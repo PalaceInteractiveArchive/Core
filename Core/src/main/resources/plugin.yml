@@ -1,0 +1,4 @@
+name: Core
+version: 1.0
+depend: [ProtocolLib]
+main: com.palacemc.core.Core
