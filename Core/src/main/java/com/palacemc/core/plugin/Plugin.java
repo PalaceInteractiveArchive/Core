@@ -3,25 +3,36 @@ package com.palacemc.core.plugin;
 import com.palacemc.core.Core;
 import com.palacemc.core.command.CoreCommand;
 import com.palacemc.core.command.CoreCommandMap;
+import com.palacemc.core.config.LanguageFormatter;
 import com.palacemc.core.library.LibraryHandler;
+import lombok.Getter;
 import org.bukkit.ChatColor;
 import org.bukkit.event.Listener;
 import org.bukkit.plugin.java.JavaPlugin;
 
 public class Plugin extends JavaPlugin {
 
-    private PluginInfo info;
-    private CoreCommandMap commandMap;
+    @Getter private PluginInfo info;
+    @Getter private LanguageFormatter languageFormatter;
+    @Getter private CoreCommandMap commandMap;
 
     @Override
     public final void onEnable() {
         try {
+            // Start library downloading and loading
             LibraryHandler.loadLibraries(this);
+            // Check if Core is enabled if not can't work
             if (!Core.getInstance().isEnabled()) return;
+            // Register this plugin to Core
             Core.onPluginEnable(this);
+            // Get plugin info
             info = getClass().getAnnotation(PluginInfo.class);
             if (info == null) throw new IllegalStateException("You must annotate your class with the @PluginInfo annotation!");
+            // Load languages
+            languageFormatter = new LanguageFormatter(this);
+            // Start command map
             commandMap = new CoreCommandMap(this);
+            // Plugin enabled finally
             onPluginEnable();
         } catch (Exception e) {
             e.printStackTrace();
@@ -55,14 +66,5 @@ public class Plugin extends JavaPlugin {
     /* Bukkit Utils */
     public void registerListener(Listener listener) {
         getServer().getPluginManager().registerEvents(listener, this);
-    }
-
-    /* Get Methods */
-    public PluginInfo getInfo() {
-        return info;
-    }
-
-    public CoreCommandMap getCommandMap() {
-        return commandMap;
     }
 }

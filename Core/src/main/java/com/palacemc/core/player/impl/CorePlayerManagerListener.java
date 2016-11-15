@@ -24,7 +24,7 @@ public class CorePlayerManagerListener implements Listener {
             CPlayer player =  Core.getPlayerManager().getPlayer(event.getPlayer());
             player.resetManagers();
             Core.callEvent(new CorePlayerJoinDelayedEvent(player));
-        }, 3L);
+        }, 10L);
     }
 
     @EventHandler(ignoreCancelled = true)

@@ -1,12 +1,15 @@
 package com.palacemc.tests;
 
+import com.palacemc.core.Core;
 import com.palacemc.core.events.CorePlayerJoinDelayedEvent;
 import com.palacemc.core.player.CPlayer;
+import org.bukkit.Bukkit;
 import org.bukkit.ChatColor;
 import org.bukkit.boss.BarColor;
 import org.bukkit.boss.BarStyle;
 import org.bukkit.event.EventHandler;
 import org.bukkit.event.Listener;
+import org.bukkit.event.player.PlayerJoinEvent;
 
 public class TestsListener implements Listener {
 
@@ -27,5 +30,8 @@ public class TestsListener implements Listener {
         player.getActionBar().show(ChatColor.GOLD + "Action Bar Test");
         // Title and subtitle
         player.getTitle().show(ChatColor.GOLD + "Title Test", ChatColor.DARK_AQUA + "Subtitle Test");
+        // Test Format Messages
+        TestsMain plugin = Core.getPluginInstance(TestsMain.class);
+        player.sendFormatMessage(plugin, "test");
     }
 }

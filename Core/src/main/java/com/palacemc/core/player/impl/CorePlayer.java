@@ -1,21 +1,28 @@
 package com.palacemc.core.player.impl;
 
+import com.palacemc.core.Core;
+import com.palacemc.core.config.LanguageFormatter;
 import com.palacemc.core.packets.AbstractPacket;
 import com.palacemc.core.player.*;
+import com.palacemc.core.plugin.Plugin;
 import lombok.Getter;
+import lombok.Setter;
 import org.bukkit.Bukkit;
 import org.bukkit.GameMode;
 import org.bukkit.Location;
 import org.bukkit.entity.Player;
 import org.bukkit.inventory.ItemStack;
+import org.bukkit.plugin.java.JavaPlugin;
 import org.bukkit.util.Vector;
 
 import java.util.Arrays;
 import java.util.UUID;
+import java.util.logging.Level;
 
 public class CorePlayer implements CPlayer {
 
     @Getter private UUID uuid;
+    @Getter @Setter private String locale = "en_US";
     @Getter private CPlayerActionBarManager actionBar = new CorePlayerActionBarManager(this);
     @Getter private CPlayerBossBarManager bossBar = new CorePlayerBossBarManager(this);
     @Getter private CPlayerHeaderFooterManager headerFooter = new CorePlayerHeaderFooterManager(this);
@@ -60,8 +67,28 @@ public class CorePlayer implements CPlayer {
     }
 
     @Override
-    public void sendMessage(String... messages) {
-        Arrays.stream(messages).forEach(message -> getBukkitPlayer().sendMessage(message));
+    public void sendMessage(String message) {
+        getBukkitPlayer().sendMessage(message);
+    }
+
+    @Override
+    public void sendFormatMessage(JavaPlugin plugin, String key) {
+        LanguageFormatter languageFormatter = null;
+        if (plugin instanceof Core) {
+            languageFormatter = Core.getLanguageFormatter();
+        } else if (plugin instanceof Plugin) {
+            languageFormatter = ((Plugin) plugin).getLanguageFormatter();
+        }
+        if (languageFormatter == null) {
+            plugin.getLogger().log(Level.SEVERE, "PROBLEM GETTING LANGUAGE FORMATTER for key: " + key);
+            return;
+        }
+        String message = languageFormatter.getFormat(getLocale(), key);
+        if (message == null) {
+            plugin.getLogger().log(Level.SEVERE, "MESSAGE NULL for key: " + key);
+            return;
+        }
+        getBukkitPlayer().sendMessage(message);
     }
 
     @Override

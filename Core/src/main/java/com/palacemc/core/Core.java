@@ -1,5 +1,8 @@
 package com.palacemc.core;
 
+import com.comphenix.protocol.ProtocolLibrary;
+import com.palacemc.core.config.LanguageFormatter;
+import com.palacemc.core.packets.adapters.SettingsAdapter;
 import com.palacemc.core.player.CPlayerManager;
 import com.palacemc.core.player.impl.CorePlayerManager;
 import com.palacemc.core.plugin.Plugin;
@@ -14,6 +17,7 @@ import org.bukkit.event.Listener;
 import org.bukkit.plugin.java.JavaPlugin;
 import org.bukkit.scheduler.BukkitTask;
 
+import java.io.IOException;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -24,15 +28,27 @@ public class Core extends JavaPlugin {
     private static Core instance;
     private List<Plugin> plugins = new ArrayList<>();
 
+    private LanguageFormatter languageFormatter;
     private CPlayerManager playerManager;
 
     @Override
     public final void onEnable() {
         instance = this;
+        // Kick all players on reload
         for (Player player : Bukkit.getOnlinePlayers()) {
             player.kickPlayer(ChatColor.RED + "Server is reloading!");
         }
+        // Libraries
         LibraryHandler.loadLibraries(this);
+        // Formatter
+        try {
+            languageFormatter = new LanguageFormatter(this);
+        } catch (IOException e) {
+            e.printStackTrace();
+        }
+        // Protocol lib adapters
+        ProtocolLibrary.getProtocolManager().addPacketListener(new SettingsAdapter());
+        // Managers
         playerManager = new CorePlayerManager();
         logMessage("Core", ChatColor.DARK_GREEN + "Enabled");
     }
@@ -95,5 +111,9 @@ public class Core extends JavaPlugin {
     /* Managers */
     public static CPlayerManager getPlayerManager() {
         return getInstance().playerManager;
+    }
+
+    public static LanguageFormatter getLanguageFormatter() {
+        return getInstance().languageFormatter;
     }
 }
