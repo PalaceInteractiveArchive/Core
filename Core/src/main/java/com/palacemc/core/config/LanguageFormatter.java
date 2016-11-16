@@ -1,7 +1,11 @@
 package com.palacemc.core.config;
 
+import com.palacemc.core.Core;
+import com.palacemc.core.player.CPlayer;
 import org.bukkit.ChatColor;
+import org.bukkit.command.CommandSender;
 import org.bukkit.configuration.file.FileConfiguration;
+import org.bukkit.entity.Player;
 import org.bukkit.plugin.java.JavaPlugin;
 
 import java.io.BufferedReader;
@@ -32,8 +36,17 @@ public class LanguageFormatter {
         }
     }
 
-    public final String getFormat(String lang, String key) {
-        String format = getFormatFromLang(lang, key);
+    public final String getFormat(CommandSender sender, String key) {
+        String locale = DEFAULT_LANG;
+        if (sender instanceof Player) {
+            CPlayer player = Core.getPlayerManager().getPlayer((Player) sender);
+            locale = player.getLocale();
+        }
+        return getFormat(locale, key);
+    }
+
+    public final String getFormat(String locale, String key) {
+        String format = getFormatFromLang(locale, key);
         if (format != null) {
             return ChatColor.translateAlternateColorCodes('&', format);
         } else {
@@ -41,7 +54,7 @@ public class LanguageFormatter {
             if (format != null) {
                 return ChatColor.translateAlternateColorCodes('&', format);
             } else {
-                return null;
+                return "";
             }
         }
     }

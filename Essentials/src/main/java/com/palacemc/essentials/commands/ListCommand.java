@@ -4,9 +4,10 @@ import com.palacemc.core.Core;
 import com.palacemc.core.command.CommandException;
 import com.palacemc.core.command.CommandMeta;
 import com.palacemc.core.command.CoreCommand;
+import com.palacemc.core.config.LanguageFormatter;
 import com.palacemc.core.player.CPlayer;
 import com.google.common.base.Joiner;
-import org.bukkit.ChatColor;
+import com.palacemc.essentials.EssentialsMain;
 import org.bukkit.command.CommandSender;
 
 import java.util.List;
@@ -23,6 +24,9 @@ public class ListCommand extends CoreCommand {
     protected void handleCommandUnspecific(CommandSender sender, String[] args) throws CommandException {
         List<String> playerNames = Core.getPlayerManager().getOnlinePlayers().stream().map(CPlayer::getName).collect(Collectors.toList());
         String playerList = Joiner.on(" ").skipNulls().join(playerNames);
-        sender.sendMessage(ChatColor.GOLD + "Players online: " + ChatColor.GREEN + playerList);
+        // Formatter
+        LanguageFormatter formatter = Core.getPluginInstance(EssentialsMain.class).getLanguageFormatter();
+        String playersOnlineFormat = formatter.getFormat(sender, "command.list.playersOnline").replaceAll("<players-online>", playerList);
+        sender.sendMessage(playersOnlineFormat);
     }
 }

@@ -1,0 +1,4 @@
+command.error.permissions: "&cYou do not have permission for this command!"
+command.error.invalid.handler: "&cThere was no handler found for this command!"
+command.error.arguments.specify: "&cYou must specify a sub-command for this command!"
+command.error.arguments.invalid: "&cThe sub-command you have specified is invalid!"

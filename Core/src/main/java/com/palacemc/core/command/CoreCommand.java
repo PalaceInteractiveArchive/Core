@@ -104,6 +104,7 @@ public abstract class CoreCommand implements CommandExecutor, TabCompleter {
                 }
                 String s = builder.toString();
                 // Looks like this /name - [subcommand1|subcommand2|]
+                // TODO Switch to language formatting?
                 sender.sendMessage(ChatColor.AQUA + "/" + ChatColor.DARK_AQUA + superHelpCommand.getFormattedName() + ChatColor.YELLOW + " - [" + s.substring(0, s.length()-1) + "]");
             }
         });
@@ -120,20 +121,22 @@ public abstract class CoreCommand implements CommandExecutor, TabCompleter {
             // Get the permission and test for it
             if (getClass().isAnnotationPresent(CommandPermission.class)) {
                 CommandPermission annotation = getClass().getAnnotation(CommandPermission.class);
-                if (!sender.hasPermission(annotation.value()) && !(sender.isOp() && annotation.isOpExempt())) throw new PermissionException("You do not have permission for this command!");
+                if (!sender.hasPermission(annotation.value()) && !(sender.isOp() && annotation.isOpExempt())) {
+                    throw new PermissionException();
+                }
             }
             // Check if we HAVE to use sub-commands (a behavior this class provides)
             if (isUsingSubCommandsOnly()) {
                 // Check if there are not enough args for there to be a sub command
                 if (args.length < 1) {
-                    throw new ArgumentRequirementException("You must specify a sub-command for this command!");
+                    throw new ArgumentRequirementException("command.error.arguments.specify");
                 }
                 // Also check if the sub command is valid by assigning and checking the value of the resolved sub command from the first argument.
                 if ((subCommand = getSubCommandFor(args[0])) == null) {
-                    throw new ArgumentRequirementException("The sub-command you have specified is invalid!");
+                    throw new ArgumentRequirementException("command.error.arguments.invalid");
                 }
             }
-            if (subCommand == null && args.length > 0) subCommand = getSubCommandFor(args[0]); //If we're not requiring sub-commands but we can have them, let's try that
+            if (subCommand == null && args.length > 0) subCommand = getSubCommandFor(args[0]); // If we're not requiring sub-commands but we can have them, let's try that
             // By now we have validated that the sub command can be executed if it MUST, now lets see if we can execute it
             // In this case, if we must execute the sub command, this check will always past. In cases where it's an option, this check will also pass.
             // That way, we can use this feature of sub commands without actually requiring it.
@@ -213,9 +216,14 @@ public abstract class CoreCommand implements CommandExecutor, TabCompleter {
     @SuppressWarnings("UnusedParameters")
     protected void handleCommandException(com.palacemc.core.command.CommandException ex, String[] args, CommandSender sender) {
         //Get the friendly message if supported
-        if (ex instanceof FriendlyException) sender.sendMessage(((FriendlyException) ex).getFriendlyMessage(this));
-        else sender.sendMessage(ChatColor.RED + ex.getClass().getSimpleName() + ": " + ex.getMessage() + "!");
-        if (ex instanceof UnhandledCommandExceptionException) ((UnhandledCommandExceptionException) ex).getCausingException().printStackTrace();
+        if (ex instanceof FriendlyException) {
+            sender.sendMessage(Core.getLanguageFormatter().getFormat(sender, ((FriendlyException) ex).getFriendlyMessage()));
+        } else {
+            sender.sendMessage(ChatColor.RED + ex.getClass().getSimpleName() + ": " + ex.getMessage() + "!");
+        }
+        if (ex instanceof UnhandledCommandExceptionException) {
+            ((UnhandledCommandExceptionException) ex).getCausingException().printStackTrace();
+        }
     }
 
     @SuppressWarnings("UnusedParameters")

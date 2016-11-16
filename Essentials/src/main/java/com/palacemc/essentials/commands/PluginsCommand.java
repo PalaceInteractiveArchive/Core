@@ -4,7 +4,9 @@ import com.palacemc.core.Core;
 import com.palacemc.core.command.CommandException;
 import com.palacemc.core.command.CommandMeta;
 import com.palacemc.core.command.CoreCommand;
+import com.palacemc.core.config.LanguageFormatter;
 import com.palacemc.essentials.BoilerplateUtil;
+import com.palacemc.essentials.EssentialsMain;
 import org.bukkit.Bukkit;
 import org.bukkit.ChatColor;
 import org.bukkit.command.CommandSender;
@@ -24,43 +26,59 @@ public class PluginsCommand extends CoreCommand {
 
     @Override
     protected void handleCommandUnspecific(CommandSender sender, String[] args) throws CommandException {
+        // Formatter
+        LanguageFormatter formatter = Core.getPluginInstance(EssentialsMain.class).getLanguageFormatter();
         // Lists
-        List<PluginInfo> modulesList = new ArrayList<>();
         List<PluginInfo> pluginsList = new ArrayList<>();
+        List<PluginInfo> thirdPartyList = new ArrayList<>();
         // String builds
-        StringBuilder modulesSB = new StringBuilder();
-        StringBuilder pluginSB = new StringBuilder();
+        StringBuilder pluginsSB = new StringBuilder();
+        StringBuilder thirdPartySB = new StringBuilder();
         // Loop through plugins and add
         for (Plugin plugin : Bukkit.getPluginManager().getPlugins()) {
             if (plugin instanceof com.palacemc.core.plugin.Plugin) {
                 com.palacemc.core.plugin.Plugin corePlugin = (com.palacemc.core.plugin.Plugin) plugin;
-                modulesList.add(new PluginInfo(corePlugin.getInfo().name(), corePlugin.isEnabled()));
+                pluginsList.add(new PluginInfo(corePlugin.getInfo().name(), corePlugin.isEnabled()));
             } else if (!(plugin instanceof Core)) {
-                pluginsList.add(new PluginInfo(plugin.getName(), plugin.isEnabled()));
+                thirdPartyList.add(new PluginInfo(plugin.getName(), plugin.isEnabled()));
             }
         }
         // Sort
-        Collections.sort(modulesList, getComparator());
         Collections.sort(pluginsList, getComparator());
-        // Set plugin info color
-        for (PluginInfo info : modulesList) {
-            modulesSB.append(info.isEnabled() ? ChatColor.GREEN : ChatColor.RED).append(info.getName()).append(ChatColor.GOLD).append(", ");
-        }
+        Collections.sort(thirdPartyList, getComparator());
+        // Plugins info and colors
+        String pluginsSeparator = formatter.getFormat(sender, "command.plugins.plugins.separator");
+        String pluginsEnabledColor = formatter.getFormat(sender, "command.plugins.plugins.enabledColor");
+        String pluginsDisabledColor = formatter.getFormat(sender, "command.plugins.plugins.disabledColor");
         for (PluginInfo info : pluginsList) {
-            pluginSB.append(info.isEnabled() ? ChatColor.GREEN : ChatColor.RED).append(info.getName()).append(ChatColor.GOLD).append(", ");
+            pluginsSB.append(info.isEnabled() ? pluginsEnabledColor : pluginsDisabledColor).append(info.getName()).append(pluginsSeparator);
         }
-        String modules = modulesSB.toString();
-        modules = modules.substring(0, Math.max(0, modules.length() - 2));
-        String plugins = pluginSB.toString();
-        plugins = plugins.substring(0, Math.max(0, plugins.length() - 2));
+        // Third party plugins info and colors
+        String thirdPartySeparator = formatter.getFormat(sender, "command.plugins.thirdParty.separator");
+        String thirdPartyEnabledColor = formatter.getFormat(sender, "command.plugins.thirdParty.enabledColor");
+        String thirdPartyDisabledColor = formatter.getFormat(sender, "command.plugins.thirdParty.disabledColor");
+        for (PluginInfo info : thirdPartyList) {
+            thirdPartySB.append(info.isEnabled() ? thirdPartyEnabledColor : thirdPartyDisabledColor).append(info.getName()).append(thirdPartySeparator);
+        }
+        // Remove left over separators
+        String plugins = pluginsSB.toString();
+        plugins = plugins.substring(0, Math.max(0, plugins.length() - pluginsSeparator.length()));
+        String thirdParty = thirdPartySB.toString();
+        thirdParty = thirdParty.substring(0, Math.max(0, thirdParty.length() - thirdPartySeparator.length()));
+        // Formats
+        String boilerPlateFormat = formatter.getFormat(sender, "command.plugins.boilerPlate");
+        String runningFormat = formatter.getFormat(sender, "command.plugins.running").replaceAll("<core-version>", Double.toString(Core.getVersion()));
+        String pluginsFormat = formatter.getFormat(sender, "command.plugins.plugins.info").replaceAll("<core-plugins>", plugins);
+        String thirdPartyFormat = formatter.getFormat(sender, "command.plugins.thirdParty.info").replaceAll("<thirdParty-plugins>", thirdParty);
         // Send Messages
-        sender.sendMessage(BoilerplateUtil.getBoilerplateText());
-        sender.sendMessage(ChatColor.GOLD + "Running " + ChatColor.GREEN + "Core " + ChatColor.GOLD + "version " + ChatColor.DARK_GREEN + Core.getVersion());
+        String boilerPlate = BoilerplateUtil.getBoilerplateText(boilerPlateFormat);
+        sender.sendMessage(boilerPlate);
+        sender.sendMessage(runningFormat);
         sender.sendMessage("");
-        sender.sendMessage(ChatColor.GOLD + "Core Modules: " + ChatColor.RESET + modules);
+        sender.sendMessage(pluginsFormat);
         sender.sendMessage("");
-        sender.sendMessage(ChatColor.RED + "Third Party Plugins: " + ChatColor.RESET + plugins);
-        sender.sendMessage(BoilerplateUtil.getBoilerplateText());
+        sender.sendMessage(thirdPartyFormat);
+        sender.sendMessage(boilerPlate);
     }
 
     public Comparator getComparator() {

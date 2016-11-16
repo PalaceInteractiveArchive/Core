@@ -182,7 +182,7 @@ public class CorePlayerScoreboardManager implements CPlayerScoreboardManager {
         String prefix = string.substring(0, w);
         String inner = string.substring(w, w + 16);
         String end = string.substring(w + 16);
-        Team t = player.getBukkitPlayer().getScoreboard().registerNewTeam(inner); //TODO: Make a real name I guess.
+        Team t = player.getBukkitPlayer().getScoreboard().registerNewTeam(inner);
         t.setPrefix(prefix);
         t.setSuffix(end);
         t.addEntry(inner);

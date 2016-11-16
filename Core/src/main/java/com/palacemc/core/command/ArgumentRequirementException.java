@@ -1,7 +1,5 @@
 package com.palacemc.core.command;
 
-import org.bukkit.ChatColor;
-
 public final class ArgumentRequirementException extends CommandException implements FriendlyException {
 
     public ArgumentRequirementException(String message) {
@@ -9,7 +7,7 @@ public final class ArgumentRequirementException extends CommandException impleme
     }
 
     @Override
-    public String getFriendlyMessage(CoreCommand command) {
-        return ChatColor.RED + this.getMessage();
+    public String getFriendlyMessage() {
+        return getMessage();
     }
 }

@@ -1,15 +1,13 @@
 package com.palacemc.core.command;
 
-import org.bukkit.ChatColor;
-
 public final class PermissionException extends CommandException implements FriendlyException {
 
-    public PermissionException(String message) {
-        super(message);
+    public PermissionException() {
+        super("command.error.permissions");
     }
 
     @Override
-    public String getFriendlyMessage(CoreCommand command) {
-        return ChatColor.RED + "You do not have permission for this!";
+    public String getFriendlyMessage() {
+        return getMessage();
     }
 }
