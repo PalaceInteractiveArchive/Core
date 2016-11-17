@@ -12,6 +12,7 @@ import org.bukkit.World;
 import org.bukkit.event.Listener;
 import org.bukkit.inventory.Inventory;
 import org.bukkit.plugin.java.JavaPlugin;
+import org.bukkit.scheduler.BukkitRunnable;
 
 public class Plugin extends JavaPlugin {
 
@@ -83,19 +84,21 @@ public class Plugin extends JavaPlugin {
         getServer().getPluginManager().registerEvents(listener, this);
     }
 
-    public int runTaskTimer(Runnable runnable, long delay, long period) {
-        return Bukkit.getScheduler().runTaskTimer(this, runnable, delay, period).getTaskId();
+    public int runTaskTimer(BukkitRunnable runnable, long delay, long period) {
+        return runnable.runTaskTimer(this, delay, period).getTaskId();
     }
 
-    public int runTaskLater(Runnable runnable, long delay) {
-        return Bukkit.getScheduler().runTaskLater(this, runnable, delay).getTaskId();
+    public int runTaskLater(BukkitRunnable runnable, long delay) {
+        return runnable.runTaskLater(this, delay).getTaskId();
     }
 
-    public int scheduleSyncDelayedTask(Runnable runnable, long delay) {
+    @SuppressWarnings("deprecation")
+    public int scheduleSyncDelayedTask(BukkitRunnable runnable, long delay) {
         return Bukkit.getScheduler().scheduleSyncDelayedTask(this, runnable, delay);
     }
 
-    public int scheduleSyncRepeatingTask(Runnable runnable, long delay, long period) {
+    @SuppressWarnings("deprecation")
+    public int scheduleSyncRepeatingTask(BukkitRunnable runnable, long delay, long period) {
         return Bukkit.getScheduler().scheduleSyncRepeatingTask(this, runnable, delay, period);
     }
 
