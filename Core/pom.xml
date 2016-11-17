@@ -59,6 +59,7 @@
                                     <type>jar</type>
                                     <overWrite>true</overWrite>
                                     <outputDirectory>${project.parent.basedir}/Builds</outputDirectory>
+                                    <destFileName>${project.artifactId}.jar</destFileName>
                                 </artifactItem>
                             </artifactItems>
                         </configuration>
