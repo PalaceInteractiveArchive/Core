@@ -1,4 +1,4 @@
 name: Punishments
 version: 1.0
 depend: [Core]
-main: com.palacemc.punishments.PunishmentsMain
+main: com.thepalace.punishments.PunishmentsMain

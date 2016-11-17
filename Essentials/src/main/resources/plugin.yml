@@ -1,4 +1,4 @@
 name: Essentials
 version: 1.0
 depend: [Core]
-main: com.palacemc.essentials.EssentialsMain
+main: com.thepalace.essentials.EssentialsMain

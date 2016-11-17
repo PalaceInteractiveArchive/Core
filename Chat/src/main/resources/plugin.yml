@@ -1,4 +1,4 @@
 name: Chat
 version: 1.0
 depend: [Core]
-main: com.palacemc.chat.ChatMain
+main: com.thepalace.chat.ChatMain

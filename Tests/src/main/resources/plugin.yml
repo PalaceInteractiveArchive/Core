@@ -1,4 +1,4 @@
 name: Tests
 version: 1.0
 depend: [Core]
-main: com.palacemc.tests.TestsMain
+main: com.thepalace.tests.TestsMain
