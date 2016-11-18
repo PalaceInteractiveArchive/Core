@@ -72,7 +72,7 @@ public class CorePlayerScoreboardManager implements CPlayerScoreboardManager {
     }
 
     @Override
-    public void reset() {
+    public void setup() {
         lines = HashBiMap.create();
         scoreboard = Bukkit.getScoreboardManager().getNewScoreboard();
         player.getBukkitPlayer().setScoreboard(scoreboard);

@@ -7,6 +7,6 @@ public interface CPlayerScoreboardManager {
     CPlayerScoreboardManager remove(int id);
     CPlayerScoreboardManager title(String title);
 
-    void reset();
+    void setup();
 
 }

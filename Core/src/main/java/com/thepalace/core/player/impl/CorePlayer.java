@@ -145,7 +145,6 @@ public class CorePlayer implements CPlayer {
     public void resetManagers() {
         getBossBar().remove();
         getHeaderFooter().hide();
-        getScoreboard().reset();
         getTitle().hide();
     }
 
