@@ -15,6 +15,7 @@ import org.bukkit.entity.Player;
 import org.bukkit.event.Event;
 import org.bukkit.event.Listener;
 import org.bukkit.plugin.java.JavaPlugin;
+import org.bukkit.scheduler.BukkitRunnable;
 import org.bukkit.scheduler.BukkitTask;
 
 import java.io.IOException;
@@ -66,8 +67,8 @@ public class Core extends JavaPlugin {
         Bukkit.getServer().getPluginManager().registerEvents(listener, getInstance());
     }
 
-    public static BukkitTask runTaskLater(Runnable task, long delay) {
-        return Bukkit.getScheduler().runTaskLater(getInstance(), task, delay);
+    public static int runTaskLater(Runnable task, long delay) {
+        return Bukkit.getScheduler().runTaskLater(getInstance(), task, delay).getTaskId();
     }
 
     /* Log Utils */

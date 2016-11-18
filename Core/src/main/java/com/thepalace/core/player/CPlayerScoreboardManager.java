@@ -2,15 +2,10 @@ package com.thepalace.core.player;
 
 public interface CPlayerScoreboardManager {
 
-    String getTitle();
-    void setTitle(String title);
-
-    String getLine(int line);
-    void setLine(int line, String info);
-
-    void setToSize(int size);
-
-    void setScore(String line, int score);
+    CPlayerScoreboardManager set(int id, String text);
+    CPlayerScoreboardManager setBlank(int id);
+    CPlayerScoreboardManager remove(int id);
+    CPlayerScoreboardManager title(String title);
 
     void reset();
 
