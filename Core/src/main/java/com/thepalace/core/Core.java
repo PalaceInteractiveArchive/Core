@@ -48,6 +48,8 @@ public class Core extends JavaPlugin {
         }
         // Protocol lib adapters
         ProtocolLibrary.getProtocolManager().addPacketListener(new SettingsAdapter());
+        // Register plugin channel
+        getServer().getMessenger().registerOutgoingPluginChannel(this, "BungeeCord");
         // Managers
         playerManager = new CorePlayerManager();
         logMessage("Core", ChatColor.DARK_GREEN + "Enabled");
