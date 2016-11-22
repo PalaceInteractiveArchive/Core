@@ -3,7 +3,7 @@
     <modelVersion>4.0.0</modelVersion>
 
     <parent>
-        <artifactId>PalaceBase</artifactId>
+        <artifactId>CoreBase</artifactId>
         <groupId>com.thepalace</groupId>
         <version>1.0-SNAPSHOT</version>
     </parent>

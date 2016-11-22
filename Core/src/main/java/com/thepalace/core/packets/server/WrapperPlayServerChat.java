@@ -47,27 +47,11 @@ public class WrapperPlayServerChat extends AbstractPacket {
     }
 
     /**
-     * @deprecated Renamed to {@link #getMessage()}
-     */
-    @Deprecated
-    public WrappedChatComponent getJsonData() {
-        return getMessage();
-    }
-
-    /**
      * Set the message.
      * @param value - new value.
      */
     public void setMessage(WrappedChatComponent value) {
         handle.getChatComponents().write(0, value);
-    }
-
-    /**
-     * @deprecated Renamed to {@link #setMessage(WrappedChatComponent)}
-     */
-    @Deprecated
-    public void setJsonData(WrappedChatComponent value) {
-        setMessage(value);
     }
 
     /**

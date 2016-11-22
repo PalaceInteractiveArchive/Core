@@ -11,11 +11,17 @@ import com.thepalace.core.plugin.PluginInfo;
 import lombok.Getter;
 import org.bukkit.Bukkit;
 import org.bukkit.ChatColor;
+import org.bukkit.Server;
+import org.bukkit.World;
+import org.bukkit.command.ConsoleCommandSender;
 import org.bukkit.entity.Player;
 import org.bukkit.event.Event;
 import org.bukkit.event.Listener;
+import org.bukkit.inventory.Inventory;
+import org.bukkit.plugin.PluginManager;
 import org.bukkit.plugin.java.JavaPlugin;
 import org.bukkit.scheduler.BukkitRunnable;
+import org.bukkit.scheduler.BukkitScheduler;
 import org.bukkit.scheduler.BukkitTask;
 
 import java.io.IOException;
@@ -60,38 +66,7 @@ public class Core extends JavaPlugin {
         logMessage("Core", ChatColor.DARK_RED + "Disabled");
     }
 
-    /** Bukkit Utils */
-    public static void callEvent(Event event) {
-        Bukkit.getPluginManager().callEvent(event);
-    }
-
-    public static void registerListener(Listener listener) {
-        Bukkit.getServer().getPluginManager().registerEvents(listener, getInstance());
-    }
-
-    public static int runTaskLater(Runnable task, long delay) {
-        return Bukkit.getScheduler().runTaskLater(getInstance(), task, delay).getTaskId();
-    }
-
-    /* Log Utils */
-    public static void logMessage(String name, String message) {
-        logInfo(ChatColor.GOLD + name + ChatColor.DARK_GRAY + " > " + message);
-    }
-
-    public static void logInfo(String message) {
-        Bukkit.getServer().getConsoleSender().sendMessage(message);
-    }
-
     /* Plugin Utils */
-    public static <T extends Plugin> T getPluginInstance(Class<T> pluginClass) {
-        for (Plugin plugin : getInstance().plugins) {
-            if (pluginClass.equals(plugin.getClass())) {
-                return (T) plugin;
-            }
-        }
-        return null;
-    }
-
     public static void onPluginEnable(Plugin plugin) {
         getInstance().plugins.add(plugin);
     }
@@ -117,5 +92,60 @@ public class Core extends JavaPlugin {
 
     public static LanguageFormatter getLanguageFormatter() {
         return getInstance().languageFormatter;
+    }
+
+    /** Bukkit Utils */
+    public static Inventory createInventory(int size, String title) {
+        return Bukkit.createInventory(null, size, title);
+    }
+
+    public static World getWorld(String name) {
+        return getBukkitServer().getWorld(name);
+    }
+
+    public static void shutdown() {
+        getBukkitServer().shutdown();
+    }
+
+    public static void callEvent(Event event) {
+        getPluginManager().callEvent(event);
+    }
+
+    public static void registerListener(Listener listener) {
+        getPluginManager().registerEvents(listener, getInstance());
+    }
+
+    public static void cancelTask(int taskId) {
+        getScheduler().cancelTask(taskId);
+    }
+
+    public static int runTaskLater(Runnable task, long delay) {
+        return getScheduler().runTaskLater(getInstance(), task, delay).getTaskId();
+    }
+
+    /* Log Utils */
+    public static void logMessage(String name, String message) {
+        logInfo(ChatColor.GOLD + name + ChatColor.DARK_GRAY + " > " + message);
+    }
+
+    public static void logInfo(String message) {
+        getConsoleSender().sendMessage(message);
+    }
+
+    /** Bukkit Getters */
+    private static PluginManager getPluginManager() {
+        return getBukkitServer().getPluginManager();
+    }
+
+    private static ConsoleCommandSender getConsoleSender() {
+        return getBukkitServer().getConsoleSender();
+    }
+
+    private static BukkitScheduler getScheduler() {
+        return Bukkit.getScheduler();
+    }
+
+    private static Server getBukkitServer() {
+        return Bukkit.getServer();
     }
 }

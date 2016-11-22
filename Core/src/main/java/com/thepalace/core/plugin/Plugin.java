@@ -68,18 +68,6 @@ public class Plugin extends JavaPlugin {
     }
 
     /* Bukkit Utils */
-    public static World getWorld(String name) {
-        return Bukkit.getServer().getWorld(name);
-    }
-
-    public static void shutdown() {
-        Bukkit.getServer().shutdown();
-    }
-
-    public static Inventory createInventory(int size, String title) {
-        return Bukkit.createInventory(null, size, title);
-    }
-
     public void registerListener(Listener listener) {
         getServer().getPluginManager().registerEvents(listener, this);
     }
@@ -96,17 +84,11 @@ public class Plugin extends JavaPlugin {
         return Bukkit.getScheduler().runTaskLater(this, runnable, delay).getTaskId();
     }
 
-    @SuppressWarnings("deprecation")
     public int scheduleSyncDelayedTask(Runnable runnable, long delay) {
         return Bukkit.getScheduler().scheduleSyncDelayedTask(this, runnable, delay);
     }
 
-    @SuppressWarnings("deprecation")
     public int scheduleSyncRepeatingTask(Runnable runnable, long delay, long period) {
         return Bukkit.getScheduler().scheduleSyncRepeatingTask(this, runnable, delay, period);
-    }
-
-    public static void cancelTask(int taskId) {
-        Bukkit.getScheduler().cancelTask(taskId);
     }
 }

@@ -1,6 +1,5 @@
 package com.thepalace.tests;
 
-import com.thepalace.core.Core;
 import com.thepalace.core.events.CorePlayerJoinDelayedEvent;
 import com.thepalace.core.player.CPlayer;
 import org.bukkit.ChatColor;
@@ -27,7 +26,7 @@ public class TestsListener implements Listener {
         // Title and subtitle
         player.getTitle().show(ChatColor.GOLD + "Title Test", ChatColor.DARK_AQUA + "Subtitle Test");
         // Test Format Messages
-        TestsMain plugin = Core.getPluginInstance(TestsMain.class);
+        TestsMain plugin = TestsMain.getPlugin(TestsMain.class);
         player.sendFormatMessage(plugin, "test");
     }
 }

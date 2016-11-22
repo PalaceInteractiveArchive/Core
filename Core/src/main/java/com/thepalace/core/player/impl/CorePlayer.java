@@ -170,6 +170,7 @@ public class CorePlayer implements CPlayer {
 
     @Override
     public void sendPacket(AbstractPacket packet) {
+        if (getBukkitPlayer() == null) return;
         packet.sendPacket(getBukkitPlayer());
     }
 

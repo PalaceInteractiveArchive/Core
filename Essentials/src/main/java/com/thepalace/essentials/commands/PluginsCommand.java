@@ -26,7 +26,7 @@ public class PluginsCommand extends CoreCommand {
     @Override
     protected void handleCommandUnspecific(CommandSender sender, String[] args) throws CommandException {
         // Formatter
-        LanguageFormatter formatter = Core.getPluginInstance(EssentialsMain.class).getLanguageFormatter();
+        LanguageFormatter formatter = EssentialsMain.getPlugin(EssentialsMain.class).getLanguageFormatter();
         // Lists
         List<PluginInfo> pluginsList = new ArrayList<>();
         List<PluginInfo> thirdPartyList = new ArrayList<>();

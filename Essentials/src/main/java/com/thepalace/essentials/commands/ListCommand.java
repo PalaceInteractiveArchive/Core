@@ -25,7 +25,7 @@ public class ListCommand extends CoreCommand {
         List<String> playerNames = Core.getPlayerManager().getOnlinePlayers().stream().map(CPlayer::getName).collect(Collectors.toList());
         String playerList = Joiner.on(" ").skipNulls().join(playerNames);
         // Formatter
-        LanguageFormatter formatter = Core.getPluginInstance(EssentialsMain.class).getLanguageFormatter();
+        LanguageFormatter formatter = EssentialsMain.getPlugin(EssentialsMain.class).getLanguageFormatter();
         String playersOnlineFormat = formatter.getFormat(sender, "command.list.playersOnline").replaceAll("<players-online>", playerList);
         sender.sendMessage(playersOnlineFormat);
     }
