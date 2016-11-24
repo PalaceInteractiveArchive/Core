@@ -1,5 +1,6 @@
 package com.thepalace.core.player;
 
+@SuppressWarnings("unused")
 public interface CPlayerScoreboardManager {
 
     CPlayerScoreboardManager set(int id, String text);

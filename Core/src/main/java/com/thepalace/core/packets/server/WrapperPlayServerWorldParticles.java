@@ -1,4 +1,4 @@
-/**
+/*
  * PacketWrapper - ProtocolLib wrappers for Minecraft packets
  * Copyright (C) dmulloy2 <http://dmulloy2.net>
  * Copyright (C) Kristian S. Strangeland
@@ -24,6 +24,7 @@ import com.comphenix.protocol.events.PacketContainer;
 import com.comphenix.protocol.wrappers.EnumWrappers.Particle;
 import org.bukkit.Location;
 
+@SuppressWarnings("unused")
 public class WrapperPlayServerWorldParticles extends AbstractPacket {
 
     public static final PacketType TYPE = PacketType.Play.Server.WORLD_PARTICLES;

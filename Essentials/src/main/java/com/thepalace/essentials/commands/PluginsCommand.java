@@ -12,7 +12,6 @@ import org.bukkit.command.CommandSender;
 import org.bukkit.plugin.Plugin;
 
 import java.util.ArrayList;
-import java.util.Collections;
 import java.util.Comparator;
 import java.util.List;
 
@@ -43,8 +42,8 @@ public class PluginsCommand extends CoreCommand {
             }
         }
         // Sort
-        Collections.sort(pluginsList, getComparator());
-        Collections.sort(thirdPartyList, getComparator());
+        pluginsList.sort(Comparator.comparing(PluginInfo::getName));
+        thirdPartyList.sort(Comparator.comparing(PluginInfo::getName));
         // Plugins info and colors
         String pluginsSeparator = formatter.getFormat(sender, "command.plugins.plugins.separator");
         String pluginsEnabledColor = formatter.getFormat(sender, "command.plugins.plugins.enabledColor");
@@ -78,10 +77,6 @@ public class PluginsCommand extends CoreCommand {
         sender.sendMessage("");
         sender.sendMessage(thirdPartyFormat);
         sender.sendMessage(boilerPlate);
-    }
-
-    public Comparator getComparator() {
-        return (Comparator<PluginInfo>) (info1, info2) -> info1.getName().compareTo(info2.getName());
     }
 
     public class PluginInfo {

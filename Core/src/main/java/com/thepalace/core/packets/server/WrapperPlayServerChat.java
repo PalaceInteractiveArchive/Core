@@ -1,4 +1,4 @@
-/**
+/*
  * This file is part of PacketWrapper.
  * Copyright (C) 2012-2015 Kristian S. Strangeland
  * Copyright (C) 2015 dmulloy2
@@ -23,6 +23,7 @@ import com.comphenix.protocol.PacketType;
 import com.comphenix.protocol.events.PacketContainer;
 import com.comphenix.protocol.wrappers.WrappedChatComponent;
 
+@SuppressWarnings("unused")
 public class WrapperPlayServerChat extends AbstractPacket {
 
     public static final PacketType TYPE = PacketType.Play.Server.CHAT;

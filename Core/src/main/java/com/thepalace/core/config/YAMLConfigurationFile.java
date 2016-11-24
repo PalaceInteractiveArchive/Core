@@ -51,6 +51,7 @@ public final class YAMLConfigurationFile {
         return fileConfiguration;
     }
 
+    @SuppressWarnings("unused")
     public void saveConfig() {
         if (fileConfiguration == null || configFile == null) {
             return;

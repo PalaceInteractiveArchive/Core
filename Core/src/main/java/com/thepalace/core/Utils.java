@@ -1,5 +1,6 @@
 package com.thepalace.core;
 
+@SuppressWarnings("unused")
 public class Utils {
 
     public static boolean checkIfInt(String toCheck) {

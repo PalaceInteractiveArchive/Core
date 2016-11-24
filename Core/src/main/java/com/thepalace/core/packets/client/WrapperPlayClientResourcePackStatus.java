@@ -1,4 +1,4 @@
-/**
+/*
  * PacketWrapper - ProtocolLib wrappers for Minecraft packets
  * Copyright (C) dmulloy2 <http://dmulloy2.net>
  * Copyright (C) Kristian S. Strangeland
@@ -23,6 +23,7 @@ import com.comphenix.protocol.PacketType;
 import com.comphenix.protocol.events.PacketContainer;
 import com.comphenix.protocol.wrappers.EnumWrappers.ResourcePackStatus;
 
+@SuppressWarnings("unused")
 public class WrapperPlayClientResourcePackStatus extends AbstractPacket {
 
     public static final PacketType TYPE = PacketType.Play.Client.RESOURCE_PACK_STATUS;

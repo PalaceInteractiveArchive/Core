@@ -10,6 +10,7 @@ import org.bukkit.plugin.java.JavaPlugin;
 
 import java.util.UUID;
 
+@SuppressWarnings("unused")
 public interface CPlayer {
 
     String getName();

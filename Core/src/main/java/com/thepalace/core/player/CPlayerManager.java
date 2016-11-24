@@ -5,6 +5,7 @@ import org.bukkit.entity.Player;
 import java.util.Collection;
 import java.util.UUID;
 
+@SuppressWarnings("unused")
 public interface CPlayerManager extends Iterable<CPlayer> {
 
     void playerLoggedIn(Player player);

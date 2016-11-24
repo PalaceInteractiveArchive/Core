@@ -1,4 +1,4 @@
-/**
+/*
  * PacketWrapper - ProtocolLib wrappers for Minecraft packets
  * Copyright (C) dmulloy2 <http://dmulloy2.net>
  * Copyright (C) Kristian S. Strangeland
@@ -24,6 +24,7 @@ import com.comphenix.protocol.events.PacketContainer;
 import com.comphenix.protocol.wrappers.EnumWrappers.TitleAction;
 import com.comphenix.protocol.wrappers.WrappedChatComponent;
 
+@SuppressWarnings("unused")
 public class WrapperPlayServerTitle extends AbstractPacket {
 
     public static final PacketType TYPE = PacketType.Play.Server.TITLE;

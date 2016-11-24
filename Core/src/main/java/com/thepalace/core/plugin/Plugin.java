@@ -8,9 +8,7 @@ import com.thepalace.core.library.LibraryHandler;
 import lombok.Getter;
 import org.bukkit.Bukkit;
 import org.bukkit.ChatColor;
-import org.bukkit.World;
 import org.bukkit.event.Listener;
-import org.bukkit.inventory.Inventory;
 import org.bukkit.plugin.java.JavaPlugin;
 import org.bukkit.scheduler.BukkitRunnable;
 
@@ -67,22 +65,27 @@ public class Plugin extends JavaPlugin {
         getServer().getPluginManager().registerEvents(listener, this);
     }
 
+    @SuppressWarnings("unused")
     public int runTaskTimer(Runnable runnable, long delay, long period) {
         return Bukkit.getScheduler().runTaskTimer(this, runnable, delay, period).getTaskId();
     }
 
+    @SuppressWarnings("unused")
     public int runTaskTimerBukkit(BukkitRunnable runnable, long delay, long period) {
         return runnable.runTaskTimer(this, delay, period).getTaskId();
     }
 
+    @SuppressWarnings("unused")
     public int runTaskLater(Runnable runnable, long delay) {
         return Bukkit.getScheduler().runTaskLater(this, runnable, delay).getTaskId();
     }
 
+    @SuppressWarnings("unused")
     public int scheduleSyncDelayedTask(Runnable runnable, long delay) {
         return Bukkit.getScheduler().scheduleSyncDelayedTask(this, runnable, delay);
     }
 
+    @SuppressWarnings("unused")
     public int scheduleSyncRepeatingTask(Runnable runnable, long delay, long period) {
         return Bukkit.getScheduler().scheduleSyncRepeatingTask(this, runnable, delay, period);
     }

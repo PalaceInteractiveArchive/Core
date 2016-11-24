@@ -8,7 +8,6 @@ import com.thepalace.core.player.impl.CorePlayerManager;
 import com.thepalace.core.plugin.Plugin;
 import com.thepalace.core.library.LibraryHandler;
 import com.thepalace.core.plugin.PluginInfo;
-import lombok.Getter;
 import org.bukkit.Bukkit;
 import org.bukkit.ChatColor;
 import org.bukkit.Server;
@@ -22,10 +21,8 @@ import org.bukkit.plugin.PluginManager;
 import org.bukkit.plugin.java.JavaPlugin;
 import org.bukkit.scheduler.BukkitScheduler;
 
-import java.io.IOException;
 import java.util.ArrayList;
 import java.util.List;
-import java.util.logging.Level;
 
 @PluginInfo(name = "Core")
 public class Core extends JavaPlugin {
@@ -92,14 +89,17 @@ public class Core extends JavaPlugin {
     }
 
     /** Bukkit Utils */
+    @SuppressWarnings("unused")
     public static Inventory createInventory(int size, String title) {
         return Bukkit.createInventory(null, size, title);
     }
 
+    @SuppressWarnings("unused")
     public static World getWorld(String name) {
         return getBukkitServer().getWorld(name);
     }
 
+    @SuppressWarnings("unused")
     public static void shutdown() {
         getBukkitServer().shutdown();
     }
@@ -112,6 +112,7 @@ public class Core extends JavaPlugin {
         getPluginManager().registerEvents(listener, getInstance());
     }
 
+    @SuppressWarnings("unused")
     public static void cancelTask(int taskId) {
         getScheduler().cancelTask(taskId);
     }
