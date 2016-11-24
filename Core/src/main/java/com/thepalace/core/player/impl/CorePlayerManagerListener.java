@@ -21,9 +21,7 @@ public class CorePlayerManagerListener implements Listener {
     @EventHandler(ignoreCancelled = true)
     public void onPlayerJoin(PlayerJoinEvent event) {
         Core.runTaskLater(() -> {
-            CPlayer player =  Core.getPlayerManager().getPlayer(event.getPlayer());
-            player.resetManagers();
-            CorePlayerJoinDelayedEvent e = new CorePlayerJoinDelayedEvent(player, event.getJoinMessage());
+            CorePlayerJoinDelayedEvent e = new CorePlayerJoinDelayedEvent(Core.getPlayerManager().getPlayer(event.getPlayer()), event.getJoinMessage());
             Core.callEvent(e);
             event.setJoinMessage(e.getJoinMessage());
         }, 10L);

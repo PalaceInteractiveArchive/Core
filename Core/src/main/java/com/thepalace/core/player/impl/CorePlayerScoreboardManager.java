@@ -14,7 +14,7 @@ import java.util.concurrent.ThreadLocalRandom;
 
 public class CorePlayerScoreboardManager implements CPlayerScoreboardManager {
 
-    private final static String OBJECTIVE = "obj" + ThreadLocalRandom.current().nextInt(10000);
+    private final static String OBJECTIVE = "obj" + ThreadLocalRandom.current().nextInt(1000000000);
     private final static int MAX_STRING_LENGTH = 64;
 
     private final CPlayer player;
