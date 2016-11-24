@@ -22,17 +22,21 @@ public class LanguageFormatter {
 
     private HashMap<String, YAMLConfigurationFile> languages = new HashMap<>();
 
-    public LanguageFormatter(JavaPlugin plugin) throws IOException {
+    public LanguageFormatter(JavaPlugin plugin) {
         // Return if languages file does not exist
         if (plugin.getResource(PATH + LANG_FILE_NAME) == null) return;
         // Languages text file to get all the languages to load
-        BufferedReader languagesReader = new BufferedReader(new InputStreamReader(plugin.getResource(PATH + LANG_FILE_NAME)));
-        String language;
-        while ((language = languagesReader.readLine()) != null) {
-            // Check if resource exist if not continue
-            if (plugin.getResource(PATH + language + YML_EXTENSION) == null) continue;
-            // Add to list of languages
-            languages.put(language, new YAMLConfigurationFile(plugin, PATH, PATH + language + YML_EXTENSION));
+        try {
+            BufferedReader languagesReader = new BufferedReader(new InputStreamReader(plugin.getResource(PATH + LANG_FILE_NAME)));
+            String language;
+            while ((language = languagesReader.readLine()) != null) {
+                // Check if resource exist if not continue
+                if (plugin.getResource(PATH + language + YML_EXTENSION) == null) continue;
+                // Add to list of languages
+                languages.put(language, new YAMLConfigurationFile(plugin, PATH, PATH + language + YML_EXTENSION));
+            }
+        } catch (IOException e) {
+            e.printStackTrace();
         }
     }
 

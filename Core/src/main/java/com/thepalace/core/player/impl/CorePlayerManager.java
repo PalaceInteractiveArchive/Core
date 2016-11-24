@@ -22,16 +22,12 @@ public class CorePlayerManager implements CPlayerManager {
 
     @Override
     public void playerLoggedIn(Player player) {
-        synchronized (onlinePlayers) {
-            onlinePlayers.put(player.getName(), new CorePlayer(player.getUniqueId()));
-        }
+        onlinePlayers.put(player.getName(), new CorePlayer(player.getUniqueId()));
     }
 
     @Override
     public void playerLoggedOut(Player player) {
-        synchronized (onlinePlayers) {
-            onlinePlayers.remove(player.getName());
-        }
+        onlinePlayers.remove(player.getName());
     }
 
     @Override
@@ -41,9 +37,7 @@ public class CorePlayerManager implements CPlayerManager {
 
     @Override
     public CorePlayer getPlayer(Player player) {
-        synchronized (onlinePlayers) {
-            return (CorePlayer) onlinePlayers.get(player.getName());
-        }
+        return (CorePlayer) onlinePlayers.get(player.getName());
     }
 
     @Override

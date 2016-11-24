@@ -20,18 +20,16 @@ import org.bukkit.event.Listener;
 import org.bukkit.inventory.Inventory;
 import org.bukkit.plugin.PluginManager;
 import org.bukkit.plugin.java.JavaPlugin;
-import org.bukkit.scheduler.BukkitRunnable;
 import org.bukkit.scheduler.BukkitScheduler;
-import org.bukkit.scheduler.BukkitTask;
 
 import java.io.IOException;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.logging.Level;
 
 @PluginInfo(name = "Core")
 public class Core extends JavaPlugin {
 
-    @Getter private static Core instance;
     private List<Plugin> plugins = new ArrayList<>();
 
     private LanguageFormatter languageFormatter;
@@ -39,7 +37,6 @@ public class Core extends JavaPlugin {
 
     @Override
     public final void onEnable() {
-        instance = this;
         // Kick all players on reload
         for (Player player : Bukkit.getOnlinePlayers()) {
             player.kickPlayer(ChatColor.RED + "Server is reloading!");
@@ -47,11 +44,7 @@ public class Core extends JavaPlugin {
         // Libraries
         LibraryHandler.loadLibraries(this);
         // Formatter
-        try {
-            languageFormatter = new LanguageFormatter(this);
-        } catch (IOException e) {
-            e.printStackTrace();
-        }
+        languageFormatter = new LanguageFormatter(this);
         // Protocol lib adapters
         ProtocolLibrary.getProtocolManager().addPacketListener(new SettingsAdapter());
         // Register plugin channel
@@ -76,9 +69,13 @@ public class Core extends JavaPlugin {
     }
 
     /* Core Info */
+    public static Core getInstance() {
+        return Core.getPlugin(Core.class);
+    }
+
     public static double getVersion() {
         PluginInfo annotation = getInstance().getClass().getAnnotation(PluginInfo.class);
-        if (annotation != null){
+        if (annotation != null) {
             return annotation.version();
         } else {
             return 1.0;
