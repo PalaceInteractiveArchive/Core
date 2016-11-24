@@ -24,7 +24,7 @@ import java.util.logging.Level;
 
 public class CorePlayer implements CPlayer {
 
-    @Getter private UUID uuid;
+    @Getter private final UUID uuid;
     @Getter @Setter private String locale = "en_US";
     @Getter private CPlayerActionBarManager actionBar = new CorePlayerActionBarManager(this);
     @Getter private CPlayerBossBarManager bossBar = new CorePlayerBossBarManager(this);

@@ -9,5 +9,6 @@ import java.lang.annotation.Target;
 @Retention(RetentionPolicy.RUNTIME)
 public @interface CommandPermission {
     String value();
+    @SuppressWarnings("BooleanMethodIsAlwaysInverted")
     boolean isOpExempt() default true;
 }

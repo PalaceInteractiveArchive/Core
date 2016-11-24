@@ -221,7 +221,7 @@ public abstract class CoreCommand implements CommandExecutor, TabCompleter {
         }
     }
 
-    @SuppressWarnings("UnusedParameters")
+    @SuppressWarnings({"UnusedParameters", "EmptyMethod"})
     protected void preSubCommandDispatch(CommandSender sender, String[] args, CoreCommand subCommand) {}
 
     public final CoreCommand getSubCommandFor(String s) {
@@ -257,7 +257,10 @@ public abstract class CoreCommand implements CommandExecutor, TabCompleter {
     protected void handleCommandUnspecific(CommandSender sender, String[] args) throws CommandException {throw new EmptyHandlerException();}
     protected void handlePostSubCommand(CommandSender sender, String[] args) throws CommandException {throw new EmptyHandlerException();}
 
-    protected boolean shouldGenerateHelpCommand() {return true;}
+    @SuppressWarnings("SameReturnValue")
+    protected boolean shouldGenerateHelpCommand() {
+        return true;
+    }
 
     // Default behavior if we delegate the call to the sub-class
     protected List<String> handleTabComplete(CommandSender sender, Command command, String alias, String[] args) {
@@ -271,6 +274,7 @@ public abstract class CoreCommand implements CommandExecutor, TabCompleter {
         return ss; //Return what we found.
     }
 
+    @SuppressWarnings("SameReturnValue")
     protected boolean isUsingSubCommandsOnly() {
         return false;
     }

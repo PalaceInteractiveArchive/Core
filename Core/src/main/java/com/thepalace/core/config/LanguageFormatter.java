@@ -20,7 +20,7 @@ public class LanguageFormatter {
     private final String LANG_FILE_NAME = "languages.txt";
     private final String YML_EXTENSION = ".yml";
 
-    private HashMap<String, YAMLConfigurationFile> languages = new HashMap<>();
+    private final HashMap<String, YAMLConfigurationFile> languages = new HashMap<>();
 
     public LanguageFormatter(JavaPlugin plugin) {
         // Return if languages file does not exist

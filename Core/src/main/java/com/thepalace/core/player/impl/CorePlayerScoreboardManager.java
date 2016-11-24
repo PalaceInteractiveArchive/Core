@@ -17,7 +17,7 @@ public class CorePlayerScoreboardManager implements CPlayerScoreboardManager {
     private final static String OBJECTIVE = "obj" + ThreadLocalRandom.current().nextInt(10000);
     private final static int MAX_STRING_LENGTH = 64;
 
-    private CPlayer player;
+    private final CPlayer player;
 
     private BiMap<Integer, String> lines;
     private Scoreboard scoreboard;

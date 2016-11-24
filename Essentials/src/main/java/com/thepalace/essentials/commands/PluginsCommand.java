@@ -80,8 +80,8 @@ public class PluginsCommand extends CoreCommand {
     }
 
     public class PluginInfo {
-        private String name;
-        private boolean enabled;
+        private final String name;
+        private final boolean enabled;
 
         public PluginInfo(String name, boolean enabled) {
             this.name = name;

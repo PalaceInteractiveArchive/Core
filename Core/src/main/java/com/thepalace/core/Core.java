@@ -27,7 +27,7 @@ import java.util.List;
 @PluginInfo(name = "Core")
 public class Core extends JavaPlugin {
 
-    private List<Plugin> plugins = new ArrayList<>();
+    private final List<Plugin> plugins = new ArrayList<>();
 
     private LanguageFormatter languageFormatter;
     private CPlayerManager playerManager;
@@ -117,6 +117,7 @@ public class Core extends JavaPlugin {
         getScheduler().cancelTask(taskId);
     }
 
+    @SuppressWarnings("UnusedReturnValue")
     public static int runTaskLater(Runnable task, long delay) {
         return getScheduler().runTaskLater(getInstance(), task, delay).getTaskId();
     }

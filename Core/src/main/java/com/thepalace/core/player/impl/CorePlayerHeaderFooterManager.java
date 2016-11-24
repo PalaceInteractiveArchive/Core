@@ -7,7 +7,7 @@ import com.comphenix.protocol.wrappers.WrappedChatComponent;
 
 public class CorePlayerHeaderFooterManager implements CPlayerHeaderFooterManager {
 
-    private CPlayer player;
+    private final CPlayer player;
     private String header = " ";
     private String footer = " ";
 

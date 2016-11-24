@@ -7,7 +7,7 @@ import com.comphenix.protocol.wrappers.WrappedChatComponent;
 
 public class CorePlayerActionBarManager implements CPlayerActionBarManager {
 
-    private CPlayer player;
+    private final CPlayer player;
 
     public CorePlayerActionBarManager(CPlayer player) {
         this.player = player;

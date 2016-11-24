@@ -78,7 +78,7 @@ public class WrapperPlayServerChat extends AbstractPacket {
         CHAT_SYSTEM((byte) 1),
         ACTION_BAR((byte) 2);
 
-        private byte value;
+        private final byte value;
 
         Position(byte value) {
             this.value = value;

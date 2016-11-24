@@ -9,7 +9,7 @@ import org.bukkit.boss.BossBar;
 
 public class CorePlayerBossBarManager implements CPlayerBossBarManager {
 
-    private CPlayer player;
+    private final CPlayer player;
     private BossBar bossBar = null;
 
     public CorePlayerBossBarManager(CPlayer player) {

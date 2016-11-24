@@ -1,5 +1,6 @@
 package com.thepalace.core.player;
 
+@SuppressWarnings("unused")
 public interface CPlayerTitleManager {
 
     void show(String title, String subtitle);

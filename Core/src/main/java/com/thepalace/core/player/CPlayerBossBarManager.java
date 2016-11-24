@@ -3,6 +3,7 @@ package com.thepalace.core.player;
 import org.bukkit.boss.BarColor;
 import org.bukkit.boss.BarStyle;
 
+@SuppressWarnings("unused")
 public interface CPlayerBossBarManager {
 
     void setText(String title);

@@ -6,7 +6,7 @@ import com.thepalace.core.player.CPlayerResourcePackManager;
 
 public class CorePlayerResourcePackManager implements CPlayerResourcePackManager {
 
-    private CPlayer player;
+    private final CPlayer player;
 
     public CorePlayerResourcePackManager(CPlayer player) {
         this.player = player;

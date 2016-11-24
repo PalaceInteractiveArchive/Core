@@ -52,9 +52,10 @@ public class Plugin extends JavaPlugin {
 
     /* Delegated Methods */
     protected void onPluginEnable() { Core.logMessage(getInfo().name(), ChatColor.RED + "Did not run any code on enable!"); }
-    protected void onPluginDisable() {}
+    @SuppressWarnings("EmptyMethod") protected void onPluginDisable() {}
 
     /* Command Methods */
+    @SuppressWarnings("UnusedReturnValue")
     public final <T extends CoreCommand> T registerCommand(T command) {
         getCommandMap().registerCommand(command);
         return command;

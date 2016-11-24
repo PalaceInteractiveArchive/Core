@@ -8,7 +8,7 @@ import org.bukkit.Location;
 
 public class CorePlayerParticlesManager implements CPlayerParticlesManager {
 
-    private CPlayer player;
+    private final CPlayer player;
 
     public CorePlayerParticlesManager(CPlayer player) {
         this.player = player;

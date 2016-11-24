@@ -8,7 +8,7 @@ import com.comphenix.protocol.wrappers.WrappedChatComponent;
 
 public class CorePlayerTitleManager implements CPlayerTitleManager {
 
-    private CPlayer player;
+    private final CPlayer player;
 
     public CorePlayerTitleManager(CPlayer player) {
         this.player = player;
