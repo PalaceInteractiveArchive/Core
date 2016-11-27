@@ -3,7 +3,6 @@ package com.thepalace.core.player.impl;
 import com.thepalace.core.Core;
 import com.thepalace.core.player.CPlayer;
 import com.thepalace.core.player.CPlayerManager;
-import org.bukkit.Bukkit;
 import org.bukkit.entity.Player;
 
 import java.util.Collection;
@@ -14,20 +13,20 @@ import java.util.concurrent.ConcurrentHashMap;
 
 public class CorePlayerManager implements CPlayerManager {
 
-    private final Map<String, CPlayer> onlinePlayers = new ConcurrentHashMap<>();
+    private final Map<UUID, CPlayer> onlinePlayers = new ConcurrentHashMap<>();
 
     public CorePlayerManager() {
         Core.registerListener(new CorePlayerManagerListener());
     }
 
     @Override
-    public void playerLoggedIn(Player player) {
-        onlinePlayers.put(player.getName(), new CorePlayer(player.getUniqueId()));
+    public void playerLoggedIn(UUID uuid) {
+        onlinePlayers.put(uuid, new CorePlayer(uuid));
     }
 
     @Override
-    public void playerLoggedOut(Player player) {
-        onlinePlayers.remove(player.getName());
+    public void playerLoggedOut(UUID uuid) {
+        onlinePlayers.remove(uuid);
     }
 
     @Override
@@ -36,15 +35,13 @@ public class CorePlayerManager implements CPlayerManager {
     }
 
     @Override
-    public CorePlayer getPlayer(Player player) {
-        return (CorePlayer) onlinePlayers.get(player.getName());
+    public CorePlayer getPlayer(UUID playerUUID) {
+        return (CorePlayer) onlinePlayers.get(playerUUID);
     }
 
     @Override
-    public CPlayer getPlayer(UUID uuid) {
-        Player player = Bukkit.getPlayer(uuid);
-        if (player == null) return null;
-        return getPlayer(player);
+    public CorePlayer getPlayer(Player player) {
+        return getPlayer(player.getUniqueId());
     }
 
     @Override

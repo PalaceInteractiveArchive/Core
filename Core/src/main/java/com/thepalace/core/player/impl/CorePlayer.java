@@ -26,6 +26,7 @@ public class CorePlayer implements CPlayer {
 
     @Getter private final UUID uuid;
     @Getter @Setter private String locale = "en_US";
+    @Getter @Setter private PlayerStatus status = PlayerStatus.LOGIN;
     @Getter private CPlayerActionBarManager actionBar = new CorePlayerActionBarManager(this);
     @Getter private CPlayerBossBarManager bossBar = new CorePlayerBossBarManager(this);
     @Getter private CPlayerHeaderFooterManager headerFooter = new CorePlayerHeaderFooterManager(this);
@@ -40,57 +41,60 @@ public class CorePlayer implements CPlayer {
 
     @Override
     public String getName() {
+        if (status != PlayerStatus.JOINED) return "";
         return getBukkitPlayer().getName();
     }
 
     @Override
     public boolean isOnline() {
-        Player bukkitPlayer = getBukkitPlayer();
-        return bukkitPlayer == null || bukkitPlayer.isOnline();
+        return status == PlayerStatus.JOINED && (getBukkitPlayer() == null || getBukkitPlayer().isOnline());
     }
 
     @Override
     public void setMaxHealth(double health) {
+        if (status != PlayerStatus.JOINED) return;
         getBukkitPlayer().setMaxHealth(health);
     }
 
     @Override
     public void setHealth(double health) {
+        if (status != PlayerStatus.JOINED) return;
         getBukkitPlayer().setHealth(health);
     }
 
     @Override
     public GameMode getGamemode() {
+        if (status != PlayerStatus.JOINED) return GameMode.SURVIVAL;
         return getBukkitPlayer().getGameMode();
     }
 
     @Override
     public void setGamemode(GameMode gamemode) {
+        if (status != PlayerStatus.JOINED) return;
         getBukkitPlayer().setGameMode(gamemode);
     }
 
     @Override
     public Location getLocation() {
+        if (status != PlayerStatus.JOINED) return new Location(Core.getWorld("world"), 0, 64, 0);
         return getBukkitPlayer().getLocation();
     }
 
     @Override
-    public void setLocation(Location location) {
-        getBukkitPlayer().teleport(location);
-    }
-
-    @Override
     public void teleport(Location location) {
+        if (status != PlayerStatus.JOINED) return;
         getBukkitPlayer().teleport(location);
     }
 
     @Override
     public void sendMessage(String message) {
+        if (status != PlayerStatus.JOINED) return;
         getBukkitPlayer().sendMessage(message);
     }
 
     @Override
     public void sendFormatMessage(JavaPlugin plugin, String key) {
+        if (status != PlayerStatus.JOINED) return;
         LanguageFormatter languageFormatter = null;
         if (plugin instanceof Core) {
             languageFormatter = Core.getLanguageFormatter();
@@ -111,38 +115,40 @@ public class CorePlayer implements CPlayer {
 
     @Override
     public void resetPlayer() {
-        Player bukkitPlayer = getBukkitPlayer();
-        bukkitPlayer.setItemOnCursor(null);
-        bukkitPlayer.getInventory().clear();
-        bukkitPlayer.getInventory().setArmorContents(new ItemStack[4]);
-        bukkitPlayer.getInventory().setHeldItemSlot(0);
-        bukkitPlayer.getInventory().setItemInMainHand(null);
-        bukkitPlayer.getInventory().setItemInOffHand(null);
-        bukkitPlayer.setFoodLevel(20);
-        bukkitPlayer.setExhaustion(0);
-        bukkitPlayer.setSaturation(20);
-        bukkitPlayer.setHealth(20);
-        bukkitPlayer.setFallDistance(0);
-        bukkitPlayer.setFireTicks(0);
-        bukkitPlayer.resetMaxHealth();
-        bukkitPlayer.setExp(0);
-        bukkitPlayer.setTotalExperience(0);
-        bukkitPlayer.setLevel(0);
-        bukkitPlayer.setRemainingAir(20);
-        bukkitPlayer.setAllowFlight(false);
-        bukkitPlayer.setFlying(false);
-        bukkitPlayer.setSneaking(false);
-        bukkitPlayer.setSprinting(false);
-        bukkitPlayer.setVelocity(new Vector());
-        bukkitPlayer.setFallDistance(0f);
-        bukkitPlayer.resetPlayerTime();
-        bukkitPlayer.resetPlayerWeather();
-        bukkitPlayer.getActivePotionEffects().forEach(potionEffect -> bukkitPlayer.removePotionEffect(potionEffect.getType()));
-        bukkitPlayer.updateInventory();
+        if (status != PlayerStatus.JOINED) return;
+        Player player = getBukkitPlayer();
+        player.setItemOnCursor(null);
+        player.getInventory().clear();
+        player.getInventory().setArmorContents(new ItemStack[4]);
+        player.getInventory().setHeldItemSlot(0);
+        player.getInventory().setItemInMainHand(null);
+        player.getInventory().setItemInOffHand(null);
+        player.setFoodLevel(20);
+        player.setExhaustion(0);
+        player.setSaturation(20);
+        player.setHealth(20);
+        player.setFallDistance(0);
+        player.setFireTicks(0);
+        player.resetMaxHealth();
+        player.setExp(0);
+        player.setTotalExperience(0);
+        player.setLevel(0);
+        player.setRemainingAir(20);
+        player.setAllowFlight(false);
+        player.setFlying(false);
+        player.setSneaking(false);
+        player.setSprinting(false);
+        player.setVelocity(new Vector());
+        player.setFallDistance(0f);
+        player.resetPlayerTime();
+        player.resetPlayerWeather();
+        player.getActivePotionEffects().forEach(potionEffect -> player.removePotionEffect(potionEffect.getType()));
+        player.updateInventory();
     }
 
     @Override
     public void resetManagers() {
+        if (status != PlayerStatus.JOINED) return;
         getBossBar().remove();
         getHeaderFooter().hide();
         getTitle().hide();
@@ -150,32 +156,37 @@ public class CorePlayer implements CPlayer {
 
     @Override
     public PlayerInventory getInventory() {
+        if (status != PlayerStatus.JOINED) return null;
         return getBukkitPlayer().getInventory();
     }
 
     @Override
     public void openInventory(Inventory inventory) {
+        if (status != PlayerStatus.JOINED) return;
         getBukkitPlayer().openInventory(inventory);
     }
 
     @Override
     public void closeInventory() {
+        if (status != PlayerStatus.JOINED) return;
         getBukkitPlayer().closeInventory();
     }
 
     @Override
     public void respawn() {
+        if (status != PlayerStatus.JOINED) return;
         getBukkitPlayer().spigot().respawn();
     }
 
     @Override
     public void sendPacket(AbstractPacket packet) {
-        if (getBukkitPlayer() == null) return;
+        if (status != PlayerStatus.JOINED) return;
         packet.sendPacket(getBukkitPlayer());
     }
 
     @Override
     public void sendToServer(String server) {
+        if (status != PlayerStatus.JOINED) return;
         ByteArrayDataOutput out = ByteStreams.newDataOutput();
         out.writeUTF("Connect");
         out.writeUTF(server);
@@ -184,6 +195,7 @@ public class CorePlayer implements CPlayer {
 
     @Override
     public Player getBukkitPlayer() {
+        if (status != PlayerStatus.JOINED) return null;
         return Bukkit.getPlayer(getUuid());
     }
 }

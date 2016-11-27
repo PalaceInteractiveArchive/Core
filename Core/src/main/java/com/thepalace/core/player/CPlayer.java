@@ -1,6 +1,7 @@
 package com.thepalace.core.player;
 
 import com.thepalace.core.packets.AbstractPacket;
+import com.thepalace.core.player.impl.PlayerStatus;
 import org.bukkit.GameMode;
 import org.bukkit.Location;
 import org.bukkit.entity.Player;
@@ -22,8 +23,6 @@ public interface CPlayer {
     GameMode getGamemode();
     void setGamemode(GameMode gamemode);
     Location getLocation();
-    void setLocation(Location location);
-
     void teleport(Location location);
 
     void sendMessage(String message);
@@ -53,5 +52,8 @@ public interface CPlayer {
 
     Player getBukkitPlayer();
     UUID getUuid();
+
+    void setStatus(PlayerStatus status);
+    PlayerStatus getStatus();
 
 }

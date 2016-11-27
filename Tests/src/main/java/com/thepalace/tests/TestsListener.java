@@ -14,6 +14,7 @@ public class TestsListener implements Listener {
     public void onPlayerJoinDelayed(CorePlayerJoinDelayedEvent event) {
         CPlayer player = event.getPlayer();
         // Scoreboard
+        player.getScoreboard().setup();
         String hello = ChatColor.DARK_AQUA + "Hello " + event.getPlayer().getName();
         player.getScoreboard().title(ChatColor.GOLD + "Scoreboard Test").set(100, "TEST").setBlank(2).set(1, hello).setBlank(0);
         // Boss bar
