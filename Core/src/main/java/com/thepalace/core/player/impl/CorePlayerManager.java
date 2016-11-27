@@ -20,8 +20,8 @@ public class CorePlayerManager implements CPlayerManager {
     }
 
     @Override
-    public void playerLoggedIn(UUID uuid) {
-        onlinePlayers.put(uuid, new CorePlayer(uuid));
+    public void playerLoggedIn(UUID uuid, String name) {
+        onlinePlayers.put(uuid, new CorePlayer(uuid, name));
     }
 
     @Override

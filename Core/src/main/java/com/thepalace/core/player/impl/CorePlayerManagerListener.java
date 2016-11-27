@@ -11,14 +11,12 @@ import java.util.UUID;
 
 public class CorePlayerManagerListener implements Listener {
 
-    @EventHandler(ignoreCancelled = true, priority = EventPriority.MONITOR)
+    @EventHandler(ignoreCancelled = true, priority = EventPriority.LOW)
     public void onPlayerLogin(AsyncPlayerPreLoginEvent event) {
-        if (event.getLoginResult() == AsyncPlayerPreLoginEvent.Result.ALLOWED) {
-            Core.getPlayerManager().playerLoggedIn(event.getUniqueId());
-        }
+        Core.getPlayerManager().playerLoggedIn(event.getUniqueId(), event.getName());
     }
 
-    @EventHandler(ignoreCancelled = true, priority = EventPriority.LOWEST)
+    @EventHandler(ignoreCancelled = true, priority = EventPriority.LOW)
     public void onPlayerJoin(PlayerJoinEvent event) {
         // Call join delayed event
         Core.runTaskLater(() -> {
@@ -29,13 +27,17 @@ public class CorePlayerManagerListener implements Listener {
         }, 10L);
     }
 
-    @EventHandler(ignoreCancelled = true, priority = EventPriority.MONITOR)
+    @EventHandler(ignoreCancelled = true, priority = EventPriority.HIGHEST)
     public void onPlayerQuit(PlayerQuitEvent event) {
+        if (event.getPlayer() == null) return;
+        if (event.getPlayer().getUniqueId() == null) return;
         onLeave(event.getPlayer().getUniqueId());
     }
 
-    @EventHandler(ignoreCancelled = true, priority = EventPriority.MONITOR)
+    @EventHandler(ignoreCancelled = true, priority = EventPriority.HIGHEST)
     public void onPlayerKick(PlayerKickEvent event) {
+        if (event.getPlayer() == null) return;
+        if (event.getPlayer().getUniqueId() == null) return;
         onLeave(event.getPlayer().getUniqueId());
     }
 

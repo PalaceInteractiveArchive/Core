@@ -8,7 +8,7 @@ import java.util.UUID;
 @SuppressWarnings("unused")
 public interface CPlayerManager extends Iterable<CPlayer> {
 
-    void playerLoggedIn(UUID uuid);
+    void playerLoggedIn(UUID uuid, String name);
     void playerLoggedOut(UUID uuid);
 
     void broadcastMessage(String message);
