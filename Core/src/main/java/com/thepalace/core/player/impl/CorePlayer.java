@@ -157,6 +157,12 @@ public class CorePlayer implements CPlayer {
     }
 
     @Override
+    public void setInventorySlot(int slot, ItemStack stack) {
+        if (getInventory() == null) return;
+        getInventory().setItem(slot, stack);
+    }
+
+    @Override
     public PlayerInventory getInventory() {
         if (status != PlayerStatus.JOINED) return null;
         return getBukkitPlayer().getInventory();

@@ -18,9 +18,9 @@ public class CorePlayerManagerListener implements Listener {
 
     @EventHandler(ignoreCancelled = true, priority = EventPriority.LOW)
     public void onPlayerJoin(PlayerJoinEvent event) {
+        Core.getPlayerManager().getPlayer(event.getPlayer().getUniqueId()).setStatus(PlayerStatus.JOINED);
         // Call join delayed event
         Core.runTaskLater(() -> {
-            Core.getPlayerManager().getPlayer(event.getPlayer()).setStatus(PlayerStatus.JOINED);
             CorePlayerJoinDelayedEvent e = new CorePlayerJoinDelayedEvent(Core.getPlayerManager().getPlayer(event.getPlayer()), event.getJoinMessage());
             Core.callEvent(e);
             event.setJoinMessage(e.getJoinMessage());

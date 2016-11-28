@@ -6,6 +6,7 @@ import org.bukkit.GameMode;
 import org.bukkit.Location;
 import org.bukkit.entity.Player;
 import org.bukkit.inventory.Inventory;
+import org.bukkit.inventory.ItemStack;
 import org.bukkit.inventory.PlayerInventory;
 import org.bukkit.plugin.java.JavaPlugin;
 
@@ -31,6 +32,7 @@ public interface CPlayer {
     void resetPlayer();
     void resetManagers();
 
+    void setInventorySlot(int slot, ItemStack stack);
     PlayerInventory getInventory();
     void openInventory(Inventory inventory);
     void closeInventory();

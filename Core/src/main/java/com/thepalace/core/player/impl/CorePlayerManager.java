@@ -5,15 +5,12 @@ import com.thepalace.core.player.CPlayer;
 import com.thepalace.core.player.CPlayerManager;
 import org.bukkit.entity.Player;
 
-import java.util.Collection;
-import java.util.Iterator;
-import java.util.Map;
-import java.util.UUID;
+import java.util.*;
 import java.util.concurrent.ConcurrentHashMap;
 
 public class CorePlayerManager implements CPlayerManager {
 
-    private final Map<UUID, CPlayer> onlinePlayers = new ConcurrentHashMap<>();
+    private final HashMap<UUID, CPlayer> onlinePlayers = new HashMap<>();
 
     public CorePlayerManager() {
         Core.registerListener(new CorePlayerManagerListener());
