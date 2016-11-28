@@ -6,7 +6,6 @@ import com.thepalace.core.player.CPlayerManager;
 import org.bukkit.entity.Player;
 
 import java.util.*;
-import java.util.concurrent.ConcurrentHashMap;
 
 public class CorePlayerManager implements CPlayerManager {
 

@@ -2,6 +2,7 @@ package com.thepalace.core.player.impl;
 
 import com.thepalace.core.Core;
 import com.thepalace.core.events.CorePlayerJoinDelayedEvent;
+import com.thepalace.core.player.CPlayer;
 import org.bukkit.event.EventHandler;
 import org.bukkit.event.EventPriority;
 import org.bukkit.event.Listener;
@@ -18,7 +19,8 @@ public class CorePlayerManagerListener implements Listener {
 
     @EventHandler(ignoreCancelled = true, priority = EventPriority.LOW)
     public void onPlayerJoin(PlayerJoinEvent event) {
-        Core.getPlayerManager().getPlayer(event.getPlayer().getUniqueId()).setStatus(PlayerStatus.JOINED);
+        if (Core.getPlayerManager().getPlayer(event.getPlayer()) == null) return;
+        Core.getPlayerManager().getPlayer(event.getPlayer()).setStatus(CPlayer.PlayerStatus.JOINED);
         // Call join delayed event
         Core.runTaskLater(() -> {
             CorePlayerJoinDelayedEvent e = new CorePlayerJoinDelayedEvent(Core.getPlayerManager().getPlayer(event.getPlayer()), event.getJoinMessage());
@@ -42,8 +44,9 @@ public class CorePlayerManagerListener implements Listener {
     }
 
     public void onLeave(UUID uuid) {
+        if (Core.getPlayerManager().getPlayer(uuid) == null) return;
         Core.getPlayerManager().getPlayer(uuid).resetManagers();
-        Core.getPlayerManager().getPlayer(uuid).setStatus(PlayerStatus.LEFT);
+        Core.getPlayerManager().getPlayer(uuid).setStatus(CPlayer.PlayerStatus.LEFT);
         Core.getPlayerManager().playerLoggedOut(uuid);
     }
 }

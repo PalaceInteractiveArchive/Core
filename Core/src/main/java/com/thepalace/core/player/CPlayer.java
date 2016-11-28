@@ -1,7 +1,6 @@
 package com.thepalace.core.player;
 
 import com.thepalace.core.packets.AbstractPacket;
-import com.thepalace.core.player.impl.PlayerStatus;
 import org.bukkit.GameMode;
 import org.bukkit.Location;
 import org.bukkit.entity.Player;
@@ -58,4 +57,7 @@ public interface CPlayer {
     void setStatus(PlayerStatus status);
     PlayerStatus getStatus();
 
+    enum PlayerStatus {
+        LOGIN, JOINED, LEFT
+    }
 }
