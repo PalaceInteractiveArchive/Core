@@ -1,6 +1,7 @@
 package com.thepalace.core.player.impl;
 
 import com.thepalace.core.Core;
+import com.thepalace.core.events.CorePlayerJoinDelayedEvent;
 import com.thepalace.core.player.CPlayer;
 import com.thepalace.core.player.CPlayerManager;
 import org.bukkit.entity.Player;
@@ -17,11 +18,21 @@ public class CorePlayerManager implements CPlayerManager {
 
     @Override
     public void playerLoggedIn(UUID uuid, String name) {
+        if (getPlayer(uuid) != null) onlinePlayers.remove(uuid);
         onlinePlayers.put(uuid, new CorePlayer(uuid, name));
     }
 
     @Override
+    public void playerJoined(UUID uuid) {
+        if (getPlayer(uuid) == null) return;
+        getPlayer(uuid).setStatus(CPlayer.PlayerStatus.JOINED);
+    }
+
+    @Override
     public void playerLoggedOut(UUID uuid) {
+        if (getPlayer(uuid) == null) return;
+        getPlayer(uuid).resetManagers();
+        getPlayer(uuid).setStatus(CPlayer.PlayerStatus.LEFT);
         onlinePlayers.remove(uuid);
     }
 

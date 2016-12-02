@@ -4,15 +4,13 @@ import com.thepalace.core.packets.server.WrapperPlayServerWorldParticles;
 import com.thepalace.core.player.CPlayer;
 import com.thepalace.core.player.CPlayerParticlesManager;
 import com.comphenix.protocol.wrappers.EnumWrappers;
+import lombok.AllArgsConstructor;
 import org.bukkit.Location;
 
+@AllArgsConstructor
 public class CorePlayerParticlesManager implements CPlayerParticlesManager {
 
     private final CPlayer player;
-
-    public CorePlayerParticlesManager(CPlayer player) {
-        this.player = player;
-    }
 
     @Override
     public void send(EnumWrappers.Particle particle) {

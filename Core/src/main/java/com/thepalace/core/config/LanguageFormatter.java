@@ -63,7 +63,7 @@ public class LanguageFormatter {
         }
     }
 
-    public String getFormatFromLang(String lang, String key) {
+    private String getFormatFromLang(String lang, String key) {
         if (getYamlFile(lang) == null) return null;
         FileConfiguration langFile = getYamlFile(lang).getConfig();
         if (langFile == null) return null;
@@ -74,7 +74,7 @@ public class LanguageFormatter {
         }
     }
 
-    public YAMLConfigurationFile getYamlFile(String lang) {
+    private YAMLConfigurationFile getYamlFile(String lang) {
         return languages.get(lang);
     }
 }

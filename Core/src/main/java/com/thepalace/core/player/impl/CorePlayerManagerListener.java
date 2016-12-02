@@ -19,34 +19,21 @@ public class CorePlayerManagerListener implements Listener {
 
     @EventHandler(ignoreCancelled = true, priority = EventPriority.LOW)
     public void onPlayerJoin(PlayerJoinEvent event) {
-        if (Core.getPlayerManager().getPlayer(event.getPlayer()) == null) return;
-        Core.getPlayerManager().getPlayer(event.getPlayer()).setStatus(CPlayer.PlayerStatus.JOINED);
-        // Call join delayed event
+        Core.getPlayerManager().playerJoined(event.getPlayer().getUniqueId());
         Core.runTaskLater(() -> {
-            CorePlayerJoinDelayedEvent e = new CorePlayerJoinDelayedEvent(Core.getPlayerManager().getPlayer(event.getPlayer()), event.getJoinMessage());
-            Core.callEvent(e);
-            event.setJoinMessage(e.getJoinMessage());
+            CorePlayerJoinDelayedEvent delayedEvent = new CorePlayerJoinDelayedEvent(Core.getPlayerManager().getPlayer(event.getPlayer()), event.getJoinMessage());
+            Core.callEvent(delayedEvent);
+            event.setJoinMessage(delayedEvent.getJoinMessage());
         }, 10L);
     }
 
     @EventHandler(ignoreCancelled = true, priority = EventPriority.HIGHEST)
     public void onPlayerQuit(PlayerQuitEvent event) {
-        if (event.getPlayer() == null) return;
-        if (event.getPlayer().getUniqueId() == null) return;
-        onLeave(event.getPlayer().getUniqueId());
+        Core.getPlayerManager().playerLoggedOut(event.getPlayer().getUniqueId());
     }
 
     @EventHandler(ignoreCancelled = true, priority = EventPriority.HIGHEST)
     public void onPlayerKick(PlayerKickEvent event) {
-        if (event.getPlayer() == null) return;
-        if (event.getPlayer().getUniqueId() == null) return;
-        onLeave(event.getPlayer().getUniqueId());
-    }
-
-    public void onLeave(UUID uuid) {
-        if (Core.getPlayerManager().getPlayer(uuid) == null) return;
-        Core.getPlayerManager().getPlayer(uuid).resetManagers();
-        Core.getPlayerManager().getPlayer(uuid).setStatus(CPlayer.PlayerStatus.LEFT);
-        Core.getPlayerManager().playerLoggedOut(uuid);
+        Core.getPlayerManager().playerLoggedOut(event.getPlayer().getUniqueId());
     }
 }

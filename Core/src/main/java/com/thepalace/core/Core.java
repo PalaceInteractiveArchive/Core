@@ -48,6 +48,8 @@ public class Core extends JavaPlugin {
         getServer().getMessenger().registerOutgoingPluginChannel(this, "BungeeCord");
         // Managers
         playerManager = new CorePlayerManager();
+        // Register Listeners
+        registerListener(new ItemUtils());
         logMessage("Core", ChatColor.DARK_GREEN + "Enabled");
     }
 

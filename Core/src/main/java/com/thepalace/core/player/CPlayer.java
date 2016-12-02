@@ -3,6 +3,7 @@ package com.thepalace.core.player;
 import com.thepalace.core.packets.AbstractPacket;
 import org.bukkit.GameMode;
 import org.bukkit.Location;
+import org.bukkit.Material;
 import org.bukkit.entity.Player;
 import org.bukkit.inventory.Inventory;
 import org.bukkit.inventory.ItemStack;
@@ -31,12 +32,32 @@ public interface CPlayer {
     void resetPlayer();
     void resetManagers();
 
-    void setInventorySlot(int slot, ItemStack stack);
     PlayerInventory getInventory();
     void openInventory(Inventory inventory);
     void closeInventory();
+    void setInventorySlot(int slot, ItemStack stack);
+    void addToInventory(ItemStack... itemStacks);
+    boolean doesInventoryContain(Material material);
+    void removeFromInventory(Material material);
+
+    ItemStack getHelmet();
+    void setHelmet(ItemStack itemStack);
+    ItemStack getChestplate();
+    void setChestplate(ItemStack itemStack);
+    ItemStack getLeggings();
+    void setLeggings(ItemStack itemStack);
+    ItemStack getBoots();
+    void setBoots(ItemStack itemStack);
+
+    ItemStack getMainHand();
+    void setMainHand(ItemStack itemStack);
+    ItemStack getOffHand();
+    void setOffHand(ItemStack itemStack);
+
 
     void respawn();
+    void showPlayer(CPlayer player);
+    void hidePlayer(CPlayer player);
 
     CPlayerActionBarManager getActionBar();
     CPlayerBossBarManager getBossBar();

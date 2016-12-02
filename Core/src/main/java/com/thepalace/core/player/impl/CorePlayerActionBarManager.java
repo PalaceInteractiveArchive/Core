@@ -4,14 +4,12 @@ import com.thepalace.core.packets.server.WrapperPlayServerChat;
 import com.thepalace.core.player.CPlayer;
 import com.thepalace.core.player.CPlayerActionBarManager;
 import com.comphenix.protocol.wrappers.WrappedChatComponent;
+import lombok.AllArgsConstructor;
 
+@AllArgsConstructor
 public class CorePlayerActionBarManager implements CPlayerActionBarManager {
 
     private final CPlayer player;
-
-    public CorePlayerActionBarManager(CPlayer player) {
-        this.player = player;
-    }
 
     @Override
     public void show(String message) {

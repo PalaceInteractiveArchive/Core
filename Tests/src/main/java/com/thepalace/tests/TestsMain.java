@@ -7,12 +7,7 @@ import com.thepalace.core.plugin.PluginInfo;
 public class TestsMain extends Plugin {
 
     @Override
-    protected void onPluginEnable() {
+    protected void onPluginEnable() throws Exception {
         registerListener(new TestsListener());
-    }
-
-    @Override
-    protected void onPluginDisable() {
-
     }
 }

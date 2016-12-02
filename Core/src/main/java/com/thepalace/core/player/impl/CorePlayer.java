@@ -12,6 +12,7 @@ import lombok.Setter;
 import org.bukkit.Bukkit;
 import org.bukkit.GameMode;
 import org.bukkit.Location;
+import org.bukkit.Material;
 import org.bukkit.entity.Player;
 import org.bukkit.inventory.Inventory;
 import org.bukkit.inventory.ItemStack;
@@ -43,60 +44,60 @@ public class CorePlayer implements CPlayer {
 
     @Override
     public String getName() {
-        if (status != PlayerStatus.JOINED) return name;
+        if (getStatus() != PlayerStatus.JOINED) return name;
         return getBukkitPlayer().getName();
     }
 
     @Override
     public boolean isOnline() {
-        return status == PlayerStatus.JOINED && (getBukkitPlayer() == null || getBukkitPlayer().isOnline());
+        return getStatus() == PlayerStatus.JOINED && (getBukkitPlayer() == null || getBukkitPlayer().isOnline());
     }
 
     @Override
     public void setMaxHealth(double health) {
-        if (status != PlayerStatus.JOINED) return;
+        if (getStatus() != PlayerStatus.JOINED) return;
         getBukkitPlayer().setMaxHealth(health);
     }
 
     @Override
     public void setHealth(double health) {
-        if (status != PlayerStatus.JOINED) return;
+        if (getStatus() != PlayerStatus.JOINED) return;
         getBukkitPlayer().setHealth(health);
     }
 
     @Override
     public GameMode getGamemode() {
-        if (status != PlayerStatus.JOINED) return GameMode.SURVIVAL;
+        if (getStatus() != PlayerStatus.JOINED) return GameMode.SURVIVAL;
         return getBukkitPlayer().getGameMode();
     }
 
     @Override
     public void setGamemode(GameMode gamemode) {
-        if (status != PlayerStatus.JOINED) return;
+        if (getStatus() != PlayerStatus.JOINED) return;
         getBukkitPlayer().setGameMode(gamemode);
     }
 
     @Override
     public Location getLocation() {
-        if (status != PlayerStatus.JOINED) return new Location(Core.getWorld("world"), 0, 64, 0);
+        if (getStatus() != PlayerStatus.JOINED) return new Location(Core.getWorld("world"), 0, 64, 0);
         return getBukkitPlayer().getLocation();
     }
 
     @Override
     public void teleport(Location location) {
-        if (status != PlayerStatus.JOINED) return;
+        if (getStatus() != PlayerStatus.JOINED) return;
         getBukkitPlayer().teleport(location);
     }
 
     @Override
     public void sendMessage(String message) {
-        if (status != PlayerStatus.JOINED) return;
+        if (getStatus() != PlayerStatus.JOINED) return;
         getBukkitPlayer().sendMessage(message);
     }
 
     @Override
     public void sendFormatMessage(JavaPlugin plugin, String key) {
-        if (status != PlayerStatus.JOINED) return;
+        if (getStatus() != PlayerStatus.JOINED) return;
         LanguageFormatter languageFormatter = null;
         if (plugin instanceof Core) {
             languageFormatter = Core.getLanguageFormatter();
@@ -117,7 +118,7 @@ public class CorePlayer implements CPlayer {
 
     @Override
     public void resetPlayer() {
-        if (status != PlayerStatus.JOINED) return;
+        if (getStatus() != PlayerStatus.JOINED) return;
         Player player = getBukkitPlayer();
         player.setItemOnCursor(null);
         player.getInventory().clear();
@@ -150,7 +151,7 @@ public class CorePlayer implements CPlayer {
 
     @Override
     public void resetManagers() {
-        if (status != PlayerStatus.JOINED) return;
+        if (getStatus() != PlayerStatus.JOINED) return;
         getBossBar().remove();
         getHeaderFooter().hide();
         getTitle().hide();
@@ -163,38 +164,143 @@ public class CorePlayer implements CPlayer {
     }
 
     @Override
+    public void addToInventory(ItemStack... itemStacks) {
+        if (getInventory() == null) return;
+        getInventory().addItem(itemStacks);
+    }
+
+    @Override
+    public boolean doesInventoryContain(Material material) {
+        return getInventory() != null && getInventory().contains(material);
+    }
+
+    @Override
+    public void removeFromInventory(Material material) {
+        if (getInventory() == null) return;
+        getInventory().remove(material);
+    }
+
+    @Override
+    public ItemStack getHelmet() {
+        if (getInventory() == null) return new ItemStack(Material.AIR);
+        return getInventory().getHelmet();
+    }
+
+    @Override
+    public void setHelmet(ItemStack itemStack) {
+        if (getInventory() == null) return;
+        getInventory().setHelmet(itemStack);
+    }
+
+    @Override
+    public ItemStack getChestplate() {
+        if (getInventory() == null) return new ItemStack(Material.AIR);
+        return getInventory().getChestplate();
+    }
+
+    @Override
+    public void setChestplate(ItemStack itemStack) {
+        if (getInventory() == null) return;
+        getInventory().setChestplate(itemStack);
+    }
+
+    @Override
+    public ItemStack getLeggings() {
+        if (getInventory() == null) return new ItemStack(Material.AIR);
+        return getInventory().getLeggings();
+    }
+
+    @Override
+    public void setLeggings(ItemStack itemStack) {
+        if (getInventory() == null) return;
+        getInventory().setLeggings(itemStack);
+    }
+
+    @Override
+    public ItemStack getBoots() {
+        if (getInventory() == null) return new ItemStack(Material.AIR);
+        return getInventory().getBoots();
+    }
+
+    @Override
+    public void setBoots(ItemStack itemStack) {
+        if (getInventory() == null) return;
+        getInventory().setBoots(itemStack);
+    }
+
+    @Override
+    public ItemStack getMainHand() {
+        if (getInventory() == null) return new ItemStack(Material.AIR);
+        return getInventory().getItemInMainHand();
+    }
+
+    @Override
+    public void setMainHand(ItemStack itemStack) {
+        if (getInventory() == null) return;
+        getInventory().setItemInMainHand(itemStack);
+    }
+
+    @Override
+    public ItemStack getOffHand() {
+        if (getInventory() == null) return new ItemStack(Material.AIR);
+        return getInventory().getItemInOffHand();
+    }
+
+    @Override
+    public void setOffHand(ItemStack itemStack) {
+        if (getInventory() == null) return;
+        getInventory().setItemInOffHand(itemStack);
+    }
+
+    @Override
     public PlayerInventory getInventory() {
-        if (status != PlayerStatus.JOINED) return null;
+        if (getStatus() != PlayerStatus.JOINED) return null;
         return getBukkitPlayer().getInventory();
     }
 
     @Override
     public void openInventory(Inventory inventory) {
-        if (status != PlayerStatus.JOINED) return;
+        if (getStatus() != PlayerStatus.JOINED) return;
         getBukkitPlayer().openInventory(inventory);
     }
 
     @Override
     public void closeInventory() {
-        if (status != PlayerStatus.JOINED) return;
+        if (getStatus() != PlayerStatus.JOINED) return;
         getBukkitPlayer().closeInventory();
     }
 
     @Override
     public void respawn() {
-        if (status != PlayerStatus.JOINED) return;
+        if (getStatus() != PlayerStatus.JOINED) return;
         getBukkitPlayer().spigot().respawn();
     }
 
     @Override
+    public void showPlayer(CPlayer player) {
+        if (getStatus() != PlayerStatus.JOINED) return;
+        if (player == null) return;
+        if (player.getStatus() != PlayerStatus.JOINED) return;
+        getBukkitPlayer().showPlayer(player.getBukkitPlayer());
+    }
+
+    @Override
+    public void hidePlayer(CPlayer player) {
+        if (getStatus() != PlayerStatus.JOINED) return;
+        if (player == null) return;
+        if (player.getStatus() != PlayerStatus.JOINED) return;
+        getBukkitPlayer().hidePlayer(player.getBukkitPlayer());
+    }
+
+    @Override
     public void sendPacket(AbstractPacket packet) {
-        if (status != PlayerStatus.JOINED) return;
+        if (getStatus() != PlayerStatus.JOINED) return;
         packet.sendPacket(getBukkitPlayer());
     }
 
     @Override
     public void sendToServer(String server) {
-        if (status != PlayerStatus.JOINED) return;
+        if (getStatus() != PlayerStatus.JOINED) return;
         ByteArrayDataOutput out = ByteStreams.newDataOutput();
         out.writeUTF("Connect");
         out.writeUTF(server);
@@ -203,7 +309,7 @@ public class CorePlayer implements CPlayer {
 
     @Override
     public Player getBukkitPlayer() {
-        if (status != PlayerStatus.JOINED) return null;
+        if (getStatus() != PlayerStatus.JOINED) return null;
         return Bukkit.getPlayer(getUuid());
     }
 }

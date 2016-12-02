@@ -9,13 +9,8 @@ import com.thepalace.essentials.commands.PluginsCommand;
 public class EssentialsMain extends Plugin {
 
     @Override
-    protected void onPluginEnable() {
+    protected void onPluginEnable() throws Exception  {
         registerCommand(new PluginsCommand());
         registerCommand(new ListCommand());
-    }
-
-    @Override
-    protected void onPluginDisable() {
-
     }
 }

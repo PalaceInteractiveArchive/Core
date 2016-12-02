@@ -5,14 +5,12 @@ import com.thepalace.core.player.CPlayer;
 import com.thepalace.core.player.CPlayerTitleManager;
 import com.comphenix.protocol.wrappers.EnumWrappers;
 import com.comphenix.protocol.wrappers.WrappedChatComponent;
+import lombok.AllArgsConstructor;
 
+@AllArgsConstructor
 public class CorePlayerTitleManager implements CPlayerTitleManager {
 
     private final CPlayer player;
-
-    public CorePlayerTitleManager(CPlayer player) {
-        this.player = player;
-    }
 
     @Override
     public void show(String title, String subtitle) {
