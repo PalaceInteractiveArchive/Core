@@ -32,6 +32,8 @@ public interface CPlayer {
     void resetPlayer();
     void resetManagers();
 
+    void setDisplayName(String name);
+
     PlayerInventory getInventory();
     void openInventory(Inventory inventory);
     void closeInventory();

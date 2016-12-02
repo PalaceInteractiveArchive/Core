@@ -158,6 +158,12 @@ public class CorePlayer implements CPlayer {
     }
 
     @Override
+    public void setDisplayName(String name) {
+        if (getStatus() != PlayerStatus.JOINED) return;
+        getBukkitPlayer().setDisplayName(name);
+    }
+
+    @Override
     public void setInventorySlot(int slot, ItemStack stack) {
         if (getInventory() == null) return;
         getInventory().setItem(slot, stack);
