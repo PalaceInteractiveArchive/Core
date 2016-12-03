@@ -31,6 +31,7 @@ public class CorePlayerScoreboardManager implements CPlayerScoreboardManager {
 
     @Override
     public CPlayerScoreboardManager set(int id, String text) {
+        if (scoreboard == null) setup();
         text = text.substring(0, Math.min(text.length(), MAX_STRING_LENGTH));
         while (text.endsWith("§")) text = text.substring(0, text.length()-1);
         if (lines.containsKey(id)) {
@@ -55,6 +56,7 @@ public class CorePlayerScoreboardManager implements CPlayerScoreboardManager {
 
     @Override
     public CPlayerScoreboardManager remove(int id) {
+        if (scoreboard == null) setup();
         if (lines.containsKey(id)) {
             scoreboard.resetScores(lines.get(id));
         }
@@ -64,6 +66,7 @@ public class CorePlayerScoreboardManager implements CPlayerScoreboardManager {
 
     @Override
     public CPlayerScoreboardManager title(String title) {
+        if (scoreboard == null) setup();
         if (this.title != null && this.title.equals(title)) return this;
         this.title = title;
         scoreboardObjective.setDisplayName(title);
@@ -71,8 +74,7 @@ public class CorePlayerScoreboardManager implements CPlayerScoreboardManager {
         return this;
     }
 
-    @Override
-    public void setup() {
+    private void setup() {
         lines = HashBiMap.create();
         scoreboard = Bukkit.getScoreboardManager().getNewScoreboard();
         player.getBukkitPlayer().setScoreboard(scoreboard);
