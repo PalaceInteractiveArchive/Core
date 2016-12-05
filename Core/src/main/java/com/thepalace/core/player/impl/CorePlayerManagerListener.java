@@ -2,19 +2,20 @@ package com.thepalace.core.player.impl;
 
 import com.thepalace.core.Core;
 import com.thepalace.core.events.CorePlayerJoinDelayedEvent;
-import com.thepalace.core.player.CPlayer;
 import org.bukkit.event.EventHandler;
 import org.bukkit.event.EventPriority;
 import org.bukkit.event.Listener;
-import org.bukkit.event.player.*;
-
-import java.util.UUID;
+import org.bukkit.event.player.AsyncPlayerPreLoginEvent;
+import org.bukkit.event.player.PlayerJoinEvent;
+import org.bukkit.event.player.PlayerKickEvent;
+import org.bukkit.event.player.PlayerQuitEvent;
 
 public class CorePlayerManagerListener implements Listener {
 
     @EventHandler(ignoreCancelled = true, priority = EventPriority.LOW)
     public void onPlayerLogin(AsyncPlayerPreLoginEvent event) {
-        Core.getPlayerManager().playerLoggedIn(event.getUniqueId(), event.getName());
+        if (event.getLoginResult() == AsyncPlayerPreLoginEvent.Result.ALLOWED)
+            Core.getPlayerManager().playerLoggedIn(event.getUniqueId(), event.getName());
     }
 
     @EventHandler(ignoreCancelled = true, priority = EventPriority.LOW)
