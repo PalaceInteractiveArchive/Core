@@ -14,8 +14,11 @@ public class CorePlayerManagerListener implements Listener {
 
     @EventHandler(ignoreCancelled = true, priority = EventPriority.LOW)
     public void onPlayerLogin(AsyncPlayerPreLoginEvent event) {
-        if (event.getLoginResult() == AsyncPlayerPreLoginEvent.Result.ALLOWED)
+        if (event.getLoginResult() == AsyncPlayerPreLoginEvent.Result.ALLOWED) {
             Core.getPlayerManager().playerLoggedIn(event.getUniqueId(), event.getName());
+        } else {
+            Core.getPlayerManager().playerLoggedOut(event.getUniqueId());
+        }
     }
 
     @EventHandler(ignoreCancelled = true, priority = EventPriority.LOW)
