@@ -1,6 +1,10 @@
 package com.palacemc.core;
 
 import com.comphenix.protocol.ProtocolLibrary;
+import com.palacemc.core.command.CoreCommand;
+import com.palacemc.core.command.CoreCommandMap;
+import com.palacemc.core.commands.ListCommand;
+import com.palacemc.core.commands.PluginsCommand;
 import com.palacemc.core.config.LanguageFormatter;
 import com.palacemc.core.packets.adapters.SettingsAdapter;
 import com.palacemc.core.player.CPlayerManager;
@@ -28,6 +32,7 @@ import java.util.List;
 public class Core extends JavaPlugin {
 
     private final List<Plugin> plugins = new ArrayList<>();
+    private CoreCommandMap commandMap;
 
     private LanguageFormatter languageFormatter;
     private CPlayerManager playerManager;
@@ -48,9 +53,25 @@ public class Core extends JavaPlugin {
         getServer().getMessenger().registerOutgoingPluginChannel(this, "BungeeCord");
         // Managers
         playerManager = new CorePlayerManager();
+        commandMap = new CoreCommandMap(this);
         // Register Listeners
-        registerListener(new ItemUtils());
+        registerListeners();
+        // Register Commands
+        registerCommands();
         logMessage("Core", ChatColor.DARK_GREEN + "Enabled");
+    }
+
+    public void registerListeners() {
+        registerListener(new ItemUtils());
+    }
+
+    public void registerCommands() {
+        registerCommand(new ListCommand());
+        registerCommand(new PluginsCommand());
+    }
+
+    public final void registerCommand(CoreCommand command) {
+        commandMap.registerCommand(command);
     }
 
     @Override

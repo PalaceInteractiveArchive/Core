@@ -9,6 +9,7 @@ import org.bukkit.command.CommandMap;
 import org.bukkit.command.PluginCommand;
 import org.bukkit.command.SimpleCommandMap;
 import org.bukkit.plugin.PluginManager;
+import org.bukkit.plugin.java.JavaPlugin;
 
 import java.lang.reflect.Constructor;
 import java.lang.reflect.Field;
@@ -20,9 +21,9 @@ import java.util.*;
 public final class CoreCommandMap {
 
     @Getter private final Map<String, CoreCommand> topLevelCommands = new HashMap<>();
-    private final Plugin plugin;
+    private final JavaPlugin plugin;
 
-    public CoreCommandMap(Plugin plugin) {
+    public CoreCommandMap(JavaPlugin plugin) {
         this.plugin = plugin;
     }
 
@@ -51,7 +52,13 @@ public final class CoreCommandMap {
             removeKnownCommand(oldCommand);
         }
         getCommandMap().register(plugin.getDescription().getName(), command1); // Register it with Bukkit
-        Core.logMessage(plugin.getInfo().name(), "Registered " + command.toString());
+        String pluginName = "Unknown";
+        if (plugin instanceof Core) {
+            pluginName = "Core";
+        } else if (plugin instanceof Plugin) {
+            pluginName = ((Plugin) plugin).getInfo().name();
+        }
+        Core.logMessage(pluginName, "Registered " + command.toString());
         this.topLevelCommands.put(command.getName(), command); // Put it in the hash map now that we've registered it.
     }
 

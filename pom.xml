@@ -9,7 +9,6 @@
 
     <modules>
         <module>Core</module>
-        <module>Essentials</module>
         <module>Tests</module>
     </modules>
 

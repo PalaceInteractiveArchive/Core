@@ -1,7 +1,5 @@
-package com.palacemc.essentials.commands;
+package com.palacemc.core.commands;
 
-import com.palacemc.essentials.BoilerplateUtil;
-import com.palacemc.essentials.EssentialsMain;
 import com.palacemc.core.Core;
 import com.palacemc.core.command.CommandException;
 import com.palacemc.core.command.CommandMeta;
@@ -25,7 +23,7 @@ public class PluginsCommand extends CoreCommand {
     @Override
     protected void handleCommandUnspecific(CommandSender sender, String[] args) throws CommandException {
         // Formatter
-        LanguageFormatter formatter = EssentialsMain.getPlugin(EssentialsMain.class).getLanguageFormatter();
+        LanguageFormatter formatter = Core.getLanguageFormatter();
         // Lists
         List<PluginInfo> pluginsList = new ArrayList<>();
         List<PluginInfo> thirdPartyList = new ArrayList<>();

@@ -60,10 +60,8 @@ public class Plugin extends JavaPlugin {
     @SuppressWarnings("EmptyMethod") protected void onPluginDisable() throws Exception {}
 
     /* Command Methods */
-    @SuppressWarnings("UnusedReturnValue")
-    public final <T extends CoreCommand> T registerCommand(T command) {
+    public void registerCommand(CoreCommand command) {
         getCommandMap().registerCommand(command);
-        return command;
     }
 
     /* Bukkit Utils */
