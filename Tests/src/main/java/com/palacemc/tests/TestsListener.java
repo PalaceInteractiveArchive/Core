@@ -1,7 +1,7 @@
 package com.palacemc.tests;
 
-import com.thepalace.core.events.CorePlayerJoinDelayedEvent;
-import com.thepalace.core.player.CPlayer;
+import com.palacemc.core.events.CorePlayerJoinDelayedEvent;
+import com.palacemc.core.player.CPlayer;
 import org.bukkit.ChatColor;
 import org.bukkit.boss.BarColor;
 import org.bukkit.boss.BarStyle;

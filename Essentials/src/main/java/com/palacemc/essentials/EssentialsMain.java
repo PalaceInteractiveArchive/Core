@@ -1,7 +1,7 @@
 package com.palacemc.essentials;
 
-import com.thepalace.core.plugin.Plugin;
-import com.thepalace.core.plugin.PluginInfo;
+import com.palacemc.core.plugin.Plugin;
+import com.palacemc.core.plugin.PluginInfo;
 import com.palacemc.essentials.commands.ListCommand;
 import com.palacemc.essentials.commands.PluginsCommand;
 

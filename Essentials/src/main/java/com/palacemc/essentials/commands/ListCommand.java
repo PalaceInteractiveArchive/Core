@@ -1,12 +1,12 @@
 package com.palacemc.essentials.commands;
 
 import com.palacemc.essentials.EssentialsMain;
-import com.thepalace.core.Core;
-import com.thepalace.core.command.CommandException;
-import com.thepalace.core.command.CommandMeta;
-import com.thepalace.core.command.CoreCommand;
-import com.thepalace.core.config.LanguageFormatter;
-import com.thepalace.core.player.CPlayer;
+import com.palacemc.core.Core;
+import com.palacemc.core.command.CommandException;
+import com.palacemc.core.command.CommandMeta;
+import com.palacemc.core.command.CoreCommand;
+import com.palacemc.core.config.LanguageFormatter;
+import com.palacemc.core.player.CPlayer;
 import com.google.common.base.Joiner;
 import org.bukkit.command.CommandSender;
 

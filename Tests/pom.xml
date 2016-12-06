@@ -5,8 +5,8 @@
 
     <parent>
         <artifactId>CoreBase</artifactId>
-        <groupId>com.thepalace</groupId>
-        <version>1.1</version>
+        <groupId>com.palacemc</groupId>
+        <version>1.2</version>
     </parent>
 
     <artifactId>Tests</artifactId>
@@ -22,7 +22,7 @@
         <dependency>
             <groupId>com.palacemc</groupId>
             <artifactId>core</artifactId>
-            <version>1.1</version>
+            <version>1.2</version>
             <scope>provided</scope>
         </dependency>
     </dependencies>
