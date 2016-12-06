@@ -44,7 +44,10 @@ public class CorePlayerScoreboardManager implements CPlayerScoreboardManager {
         if (lines.containsValue(text)) {
             lines.inverse().remove(text);
         }
+        if (text == null) return this;
         lines.put(id, text);
+        if (scoreboardObjective == null) return this;
+        if (scoreboardObjective.getScore(text) == null) return this;
         scoreboardObjective.getScore(text).setScore(id);
         return this;
     }
