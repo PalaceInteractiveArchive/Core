@@ -1,18 +1,10 @@
 <?xml version="1.0" encoding="UTF-8"?>
-<project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
-         xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd">
+<project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd">
     <modelVersion>4.0.0</modelVersion>
 
     <groupId>com.palacemc</groupId>
-    <artifactId>CoreBase</artifactId>
-    <version>1.2</version>
-
-    <modules>
-        <module>Core</module>
-        <module>Tests</module>
-    </modules>
-
-    <packaging>pom</packaging>
+    <artifactId>Core</artifactId>
+    <version>1.3</version>
 
     <repositories>
         <repository>
@@ -36,22 +28,18 @@
     <dependencies>
         <dependency>
             <groupId>org.spigotmc</groupId>
-            <artifactId>spigot</artifactId>
-            <version>1.11</version>
-            <type>jar</type>
-            <scope>provided</scope>
+            <artifactId>spigot-api</artifactId>
+            <version>1.11-R0.1-SNAPSHOT</version>
         </dependency>
         <dependency>
-            <groupId>com.comphenix</groupId>
-            <artifactId>protocollib</artifactId>
-            <version>4.1</version>
-            <scope>provided</scope>
+            <groupId>com.comphenix.protocol</groupId>
+            <artifactId>ProtocolLib-API</artifactId>
+            <version>4.1.0</version>
         </dependency>
         <dependency>
             <groupId>org.projectlombok</groupId>
             <artifactId>lombok</artifactId>
             <version>1.16.10</version>
-            <scope>provided</scope>
         </dependency>
     </dependencies>
 
@@ -60,4 +48,8 @@
         <maven.compiler.source>1.8</maven.compiler.source>
         <maven.compiler.target>1.8</maven.compiler.target>
     </properties>
+
+    <build>
+        <finalName>${project.artifactId}</finalName>
+    </build>
 </project>
