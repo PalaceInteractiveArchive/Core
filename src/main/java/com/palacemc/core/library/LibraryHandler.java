@@ -23,6 +23,7 @@ import java.util.Set;
 public final class LibraryHandler {
 
     public static void loadLibraries(JavaPlugin plugin) {
+        if (plugin == null) return;
         // Loop through list from json
         try {
             if (plugin.getClass().getResourceAsStream("/libraries.json") == null) return;

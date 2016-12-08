@@ -19,6 +19,7 @@ public class CorePlayerBossBarManager implements CPlayerBossBarManager {
     @Override
     public void setText(String title) {
         BossBar bossBar = createIfDoesNotExist();
+        if (bossBar == null) return;
         bossBar.setTitle(title);
         show();
     }
@@ -26,6 +27,7 @@ public class CorePlayerBossBarManager implements CPlayerBossBarManager {
     @Override
     public void setProgress(double progress) {
         BossBar bossBar = createIfDoesNotExist();
+        if (bossBar == null) return;
         if (progress < 0.0) progress = 0.0;
         if (progress > 1.0) progress = 1.0;
         bossBar.setProgress(progress);
@@ -35,6 +37,7 @@ public class CorePlayerBossBarManager implements CPlayerBossBarManager {
     @Override
     public void setColor(BarColor color) {
         BossBar bossBar = createIfDoesNotExist();
+        if (bossBar == null) return;
         bossBar.setColor(color);
         show();
     }
@@ -42,6 +45,7 @@ public class CorePlayerBossBarManager implements CPlayerBossBarManager {
     @Override
     public void setStyle(BarStyle style) {
         BossBar bossBar = createIfDoesNotExist();
+        if (bossBar == null) return;
         bossBar.setStyle(style);
         show();
     }

@@ -25,8 +25,6 @@ public class Plugin extends JavaPlugin {
             LibraryHandler.loadLibraries(this);
             // Check if Core is enabled if not can't work
             if (!Core.getInstance().isEnabled()) return;
-            // Register this plugin to Core
-            Core.onPluginEnable(this);
             // Get plugin info
             info = getClass().getAnnotation(PluginInfo.class);
             if (info == null)
@@ -48,7 +46,6 @@ public class Plugin extends JavaPlugin {
     public final void onDisable() {
         try {
             onPluginDisable();
-            Core.onPluginDisable(this);
         } catch (Exception e) {
             e.printStackTrace();
         }

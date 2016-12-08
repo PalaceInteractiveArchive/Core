@@ -23,6 +23,7 @@ public class LanguageFormatter {
     private final HashMap<String, YAMLConfigurationFile> languages = new HashMap<>();
 
     public LanguageFormatter(JavaPlugin plugin) {
+        if (plugin == null) return;
         // Return if languages file does not exist
         if (plugin.getResource(PATH + LANG_FILE_NAME) == null) return;
         // Languages text file to get all the languages to load

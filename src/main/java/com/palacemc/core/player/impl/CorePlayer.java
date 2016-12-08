@@ -25,29 +25,17 @@ import java.util.logging.Level;
 
 public class CorePlayer implements CPlayer {
 
-    @Getter
-    private final UUID uuid;
+    @Getter private final UUID uuid;
     private final String name;
-    @Getter
-    @Setter
-    private String locale = "en_US";
-    @Getter
-    @Setter
-    private PlayerStatus status = PlayerStatus.LOGIN;
-    @Getter
-    private CPlayerActionBarManager actionBar = new CorePlayerActionBarManager(this);
-    @Getter
-    private CPlayerBossBarManager bossBar = new CorePlayerBossBarManager(this);
-    @Getter
-    private CPlayerHeaderFooterManager headerFooter = new CorePlayerHeaderFooterManager(this);
-    @Getter
-    private CPlayerScoreboardManager scoreboard = new CorePlayerScoreboardManager(this);
-    @Getter
-    private CPlayerTitleManager title = new CorePlayerTitleManager(this);
-    @Getter
-    private CPlayerParticlesManager particles = new CorePlayerParticlesManager(this);
-    @Getter
-    private CPlayerResourcePackManager resourcePack = new CorePlayerResourcePackManager(this);
+    @Getter @Setter private String locale = "en_US";
+    @Getter @Setter private PlayerStatus status = PlayerStatus.LOGIN;
+    @Getter private CPlayerActionBarManager actionBar = new CorePlayerActionBarManager(this);
+    @Getter private CPlayerBossBarManager bossBar = new CorePlayerBossBarManager(this);
+    @Getter private CPlayerHeaderFooterManager headerFooter = new CorePlayerHeaderFooterManager(this);
+    @Getter private CPlayerScoreboardManager scoreboard = new CorePlayerScoreboardManager(this);
+    @Getter private CPlayerTitleManager title = new CorePlayerTitleManager(this);
+    @Getter private CPlayerParticlesManager particles = new CorePlayerParticlesManager(this);
+    @Getter private CPlayerResourcePackManager resourcePack = new CorePlayerResourcePackManager(this);
 
     public CorePlayer(UUID uuid, String name) {
         this.uuid = uuid;
@@ -57,59 +45,68 @@ public class CorePlayer implements CPlayer {
     @Override
     public String getName() {
         if (getStatus() != PlayerStatus.JOINED) return name;
+        if (getBukkitPlayer() == null) return name;
         return getBukkitPlayer().getName();
     }
 
     @Override
     public boolean isOnline() {
-        return getStatus() == PlayerStatus.JOINED && (getBukkitPlayer() == null || getBukkitPlayer().isOnline());
+        return getStatus() == PlayerStatus.JOINED && getBukkitPlayer() != null && getBukkitPlayer().isOnline();
     }
 
     @Override
     public void setMaxHealth(double health) {
         if (getStatus() != PlayerStatus.JOINED) return;
+        if (getBukkitPlayer() == null) return;
         getBukkitPlayer().setMaxHealth(health);
     }
 
     @Override
     public void setHealth(double health) {
         if (getStatus() != PlayerStatus.JOINED) return;
+        if (getBukkitPlayer() == null) return;
         getBukkitPlayer().setHealth(health);
     }
 
     @Override
     public GameMode getGamemode() {
         if (getStatus() != PlayerStatus.JOINED) return GameMode.SURVIVAL;
+        if (getBukkitPlayer() == null) return GameMode.SURVIVAL;
         return getBukkitPlayer().getGameMode();
     }
 
     @Override
     public void setGamemode(GameMode gamemode) {
         if (getStatus() != PlayerStatus.JOINED) return;
+        if (getBukkitPlayer() == null) return;
         getBukkitPlayer().setGameMode(gamemode);
     }
 
     @Override
     public Location getLocation() {
         if (getStatus() != PlayerStatus.JOINED) return new Location(Core.getWorld("world"), 0, 64, 0);
+        if (getBukkitPlayer() == null) return new Location(Core.getWorld("world"), 0, 64, 0);
         return getBukkitPlayer().getLocation();
     }
 
     @Override
     public void teleport(Location location) {
         if (getStatus() != PlayerStatus.JOINED) return;
+        if (getBukkitPlayer() == null) return;
         getBukkitPlayer().teleport(location);
     }
 
     @Override
     public void sendMessage(String message) {
         if (getStatus() != PlayerStatus.JOINED) return;
+        if (getBukkitPlayer() == null) return;
         getBukkitPlayer().sendMessage(message);
     }
 
     @Override
     public void sendFormatMessage(JavaPlugin plugin, String key) {
         if (getStatus() != PlayerStatus.JOINED) return;
+        if (getBukkitPlayer() == null) return;
         LanguageFormatter languageFormatter = null;
         if (plugin instanceof Core) {
             languageFormatter = Core.getLanguageFormatter();
@@ -131,6 +128,7 @@ public class CorePlayer implements CPlayer {
     @Override
     public void resetPlayer() {
         if (getStatus() != PlayerStatus.JOINED) return;
+        if (getBukkitPlayer() == null) return;
         Player player = getBukkitPlayer();
         player.setItemOnCursor(null);
         player.getInventory().clear();
@@ -172,6 +170,7 @@ public class CorePlayer implements CPlayer {
     @Override
     public void setDisplayName(String name) {
         if (getStatus() != PlayerStatus.JOINED) return;
+        if (getBukkitPlayer() == null) return;
         getBukkitPlayer().setDisplayName(name);
     }
 
@@ -273,24 +272,28 @@ public class CorePlayer implements CPlayer {
     @Override
     public PlayerInventory getInventory() {
         if (getStatus() != PlayerStatus.JOINED) return null;
+        if (getBukkitPlayer() == null) return null;
         return getBukkitPlayer().getInventory();
     }
 
     @Override
     public void openInventory(Inventory inventory) {
         if (getStatus() != PlayerStatus.JOINED) return;
+        if (getBukkitPlayer() == null) return;
         getBukkitPlayer().openInventory(inventory);
     }
 
     @Override
     public void closeInventory() {
         if (getStatus() != PlayerStatus.JOINED) return;
+        if (getBukkitPlayer() == null) return;
         getBukkitPlayer().closeInventory();
     }
 
     @Override
     public void respawn() {
         if (getStatus() != PlayerStatus.JOINED) return;
+        if (getBukkitPlayer() == null) return;
         getBukkitPlayer().spigot().respawn();
     }
 
@@ -299,6 +302,7 @@ public class CorePlayer implements CPlayer {
         if (getStatus() != PlayerStatus.JOINED) return;
         if (player == null) return;
         if (player.getStatus() != PlayerStatus.JOINED) return;
+        if (getBukkitPlayer() == null) return;
         getBukkitPlayer().showPlayer(player.getBukkitPlayer());
     }
 
@@ -307,18 +311,21 @@ public class CorePlayer implements CPlayer {
         if (getStatus() != PlayerStatus.JOINED) return;
         if (player == null) return;
         if (player.getStatus() != PlayerStatus.JOINED) return;
+        if (getBukkitPlayer() == null) return;
         getBukkitPlayer().hidePlayer(player.getBukkitPlayer());
     }
 
     @Override
     public void sendPacket(AbstractPacket packet) {
         if (getStatus() != PlayerStatus.JOINED) return;
+        if (getBukkitPlayer() == null) return;
         packet.sendPacket(getBukkitPlayer());
     }
 
     @Override
     public void sendToServer(String server) {
         if (getStatus() != PlayerStatus.JOINED) return;
+        if (getBukkitPlayer() == null) return;
         ByteArrayDataOutput out = ByteStreams.newDataOutput();
         out.writeUTF("Connect");
         out.writeUTF(server);

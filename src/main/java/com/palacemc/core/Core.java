@@ -31,7 +31,6 @@ import java.util.List;
 @PluginInfo(name = "Core")
 public class Core extends JavaPlugin {
 
-    private final List<Plugin> plugins = new ArrayList<>();
     private CoreCommandMap commandMap;
 
     private LanguageFormatter languageFormatter;
@@ -77,15 +76,6 @@ public class Core extends JavaPlugin {
     @Override
     public final void onDisable() {
         logMessage("Core", ChatColor.DARK_RED + "Disabled");
-    }
-
-    /* Plugin Utils */
-    public static void onPluginEnable(Plugin plugin) {
-        getInstance().plugins.add(plugin);
-    }
-
-    public static void onPluginDisable(Plugin plugin) {
-        getInstance().plugins.remove(plugin);
     }
 
     /* Core Info */
