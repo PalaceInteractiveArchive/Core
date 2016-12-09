@@ -6,35 +6,49 @@ import com.palacemc.core.command.CoreCommandMap;
 import com.palacemc.core.commands.ListCommand;
 import com.palacemc.core.commands.PluginsCommand;
 import com.palacemc.core.config.LanguageFormatter;
+import com.palacemc.core.config.YAMLConfigurationFile;
+import com.palacemc.core.dashboard.DashboardConnection;
+import com.palacemc.core.library.LibraryHandler;
 import com.palacemc.core.packets.adapters.SettingsAdapter;
 import com.palacemc.core.player.CPlayerManager;
 import com.palacemc.core.player.impl.CorePlayerManager;
-import com.palacemc.core.plugin.Plugin;
-import com.palacemc.core.library.LibraryHandler;
 import com.palacemc.core.plugin.PluginInfo;
+import lombok.Getter;
+import lombok.Setter;
 import org.bukkit.Bukkit;
 import org.bukkit.ChatColor;
 import org.bukkit.Server;
 import org.bukkit.World;
 import org.bukkit.command.ConsoleCommandSender;
+import org.bukkit.configuration.file.FileConfiguration;
 import org.bukkit.entity.Player;
-import org.bukkit.event.Event;
 import org.bukkit.event.Listener;
 import org.bukkit.inventory.Inventory;
 import org.bukkit.plugin.PluginManager;
 import org.bukkit.plugin.java.JavaPlugin;
 import org.bukkit.scheduler.BukkitScheduler;
 
-import java.util.ArrayList;
-import java.util.List;
+import java.net.URISyntaxException;
 
 @PluginInfo(name = "Core")
 public class Core extends JavaPlugin {
-
+    @Getter
+    @Setter
+    private static String serverType = "Hub";
+    @Getter
+    @Setter
+    private static String instanceName = "";
     private CoreCommandMap commandMap;
+
+    @Getter
+    private static DashboardConnection dashboardConnection;
 
     private LanguageFormatter languageFormatter;
     private CPlayerManager playerManager;
+
+    private SqlUtil sqlUtil;
+
+    private YAMLConfigurationFile configFile;
 
     @Override
     public final void onEnable() {
@@ -44,6 +58,12 @@ public class Core extends JavaPlugin {
         }
         // Libraries
         LibraryHandler.loadLibraries(this);
+        //Dashboard
+        try {
+            dashboardConnection = new DashboardConnection();
+        } catch (URISyntaxException e) {
+            e.printStackTrace();
+        }
         // Formatter
         languageFormatter = new LanguageFormatter(this);
         // Protocol lib adapters
@@ -53,6 +73,12 @@ public class Core extends JavaPlugin {
         // Managers
         playerManager = new CorePlayerManager();
         commandMap = new CoreCommandMap(this);
+        // SQL Classes
+        sqlUtil = new SqlUtil();
+        // Configurations
+        configFile = new YAMLConfigurationFile(this, "plugins/Core/", "config.yml");
+        setServerType(getCoreConfig().getString("server-type"));
+        setInstanceName(getCoreConfig().getString("instance-name"));
         // Register Listeners
         registerListeners();
         // Register Commands
@@ -101,7 +127,19 @@ public class Core extends JavaPlugin {
         return getInstance().languageFormatter;
     }
 
-    /** Bukkit Utils */
+    /* SQL Classes */
+    public static SqlUtil getSqlUtil() {
+        return getInstance().sqlUtil;
+    }
+
+    /* Configurations */
+    public static FileConfiguration getCoreConfig() {
+        return getInstance().configFile.getConfig();
+    }
+
+    /**
+     * Bukkit Utils
+     */
     @SuppressWarnings("unused")
     public static Inventory createInventory(int size, String title) {
         return Bukkit.createInventory(null, size, title);
@@ -115,10 +153,6 @@ public class Core extends JavaPlugin {
     @SuppressWarnings("unused")
     public static void shutdown() {
         getBukkitServer().shutdown();
-    }
-
-    public static void callEvent(Event event) {
-        getPluginManager().callEvent(event);
     }
 
     public static void registerListener(Listener listener) {
@@ -144,7 +178,9 @@ public class Core extends JavaPlugin {
         getConsoleSender().sendMessage(message);
     }
 
-    /** Bukkit Getters */
+    /**
+     * Bukkit Getters
+     */
     private static PluginManager getPluginManager() {
         return getBukkitServer().getPluginManager();
     }

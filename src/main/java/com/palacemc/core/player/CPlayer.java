@@ -80,6 +80,9 @@ public interface CPlayer {
     void setStatus(PlayerStatus status);
     PlayerStatus getStatus();
 
+    Rank getRank();
+    void setRank(Rank rank);
+
     enum PlayerStatus {
         LOGIN, JOINED, LEFT
     }

@@ -27,6 +27,7 @@ public class CorePlayer implements CPlayer {
 
     @Getter private final UUID uuid;
     private final String name;
+    @Getter @Setter private Rank rank = Rank.SETTLER;
     @Getter @Setter private String locale = "en_US";
     @Getter @Setter private PlayerStatus status = PlayerStatus.LOGIN;
     @Getter private CPlayerActionBarManager actionBar = new CorePlayerActionBarManager(this);
@@ -37,9 +38,10 @@ public class CorePlayer implements CPlayer {
     @Getter private CPlayerParticlesManager particles = new CorePlayerParticlesManager(this);
     @Getter private CPlayerResourcePackManager resourcePack = new CorePlayerResourcePackManager(this);
 
-    public CorePlayer(UUID uuid, String name) {
+    public CorePlayer(UUID uuid, String name, Rank rank) {
         this.uuid = uuid;
         this.name = name;
+        this.rank = rank;
     }
 
     @Override

@@ -3,6 +3,7 @@ package com.palacemc.core.player.impl;
 import com.palacemc.core.Core;
 import com.palacemc.core.player.CPlayer;
 import com.palacemc.core.player.CPlayerManager;
+import com.palacemc.core.player.Rank;
 import org.bukkit.entity.Player;
 
 import java.util.Collection;
@@ -21,7 +22,8 @@ public class CorePlayerManager implements CPlayerManager {
     @Override
     public void playerLoggedIn(UUID uuid, String name) {
         playerLoggedOut(uuid);
-        onlinePlayers.put(uuid, new CorePlayer(uuid, name));
+        Rank rank = Core.getSqlUtil().getRank(uuid);
+        onlinePlayers.put(uuid, new CorePlayer(uuid, name, rank));
     }
 
     @Override
