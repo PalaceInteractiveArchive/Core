@@ -29,6 +29,7 @@ import org.bukkit.plugin.java.JavaPlugin;
 import org.bukkit.scheduler.BukkitScheduler;
 
 import java.net.URISyntaxException;
+import java.util.List;
 
 @PluginInfo(name = "Core")
 public class Core extends JavaPlugin {
@@ -148,6 +149,14 @@ public class Core extends JavaPlugin {
     @SuppressWarnings("unused")
     public static World getWorld(String name) {
         return getBukkitServer().getWorld(name);
+    }
+
+    public static World getDefaultWorld() {
+        return getBukkitServer().getWorlds().get(0);
+    }
+
+    public static List<World> getWorlds() {
+        return getBukkitServer().getWorlds();
     }
 
     @SuppressWarnings("unused")
