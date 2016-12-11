@@ -1,8 +1,9 @@
 package com.palacemc.core.command;
 
+import com.google.common.collect.ImmutableList;
 import com.palacemc.core.Core;
 import com.palacemc.core.player.CPlayer;
-import com.google.common.collect.ImmutableList;
+import com.palacemc.core.player.Rank;
 import com.palacemc.core.plugin.Plugin;
 import lombok.Getter;
 import lombok.Setter;
@@ -16,20 +17,20 @@ import java.util.stream.Collectors;
 
 /**
  * CoreCommand is the superclass for any commands that are created to hook into the plugin system in core.
- *
+ * <p>
  * All commands are handled through three main methods, splitting the different sender types into different calls, and simplifying the method to just args and a sender.
- *
+ * <p>
  * Commands must throw exceptions in the event of a failure, and you can handle these exceptions using {@link #handleCommandException(CommandException, String[], org.bukkit.command.CommandSender)}.
- *
+ * <p>
  * You can also use our sub command system which supports tab completion and recursive sub-commands by using the constructor {@link #CoreCommand(String, CoreCommand...)}.
- *
+ * <p>
  * You can override tab-completion using {@link #handleTabComplete(org.bukkit.command.CommandSender, org.bukkit.command.Command, String, String[])}
- *
+ * <p>
  * If you require usage of a sub-command, please override {@link #isUsingSubCommandsOnly()} and have it return true.
  *
+ * @version 1.1
  * @see org.bukkit.command.CommandExecutor
  * @see org.bukkit.command.TabCompleter
- * @version 1.1
  */
 @SuppressWarnings({"UnusedParameters", "unused"})
 public abstract class CoreCommand implements CommandExecutor, TabCompleter {
@@ -42,12 +43,20 @@ public abstract class CoreCommand implements CommandExecutor, TabCompleter {
     /**
      * Holds the name of this command.
      */
-    @Getter private final String name;
+    @Getter
+    private final String name;
 
-    @Getter @Setter private CoreCommand superCommand = null;
+    @Getter
+    @Setter
+    private CoreCommand superCommand = null;
+
+    @Getter
+    @Setter
+    private Rank rank = Rank.SETTLER;
 
     /**
      * Main constructor without sub-commands.
+     *
      * @param name The name of the command.
      */
     protected CoreCommand(String name) {
@@ -56,7 +65,8 @@ public abstract class CoreCommand implements CommandExecutor, TabCompleter {
 
     /**
      * Main constructor with sub-commands.
-     * @param name The name of the command.
+     *
+     * @param name        The name of the command.
      * @param subCommands The sub-commands you wish to register.
      */
     protected CoreCommand(final String name, CoreCommand... subCommands) {
@@ -66,12 +76,14 @@ public abstract class CoreCommand implements CommandExecutor, TabCompleter {
 
     /**
      * Registers sub commands with the command and re-creates the help command.
+     *
      * @param subCommands The sub-commands you wish to register.
      */
     public final void registerSubCommand(CoreCommand... subCommands) {
         // Toss all the sub commands in the map
         for (CoreCommand subCommand : subCommands) {
-            if (subCommand.getSuperCommand() != null) throw new IllegalArgumentException("The command you attempted to register already has a supercommand.");
+            if (subCommand.getSuperCommand() != null)
+                throw new IllegalArgumentException("The command you attempted to register already has a supercommand.");
             this.subCommands.put(subCommand.getName(), subCommand);
             subCommand.setSuperCommand(this);
         }
@@ -105,7 +117,7 @@ public abstract class CoreCommand implements CommandExecutor, TabCompleter {
                 String s = builder.toString();
                 // Looks like this /name - [subcommand1|subcommand2|]
                 // TODO Switch to language formatting?
-                sender.sendMessage(ChatColor.GRAY + "/" + ChatColor.DARK_AQUA + superHelpCommand.getFormattedName() + ChatColor.GOLD + " - [" + s.substring(0, s.length()-1) + "]");
+                sender.sendMessage(ChatColor.GRAY + "/" + ChatColor.DARK_AQUA + superHelpCommand.getFormattedName() + ChatColor.GOLD + " - [" + s.substring(0, s.length() - 1) + "]");
             }
         });
     }
@@ -118,19 +130,30 @@ public abstract class CoreCommand implements CommandExecutor, TabCompleter {
         try {
             // STEP ONE: Handle sub-commands
             CoreCommand subCommand = null;
+            /*
             // Get the permission and test for it
             if (getClass().isAnnotationPresent(CommandPermission.class)) {
                 CommandPermission annotation = getClass().getAnnotation(CommandPermission.class);
                 if (!sender.hasPermission(annotation.value()) && !(sender.isOp() && annotation.isOpExempt())) throw new PermissionException();
+            }*/
+            if (sender instanceof Player) {
+                CPlayer player = Core.getPlayerManager().getPlayer(((Player) sender).getUniqueId());
+                if (getClass().isAnnotationPresent(CommandPermission.class)) {
+                    CommandPermission annotation = getClass().getAnnotation(CommandPermission.class);
+                    if (player.getRank().getRankId() < annotation.rank().getRankId())
+                        throw new PermissionException();
+                }
             }
             // Check if we HAVE to use sub-commands (a behavior this class provides)
             if (isUsingSubCommandsOnly()) {
                 // Check if there are not enough args for there to be a sub command
                 if (args.length < 1) throw new ArgumentRequirementException("command.error.arguments.specify");
                 // Also check if the sub command is valid by assigning and checking the value of the resolved sub command from the first argument.
-                if ((subCommand = getSubCommandFor(args[0])) == null) throw new ArgumentRequirementException("command.error.arguments.invalid");
+                if ((subCommand = getSubCommandFor(args[0])) == null)
+                    throw new ArgumentRequirementException("command.error.arguments.invalid");
             }
-            if (subCommand == null && args.length > 0) subCommand = getSubCommandFor(args[0]); // If we're not requiring sub-commands but we can have them, let's try that
+            if (subCommand == null && args.length > 0)
+                subCommand = getSubCommandFor(args[0]); // If we're not requiring sub-commands but we can have them, let's try that
             // By now we have validated that the sub command can be executed if it MUST, now lets see if we can execute it
             // In this case, if we must execute the sub command, this check will always past. In cases where it's an option, this check will also pass.
             // That way, we can use this feature of sub commands without actually requiring it.
@@ -140,7 +163,8 @@ public abstract class CoreCommand implements CommandExecutor, TabCompleter {
                 subCommand.onCommand(sender, command, s, choppedArgs);
                 try {
                     handlePostSubCommand(sender, args);
-                } catch (EmptyHandlerException ignored) {}
+                } catch (EmptyHandlerException ignored) {
+                }
                 return true;
             }
             // Now that we've made it past the sub commands and permissions, STEP TWO: actually handle the command and it's args.
@@ -148,9 +172,8 @@ public abstract class CoreCommand implements CommandExecutor, TabCompleter {
                 if (sender instanceof Player) {
                     CPlayer player = Core.getPlayerManager().getPlayer((Player) sender);
                     if (player != null) handleCommand(player, args);
-                }
-                else if (sender instanceof ConsoleCommandSender) handleCommand((ConsoleCommandSender)sender, args);
-                else if (sender instanceof BlockCommandSender)  handleCommand((BlockCommandSender)sender, args);
+                } else if (sender instanceof ConsoleCommandSender) handleCommand((ConsoleCommandSender) sender, args);
+                else if (sender instanceof BlockCommandSender) handleCommand((BlockCommandSender) sender, args);
             } catch (EmptyHandlerException e) {
                 handleCommandUnspecific(sender, args); // We don't catch this because we would catch it and then immediately re-throw it so it could be caught by the below catch block (which handles the exception).
             }
@@ -167,9 +190,13 @@ public abstract class CoreCommand implements CommandExecutor, TabCompleter {
     @Override
     public final List<String> onTabComplete(CommandSender sender, Command command, String alias, String[] args) {
         // Security for tab complete
-        if (getClass().isAnnotationPresent(CommandPermission.class)) {
-            CommandPermission annotation = getClass().getAnnotation(CommandPermission.class);
-            if (!sender.hasPermission(annotation.value()) && !(sender.isOp() && annotation.isOpExempt())) return Collections.emptyList();
+        if (sender instanceof Player) {
+            CPlayer player = Core.getPlayerManager().getPlayer(((Player) sender).getUniqueId());
+            if (getClass().isAnnotationPresent(CommandPermission.class)) {
+                CommandPermission annotation = getClass().getAnnotation(CommandPermission.class);
+                if (player.getRank().getRankId() < annotation.rank().getRankId())
+                    return Collections.emptyList();
+            }
         }
         // Step one, check if we have to go a level deeper in the sub command system:
         if (args.length > 1) {
@@ -199,13 +226,13 @@ public abstract class CoreCommand implements CommandExecutor, TabCompleter {
 
     /**
      * This method <b>should</b> be overridden by any sub-classes as the functionality it provides is limited.
-     *
+     * <p>
      * The goal of this method should always be conveying an error message to a user in a friendly manner. The {@link CommandException} can be extended by your {@link Plugin} to provide extended functionality.
-     *
+     * <p>
      * The {@code args} are the same args that would be passed to your handlers. Meaning, if this is a sub-command they will be cut to fit that sub-command, and if this is a root level command they will be all of the arguments.
      *
-     * @param ex The exception used to hold the error message and any other details about the failure. If there was an exception during the handling of the command this will be an {@link UnhandledCommandExceptionException}.
-     * @param args The arguments passed to the command.
+     * @param ex     The exception used to hold the error message and any other details about the failure. If there was an exception during the handling of the command this will be an {@link UnhandledCommandExceptionException}.
+     * @param args   The arguments passed to the command.
      * @param sender The sender of the command, cannot be directly cast to {@link CPlayer}.
      */
     @SuppressWarnings("UnusedParameters")
@@ -222,7 +249,8 @@ public abstract class CoreCommand implements CommandExecutor, TabCompleter {
     }
 
     @SuppressWarnings({"UnusedParameters", "EmptyMethod"})
-    protected void preSubCommandDispatch(CommandSender sender, String[] args, CoreCommand subCommand) {}
+    protected void preSubCommandDispatch(CommandSender sender, String[] args, CoreCommand subCommand) {
+    }
 
     public final CoreCommand getSubCommandFor(String s) {
         // If we have an exact match, case and all, don't waste the CPU cycles on the lower for loop.
@@ -249,13 +277,26 @@ public abstract class CoreCommand implements CommandExecutor, TabCompleter {
     }
 
     // Default behavior is to do nothing, these methods can be overridden by the sub-class.
-    protected void handleCommand(CPlayer player, String[] args) throws CommandException {throw new EmptyHandlerException();}
-    protected void handleCommand(ConsoleCommandSender commandSender, String[] args) throws CommandException {throw new EmptyHandlerException();}
-    protected void handleCommand(BlockCommandSender commandSender, String[] args) throws CommandException {throw new EmptyHandlerException();}
+    protected void handleCommand(CPlayer player, String[] args) throws CommandException {
+        throw new EmptyHandlerException();
+    }
+
+    protected void handleCommand(ConsoleCommandSender commandSender, String[] args) throws CommandException {
+        throw new EmptyHandlerException();
+    }
+
+    protected void handleCommand(BlockCommandSender commandSender, String[] args) throws CommandException {
+        throw new EmptyHandlerException();
+    }
 
     // Handles for all types in the event that no specific handler is overridden above.
-    protected void handleCommandUnspecific(CommandSender sender, String[] args) throws CommandException {throw new EmptyHandlerException();}
-    protected void handlePostSubCommand(CommandSender sender, String[] args) throws CommandException {throw new EmptyHandlerException();}
+    protected void handleCommandUnspecific(CommandSender sender, String[] args) throws CommandException {
+        throw new EmptyHandlerException();
+    }
+
+    protected void handlePostSubCommand(CommandSender sender, String[] args) throws CommandException {
+        throw new EmptyHandlerException();
+    }
 
     @SuppressWarnings("SameReturnValue")
     protected boolean shouldGenerateHelpCommand() {
@@ -269,7 +310,8 @@ public abstract class CoreCommand implements CommandExecutor, TabCompleter {
         String arg = args.length > 0 ? args[args.length - 1].toLowerCase() : ""; // Get the last argument
         for (Player player : Bukkit.getOnlinePlayers()) { // Loop through all the players
             String name1 = player.getName(); // Get this players name (since we reference it twice)
-            if (name1.toLowerCase().startsWith(arg)) ss.add(name1); // And if it starts with the argument we add it to this list
+            if (name1.toLowerCase().startsWith(arg))
+                ss.add(name1); // And if it starts with the argument we add it to this list
         }
         return ss; //Return what we found.
     }

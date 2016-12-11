@@ -1,0 +1,6 @@
+sql:
+  url: jdbc:mysql://address:3306/Database
+  user: root
+  password: password
+server-type: Unknown
+instance-name: ServerName

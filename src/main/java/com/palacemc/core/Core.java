@@ -5,6 +5,7 @@ import com.palacemc.core.command.CoreCommand;
 import com.palacemc.core.command.CoreCommandMap;
 import com.palacemc.core.commands.ListCommand;
 import com.palacemc.core.commands.PluginsCommand;
+import com.palacemc.core.commands.SafestopCommand;
 import com.palacemc.core.config.LanguageFormatter;
 import com.palacemc.core.config.YAMLConfigurationFile;
 import com.palacemc.core.dashboard.DashboardConnection;
@@ -38,6 +39,9 @@ public class Core extends JavaPlugin {
     @Getter
     @Setter
     private static String instanceName = "";
+    @Getter
+    @Setter
+    private static boolean testNetwork = false;
     private CoreCommandMap commandMap;
 
     @Getter
@@ -58,12 +62,6 @@ public class Core extends JavaPlugin {
         }
         // Libraries
         LibraryHandler.loadLibraries(this);
-        //Dashboard
-        try {
-            dashboardConnection = new DashboardConnection();
-        } catch (URISyntaxException e) {
-            e.printStackTrace();
-        }
         // Formatter
         languageFormatter = new LanguageFormatter(this);
         // Protocol lib adapters
@@ -76,9 +74,16 @@ public class Core extends JavaPlugin {
         // SQL Classes
         sqlUtil = new SqlUtil();
         // Configurations
-        configFile = new YAMLConfigurationFile(this, "plugins/Core/", "config.yml");
+        configFile = new YAMLConfigurationFile(this, "", "config.yml");
         setServerType(getCoreConfig().getString("server-type"));
         setInstanceName(getCoreConfig().getString("instance-name"));
+        setTestNetwork(getCoreConfig().getBoolean("test-network"));
+        //Dashboard
+        try {
+            dashboardConnection = new DashboardConnection();
+        } catch (URISyntaxException e) {
+            e.printStackTrace();
+        }
         // Register Listeners
         registerListeners();
         // Register Commands
@@ -93,6 +98,7 @@ public class Core extends JavaPlugin {
     public void registerCommands() {
         registerCommand(new ListCommand());
         registerCommand(new PluginsCommand());
+        registerCommand(new SafestopCommand());
     }
 
     public final void registerCommand(CoreCommand command) {
@@ -109,12 +115,12 @@ public class Core extends JavaPlugin {
         return Core.getPlugin(Core.class);
     }
 
-    public static double getVersion() {
-        PluginInfo annotation = getInstance().getClass().getAnnotation(PluginInfo.class);
-        if (annotation != null) {
-            return annotation.version();
+    public static String getVersion() {
+        String v = getPlugin(Core.class).getDescription().getVersion();
+        if (v != null) {
+            return v;
         } else {
-            return 1.0;
+            return "1.0";
         }
     }
 

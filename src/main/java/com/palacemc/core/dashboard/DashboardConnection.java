@@ -33,7 +33,8 @@ public class DashboardConnection {
     }
 
     private void start() throws URISyntaxException {
-        ws = new WebSocketClient(new URI("ws://socket.dashboard.palace.network:7892"), new Draft_10()) {
+        String pg = Core.isTestNetwork() ? ".playground" : "";
+        ws = new WebSocketClient(new URI("ws://socket.dashboard" + pg + ".palace.network:7892"), new Draft_10()) {
             @Override
             public void onMessage(String message) {
                 JsonObject object = (JsonObject) new JsonParser().parse(message);
