@@ -5,6 +5,7 @@ import com.palacemc.core.command.CoreCommand;
 import com.palacemc.core.command.CoreCommandMap;
 import com.palacemc.core.commands.ListCommand;
 import com.palacemc.core.commands.PluginsCommand;
+import com.palacemc.core.commands.ReloadCommand;
 import com.palacemc.core.commands.SafestopCommand;
 import com.palacemc.core.config.LanguageFormatter;
 import com.palacemc.core.config.YAMLConfigurationFile;
@@ -102,6 +103,7 @@ public class Core extends JavaPlugin {
         registerCommand(new ListCommand());
         registerCommand(new PluginsCommand());
         registerCommand(new SafestopCommand());
+        registerCommand(new ReloadCommand());
     }
 
     public final void registerCommand(CoreCommand command) {
