@@ -7,6 +7,7 @@ import com.palacemc.core.dashboard.packets.PacketID;
 /**
  * Created by Marc on 9/12/16
  */
+@SuppressWarnings("unused")
 public class PacketMaintenance extends BasePacket {
     private boolean maintenance;
 

@@ -7,8 +7,6 @@ import lombok.Setter;
 
 @AllArgsConstructor
 public class CorePlayerJoinDelayedEvent extends CoreEvent {
-
     @Getter private final CPlayer player;
     @Getter @Setter private String joinMessage;
-
 }

@@ -5,6 +5,7 @@ import com.google.gson.JsonObject;
 /**
  * Created by Marc on 6/15/15
  */
+@SuppressWarnings("unused")
 public class BasePacket {
     protected int id = 0;
 

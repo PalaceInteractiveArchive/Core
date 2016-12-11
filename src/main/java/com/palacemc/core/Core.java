@@ -13,6 +13,8 @@ import com.palacemc.core.packets.adapters.SettingsAdapter;
 import com.palacemc.core.player.CPlayerManager;
 import com.palacemc.core.player.impl.CorePlayerManager;
 import com.palacemc.core.plugin.PluginInfo;
+import com.palacemc.core.utils.ItemUtil;
+import com.palacemc.core.utils.SqlUtil;
 import lombok.Getter;
 import lombok.Setter;
 import org.bukkit.Bukkit;
@@ -33,16 +35,12 @@ import java.util.List;
 
 @PluginInfo(name = "Core")
 public class Core extends JavaPlugin {
-    @Getter
-    @Setter
-    private static String serverType = "Hub";
-    @Getter
-    @Setter
-    private static String instanceName = "";
+
+    @Getter @Setter private static String serverType = "Hub";
+    @Getter @Setter private static String instanceName = "";
     private CoreCommandMap commandMap;
 
-    @Getter
-    private static DashboardConnection dashboardConnection;
+    @Getter private static DashboardConnection dashboardConnection;
 
     private LanguageFormatter languageFormatter;
     private CPlayerManager playerManager;
@@ -88,7 +86,7 @@ public class Core extends JavaPlugin {
     }
 
     public void registerListeners() {
-        registerListener(new ItemUtils());
+        registerListener(new ItemUtil());
     }
 
     public void registerCommands() {
@@ -110,13 +108,8 @@ public class Core extends JavaPlugin {
         return Core.getPlugin(Core.class);
     }
 
-    public static double getVersion() {
-        PluginInfo annotation = getInstance().getClass().getAnnotation(PluginInfo.class);
-        if (annotation != null) {
-            return annotation.version();
-        } else {
-            return 1.0;
-        }
+    public static String getVersion() {
+        return getInstance().getDescription().getVersion();
     }
 
     /* Managers */
@@ -155,6 +148,7 @@ public class Core extends JavaPlugin {
         return getBukkitServer().getWorlds().get(0);
     }
 
+    @SuppressWarnings("unused")
     public static List<World> getWorlds() {
         return getBukkitServer().getWorlds();
     }

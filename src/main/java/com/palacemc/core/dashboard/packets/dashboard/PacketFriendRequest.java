@@ -9,6 +9,7 @@ import java.util.UUID;
 /**
  * Created by Marc on 8/22/16
  */
+@SuppressWarnings("unused")
 public class PacketFriendRequest extends BasePacket {
     private UUID uuid;
     private String from;

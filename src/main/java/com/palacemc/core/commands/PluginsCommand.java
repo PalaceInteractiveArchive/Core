@@ -63,7 +63,7 @@ public class PluginsCommand extends CoreCommand {
         thirdParty = thirdParty.substring(0, Math.max(0, thirdParty.length() - thirdPartySeparator.length()));
         // Formats
         String boilerPlateFormat = formatter.getFormat(sender, "command.plugins.boilerPlate");
-        String runningFormat = formatter.getFormat(sender, "command.plugins.running").replaceAll("<core-version>", Double.toString(Core.getVersion()));
+        String runningFormat = formatter.getFormat(sender, "command.plugins.running").replaceAll("<core-version>", Core.getVersion());
         String pluginsFormat = formatter.getFormat(sender, "command.plugins.plugins.info").replaceAll("<core-plugins>", plugins);
         String thirdPartyFormat = formatter.getFormat(sender, "command.plugins.thirdParty.info").replaceAll("<thirdParty-plugins>", thirdParty);
         // Send Messages

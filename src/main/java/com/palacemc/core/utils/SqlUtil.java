@@ -1,4 +1,4 @@
-package com.palacemc.core;
+package com.palacemc.core.utils;
 
 import com.palacemc.core.player.Rank;
 import org.bukkit.configuration.file.YamlConfiguration;
@@ -7,10 +7,8 @@ import java.io.File;
 import java.sql.*;
 import java.util.UUID;
 
-/**
- * Created by Marc on 12/8/16.
- */
 public class SqlUtil {
+
     private String url = "";
     private String user = "";
     private String password = "";

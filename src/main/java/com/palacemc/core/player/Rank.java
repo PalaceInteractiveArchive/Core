@@ -2,9 +2,7 @@ package com.palacemc.core.player;
 
 import org.bukkit.ChatColor;
 
-/**
- * Created by Marc on 12/8/16.
- */
+@SuppressWarnings({"CanBeFinal", "unused"})
 public enum Rank {
     EMPRESS("Empress", ChatColor.RED, ChatColor.YELLOW, true, 11),
     EMPEROR("Emperor", ChatColor.RED, ChatColor.YELLOW, true, 11),

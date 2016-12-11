@@ -24,6 +24,7 @@ import java.util.UUID;
 /**
  * Created by Marc on 5/22/16
  */
+@SuppressWarnings("unused")
 public class DashboardConnection {
     protected WebSocketClient ws;
     private boolean attempted = false;
@@ -99,6 +100,7 @@ public class DashboardConnection {
         ws.send(s);
     }
 
+    @SuppressWarnings("BooleanMethodIsAlwaysInverted")
     public boolean isConnected() {
         return ws != null && ws.getConnection() != null && !ws.getConnection().isConnecting() && ws.getConnection().isOpen();
     }

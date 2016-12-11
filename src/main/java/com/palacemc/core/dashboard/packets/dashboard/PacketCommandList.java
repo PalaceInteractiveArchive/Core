@@ -13,6 +13,7 @@ import java.util.List;
 /**
  * Created by Marc on 9/3/16
  */
+@SuppressWarnings("unused")
 public class PacketCommandList extends BasePacket {
     private List<String> commands = new ArrayList<>();
 

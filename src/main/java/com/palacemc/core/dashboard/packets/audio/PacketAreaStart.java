@@ -4,10 +4,9 @@ import com.google.gson.JsonObject;
 import com.palacemc.core.dashboard.packets.BasePacket;
 import com.palacemc.core.dashboard.packets.PacketID;
 
-/**
- * Created by Marc on 6/15/15
- */
+@SuppressWarnings("unused")
 public class PacketAreaStart extends BasePacket {
+
     private int audioid = 0;
     private String name = "";
     private float volume = 1.0F;

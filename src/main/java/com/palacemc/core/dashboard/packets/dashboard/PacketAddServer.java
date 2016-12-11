@@ -7,6 +7,7 @@ import com.palacemc.core.dashboard.packets.PacketID;
 /**
  * Created by Marc on 8/25/16
  */
+@SuppressWarnings("unused")
 public class PacketAddServer extends BasePacket {
     private String name;
     private String address;

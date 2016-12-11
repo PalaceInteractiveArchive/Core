@@ -9,6 +9,7 @@ import java.util.UUID;
 /**
  * Created by Marc on 8/24/16
  */
+@SuppressWarnings("unused")
 public class PacketBseenCommand extends BasePacket {
     private UUID uuid;
     private String username;

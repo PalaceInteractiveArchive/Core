@@ -9,6 +9,7 @@ import java.util.UUID;
 /**
  * Created by Marc on 7/14/16
  */
+@SuppressWarnings("unused")
 public class PacketPlayerJoin extends BasePacket {
     private UUID uuid;
     private String username;
@@ -69,6 +70,7 @@ public class PacketPlayerJoin extends BasePacket {
         return obj;
     }
 
+    @SuppressWarnings("SameReturnValue")
     public String getRank() {
         return null;
     }

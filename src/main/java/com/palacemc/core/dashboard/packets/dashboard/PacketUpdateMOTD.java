@@ -13,6 +13,7 @@ import java.util.List;
 /**
  * Created by Marc on 8/24/16
  */
+@SuppressWarnings("unused")
 public class PacketUpdateMOTD extends BasePacket {
     private String motd;
     private String maintenance;

@@ -14,6 +14,7 @@ import java.util.UUID;
 /**
  * Created by Marc on 9/10/16
  */
+@SuppressWarnings("unused")
 public class PacketIPSeenCommand extends BasePacket {
     private UUID uuid;
     private List<String> usernames = new ArrayList<>();

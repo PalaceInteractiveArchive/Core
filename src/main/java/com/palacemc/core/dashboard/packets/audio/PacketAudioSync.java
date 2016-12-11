@@ -7,6 +7,7 @@ import com.palacemc.core.dashboard.packets.PacketID;
 /**
  * Created by Marc on 6/15/15
  */
+@SuppressWarnings("unused")
 public class PacketAudioSync extends BasePacket {
     private int audioid = 0;
     private double seconds = 1.0D;

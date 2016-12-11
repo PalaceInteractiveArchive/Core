@@ -9,6 +9,7 @@ import java.util.UUID;
 /**
  * Created by Marc on 5/24/16
  */
+@SuppressWarnings("unused")
 public class PacketContainer extends BasePacket {
     private UUID uuid;
     private String container;
