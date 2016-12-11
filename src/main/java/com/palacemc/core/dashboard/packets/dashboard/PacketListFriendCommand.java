@@ -14,6 +14,7 @@ import java.util.UUID;
 /**
  * Created by Marc on 8/22/16
  */
+@SuppressWarnings("unused")
 public class PacketListFriendCommand extends BasePacket {
     private UUID uuid;
     private int page;

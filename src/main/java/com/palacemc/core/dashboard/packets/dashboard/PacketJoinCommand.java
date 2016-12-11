@@ -14,6 +14,7 @@ import java.util.UUID;
 /**
  * Created by Marc on 8/26/16
  */
+@SuppressWarnings("unused")
 public class PacketJoinCommand extends BasePacket {
     private UUID uuid;
     private List<String> servers = new ArrayList<>();

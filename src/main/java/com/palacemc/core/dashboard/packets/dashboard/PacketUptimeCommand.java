@@ -9,6 +9,7 @@ import java.util.UUID;
 /**
  * Created by Marc on 8/28/16
  */
+@SuppressWarnings("unused")
 public class PacketUptimeCommand extends BasePacket {
     private UUID uuid;
     private long time;

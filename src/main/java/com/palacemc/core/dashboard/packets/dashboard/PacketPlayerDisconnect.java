@@ -9,6 +9,7 @@ import java.util.UUID;
 /**
  * Created by Marc on 7/14/16
  */
+@SuppressWarnings("unused")
 public class PacketPlayerDisconnect extends BasePacket {
     private UUID uuid;
     private String reason;

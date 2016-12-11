@@ -7,6 +7,7 @@ import com.palacemc.core.player.Rank;
 
 import java.util.UUID;
 
+@SuppressWarnings("unused")
 public class PacketPlayerRank extends BasePacket {
     private UUID uuid;
     private Rank rank;

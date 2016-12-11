@@ -3,6 +3,7 @@ package com.palacemc.core.dashboard.packets;
 /**
  * Created by Marc on 6/15/15
  */
+@SuppressWarnings("unused")
 public enum PacketID {
     HEARTBEAT(0), LOGIN(1), KICK(2), GLOBAL_PLAY_ONCE(3), AREA_START(4), AREA_STOP(5), CLIENT_ACCEPTED(6), AUDIO_SYNC(7),
     NOTIFICATION(8), EXEC_SCRIPT(9), COMPUTER_SPEAK(10), INCOMING_WARP(11), SERVER_SWITCH(12), GETPLAYER(13),
@@ -18,6 +19,7 @@ public enum PacketID {
         return this.ID;
     }
 
+    @SuppressWarnings("unused")
     public enum Dashboard {
         STATUSREQUEST(18), SERVERSTATUS(19), STAFFLISTCOMMAND(20), LISTFRIENDCOMMAND(21), CONNECTIONTYPE(22),
         PLAYERJOIN(23), PLAYERDISCONNECT(24), PLAYERCHAT(25), MESSAGE(26), SERVERSWITCH(27), PLAYERRANK(28),

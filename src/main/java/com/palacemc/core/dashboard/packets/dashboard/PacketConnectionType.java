@@ -7,6 +7,7 @@ import com.palacemc.core.dashboard.packets.PacketID;
 /**
  * Created by Marc on 7/14/16
  */
+@SuppressWarnings("unused")
 public class PacketConnectionType extends BasePacket {
     private ConnectionType type;
 

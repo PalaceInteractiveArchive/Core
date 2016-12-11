@@ -7,6 +7,7 @@ import com.palacemc.core.dashboard.packets.PacketID;
 /**
  * Created by Marc on 6/15/15
  */
+@SuppressWarnings("unused")
 public class PacketGetPlayer extends BasePacket {
     private String playername = "";
 

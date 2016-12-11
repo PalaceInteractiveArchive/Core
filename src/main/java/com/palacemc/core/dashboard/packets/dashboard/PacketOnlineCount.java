@@ -7,6 +7,7 @@ import com.palacemc.core.dashboard.packets.PacketID;
 /**
  * Created by Marc on 9/1/16
  */
+@SuppressWarnings("unused")
 public class PacketOnlineCount extends BasePacket {
     private int count;
 

@@ -14,6 +14,7 @@ import java.util.UUID;
 /**
  * Created by Marc on 8/20/16
  */
+@SuppressWarnings("unused")
 public class PacketStaffListCommand extends BasePacket {
     private UUID uuid;
     private List<String> owners = new ArrayList<>();

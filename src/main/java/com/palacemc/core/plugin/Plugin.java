@@ -53,15 +53,17 @@ public class Plugin extends JavaPlugin {
     }
 
     /* Delegated Methods */
-    protected void onPluginEnable() throws Exception { Core.logMessage(getInfo().name(), ChatColor.RED + "Did not run any code on enable!"); }
-    @SuppressWarnings("EmptyMethod") protected void onPluginDisable() throws Exception {}
+    @SuppressWarnings("RedundantThrows") protected void onPluginEnable() throws Exception { Core.logMessage(getInfo().name(), ChatColor.RED + "Did not run any code on enable!"); }
+    @SuppressWarnings({"EmptyMethod", "RedundantThrows"}) protected void onPluginDisable() throws Exception {}
 
     /* Command Methods */
+    @SuppressWarnings("unused")
     public void registerCommand(CoreCommand command) {
         getCommandMap().registerCommand(command);
     }
 
     /* Bukkit Utils */
+    @SuppressWarnings("unused")
     public void registerListener(Listener listener) {
         getServer().getPluginManager().registerEvents(listener, this);
     }

@@ -7,6 +7,7 @@ import com.palacemc.core.dashboard.packets.PacketID;
 /**
  * Created by Marc on 8/20/16
  */
+@SuppressWarnings("unused")
 public class PacketStartReboot extends BasePacket {
 
     public PacketStartReboot() {

@@ -14,6 +14,8 @@ import com.palacemc.core.packets.adapters.SettingsAdapter;
 import com.palacemc.core.player.CPlayerManager;
 import com.palacemc.core.player.impl.CorePlayerManager;
 import com.palacemc.core.plugin.PluginInfo;
+import com.palacemc.core.utils.ItemUtil;
+import com.palacemc.core.utils.SqlUtil;
 import lombok.Getter;
 import lombok.Setter;
 import org.bukkit.Bukkit;
@@ -30,6 +32,7 @@ import org.bukkit.plugin.java.JavaPlugin;
 import org.bukkit.scheduler.BukkitScheduler;
 
 import java.net.URISyntaxException;
+import java.util.List;
 
 @PluginInfo(name = "Core")
 public class Core extends JavaPlugin {
@@ -92,7 +95,7 @@ public class Core extends JavaPlugin {
     }
 
     public void registerListeners() {
-        registerListener(new ItemUtils());
+        registerListener(new ItemUtil());
     }
 
     public void registerCommands() {
@@ -116,12 +119,7 @@ public class Core extends JavaPlugin {
     }
 
     public static String getVersion() {
-        String v = getPlugin(Core.class).getDescription().getVersion();
-        if (v != null) {
-            return v;
-        } else {
-            return "1.0";
-        }
+        return getInstance().getDescription().getVersion();
     }
 
     /* Managers */
@@ -154,6 +152,15 @@ public class Core extends JavaPlugin {
     @SuppressWarnings("unused")
     public static World getWorld(String name) {
         return getBukkitServer().getWorld(name);
+    }
+
+    public static World getDefaultWorld() {
+        return getBukkitServer().getWorlds().get(0);
+    }
+
+    @SuppressWarnings("unused")
+    public static List<World> getWorlds() {
+        return getBukkitServer().getWorlds();
     }
 
     @SuppressWarnings("unused")

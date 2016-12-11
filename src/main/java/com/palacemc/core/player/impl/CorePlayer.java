@@ -57,6 +57,7 @@ public class CorePlayer implements CPlayer {
     }
 
     @Override
+    @SuppressWarnings("deprecation")
     public void setMaxHealth(double health) {
         if (getStatus() != PlayerStatus.JOINED) return;
         if (getBukkitPlayer() == null) return;
@@ -86,8 +87,8 @@ public class CorePlayer implements CPlayer {
 
     @Override
     public Location getLocation() {
-        if (getStatus() != PlayerStatus.JOINED) return new Location(Core.getWorld("world"), 0, 64, 0);
-        if (getBukkitPlayer() == null) return new Location(Core.getWorld("world"), 0, 64, 0);
+        if (getStatus() != PlayerStatus.JOINED) return new Location(Core.getDefaultWorld(), 0, 64, 0);
+        if (getBukkitPlayer() == null) return new Location(Core.getDefaultWorld(), 0, 64, 0);
         return getBukkitPlayer().getLocation();
     }
 
@@ -128,6 +129,7 @@ public class CorePlayer implements CPlayer {
     }
 
     @Override
+    @SuppressWarnings("deprecation")
     public void resetPlayer() {
         if (getStatus() != PlayerStatus.JOINED) return;
         if (getBukkitPlayer() == null) return;

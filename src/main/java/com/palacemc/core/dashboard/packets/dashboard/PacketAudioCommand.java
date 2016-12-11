@@ -9,6 +9,7 @@ import java.util.UUID;
 /**
  * Created by Marc on 9/2/16
  */
+@SuppressWarnings("unused")
 public class PacketAudioCommand extends BasePacket {
     private UUID uuid;
     private int auth;

@@ -14,6 +14,7 @@ import java.util.UUID;
 /**
  * Created by Marc on 9/3/16
  */
+@SuppressWarnings({"CanBeFinal", "unused"})
 public class PacketTabComplete extends BasePacket {
     private UUID uuid;
     private String command;

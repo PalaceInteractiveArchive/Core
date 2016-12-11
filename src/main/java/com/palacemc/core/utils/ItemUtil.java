@@ -1,4 +1,4 @@
-package com.palacemc.core;
+package com.palacemc.core.utils;
 
 import com.comphenix.protocol.utility.MinecraftReflection;
 import com.comphenix.protocol.wrappers.nbt.NbtCompound;
@@ -11,15 +11,17 @@ import org.bukkit.event.inventory.InventoryClickEvent;
 import org.bukkit.event.player.PlayerDropItemEvent;
 import org.bukkit.inventory.ItemStack;
 
-public class ItemUtils implements Listener {
+public class ItemUtil implements Listener {
 
     private static final String UNABLE_TO_MOVE = "unableToMove";
     private static final String UNABLE_TO_DROP = "unableToDrop";
 
+    @SuppressWarnings("unused")
     public static ItemStack makeUnableToMove(ItemStack stack) {
         return setNBTForItemstack(stack, UNABLE_TO_MOVE);
     }
 
+    @SuppressWarnings("unused")
     public static ItemStack makeUnableToDrop(ItemStack stack) {
         return setNBTForItemstack(stack, UNABLE_TO_DROP);
     }

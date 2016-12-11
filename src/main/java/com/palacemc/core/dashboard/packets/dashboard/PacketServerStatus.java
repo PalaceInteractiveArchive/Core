@@ -8,6 +8,7 @@ import com.palacemc.core.dashboard.packets.PacketID;
 /**
  * Created by Marc on 6/15/15
  */
+@SuppressWarnings("unused")
 public class PacketServerStatus extends BasePacket {
     private int onlineCount;
     private JsonArray serverStatus;

@@ -14,6 +14,7 @@ import java.util.UUID;
 /**
  * Created by Marc on 9/12/16
  */
+@SuppressWarnings("unused")
 public class PacketMaintenanceWhitelist extends BasePacket {
     private List<UUID> allowed = new ArrayList<>();
 

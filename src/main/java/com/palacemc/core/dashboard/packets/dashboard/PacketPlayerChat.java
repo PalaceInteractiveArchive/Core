@@ -9,6 +9,7 @@ import java.util.UUID;
 /**
  * Created by Marc on 7/15/16
  */
+@SuppressWarnings("unused")
 public class PacketPlayerChat extends BasePacket {
     private UUID uuid;
     private String message;
