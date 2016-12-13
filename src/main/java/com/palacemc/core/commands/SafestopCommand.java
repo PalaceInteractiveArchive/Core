@@ -19,21 +19,26 @@ import org.bukkit.command.CommandSender;
 @CommandPermission(rank = Rank.WIZARD)
 public class SafestopCommand extends CoreCommand {
 
+    private Core instance = Core.getPlugin(Core.class);
+
     public SafestopCommand() {
         super("safestop");
     }
 
     @Override
     protected void handleCommandUnspecific(CommandSender sender, String[] args) throws CommandException {
-        sender.sendMessage(ChatColor.RED + "Shutting server...");
+        sender.sendMessage(ChatColor.RED + "Shutting the server down...");
+
         for (World world : Bukkit.getWorlds()) {
             world.save();
         }
-        PacketEmptyServer packet = new PacketEmptyServer(Core.getInstanceName());
-        Core.getDashboardConnection().send(packet);
+
+        PacketEmptyServer packet = new PacketEmptyServer(instance.getInstanceName());
+        instance.getDashboardConnection().send(packet);
+
         Bukkit.getScheduler().runTaskTimer(Core.getInstance(), () -> {
             if (Bukkit.getOnlinePlayers().size() <= 0) {
-                Core.getDashboardConnection().stop();
+                instance.getDashboardConnection().stop();
                 Bukkit.shutdown();
             }
         }, 0L, 40L);

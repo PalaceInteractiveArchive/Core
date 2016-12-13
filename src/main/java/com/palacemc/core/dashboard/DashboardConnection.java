@@ -26,71 +26,84 @@ import java.util.UUID;
  */
 @SuppressWarnings("unused")
 public class DashboardConnection {
-    protected WebSocketClient ws;
-    private boolean attempted = false;
+    private WebSocketClient client;
+    private boolean hasAttempted = false;
 
-    public DashboardConnection() throws URISyntaxException {
+    private Core instance = Core.getPlugin(Core.class);
+
+    private String dashboardURL = instance.getConfig().getString("dashbordURL");
+
+    public DashboardConnection() {
         start();
     }
 
-    private void start() throws URISyntaxException {
-        String pg = Core.isTestNetwork() ? ".playground" : "";
-        ws = new WebSocketClient(new URI("ws://socket.dashboard" + pg + ".palace.network:7892"), new Draft_10()) {
-            @Override
-            public void onMessage(String message) {
-                JsonObject object = (JsonObject) new JsonParser().parse(message);
-                if (!object.has("id")) {
-                    return;
-                }
-                int id = object.get("id").getAsInt();
-                System.out.println(object.toString());
-                switch (id) {
-                    case 50: {
-                        PacketMention packet = new PacketMention().fromJSON(object);
-                        UUID uuid = packet.getUniqueId();
-                        Player player = Bukkit.getPlayer(uuid);
-                        if (player == null) {
-                            return;
-                        }
-                        player.playSound(player.getLocation(), Sound.ENTITY_EXPERIENCE_ORB_PICKUP, 50f, 1f);
-                        break;
+    private void start() {
+        try {
+            client = new WebSocketClient(new URI(dashboardURL), new Draft_10()) {
+                @Override
+                public void onMessage(String message) {
+                    JsonObject object = (JsonObject) new JsonParser().parse(message);
+                    if (!object.has("id")) {
+                        return;
                     }
+
+                    int id = object.get("id").getAsInt();
+//                    System.out.println(object.toString());
+
+                    switch (id) {
+                        case 50: {
+                            PacketMention packet = new PacketMention().fromJSON(object);
+                            UUID uuid = packet.getUniqueId();
+
+                            Player player = Bukkit.getPlayer(uuid);
+
+                            if (player == null) {
+                                return;
+                            }
+
+                            player.playSound(player.getLocation(), Sound.ENTITY_EXPERIENCE_ORB_PICKUP, 50f, 1f);
+                            break;
+                        }
+                    }
+
+                    IncomingPacketEvent event = new IncomingPacketEvent(id, object.toString());
+                    Bukkit.getPluginManager().callEvent(event);
                 }
-                IncomingPacketEvent event = new IncomingPacketEvent(id, object.toString());
-                Bukkit.getPluginManager().callEvent(event);
-            }
 
-            @Override
-            public void onOpen(ServerHandshake handshake) {
-                System.out.println("Successfully connected to Dashboard");
-                DashboardConnection.this.send(new PacketConnectionType(PacketConnectionType.ConnectionType.INSTANCE).getJSON().toString());
-                DashboardConnection.this.send(new PacketServerName(Core.getInstanceName()).getJSON().toString());
-                attempted = false;
-            }
+                @Override
+                public void onOpen(ServerHandshake handshake) {
+                    System.out.println("Successfully connected to Dashboard");
 
-            @Override
-            public void onClose(int code, String reason, boolean remote) {
-                System.out.println(code + " Disconnected from Dashboard! Reconnecting...");
-                new Timer().schedule(new TimerTask() {
-                    @Override
-                    public void run() {
-                        try {
+                    DashboardConnection.this.send(
+                            new PacketConnectionType(PacketConnectionType.ConnectionType.INSTANCE).getJSON().toString());
+
+                    DashboardConnection.this.send(new PacketServerName(instance.getInstanceName()).getJSON().toString());
+                    hasAttempted = false;
+                }
+
+                @Override
+                public void onClose(int code, String reason, boolean remote) {
+                    System.out.println(code + " Disconnected from Dashboard! Reconnecting...");
+
+                    new Timer().schedule(new TimerTask() {
+                        @Override
+                        public void run() {
                             start();
-                        } catch (URISyntaxException e) {
-                            e.printStackTrace();
                         }
-                    }
-                }, 5000L);
-            }
+                    }, 5000L);
+                }
 
-            @Override
-            public void onError(Exception ex) {
-                System.out.println("Error in Dashboard connection");
-                ex.printStackTrace();
-            }
+                @Override
+                public void onError(Exception ex) {
+                    System.out.println("Error in Dashboard connection");
+                    ex.printStackTrace();
+                }
 
-        };
-        ws.connect();
+            };
+        } catch (URISyntaxException e) {
+            e.printStackTrace();
+        }
+        client.connect();
     }
 
     public void send(String s) {
@@ -98,16 +111,16 @@ public class DashboardConnection {
             Bukkit.getLogger().severe("WebSocket disconnected, cannot send packet!");
             return;
         }
-        ws.send(s);
+        client.send(s);
     }
 
     @SuppressWarnings("BooleanMethodIsAlwaysInverted")
     public boolean isConnected() {
-        return ws != null && ws.getConnection() != null && !ws.getConnection().isConnecting() && ws.getConnection().isOpen();
+        return client != null && client.getConnection() != null && !client.getConnection().isConnecting() && client.getConnection().isOpen();
     }
 
     public void stop() {
-        ws.close();
+        client.close();
     }
 
     public void send(BasePacket packet) {
