@@ -31,7 +31,7 @@ public class DashboardConnection {
 
     private Core instance = Core.getPlugin(Core.class);
 
-    private String dashboardURL = instance.getConfig().getString("dashbordURL");
+    private String dashboardURL = instance.getConfig().getString("dashboardURL");
 
     public DashboardConnection() {
         start();
