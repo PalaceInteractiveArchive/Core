@@ -70,6 +70,8 @@ public class CorePlayerScoreboardManager implements CPlayerScoreboardManager {
     public CPlayerScoreboardManager title(String title) {
         if (scoreboard == null) setup();
         if (this.title != null && this.title.equals(title)) return this;
+        if (scoreboardObjective == null) setup();
+
         this.title = title;
         scoreboardObjective.setDisplayName(title);
         player.getBukkitPlayer().setScoreboard(scoreboard);
@@ -79,7 +81,12 @@ public class CorePlayerScoreboardManager implements CPlayerScoreboardManager {
     private void setup() {
         lines = HashBiMap.create();
         scoreboard = Bukkit.getScoreboardManager().getNewScoreboard();
+
+        if (scoreboard == null) return;
+        if (player.getBukkitPlayer() == null) return;
+
         player.getBukkitPlayer().setScoreboard(scoreboard);
+
         scoreboardObjective = scoreboard.registerNewObjective(OBJECTIVE, "dummy");
         scoreboardObjective.setDisplaySlot(DisplaySlot.SIDEBAR);
     }
