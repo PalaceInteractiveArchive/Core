@@ -64,6 +64,7 @@ public interface CPlayer {
     CPlayerActionBarManager getActionBar();
     CPlayerBossBarManager getBossBar();
     CPlayerHeaderFooterManager getHeaderFooter();
+    CPlayerParticlesManager getParticles();
     CPlayerResourcePackManager getResourcePack();
     CPlayerScoreboardManager getScoreboard();
     CPlayerTitleManager getTitle();
