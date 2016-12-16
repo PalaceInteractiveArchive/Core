@@ -3,6 +3,8 @@ package com.palacemc.core.player.impl;
 import com.palacemc.core.Core;
 import com.palacemc.core.events.CorePlayerJoinDelayedEvent;
 import org.bukkit.ChatColor;
+import org.bukkit.craftbukkit.v1_11_R1.entity.CraftPlayer;
+import org.bukkit.entity.Player;
 import org.bukkit.event.EventHandler;
 import org.bukkit.event.EventPriority;
 import org.bukkit.event.Listener;
@@ -29,7 +31,14 @@ public class CorePlayerManagerListener implements Listener {
 
     @EventHandler(ignoreCancelled = true, priority = EventPriority.LOW)
     public void onPlayerJoin(PlayerJoinEvent event) {
-        Core.getPlayerManager().playerJoined(event.getPlayer().getUniqueId());
+        String textureHash = "";
+        try {
+            Player player = event.getPlayer();
+            textureHash = ((CraftPlayer) player).getHandle().getProfile().getProperties().get("textures").iterator()
+                    .next().getValue();
+        } catch (Exception ignored) {
+        }
+        Core.getPlayerManager().playerJoined(event.getPlayer().getUniqueId(), textureHash);
         CorePlayerJoinDelayedEvent delayedEvent = new CorePlayerJoinDelayedEvent(Core.getPlayerManager()
                 .getPlayer(event.getPlayer()), event.getJoinMessage());
         Core.runTaskLater(() -> {

@@ -83,6 +83,9 @@ public interface CPlayer {
     Rank getRank();
     void setRank(Rank rank);
 
+    void setTextureHash(String textureHash);
+    String getTextureHash();
+
     enum PlayerStatus {
         LOGIN, JOINED, LEFT
     }

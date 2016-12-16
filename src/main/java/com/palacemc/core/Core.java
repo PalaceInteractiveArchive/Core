@@ -37,19 +37,12 @@ import java.util.List;
 
 @PluginInfo(name = "Core")
 public class Core extends JavaPlugin {
-    @Getter
-    @Setter
-    private static String serverType = "Hub";
-    @Getter
-    @Setter
-    private static String instanceName = "";
-    @Getter
-    @Setter
-    private static boolean testNetwork = false;
+    @Getter @Setter private static String serverType = "Hub";
+    @Getter @Setter private static String instanceName = "";
+    @Getter @Setter private static boolean testNetwork = false;
     private CoreCommandMap commandMap;
 
-    @Getter
-    private static DashboardConnection dashboardConnection;
+    @Getter private static DashboardConnection dashboardConnection;
 
     private LanguageFormatter languageFormatter;
     private CPlayerManager playerManager;
@@ -79,6 +72,7 @@ public class Core extends JavaPlugin {
         sqlUtil = new SqlUtil();
         // Configurations
         configFile = new YAMLConfigurationFile(this, "", "config.yml");
+        getConfig().getDefaults();
         setServerType(getCoreConfig().getString("server-type"));
         setInstanceName(getCoreConfig().getString("instance-name"));
         setTestNetwork(getCoreConfig().getBoolean("test-network"));

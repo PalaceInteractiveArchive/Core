@@ -9,7 +9,7 @@ import java.util.UUID;
 public interface CPlayerManager extends Iterable<CPlayer> {
 
     void playerLoggedIn(UUID uuid, String name);
-    void playerJoined(UUID uuid);
+    void playerJoined(UUID uuid, String textureHash);
     void playerLoggedOut(UUID uuid);
 
     void broadcastMessage(String message);

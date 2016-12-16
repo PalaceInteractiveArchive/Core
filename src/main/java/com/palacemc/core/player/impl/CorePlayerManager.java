@@ -27,9 +27,11 @@ public class CorePlayerManager implements CPlayerManager {
     }
 
     @Override
-    public void playerJoined(UUID uuid) {
-        if (getPlayer(uuid) == null) return;
-        getPlayer(uuid).setStatus(CPlayer.PlayerStatus.JOINED);
+    public void playerJoined(UUID uuid, String textureHash) {
+        CPlayer player = getPlayer(uuid);
+        if (player == null) return;
+        player.setStatus(CPlayer.PlayerStatus.JOINED);
+        player.setTextureHash(textureHash);
     }
 
     @Override
