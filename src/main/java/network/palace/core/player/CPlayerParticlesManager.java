@@ -10,5 +10,6 @@ public interface CPlayerParticlesManager {
     void send(EnumWrappers.Particle particle, int numberOfParticles);
     void send(Location location, EnumWrappers.Particle particle);
     void send(Location location, EnumWrappers.Particle particle, int numberOfParticles);
+    void send(Location location, EnumWrappers.Particle particle, int numberOfParticles, float offsetX, float offsetY, float offsetZ, float speed);
 
 }
