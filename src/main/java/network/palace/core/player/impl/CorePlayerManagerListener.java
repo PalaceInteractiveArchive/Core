@@ -15,13 +15,16 @@ import org.bukkit.event.player.PlayerQuitEvent;
 
 public class CorePlayerManagerListener implements Listener {
 
+    private Core instance = Core.getPlugin(Core.class);
+
     @EventHandler(ignoreCancelled = true, priority = EventPriority.LOW)
     public void onPlayerLogin(AsyncPlayerPreLoginEvent event) {
-        if (!Core.getDashboardConnection().isConnected()) {
+        if (!instance.getDashboardConnection().isConnected()) {
             event.setKickMessage(ChatColor.AQUA + "Players can not join right now. Try again in a few seconds!");
             event.setLoginResult(AsyncPlayerPreLoginEvent.Result.KICK_OTHER);
             return;
         }
+
         if (event.getLoginResult() == AsyncPlayerPreLoginEvent.Result.ALLOWED) {
             Core.getPlayerManager().playerLoggedIn(event.getUniqueId(), event.getName());
         } else {
@@ -41,6 +44,7 @@ public class CorePlayerManagerListener implements Listener {
         Core.getPlayerManager().playerJoined(event.getPlayer().getUniqueId(), textureHash);
         CorePlayerJoinDelayedEvent delayedEvent = new CorePlayerJoinDelayedEvent(Core.getPlayerManager()
                 .getPlayer(event.getPlayer()), event.getJoinMessage());
+
         Core.runTaskLater(() -> {
             delayedEvent.call();
             event.setJoinMessage(delayedEvent.getJoinMessage());

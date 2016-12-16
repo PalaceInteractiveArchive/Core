@@ -304,7 +304,7 @@ public class Economy {
         try (Connection connection = Core.getSqlUtil().getConnection()) {
             PreparedStatement sql = connection.prepareStatement("INSERT INTO economy_logs (uuid, amount, type, source, server, timestamp)" +
                     " VALUES ('" + uuid.toString() + "', '" + amount + "', '" + type + "', '" + source + "', '" +
-                    Core.getInstanceName() + "', '" + System.currentTimeMillis() / 1000 + "')");
+                    Core.getInstance().getInstanceName() + "', '" + System.currentTimeMillis() / 1000 + "')");
             sql.execute();
             sql.close();
         } catch (SQLException e) {

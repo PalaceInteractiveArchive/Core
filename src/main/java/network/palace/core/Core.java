@@ -32,17 +32,16 @@ import org.bukkit.plugin.PluginManager;
 import org.bukkit.plugin.java.JavaPlugin;
 import org.bukkit.scheduler.BukkitScheduler;
 
-import java.net.URISyntaxException;
 import java.util.List;
 
 @PluginInfo(name = "Core")
 public class Core extends JavaPlugin {
-    @Getter @Setter private static String serverType = "Hub";
-    @Getter @Setter private static String instanceName = "";
-    @Getter @Setter private static boolean testNetwork = false;
+    @Getter @Setter private String serverType = "Hub";
+    @Getter @Setter private String instanceName = "";
+    @Getter @Setter private boolean testNetwork = false;
     private CoreCommandMap commandMap;
 
-    @Getter private static DashboardConnection dashboardConnection;
+    @Getter private DashboardConnection dashboardConnection;
 
     private LanguageFormatter languageFormatter;
     private CPlayerManager playerManager;
@@ -77,11 +76,7 @@ public class Core extends JavaPlugin {
         setInstanceName(getCoreConfig().getString("instance-name"));
         setTestNetwork(getCoreConfig().getBoolean("test-network"));
         //Dashboard
-        try {
-            dashboardConnection = new DashboardConnection();
-        } catch (URISyntaxException e) {
-            e.printStackTrace();
-        }
+        dashboardConnection = new DashboardConnection();
         // Register Listeners
         registerListeners();
         // Register Commands
