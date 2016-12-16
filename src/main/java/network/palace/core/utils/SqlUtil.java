@@ -1,6 +1,6 @@
-package com.palacemc.core.utils;
+package network.palace.core.utils;
 
-import com.palacemc.core.player.Rank;
+import network.palace.core.player.Rank;
 import org.bukkit.configuration.file.YamlConfiguration;
 
 import java.io.File;

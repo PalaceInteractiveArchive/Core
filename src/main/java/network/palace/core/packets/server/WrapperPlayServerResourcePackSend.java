@@ -16,9 +16,9 @@
  * You should have received a copy of the GNU General Public License
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
-package com.palacemc.core.packets.server;
+package network.palace.core.packets.server;
 
-import com.palacemc.core.packets.AbstractPacket;
+import network.palace.core.packets.AbstractPacket;
 import com.comphenix.protocol.PacketType;
 import com.comphenix.protocol.events.PacketContainer;
 

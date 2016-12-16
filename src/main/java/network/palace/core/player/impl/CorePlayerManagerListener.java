@@ -1,7 +1,7 @@
-package com.palacemc.core.player.impl;
+package network.palace.core.player.impl;
 
-import com.palacemc.core.Core;
-import com.palacemc.core.events.CorePlayerJoinDelayedEvent;
+import network.palace.core.Core;
+import network.palace.core.events.CorePlayerJoinDelayedEvent;
 import org.bukkit.ChatColor;
 import org.bukkit.craftbukkit.v1_11_R1.entity.CraftPlayer;
 import org.bukkit.entity.Player;

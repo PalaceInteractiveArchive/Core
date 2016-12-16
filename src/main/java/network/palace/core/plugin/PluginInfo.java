@@ -1,4 +1,4 @@
-package com.palacemc.core.plugin;
+package network.palace.core.plugin;
 
 import java.lang.annotation.ElementType;
 import java.lang.annotation.Retention;

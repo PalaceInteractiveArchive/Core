@@ -1,13 +1,13 @@
-package com.palacemc.core.commands;
+package network.palace.core.commands;
 
 import com.google.common.base.Joiner;
-import com.palacemc.core.Core;
-import com.palacemc.core.command.CommandException;
-import com.palacemc.core.command.CommandMeta;
-import com.palacemc.core.command.CommandPermission;
-import com.palacemc.core.command.CoreCommand;
-import com.palacemc.core.player.CPlayer;
-import com.palacemc.core.player.Rank;
+import network.palace.core.Core;
+import network.palace.core.command.CommandException;
+import network.palace.core.command.CommandMeta;
+import network.palace.core.command.CommandPermission;
+import network.palace.core.command.CoreCommand;
+import network.palace.core.player.CPlayer;
+import network.palace.core.player.Rank;
 import org.bukkit.command.CommandSender;
 
 import java.util.Collections;

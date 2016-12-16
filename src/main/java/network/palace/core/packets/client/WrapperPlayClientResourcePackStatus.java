@@ -16,9 +16,9 @@
  * You should have received a copy of the GNU General Public License
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
-package com.palacemc.core.packets.client;
+package network.palace.core.packets.client;
 
-import com.palacemc.core.packets.AbstractPacket;
+import network.palace.core.packets.AbstractPacket;
 import com.comphenix.protocol.PacketType;
 import com.comphenix.protocol.events.PacketContainer;
 import com.comphenix.protocol.wrappers.EnumWrappers.ResourcePackStatus;

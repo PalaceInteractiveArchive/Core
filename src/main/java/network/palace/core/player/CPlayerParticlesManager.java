@@ -1,4 +1,4 @@
-package com.palacemc.core.player;
+package network.palace.core.player;
 
 import com.comphenix.protocol.wrappers.EnumWrappers;
 import org.bukkit.Location;

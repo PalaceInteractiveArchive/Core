@@ -1,4 +1,4 @@
-package com.palacemc.core.dashboard.packets;
+package network.palace.core.dashboard.packets;
 
 /**
  * Created by Marc on 6/15/15

@@ -1,4 +1,4 @@
-package com.palacemc.core.library;
+package network.palace.core.library;
 
 import lombok.Getter;
 import org.bukkit.plugin.java.JavaPlugin;

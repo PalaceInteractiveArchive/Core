@@ -1,4 +1,4 @@
-package com.palacemc.core.config;
+package network.palace.core.config;
 
 import lombok.NonNull;
 import org.bukkit.configuration.file.FileConfiguration;

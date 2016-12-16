@@ -1,14 +1,14 @@
-package com.palacemc.core.commands;
+package network.palace.core.commands;
 
 import com.google.common.base.Charsets;
 import com.google.common.io.Resources;
-import com.palacemc.core.Core;
-import com.palacemc.core.command.CommandException;
-import com.palacemc.core.command.CommandMeta;
-import com.palacemc.core.command.CommandPermission;
-import com.palacemc.core.command.CoreCommand;
-import com.palacemc.core.config.LanguageFormatter;
-import com.palacemc.core.player.Rank;
+import network.palace.core.Core;
+import network.palace.core.command.CommandException;
+import network.palace.core.command.CommandMeta;
+import network.palace.core.command.CommandPermission;
+import network.palace.core.command.CoreCommand;
+import network.palace.core.config.LanguageFormatter;
+import network.palace.core.player.Rank;
 import org.bukkit.Bukkit;
 import org.bukkit.command.CommandSender;
 import org.bukkit.plugin.Plugin;
@@ -43,8 +43,8 @@ public class PluginsCommand extends CoreCommand {
         StringBuilder thirdPartySB = new StringBuilder();
         // Loop through plugins and add
         for (Plugin plugin : Bukkit.getPluginManager().getPlugins()) {
-            if (plugin instanceof com.palacemc.core.plugin.Plugin) {
-                com.palacemc.core.plugin.Plugin corePlugin = (com.palacemc.core.plugin.Plugin) plugin;
+            if (plugin instanceof network.palace.core.plugin.Plugin) {
+                network.palace.core.plugin.Plugin corePlugin = (network.palace.core.plugin.Plugin) plugin;
                 pluginsList.add(new PluginInfo(corePlugin.getInfo().name(), corePlugin.isEnabled()));
             } else if (!(plugin instanceof Core)) {
                 thirdPartyList.add(new PluginInfo(plugin.getName(), plugin.isEnabled()));

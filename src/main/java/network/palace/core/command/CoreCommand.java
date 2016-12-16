@@ -1,10 +1,10 @@
-package com.palacemc.core.command;
+package network.palace.core.command;
 
 import com.google.common.collect.ImmutableList;
-import com.palacemc.core.Core;
-import com.palacemc.core.player.CPlayer;
-import com.palacemc.core.player.Rank;
-import com.palacemc.core.plugin.Plugin;
+import network.palace.core.Core;
+import network.palace.core.player.CPlayer;
+import network.palace.core.player.Rank;
+import network.palace.core.plugin.Plugin;
 import lombok.Getter;
 import lombok.Setter;
 import org.bukkit.Bukkit;

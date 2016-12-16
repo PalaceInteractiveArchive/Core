@@ -1,4 +1,4 @@
-package com.palacemc.core.dashboard.packets;
+package network.palace.core.dashboard.packets;
 
 import com.google.gson.JsonObject;
 

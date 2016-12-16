@@ -1,8 +1,8 @@
-package com.palacemc.core.player.impl;
+package network.palace.core.player.impl;
 
-import com.palacemc.core.packets.server.WrapperPlayServerChat;
-import com.palacemc.core.player.CPlayer;
-import com.palacemc.core.player.CPlayerActionBarManager;
+import network.palace.core.packets.server.WrapperPlayServerChat;
+import network.palace.core.player.CPlayer;
+import network.palace.core.player.CPlayerActionBarManager;
 import com.comphenix.protocol.wrappers.WrappedChatComponent;
 import lombok.AllArgsConstructor;
 

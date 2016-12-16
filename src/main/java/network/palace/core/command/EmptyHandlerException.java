@@ -1,4 +1,4 @@
-package com.palacemc.core.command;
+package network.palace.core.command;
 
 public final class EmptyHandlerException extends CommandException implements FriendlyException {
 

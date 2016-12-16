@@ -1,8 +1,8 @@
-package com.palacemc.core.player.impl;
+package network.palace.core.player.impl;
 
-import com.palacemc.core.packets.server.WrapperPlayServerResourcePackSend;
-import com.palacemc.core.player.CPlayer;
-import com.palacemc.core.player.CPlayerResourcePackManager;
+import network.palace.core.packets.server.WrapperPlayServerResourcePackSend;
+import network.palace.core.player.CPlayer;
+import network.palace.core.player.CPlayerResourcePackManager;
 import lombok.AllArgsConstructor;
 
 @AllArgsConstructor

@@ -1,6 +1,6 @@
-package com.palacemc.core.events;
+package network.palace.core.events;
 
-import com.palacemc.core.player.CPlayer;
+import network.palace.core.player.CPlayer;
 import lombok.AllArgsConstructor;
 import lombok.Getter;
 import lombok.Setter;

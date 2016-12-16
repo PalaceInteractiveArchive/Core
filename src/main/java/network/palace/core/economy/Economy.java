@@ -1,8 +1,8 @@
-package com.palacemc.core.economy;
+package network.palace.core.economy;
 
-import com.palacemc.core.Core;
-import com.palacemc.core.events.EconomyUpdateEvent;
-import com.palacemc.core.player.CPlayer;
+import network.palace.core.Core;
+import network.palace.core.events.EconomyUpdateEvent;
+import network.palace.core.player.CPlayer;
 import org.bukkit.Bukkit;
 import org.bukkit.ChatColor;
 import org.bukkit.command.CommandSender;

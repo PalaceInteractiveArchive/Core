@@ -1,4 +1,4 @@
-package com.palacemc.core.player;
+package network.palace.core.player;
 
 import org.bukkit.entity.Player;
 

@@ -1,4 +1,4 @@
-package com.palacemc.core.events;
+package network.palace.core.events;
 
 import lombok.AllArgsConstructor;
 import lombok.Getter;

@@ -1,12 +1,12 @@
-package com.palacemc.core.player.impl;
+package network.palace.core.player.impl;
 
 import com.google.common.io.ByteArrayDataOutput;
 import com.google.common.io.ByteStreams;
-import com.palacemc.core.Core;
-import com.palacemc.core.config.LanguageFormatter;
-import com.palacemc.core.packets.AbstractPacket;
-import com.palacemc.core.plugin.Plugin;
-import com.palacemc.core.player.*;
+import network.palace.core.Core;
+import network.palace.core.config.LanguageFormatter;
+import network.palace.core.packets.AbstractPacket;
+import network.palace.core.player.*;
+import network.palace.core.plugin.Plugin;
 import lombok.Getter;
 import lombok.Setter;
 import org.bukkit.Bukkit;

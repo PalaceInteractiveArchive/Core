@@ -1,8 +1,8 @@
-package com.palacemc.core.dashboard.packets.audio;
+package network.palace.core.dashboard.packets.audio;
 
 import com.google.gson.JsonObject;
-import com.palacemc.core.dashboard.packets.BasePacket;
-import com.palacemc.core.dashboard.packets.PacketID;
+import network.palace.core.dashboard.packets.BasePacket;
+import network.palace.core.dashboard.packets.PacketID;
 
 import java.util.UUID;
 

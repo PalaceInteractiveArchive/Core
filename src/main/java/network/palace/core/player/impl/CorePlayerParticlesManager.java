@@ -1,8 +1,8 @@
-package com.palacemc.core.player.impl;
+package network.palace.core.player.impl;
 
-import com.palacemc.core.packets.server.WrapperPlayServerWorldParticles;
-import com.palacemc.core.player.CPlayer;
-import com.palacemc.core.player.CPlayerParticlesManager;
+import network.palace.core.packets.server.WrapperPlayServerWorldParticles;
+import network.palace.core.player.CPlayer;
+import network.palace.core.player.CPlayerParticlesManager;
 import com.comphenix.protocol.wrappers.EnumWrappers;
 import lombok.AllArgsConstructor;
 import org.bukkit.Location;

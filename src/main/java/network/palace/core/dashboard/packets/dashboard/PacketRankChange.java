@@ -1,9 +1,9 @@
-package com.palacemc.core.dashboard.packets.dashboard;
+package network.palace.core.dashboard.packets.dashboard;
 
 import com.google.gson.JsonObject;
-import com.palacemc.core.dashboard.packets.BasePacket;
-import com.palacemc.core.dashboard.packets.PacketID;
-import com.palacemc.core.player.Rank;
+import network.palace.core.dashboard.packets.BasePacket;
+import network.palace.core.dashboard.packets.PacketID;
+import network.palace.core.player.Rank;
 
 import java.util.UUID;
 

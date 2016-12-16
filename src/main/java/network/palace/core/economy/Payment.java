@@ -1,4 +1,4 @@
-package com.palacemc.core.economy;
+package network.palace.core.economy;
 
 import java.util.UUID;
 

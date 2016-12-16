@@ -1,4 +1,4 @@
-package com.palacemc.core.player;
+package network.palace.core.player;
 
 @SuppressWarnings("unused")
 public interface CPlayerActionBarManager {

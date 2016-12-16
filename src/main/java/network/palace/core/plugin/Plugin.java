@@ -1,10 +1,10 @@
-package com.palacemc.core.plugin;
+package network.palace.core.plugin;
 
-import com.palacemc.core.Core;
-import com.palacemc.core.command.CoreCommand;
-import com.palacemc.core.command.CoreCommandMap;
-import com.palacemc.core.config.LanguageFormatter;
-import com.palacemc.core.library.LibraryHandler;
+import network.palace.core.Core;
+import network.palace.core.command.CoreCommand;
+import network.palace.core.command.CoreCommandMap;
+import network.palace.core.config.LanguageFormatter;
+import network.palace.core.library.LibraryHandler;
 import lombok.Getter;
 import org.bukkit.Bukkit;
 import org.bukkit.ChatColor;

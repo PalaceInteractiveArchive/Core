@@ -1,7 +1,7 @@
-package com.palacemc.core.config;
+package network.palace.core.config;
 
-import com.palacemc.core.Core;
-import com.palacemc.core.player.CPlayer;
+import network.palace.core.Core;
+import network.palace.core.player.CPlayer;
 import org.bukkit.ChatColor;
 import org.bukkit.command.CommandSender;
 import org.bukkit.configuration.file.FileConfiguration;

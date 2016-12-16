@@ -1,4 +1,4 @@
-package com.palacemc.core.events;
+package network.palace.core.events;
 
 import org.bukkit.Bukkit;
 import org.bukkit.event.Event;

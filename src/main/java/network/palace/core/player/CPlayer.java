@@ -1,6 +1,6 @@
-package com.palacemc.core.player;
+package network.palace.core.player;
 
-import com.palacemc.core.packets.AbstractPacket;
+import network.palace.core.packets.AbstractPacket;
 import org.bukkit.GameMode;
 import org.bukkit.Location;
 import org.bukkit.Material;

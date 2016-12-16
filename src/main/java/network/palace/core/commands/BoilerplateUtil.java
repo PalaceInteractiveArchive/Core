@@ -1,4 +1,4 @@
-package com.palacemc.core.commands;
+package network.palace.core.commands;
 
 import java.util.Arrays;
 

@@ -1,10 +1,10 @@
-package com.palacemc.core.packets.adapters;
+package network.palace.core.packets.adapters;
 
 import com.comphenix.protocol.PacketType;
 import com.comphenix.protocol.events.PacketAdapter;
 import com.comphenix.protocol.events.PacketEvent;
-import com.palacemc.core.Core;
-import com.palacemc.core.player.CPlayer;
+import network.palace.core.Core;
+import network.palace.core.player.CPlayer;
 
 public class SettingsAdapter extends PacketAdapter {
 

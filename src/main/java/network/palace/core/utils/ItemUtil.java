@@ -1,4 +1,4 @@
-package com.palacemc.core.utils;
+package network.palace.core.utils;
 
 import com.comphenix.protocol.utility.MinecraftReflection;
 import com.comphenix.protocol.wrappers.nbt.NbtCompound;

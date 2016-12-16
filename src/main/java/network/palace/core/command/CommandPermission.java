@@ -1,6 +1,6 @@
-package com.palacemc.core.command;
+package network.palace.core.command;
 
-import com.palacemc.core.player.Rank;
+import network.palace.core.player.Rank;
 
 import java.lang.annotation.ElementType;
 import java.lang.annotation.Retention;

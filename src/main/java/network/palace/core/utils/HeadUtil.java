@@ -1,6 +1,6 @@
-package com.palacemc.core.utils;
+package network.palace.core.utils;
 
-import com.palacemc.core.player.CPlayer;
+import network.palace.core.player.CPlayer;
 import net.minecraft.server.v1_11_R1.Item;
 import net.minecraft.server.v1_11_R1.MojangsonParseException;
 import net.minecraft.server.v1_11_R1.MojangsonParser;

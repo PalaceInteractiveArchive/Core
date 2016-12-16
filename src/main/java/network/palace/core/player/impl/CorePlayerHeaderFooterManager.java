@@ -1,8 +1,8 @@
-package com.palacemc.core.player.impl;
+package network.palace.core.player.impl;
 
-import com.palacemc.core.packets.server.WrapperPlayServerPlayerListHeaderFooter;
-import com.palacemc.core.player.CPlayer;
-import com.palacemc.core.player.CPlayerHeaderFooterManager;
+import network.palace.core.packets.server.WrapperPlayServerPlayerListHeaderFooter;
+import network.palace.core.player.CPlayer;
+import network.palace.core.player.CPlayerHeaderFooterManager;
 import com.comphenix.protocol.wrappers.WrappedChatComponent;
 
 public class CorePlayerHeaderFooterManager implements CPlayerHeaderFooterManager {

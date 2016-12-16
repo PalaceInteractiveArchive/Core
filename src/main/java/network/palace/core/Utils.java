@@ -1,4 +1,4 @@
-package com.palacemc.core;
+package network.palace.core;
 
 @SuppressWarnings("unused")
 public class Utils {

@@ -1,11 +1,11 @@
-package com.palacemc.core.dashboard.packets.dashboard;
+package network.palace.core.dashboard.packets.dashboard;
 
 import com.google.gson.Gson;
 import com.google.gson.JsonArray;
 import com.google.gson.JsonElement;
 import com.google.gson.JsonObject;
-import com.palacemc.core.dashboard.packets.BasePacket;
-import com.palacemc.core.dashboard.packets.PacketID;
+import network.palace.core.dashboard.packets.BasePacket;
+import network.palace.core.dashboard.packets.PacketID;
 
 import java.util.ArrayList;
 import java.util.List;

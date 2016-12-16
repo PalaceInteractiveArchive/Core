@@ -1,4 +1,4 @@
-package com.palacemc.core.command;
+package network.palace.core.command;
 
 public final class PermissionException extends CommandException implements FriendlyException {
 

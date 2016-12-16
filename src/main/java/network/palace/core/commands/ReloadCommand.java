@@ -1,8 +1,8 @@
-package com.palacemc.core.commands;
+package network.palace.core.commands;
 
-import com.palacemc.core.command.CommandException;
-import com.palacemc.core.command.CommandMeta;
-import com.palacemc.core.command.CoreCommand;
+import network.palace.core.command.CommandException;
+import network.palace.core.command.CommandMeta;
+import network.palace.core.command.CoreCommand;
 import org.bukkit.ChatColor;
 import org.bukkit.command.CommandSender;
 

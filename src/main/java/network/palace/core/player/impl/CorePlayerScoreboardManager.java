@@ -1,9 +1,9 @@
-package com.palacemc.core.player.impl;
+package network.palace.core.player.impl;
 
 import com.google.common.collect.BiMap;
 import com.google.common.collect.HashBiMap;
-import com.palacemc.core.player.CPlayer;
-import com.palacemc.core.player.CPlayerScoreboardManager;
+import network.palace.core.player.CPlayer;
+import network.palace.core.player.CPlayerScoreboardManager;
 import org.bukkit.Bukkit;
 import org.bukkit.ChatColor;
 import org.bukkit.scoreboard.DisplaySlot;

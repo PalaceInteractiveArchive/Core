@@ -1,13 +1,13 @@
-package com.palacemc.core.dashboard;
+package network.palace.core.dashboard;
 
 import com.google.gson.JsonObject;
 import com.google.gson.JsonParser;
-import com.palacemc.core.Core;
-import com.palacemc.core.dashboard.packets.BasePacket;
-import com.palacemc.core.dashboard.packets.dashboard.PacketConnectionType;
-import com.palacemc.core.dashboard.packets.dashboard.PacketMention;
-import com.palacemc.core.dashboard.packets.dashboard.PacketServerName;
-import com.palacemc.core.events.IncomingPacketEvent;
+import network.palace.core.Core;
+import network.palace.core.dashboard.packets.BasePacket;
+import network.palace.core.dashboard.packets.dashboard.PacketConnectionType;
+import network.palace.core.dashboard.packets.dashboard.PacketMention;
+import network.palace.core.dashboard.packets.dashboard.PacketServerName;
+import network.palace.core.events.IncomingPacketEvent;
 import org.bukkit.Bukkit;
 import org.bukkit.Sound;
 import org.bukkit.entity.Player;

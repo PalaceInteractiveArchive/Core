@@ -1,9 +1,9 @@
-package com.palacemc.core.player.impl;
+package network.palace.core.player.impl;
 
-import com.palacemc.core.Core;
-import com.palacemc.core.player.CPlayer;
-import com.palacemc.core.player.CPlayerManager;
-import com.palacemc.core.player.Rank;
+import network.palace.core.Core;
+import network.palace.core.player.CPlayer;
+import network.palace.core.player.CPlayerManager;
+import network.palace.core.player.Rank;
 import org.bukkit.entity.Player;
 
 import java.util.Collection;

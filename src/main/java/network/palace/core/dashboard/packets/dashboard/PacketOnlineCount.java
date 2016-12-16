@@ -1,8 +1,8 @@
-package com.palacemc.core.dashboard.packets.dashboard;
+package network.palace.core.dashboard.packets.dashboard;
 
 import com.google.gson.JsonObject;
-import com.palacemc.core.dashboard.packets.BasePacket;
-import com.palacemc.core.dashboard.packets.PacketID;
+import network.palace.core.dashboard.packets.BasePacket;
+import network.palace.core.dashboard.packets.PacketID;
 
 /**
  * Created by Marc on 9/1/16

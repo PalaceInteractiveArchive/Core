@@ -1,12 +1,12 @@
-package com.palacemc.core.commands;
+package network.palace.core.commands;
 
-import com.palacemc.core.Core;
-import com.palacemc.core.command.CommandException;
-import com.palacemc.core.command.CommandMeta;
-import com.palacemc.core.command.CommandPermission;
-import com.palacemc.core.command.CoreCommand;
-import com.palacemc.core.dashboard.packets.dashboard.PacketEmptyServer;
-import com.palacemc.core.player.Rank;
+import network.palace.core.Core;
+import network.palace.core.command.CommandException;
+import network.palace.core.command.CommandMeta;
+import network.palace.core.command.CommandPermission;
+import network.palace.core.command.CoreCommand;
+import network.palace.core.dashboard.packets.dashboard.PacketEmptyServer;
+import network.palace.core.player.Rank;
 import org.bukkit.Bukkit;
 import org.bukkit.ChatColor;
 import org.bukkit.World;

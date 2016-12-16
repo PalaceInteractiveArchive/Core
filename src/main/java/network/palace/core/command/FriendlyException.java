@@ -1,4 +1,4 @@
-package com.palacemc.core.command;
+package network.palace.core.command;
 
 /**
  * Implement this on any exception that extends {@link CommandException} and the return value of the {@link #getFriendlyMessage()}

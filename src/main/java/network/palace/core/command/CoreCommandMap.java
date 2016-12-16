@@ -1,7 +1,7 @@
-package com.palacemc.core.command;
+package network.palace.core.command;
 
-import com.palacemc.core.Core;
-import com.palacemc.core.plugin.Plugin;
+import network.palace.core.Core;
+import network.palace.core.plugin.Plugin;
 import lombok.Getter;
 import org.bukkit.Bukkit;
 import org.bukkit.command.Command;
