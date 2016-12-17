@@ -1,9 +1,9 @@
 package network.palace.core.player.impl;
 
+import com.comphenix.protocol.wrappers.WrappedGameProfile;
 import network.palace.core.Core;
 import network.palace.core.events.CorePlayerJoinDelayedEvent;
 import org.bukkit.ChatColor;
-import org.bukkit.craftbukkit.v1_11_R1.entity.CraftPlayer;
 import org.bukkit.entity.Player;
 import org.bukkit.event.EventHandler;
 import org.bukkit.event.EventPriority;
@@ -37,8 +37,8 @@ public class CorePlayerManagerListener implements Listener {
         String textureHash = "";
         try {
             Player player = event.getPlayer();
-            textureHash = ((CraftPlayer) player).getHandle().getProfile().getProperties().get("textures").iterator()
-                    .next().getValue();
+            WrappedGameProfile wrappedGameProfile = WrappedGameProfile.fromPlayer(player);
+            textureHash = wrappedGameProfile.getProperties().get("textures").iterator() .next().getValue();
         } catch (Exception ignored) {
         }
         Core.getPlayerManager().playerJoined(event.getPlayer().getUniqueId(), textureHash);
