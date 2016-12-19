@@ -30,6 +30,8 @@ public class CorePlayerManager implements CPlayerManager {
     public void playerJoined(UUID uuid, String textureHash) {
         CPlayer player = getPlayer(uuid);
         if (player == null) return;
+        //Setup permissions for player
+        Core.getInstance().getPermissionManager().login(player);
         player.setStatus(CPlayer.PlayerStatus.JOINED);
         player.setTextureHash(textureHash);
     }

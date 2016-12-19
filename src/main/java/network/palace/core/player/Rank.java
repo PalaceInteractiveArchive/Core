@@ -1,6 +1,9 @@
 package network.palace.core.player;
 
+import network.palace.core.Core;
 import org.bukkit.ChatColor;
+
+import java.util.HashMap;
 
 @SuppressWarnings({"CanBeFinal", "unused"})
 public enum Rank {
@@ -96,35 +99,9 @@ public enum Rank {
         return op;
     }
 
-    /*public HashMap<String, Boolean> getPermissions() {
-        switch (this) {
-            case EMPRESS:
-            case EMPEROR:
-                return MCMagicCore.permManager.emperorPerms;
-            case WIZARD:
-                return MCMagicCore.permManager.wizPerms;
-            case PALADIN:
-                return MCMagicCore.permManager.palPerms;
-            case KNIGHT:
-                return MCMagicCore.permManager.knightPerms;
-            case SQUIRE:
-                return MCMagicCore.permManager.squirePerms;
-            case CHARACTER:
-                return MCMagicCore.permManager.charPerms;
-            case SPECIALGUEST:
-            case MCPROHOSTING:
-                return MCMagicCore.permManager.sgPerms;
-            case HONORABLE:
-            case MAJESTIC:
-            case NOBLE:
-            case DWELLER:
-            case SHAREHOLDER:
-            case DVCMEMBER:
-                return MCMagicCore.permManager.dwellerPerms;
-            default:
-                return MCMagicCore.permManager.settlerPerms;
-        }
-    }*/
+    public HashMap<String, Boolean> getPermissions() {
+        return Core.getInstance().getPermissionManager().getPermissions(this);
+    }
 
     public ChatColor getChatColor() {
         return chatColor;

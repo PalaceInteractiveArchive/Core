@@ -20,7 +20,6 @@ import java.util.UUID;
  * Created by Marc on 2/15/15
  */
 public class Economy {
-    private HashMap<String, Integer> map = new HashMap<>();
     private HashMap<UUID, Payment> balance = new HashMap<>();
     private HashMap<UUID, Payment> tokens = new HashMap<>();
     private String connUrl;

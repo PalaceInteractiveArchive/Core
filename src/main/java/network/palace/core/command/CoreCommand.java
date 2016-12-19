@@ -43,16 +43,11 @@ public abstract class CoreCommand implements CommandExecutor, TabCompleter {
     /**
      * Holds the name of this command.
      */
-    @Getter
-    private final String name;
+    @Getter private final String name;
 
-    @Getter
-    @Setter
-    private CoreCommand superCommand = null;
+    @Getter @Setter private CoreCommand superCommand = null;
 
-    @Getter
-    @Setter
-    private Rank rank = Rank.SETTLER;
+    @Getter @Setter private Rank rank = Rank.SETTLER;
 
     /**
      * Main constructor without sub-commands.

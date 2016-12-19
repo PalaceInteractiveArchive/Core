@@ -1,24 +1,23 @@
 package network.palace.core;
 
 import com.comphenix.protocol.ProtocolLibrary;
+import lombok.Getter;
+import lombok.Setter;
 import network.palace.core.command.CoreCommand;
 import network.palace.core.command.CoreCommandMap;
-import network.palace.core.commands.ListCommand;
-import network.palace.core.commands.PluginsCommand;
-import network.palace.core.commands.ReloadCommand;
-import network.palace.core.commands.SafestopCommand;
+import network.palace.core.commands.*;
 import network.palace.core.config.LanguageFormatter;
 import network.palace.core.config.YAMLConfigurationFile;
 import network.palace.core.dashboard.DashboardConnection;
+import network.palace.core.economy.Economy;
 import network.palace.core.library.LibraryHandler;
 import network.palace.core.packets.adapters.SettingsAdapter;
+import network.palace.core.permissions.PermissionManager;
 import network.palace.core.player.CPlayerManager;
 import network.palace.core.player.impl.CorePlayerManager;
 import network.palace.core.plugin.PluginInfo;
 import network.palace.core.utils.ItemUtil;
 import network.palace.core.utils.SqlUtil;
-import lombok.Getter;
-import lombok.Setter;
 import org.bukkit.Bukkit;
 import org.bukkit.ChatColor;
 import org.bukkit.Server;
@@ -36,15 +35,24 @@ import java.util.List;
 
 @PluginInfo(name = "Core")
 public class Core extends JavaPlugin {
-    @Getter @Setter private String serverType = "Hub";
-    @Getter @Setter private String instanceName = "";
-    @Getter @Setter private boolean testNetwork = false;
+    @Getter
+    @Setter
+    private String serverType = "Hub";
+    @Getter
+    @Setter
+    private String instanceName = "";
+    @Getter
+    @Setter
+    private boolean testNetwork = false;
     private CoreCommandMap commandMap;
 
-    @Getter private DashboardConnection dashboardConnection;
+    @Getter
+    private DashboardConnection dashboardConnection;
 
     private LanguageFormatter languageFormatter;
     private CPlayerManager playerManager;
+    private PermissionManager permissionManager;
+    private Economy economy;
 
     private SqlUtil sqlUtil;
 
@@ -66,6 +74,8 @@ public class Core extends JavaPlugin {
         getServer().getMessenger().registerOutgoingPluginChannel(this, "BungeeCord");
         // Managers
         playerManager = new CorePlayerManager();
+        permissionManager = new PermissionManager();
+        economy = new Economy();
         commandMap = new CoreCommandMap(this);
         // SQL Classes
         sqlUtil = new SqlUtil();
@@ -89,10 +99,13 @@ public class Core extends JavaPlugin {
     }
 
     public void registerCommands() {
+        registerCommand(new BalanceCommand());
         registerCommand(new ListCommand());
+        registerCommand(new PermCommand());
         registerCommand(new PluginsCommand());
-        registerCommand(new SafestopCommand());
         registerCommand(new ReloadCommand());
+        registerCommand(new SafestopCommand());
+        registerCommand(new TokenCommand());
     }
 
     public final void registerCommand(CoreCommand command) {
@@ -120,6 +133,14 @@ public class Core extends JavaPlugin {
 
     public static LanguageFormatter getLanguageFormatter() {
         return getInstance().languageFormatter;
+    }
+
+    public static PermissionManager getPermissionManager() {
+        return getInstance().permissionManager;
+    }
+
+    public static Economy getEconomy() {
+        return getInstance().economy;
     }
 
     /* SQL Classes */
