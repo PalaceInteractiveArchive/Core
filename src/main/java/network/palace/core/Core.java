@@ -72,13 +72,13 @@ public class Core extends JavaPlugin {
         ProtocolLibrary.getProtocolManager().addPacketListener(new SettingsAdapter());
         // Register plugin channel
         getServer().getMessenger().registerOutgoingPluginChannel(this, "BungeeCord");
+        // SQL Classes
+        sqlUtil = new SqlUtil();
         // Managers
         playerManager = new CorePlayerManager();
         permissionManager = new PermissionManager();
         economy = new Economy();
         commandMap = new CoreCommandMap(this);
-        // SQL Classes
-        sqlUtil = new SqlUtil();
         // Configurations
         configFile = new YAMLConfigurationFile(this, "", "config.yml");
         getConfig().getDefaults();
