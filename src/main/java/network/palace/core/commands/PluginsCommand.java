@@ -10,6 +10,7 @@ import network.palace.core.command.CoreCommand;
 import network.palace.core.config.LanguageFormatter;
 import network.palace.core.player.Rank;
 import org.bukkit.Bukkit;
+import org.bukkit.ChatColor;
 import org.bukkit.command.CommandSender;
 import org.bukkit.plugin.Plugin;
 import org.json.simple.JSONObject;
@@ -29,6 +30,7 @@ public class PluginsCommand extends CoreCommand {
 
     public PluginsCommand() {
         super("plugins");
+        obtainVersion();
     }
 
     @Override
@@ -74,19 +76,24 @@ public class PluginsCommand extends CoreCommand {
         thirdParty = thirdParty.substring(0, Math.max(0, thirdParty.length() - thirdPartySeparator.length()));
         // Formats
         String boilerPlateFormat = formatter.getFormat(sender, "command.plugins.boilerPlate");
-        String runningFormat = formatter.getFormat(sender, "command.plugins.running").replaceAll("<core-version>", Core.getVersion());
+        String coreRunningFormat = formatter.getFormat(sender, "command.plugins.running").replaceAll("<version>",
+                Core.getVersion()).replaceAll("<name>", "Core");
+        String bukkitRunningFormat = formatter.getFormat(sender, "command.plugins.running").replaceAll("<version>",
+                Bukkit.getVersion() + " (API version " + Bukkit.getBukkitVersion() + ") " + ChatColor.YELLOW + "(" +
+                        versionMessage + ")").replaceAll("<name>", "Spigot");
         String pluginsFormat = formatter.getFormat(sender, "command.plugins.plugins.info").replaceAll("<core-plugins>", plugins).replaceAll("<count>", Integer.toString(pluginsList.size()));
         String thirdPartyFormat = formatter.getFormat(sender, "command.plugins.thirdParty.info").replaceAll("<thirdParty-plugins>", thirdParty).replaceAll("<count>", Integer.toString(thirdPartyList.size()));
         // Send Messages
         String boilerPlate = BoilerplateUtil.getBoilerplateText(boilerPlateFormat);
         sender.sendMessage(boilerPlate);
-        sender.sendMessage(runningFormat);
+        sender.sendMessage(coreRunningFormat);
+        sender.sendMessage("");
+        sender.sendMessage(bukkitRunningFormat);
         sender.sendMessage("");
         sender.sendMessage(pluginsFormat);
         sender.sendMessage("");
         sender.sendMessage(thirdPartyFormat);
         sender.sendMessage(boilerPlate);
-        sendVersion(sender);
     }
 
     public class PluginInfo {
@@ -108,38 +115,8 @@ public class PluginsCommand extends CoreCommand {
     }
 
     private final ReentrantLock versionLock = new ReentrantLock();
-    private boolean hasVersion = false;
     private String versionMessage = null;
     private final Set<CommandSender> versionWaiters = new HashSet<>();
-    private boolean versionTaskStarted = false;
-    private long lastCheck = 0;
-
-    private void sendVersion(CommandSender sender) {
-        if (hasVersion) {
-            if (System.currentTimeMillis() - lastCheck > 21600000) {
-                lastCheck = System.currentTimeMillis();
-                hasVersion = false;
-            } else {
-                sender.sendMessage(versionMessage);
-                return;
-            }
-        }
-        versionLock.lock();
-        try {
-            if (hasVersion) {
-                sender.sendMessage(versionMessage);
-                return;
-            }
-            versionWaiters.add(sender);
-            sender.sendMessage("Checking version, please wait...");
-            if (!versionTaskStarted) {
-                versionTaskStarted = true;
-                new Thread(this::obtainVersion).start();
-            }
-        } finally {
-            versionLock.unlock();
-        }
-    }
 
     private void obtainVersion() {
         String version = Bukkit.getVersion();
@@ -152,9 +129,9 @@ public class PluginsCommand extends CoreCommand {
                 setVersionMessage("Error obtaining version information");
             } else {
                 if (cbVersions == 0 && spigotVersions == 0) {
-                    setVersionMessage("You are running the latest version");
+                    setVersionMessage("Latest");
                 } else {
-                    setVersionMessage("You are " + (cbVersions + spigotVersions) + " version(s) behind");
+                    setVersionMessage((cbVersions + spigotVersions) + " version" + ((cbVersions + spigotVersions) == 1 ? "" : "s") + " behind");
                 }
             }
 
@@ -165,9 +142,9 @@ public class PluginsCommand extends CoreCommand {
                 setVersionMessage("Error obtaining version information");
             } else {
                 if (cbVersions == 0) {
-                    setVersionMessage("You are running the latest version");
+                    setVersionMessage("Latest");
                 } else {
-                    setVersionMessage("You are " + cbVersions + " version(s) behind");
+                    setVersionMessage(cbVersions + " version" + (cbVersions == 1 ? "" : "s") + " behind");
                 }
             }
         } else {
@@ -176,12 +153,9 @@ public class PluginsCommand extends CoreCommand {
     }
 
     private void setVersionMessage(String msg) {
-        lastCheck = System.currentTimeMillis();
         versionMessage = msg;
         versionLock.lock();
         try {
-            hasVersion = true;
-            versionTaskStarted = false;
             for (CommandSender sender : versionWaiters) {
                 sender.sendMessage(versionMessage);
             }

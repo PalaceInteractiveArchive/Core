@@ -15,7 +15,7 @@ command.list.playersOnline: "&6Players online: &a<players-online>"
 
 # Plugins Command #
 command.plugins.boilerPlate: "&6&m"
-command.plugins.running: "&6Running &aCore &6version &2<core-version>"
+command.plugins.running: "&6Running &a<name> &6version &2<version>"
 
 command.plugins.plugins.info: "&6Core Plugins (<count>): <core-plugins>"
 command.plugins.plugins.separator: "&6, "
