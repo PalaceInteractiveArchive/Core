@@ -13,7 +13,7 @@ import org.bukkit.plugin.java.JavaPlugin;
 import java.util.UUID;
 
 @SuppressWarnings("unused")
-public interface CPlayer {
+public interface  CPlayer {
 
     String getName();
     boolean isOnline();
@@ -76,6 +76,7 @@ public interface CPlayer {
     String getLocale();
 
     Player getBukkitPlayer();
+    UUID getUniqueId();
     UUID getUuid();
 
     void setStatus(PlayerStatus status);

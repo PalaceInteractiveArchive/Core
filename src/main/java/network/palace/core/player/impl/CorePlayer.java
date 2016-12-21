@@ -2,13 +2,13 @@ package network.palace.core.player.impl;
 
 import com.google.common.io.ByteArrayDataOutput;
 import com.google.common.io.ByteStreams;
+import lombok.Getter;
+import lombok.Setter;
 import network.palace.core.Core;
 import network.palace.core.config.LanguageFormatter;
 import network.palace.core.packets.AbstractPacket;
 import network.palace.core.player.*;
 import network.palace.core.plugin.Plugin;
-import lombok.Getter;
-import lombok.Setter;
 import org.bukkit.Bukkit;
 import org.bukkit.GameMode;
 import org.bukkit.Location;
@@ -342,5 +342,10 @@ public class CorePlayer implements CPlayer {
     public Player getBukkitPlayer() {
         if (getStatus() != PlayerStatus.JOINED) return null;
         return Bukkit.getPlayer(getUuid());
+    }
+
+    @Override
+    public UUID getUniqueId() {
+        return getUuid();
     }
 }

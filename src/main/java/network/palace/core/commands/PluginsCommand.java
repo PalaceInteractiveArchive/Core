@@ -131,7 +131,7 @@ public class PluginsCommand extends CoreCommand {
                 if (cbVersions == 0 && spigotVersions == 0) {
                     setVersionMessage("Latest");
                 } else {
-                    setVersionMessage((cbVersions + spigotVersions) + " version" + ((cbVersions + spigotVersions) == 1 ? "" : "s") + " behind");
+                    setVersionMessage((cbVersions + spigotVersions) + " behind");
                 }
             }
 
@@ -144,7 +144,7 @@ public class PluginsCommand extends CoreCommand {
                 if (cbVersions == 0) {
                     setVersionMessage("Latest");
                 } else {
-                    setVersionMessage(cbVersions + " version" + (cbVersions == 1 ? "" : "s") + " behind");
+                    setVersionMessage(cbVersions + " behind");
                 }
             }
         } else {

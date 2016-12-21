@@ -168,7 +168,7 @@ public class PermCommand extends CoreCommand {
                         Core.getSqlUtil().setPermission(arg4, rank, true);
                         for (CPlayer tp : Core.getPlayerManager().getOnlinePlayers()) {
                             if (tp.getRank().equals(rank)) {
-                                Core.getPermissionManager().attachments.get(tp.getUuid()).setPermission(arg4, true);
+                                Core.getPermissionManager().attachments.get(tp.getUniqueId()).setPermission(arg4, true);
                             }
                         }
                         sender.sendMessage(rank.getNameWithBrackets() + ChatColor.YELLOW + " now sets " + ChatColor.AQUA + arg4 + ChatColor.YELLOW + " to " + ChatColor.GREEN + "" + ChatColor.BOLD + "true");
@@ -177,7 +177,7 @@ public class PermCommand extends CoreCommand {
                         Core.getSqlUtil().unsetPermission(arg4, rank);
                         for (CPlayer tp : Core.getPlayerManager().getOnlinePlayers()) {
                             if (tp.getRank().equals(rank)) {
-                                Core.getPermissionManager().attachments.get(tp.getUuid()).unsetPermission(arg4);
+                                Core.getPermissionManager().attachments.get(tp.getUniqueId()).unsetPermission(arg4);
                             }
                         }
                         sender.sendMessage(rank.getNameWithBrackets() + ChatColor.YELLOW + " does not set " + ChatColor.AQUA + arg4 + ChatColor.YELLOW + " anymore");
@@ -202,7 +202,7 @@ public class PermCommand extends CoreCommand {
                     Core.getSqlUtil().setPermission(arg4, rank, value);
                     for (CPlayer tp : Core.getPlayerManager().getOnlinePlayers()) {
                         if (tp.getRank().equals(rank)) {
-                            Core.getPermissionManager().attachments.get(tp.getUuid()).setPermission(arg4, true);
+                            Core.getPermissionManager().attachments.get(tp.getUniqueId()).setPermission(arg4, true);
                         }
                     }
                     if (value) {

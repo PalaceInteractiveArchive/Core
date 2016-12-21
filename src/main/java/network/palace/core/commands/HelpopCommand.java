@@ -48,7 +48,7 @@ public class HelpopCommand extends CoreCommand {
             msg += s + " ";
         }
         Location loc = sender.getBlock().getLocation();
-        message("CB (x: " + loc.getBlockX() + " y: " + loc.getBlockY() + " z:" + loc.getBlockZ() + ")", msg);
+        message("CB (x:" + loc.getBlockX() + " y:" + loc.getBlockY() + " z:" + loc.getBlockZ() + ")", msg);
     }
 
     @Override
@@ -65,7 +65,7 @@ public class HelpopCommand extends CoreCommand {
     }
 
     private void message(String sender, String message) {
-        String msg = ChatColor.RED + "[CM CHAT] " + ChatColor.GRAY + sender + ": " + ChatColor.WHITE +
+        String msg = ChatColor.DARK_RED + "[CM CHAT] " + ChatColor.GRAY + sender + ": " + ChatColor.WHITE +
                 ChatColor.translateAlternateColorCodes('&', message);
         for (CPlayer tp : Core.getPlayerManager().getOnlinePlayers()) {
             if (tp.getRank().getRankId() >= Rank.SQUIRE.getRankId()) {

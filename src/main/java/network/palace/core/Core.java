@@ -16,6 +16,7 @@ import network.palace.core.permissions.PermissionManager;
 import network.palace.core.player.CPlayerManager;
 import network.palace.core.player.impl.CorePlayerManager;
 import network.palace.core.plugin.PluginInfo;
+import network.palace.core.resource.ResourceManager;
 import network.palace.core.utils.ItemUtil;
 import network.palace.core.utils.SqlUtil;
 import org.bukkit.Bukkit;
@@ -35,15 +36,9 @@ import java.util.List;
 
 @PluginInfo(name = "Core")
 public class Core extends JavaPlugin {
-    @Getter
-    @Setter
-    private String serverType = "Hub";
-    @Getter
-    @Setter
-    private String instanceName = "";
-    @Getter
-    @Setter
-    private boolean testNetwork = false;
+    @Getter @Setter private String serverType = "Hub";
+    @Getter @Setter private String instanceName = "";
+    @Getter @Setter private boolean testNetwork = false;
     private CoreCommandMap commandMap;
 
     @Getter
@@ -53,6 +48,7 @@ public class Core extends JavaPlugin {
     private CPlayerManager playerManager;
     private PermissionManager permissionManager;
     private Economy economy;
+    private ResourceManager resourceManager;
 
     private SqlUtil sqlUtil;
 
@@ -77,6 +73,7 @@ public class Core extends JavaPlugin {
         // Managers
         playerManager = new CorePlayerManager();
         permissionManager = new PermissionManager();
+        resourceManager = new ResourceManager();
         economy = new Economy();
         commandMap = new CoreCommandMap(this);
         // Configurations
@@ -142,6 +139,10 @@ public class Core extends JavaPlugin {
 
     public static Economy getEconomy() {
         return getInstance().economy;
+    }
+
+    public static ResourceManager getResourceManager() {
+        return getInstance().resourceManager;
     }
 
     /* SQL Classes */
