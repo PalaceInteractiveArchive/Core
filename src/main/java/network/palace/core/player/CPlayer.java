@@ -87,6 +87,9 @@ public interface CPlayer {
     void setTextureHash(String textureHash);
     String getTextureHash();
 
+    void setPack(String pack);
+    String getPack();
+
     enum PlayerStatus {
         LOGIN, JOINED, LEFT
     }

@@ -100,6 +100,7 @@ public class Core extends JavaPlugin {
 
     public void registerCommands() {
         registerCommand(new BalanceCommand());
+        registerCommand(new HelpopCommand());
         registerCommand(new ListCommand());
         registerCommand(new PermCommand());
         registerCommand(new PluginsCommand());

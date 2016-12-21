@@ -2,6 +2,7 @@ package network.palace.core.player.impl;
 
 import com.comphenix.protocol.wrappers.WrappedGameProfile;
 import network.palace.core.Core;
+import network.palace.core.dashboard.packets.dashboard.PacketGetPack;
 import network.palace.core.events.CorePlayerJoinDelayedEvent;
 import org.bukkit.ChatColor;
 import org.bukkit.entity.Player;
@@ -35,19 +36,21 @@ public class CorePlayerManagerListener implements Listener {
     @EventHandler(ignoreCancelled = true, priority = EventPriority.LOW)
     public void onPlayerJoin(PlayerJoinEvent event) {
         String textureHash = "";
+        final Player player = event.getPlayer();
         try {
-            Player player = event.getPlayer();
             WrappedGameProfile wrappedGameProfile = WrappedGameProfile.fromPlayer(player);
-            textureHash = wrappedGameProfile.getProperties().get("textures").iterator() .next().getValue();
+            textureHash = wrappedGameProfile.getProperties().get("textures").iterator().next().getValue();
         } catch (Exception ignored) {
         }
-        Core.getPlayerManager().playerJoined(event.getPlayer().getUniqueId(), textureHash);
+        Core.getPlayerManager().playerJoined(player.getUniqueId(), textureHash);
         CorePlayerJoinDelayedEvent delayedEvent = new CorePlayerJoinDelayedEvent(Core.getPlayerManager()
-                .getPlayer(event.getPlayer()), event.getJoinMessage());
+                .getPlayer(player), event.getJoinMessage());
 
         Core.runTaskLater(() -> {
             delayedEvent.call();
             event.setJoinMessage(delayedEvent.getJoinMessage());
+            PacketGetPack packet = new PacketGetPack(player.getUniqueId(), "");
+            Core.getInstance().getDashboardConnection().send(packet);
         }, 10L);
     }
 

@@ -38,6 +38,7 @@ public class CorePlayer implements CPlayer {
     @Getter private CPlayerParticlesManager particles = new CorePlayerParticlesManager(this);
     @Getter private CPlayerResourcePackManager resourcePack = new CorePlayerResourcePackManager(this);
     @Getter @Setter String textureHash = "";
+    @Getter @Setter String pack = "none";
 
     public CorePlayer(UUID uuid, String name, Rank rank) {
         this.uuid = uuid;

@@ -5,9 +5,12 @@ import com.google.gson.JsonParser;
 import network.palace.core.Core;
 import network.palace.core.dashboard.packets.BasePacket;
 import network.palace.core.dashboard.packets.dashboard.PacketConnectionType;
+import network.palace.core.dashboard.packets.dashboard.PacketGetPack;
 import network.palace.core.dashboard.packets.dashboard.PacketMention;
 import network.palace.core.dashboard.packets.dashboard.PacketServerName;
+import network.palace.core.events.CurrentPackReceivedEvent;
 import network.palace.core.events.IncomingPacketEvent;
+import network.palace.core.player.CPlayer;
 import org.bukkit.Bukkit;
 import org.bukkit.Sound;
 import org.bukkit.entity.Player;
@@ -38,6 +41,9 @@ public class DashboardConnection {
     }
 
     private void start() {
+        if (client != null) {
+            client = null;
+        }
         try {
             client = new WebSocketClient(new URI(dashboardURL), new Draft_10()) {
                 @Override
@@ -46,11 +52,19 @@ public class DashboardConnection {
                     if (!object.has("id")) {
                         return;
                     }
-
                     int id = object.get("id").getAsInt();
-//                    System.out.println(object.toString());
-
+                    System.out.println(object.toString());
                     switch (id) {
+                        case 49: {
+                            PacketGetPack packet = new PacketGetPack().fromJSON(object);
+                            UUID uuid = packet.getUniqueId();
+                            String pack = packet.getPack();
+                            CPlayer player = Core.getPlayerManager().getPlayer(uuid);
+                            player.setPack(pack);
+                            CurrentPackReceivedEvent e = new CurrentPackReceivedEvent(player, pack);
+                            e.call();
+                            break;
+                        }
                         case 50: {
                             PacketMention packet = new PacketMention().fromJSON(object);
                             UUID uuid = packet.getUniqueId();
@@ -74,8 +88,7 @@ public class DashboardConnection {
                 public void onOpen(ServerHandshake handshake) {
                     System.out.println("Successfully connected to Dashboard");
 
-                    DashboardConnection.this.send(
-                            new PacketConnectionType(PacketConnectionType.ConnectionType.INSTANCE).getJSON().toString());
+                    DashboardConnection.this.send(new PacketConnectionType(PacketConnectionType.ConnectionType.INSTANCE).getJSON().toString());
 
                     DashboardConnection.this.send(new PacketServerName(instance.getInstanceName()).getJSON().toString());
                     hasAttempted = false;
