@@ -4,4 +4,4 @@ sql:
   password: password
 server-type: Unknown
 instance-name: ServerName
-dashboardURL: ws://socket.dashbord.playground.palace.network:7892
+dashboardURL: ws://socket.dashboard.playground.palace.network:7892

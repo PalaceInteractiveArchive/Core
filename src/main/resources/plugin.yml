@@ -1,4 +1,4 @@
 name: Core
-version: 1.3.6
+version: 1.3.7
 depend: [ProtocolLib]
 main: network.palace.core.Core

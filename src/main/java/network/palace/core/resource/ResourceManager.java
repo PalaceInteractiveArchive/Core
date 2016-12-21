@@ -24,6 +24,14 @@ public class ResourceManager {
     private boolean first = true;
     private HashMap<UUID, String> downloading = new HashMap<>();
 
+    public ResourceManager() {
+        try {
+            initialize();
+        } catch (SQLException e) {
+            e.printStackTrace();
+        }
+    }
+
     public void initialize() throws SQLException {
         packs.clear();
         Connection connection = Core.getSqlUtil().getConnection();
