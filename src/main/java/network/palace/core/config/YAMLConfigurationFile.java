@@ -18,6 +18,10 @@ public final class YAMLConfigurationFile {
     private File configFile;
     private FileConfiguration fileConfiguration;
 
+    public YAMLConfigurationFile(@NonNull JavaPlugin plugin, @NonNull String fileName) {
+        this(plugin, "", fileName);
+    }
+
     public YAMLConfigurationFile(@NonNull JavaPlugin plugin, String path, @NonNull String fileName) {
         this(plugin, path, new File(plugin.getDataFolder(), fileName));
     }
