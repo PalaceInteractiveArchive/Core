@@ -4,10 +4,8 @@ import com.google.gson.JsonObject;
 import com.google.gson.JsonParser;
 import network.palace.core.Core;
 import network.palace.core.dashboard.packets.BasePacket;
-import network.palace.core.dashboard.packets.dashboard.PacketConnectionType;
-import network.palace.core.dashboard.packets.dashboard.PacketGetPack;
-import network.palace.core.dashboard.packets.dashboard.PacketMention;
-import network.palace.core.dashboard.packets.dashboard.PacketServerName;
+import network.palace.core.dashboard.packets.dashboard.*;
+import network.palace.core.events.CoreOnlineCountUpdate;
 import network.palace.core.events.CurrentPackReceivedEvent;
 import network.palace.core.events.IncomingPacketEvent;
 import network.palace.core.player.CPlayer;
@@ -55,6 +53,12 @@ public class DashboardConnection {
                     int id = object.get("id").getAsInt();
                     System.out.println(object.toString());
                     switch (id) {
+                        case 41: {
+                            PacketOnlineCount packet = new PacketOnlineCount().fromJSON(object);
+                            int count = packet.getCount();
+                            new CoreOnlineCountUpdate(count).call();
+                            break;
+                        }
                         case 49: {
                             PacketGetPack packet = new PacketGetPack().fromJSON(object);
                             UUID uuid = packet.getUniqueId();
@@ -68,13 +72,10 @@ public class DashboardConnection {
                         case 50: {
                             PacketMention packet = new PacketMention().fromJSON(object);
                             UUID uuid = packet.getUniqueId();
-
                             Player player = Bukkit.getPlayer(uuid);
-
                             if (player == null) {
                                 return;
                             }
-
                             player.playSound(player.getLocation(), Sound.ENTITY_EXPERIENCE_ORB_PICKUP, 50f, 1f);
                             break;
                         }

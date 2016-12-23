@@ -30,7 +30,7 @@ public class PluginsCommand extends CoreCommand {
 
     public PluginsCommand() {
         super("plugins");
-        obtainVersion();
+        Bukkit.getScheduler().runTaskAsynchronously(Core.getInstance(), this::obtainVersion);
     }
 
     @Override
@@ -115,7 +115,7 @@ public class PluginsCommand extends CoreCommand {
     }
 
     private final ReentrantLock versionLock = new ReentrantLock();
-    private String versionMessage = null;
+    private String versionMessage = "Loading version...";
     private final Set<CommandSender> versionWaiters = new HashSet<>();
 
     private void obtainVersion() {

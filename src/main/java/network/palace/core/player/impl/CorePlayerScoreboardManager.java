@@ -33,9 +33,9 @@ public class CorePlayerScoreboardManager implements CPlayerScoreboardManager {
     public CPlayerScoreboardManager set(int id, String text) {
         if (scoreboard == null) setup();
         text = text.substring(0, Math.min(text.length(), MAX_STRING_LENGTH));
-        while (text.endsWith("§")) text = text.substring(0, text.length()-1);
+        while (text.endsWith("§")) text = text.substring(0, text.length() - 1);
         if (lines.containsKey(id)) {
-            if (lines.get(id).equals(text) || (ChatColor.stripColor(lines.get(id)).trim().equals("") && ChatColor.stripColor(text).trim().equals(""))){
+            if (lines.get(id).equals(text) || (ChatColor.stripColor(lines.get(id)).trim().equals("") && ChatColor.stripColor(text).trim().equals(""))) {
                 return this;
             } else {
                 remove(id);
