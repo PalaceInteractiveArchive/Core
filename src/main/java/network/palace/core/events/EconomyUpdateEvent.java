@@ -11,6 +11,6 @@ import java.util.UUID;
 @AllArgsConstructor
 public class EconomyUpdateEvent extends CoreEvent {
     @Getter private UUID uuid;
-    @Getter private int balance;
+    @Getter private int amount;
     @Getter private boolean isBalance;
 }

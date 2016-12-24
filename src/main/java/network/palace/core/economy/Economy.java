@@ -77,19 +77,13 @@ public class Economy {
 
     private void changeBalance(UUID uuid, int amount, String source) {
         try (Connection connection = Core.getSqlUtil().getConnection()) {
-            PreparedStatement sql = connection.prepareStatement("UPDATE player_data SET balance=(balance+?) WHERE uuid=?;SELECT balance FROM player_data WHERE uuid=?");
+            PreparedStatement sql = connection.prepareStatement("UPDATE player_data SET balance=(balance+?) WHERE uuid=?;");
             sql.setInt(1, amount);
             sql.setString(2, uuid.toString());
-            sql.setString(3, uuid.toString());
-            ResultSet result = sql.executeQuery();
-            int bal = 0;
-            if (result.next()) {
-                bal = result.getInt("balance");
-            }
-            result.close();
+            sql.execute();
             sql.close();
             logTransaction(uuid, amount, source, "add balance");
-            new EconomyUpdateEvent(uuid, bal, true).call();
+            new EconomyUpdateEvent(uuid, getBalance(uuid), true).call();
         } catch (SQLException e) {
             e.printStackTrace();
         }
@@ -97,19 +91,13 @@ public class Economy {
 
     private void changeTokens(UUID uuid, int amount, String source) {
         try (Connection connection = Core.getSqlUtil().getConnection()) {
-            PreparedStatement sql = connection.prepareStatement("UPDATE player_data SET tokens=(tokens+?) WHERE uuid=?;SELECT tokens FROM player_data WHERE uuid=?");
+            PreparedStatement sql = connection.prepareStatement("UPDATE player_data SET tokens=(tokens+?) WHERE uuid=?;");
             sql.setInt(1, amount);
             sql.setString(2, uuid.toString());
-            sql.setString(3, uuid.toString());
-            ResultSet result = sql.executeQuery();
-            int tkn = 0;
-            if (result.next()) {
-                tkn = result.getInt("tokens");
-            }
-            result.close();
+            sql.execute();
             sql.close();
             logTransaction(uuid, amount, source, "add tokens");
-            new EconomyUpdateEvent(uuid, tkn, false).call();
+            new EconomyUpdateEvent(uuid, getTokens(uuid), false).call();
         } catch (SQLException e) {
             e.printStackTrace();
         }
@@ -117,18 +105,12 @@ public class Economy {
 
     public void setBalance(UUID uuid, int amount, String source, boolean set) {
         try (Connection connection = Core.getSqlUtil().getConnection()) {
-            PreparedStatement sql = connection.prepareStatement("UPDATE player_data SET balance=? WHERE uuid=?;SELECT balance FROM player_data WHERE uuid=?");
+            PreparedStatement sql = connection.prepareStatement("UPDATE player_data SET balance=? WHERE uuid=?;");
             sql.setInt(1, amount);
             sql.setString(2, uuid.toString());
-            sql.setString(3, uuid.toString());
-            ResultSet result = sql.executeQuery();
-            int bal = 0;
-            if (result.next()) {
-                bal = result.getInt("balance");
-            }
-            result.close();
+            sql.execute();
             sql.close();
-            new EconomyUpdateEvent(uuid, bal, true).call();
+            new EconomyUpdateEvent(uuid, getBalance(uuid), true).call();
         } catch (SQLException e) {
             e.printStackTrace();
         }
@@ -139,18 +121,13 @@ public class Economy {
 
     public void setTokens(UUID uuid, int amount, String source, boolean set) {
         try (Connection connection = Core.getSqlUtil().getConnection()) {
-            PreparedStatement sql = connection.prepareStatement("UPDATE player_data SET tokens=? WHERE uuid=?;SELECT tokens FROM player_data WHERE uuid=?");
+            PreparedStatement sql = connection.prepareStatement("UPDATE player_data SET tokens=? WHERE uuid=?;");
             sql.setInt(1, amount);
             sql.setString(2, uuid.toString());
             sql.setString(3, uuid.toString());
-            ResultSet result = sql.executeQuery();
-            int tkn = 0;
-            if (result.next()) {
-                tkn = result.getInt("tokens");
-            }
-            result.close();
+            sql.execute();
             sql.close();
-            new EconomyUpdateEvent(uuid, tkn, false).call();
+            new EconomyUpdateEvent(uuid, getTokens(uuid), false).call();
         } catch (SQLException e) {
             e.printStackTrace();
         }
