@@ -101,7 +101,6 @@ public class FormattedMessage {
         } catch (final JSONException e) {
             throw new RuntimeException("invalid message");
         }
-        System.out.println(json.toString());
         return json.toString();
     }
 
