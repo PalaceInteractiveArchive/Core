@@ -44,9 +44,10 @@ public final class CoreCommandMap {
             command1.setUsage(annotation.usage());
         }
         // Remove old commands before register
-        assert annotation != null;
-        ArrayList<String> tempList = new ArrayList<>(Arrays.asList(annotation.aliases()));
-        tempList.add(command.getName());
+        List<String> tempList = new ArrayList<>(Collections.singletonList(command.getName()));
+        if (annotation != null) {
+            tempList.addAll(Arrays.asList(annotation.aliases()));
+        }
         for (String oldCommand : tempList) {
             removeKnownCommand("bukkit:" + oldCommand);
             removeKnownCommand(oldCommand);

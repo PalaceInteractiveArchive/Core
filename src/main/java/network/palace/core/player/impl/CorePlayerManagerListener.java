@@ -4,6 +4,7 @@ import com.comphenix.protocol.wrappers.WrappedGameProfile;
 import network.palace.core.Core;
 import network.palace.core.dashboard.packets.dashboard.PacketGetPack;
 import network.palace.core.events.CorePlayerJoinDelayedEvent;
+import network.palace.core.player.CPlayer;
 import org.bukkit.ChatColor;
 import org.bukkit.entity.Player;
 import org.bukkit.event.EventHandler;
@@ -56,11 +57,15 @@ public class CorePlayerManagerListener implements Listener {
 
     @EventHandler(ignoreCancelled = true, priority = EventPriority.HIGHEST)
     public void onPlayerQuit(PlayerQuitEvent event) {
+        CPlayer player = Core.getPlayerManager().getPlayer(event.getPlayer());
+        if (player != null) player.getScoreboard().destroy();
         Core.getPlayerManager().playerLoggedOut(event.getPlayer().getUniqueId());
     }
 
     @EventHandler(ignoreCancelled = true, priority = EventPriority.HIGHEST)
     public void onPlayerKick(PlayerKickEvent event) {
+        CPlayer player = Core.getPlayerManager().getPlayer(event.getPlayer());
+        if (player != null) player.getScoreboard().destroy();
         Core.getPlayerManager().playerLoggedOut(event.getPlayer().getUniqueId());
     }
 }

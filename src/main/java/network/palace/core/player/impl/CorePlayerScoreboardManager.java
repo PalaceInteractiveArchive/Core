@@ -14,8 +14,7 @@ import java.util.concurrent.ThreadLocalRandom;
 
 public class CorePlayerScoreboardManager implements CPlayerScoreboardManager {
 
-    private final static String OBJECTIVE = "obj" + ThreadLocalRandom.current().nextInt(1000000000);
-    private final static int MAX_STRING_LENGTH = 64;
+    private static final int MAX_STRING_LENGTH = 64;
 
     private final CPlayer player;
 
@@ -87,8 +86,13 @@ public class CorePlayerScoreboardManager implements CPlayerScoreboardManager {
 
         player.getBukkitPlayer().setScoreboard(scoreboard);
 
-        scoreboardObjective = scoreboard.registerNewObjective(OBJECTIVE, "dummy");
+        scoreboardObjective = scoreboard.registerNewObjective("obj" + ThreadLocalRandom.current().nextInt(1000000), "dummy");
         scoreboardObjective.setDisplaySlot(DisplaySlot.SIDEBAR);
+    }
+
+    @Override
+    public void destroy() {
+        if (scoreboardObjective != null) scoreboardObjective.unregister();
     }
 
     private String nextNull() {
