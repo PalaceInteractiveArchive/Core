@@ -34,6 +34,7 @@ public class ResourceManager {
 
     public void initialize() throws SQLException {
         packs.clear();
+        if (Core.getSqlUtil().getConnection() == null) return;
         Connection connection = Core.getSqlUtil().getConnection();
         PreparedStatement sql = connection.prepareStatement("SELECT * FROM resource_packs");
         ResultSet result = sql.executeQuery();

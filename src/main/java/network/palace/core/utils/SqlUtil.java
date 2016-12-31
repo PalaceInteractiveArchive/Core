@@ -3,6 +3,7 @@ package network.palace.core.utils;
 import network.palace.core.Core;
 import network.palace.core.player.CPlayer;
 import network.palace.core.player.Rank;
+import org.bukkit.ChatColor;
 import org.bukkit.configuration.file.YamlConfiguration;
 
 import java.io.File;
@@ -33,7 +34,7 @@ public class SqlUtil {
         try {
             return DriverManager.getConnection(url, user, password);
         } catch (SQLException e) {
-            e.printStackTrace();
+            Core.logMessage("Core", ChatColor.RED + "Could not connect to database!");
             return null;
         }
     }
@@ -43,6 +44,7 @@ public class SqlUtil {
      */
 
     public Rank getRank(UUID uuid) {
+        if (getConnection() == null) return Rank.WIZARD;
         try (Connection connection = getConnection()) {
             PreparedStatement sql = connection.prepareStatement("SELECT rank FROM player_data WHERE uuid=?");
             sql.setString(1, uuid.toString());
@@ -61,6 +63,7 @@ public class SqlUtil {
     }
 
     public Rank getRank(String username) {
+        if (getConnection() == null) return Rank.WIZARD;
         try (Connection connection = getConnection()) {
             PreparedStatement sql = connection.prepareStatement("SELECT rank FROM player_data WHERE username=?");
             sql.setString(1, username);
@@ -79,6 +82,7 @@ public class SqlUtil {
     }
 
     public boolean playerExists(String username) {
+        if (getConnection() == null) return false;
         try (Connection connection = getConnection()) {
             PreparedStatement sql = connection.prepareStatement("SELECT id FROM player_data WHERE username=?");
             sql.setString(1, username);
@@ -117,6 +121,7 @@ public class SqlUtil {
      * Permission Methods
      */
     public HashMap<String, Boolean> getPermissions(Rank rank) {
+        if (getConnection() == null) return new HashMap<>();
         try (Connection connection = getConnection()) {
             PreparedStatement sql = connection.prepareStatement("SELECT * FROM permissions WHERE rank=?");
             sql.setString(1, rank.getSqlName());

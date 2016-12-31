@@ -35,6 +35,7 @@ public class DashboardConnection {
     private String dashboardURL = instance.getConfig().getString("dashboardURL");
 
     public DashboardConnection() {
+        if (isDisabled()) return;
         start();
     }
 
@@ -131,6 +132,10 @@ public class DashboardConnection {
     @SuppressWarnings("BooleanMethodIsAlwaysInverted")
     public boolean isConnected() {
         return client != null && client.getConnection() != null && !client.getConnection().isConnecting() && client.getConnection().isOpen();
+    }
+
+    public boolean isDisabled() {
+        return dashboardURL.equalsIgnoreCase("disable");
     }
 
     public void stop() {

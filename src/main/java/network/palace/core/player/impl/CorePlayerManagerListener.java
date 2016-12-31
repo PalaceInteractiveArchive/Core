@@ -21,7 +21,7 @@ public class CorePlayerManagerListener implements Listener {
 
     @EventHandler(ignoreCancelled = true, priority = EventPriority.LOW)
     public void onPlayerLogin(AsyncPlayerPreLoginEvent event) {
-        if (!instance.getDashboardConnection().isConnected()) {
+        if (!instance.getDashboardConnection().isConnected() && !instance.getDashboardConnection().isDisabled()) {
             event.setKickMessage(ChatColor.AQUA + "Players can not join right now. Try again in a few seconds!");
             event.setLoginResult(AsyncPlayerPreLoginEvent.Result.KICK_OTHER);
             return;
