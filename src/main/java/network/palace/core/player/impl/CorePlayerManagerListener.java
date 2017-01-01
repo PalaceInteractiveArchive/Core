@@ -5,6 +5,7 @@ import network.palace.core.Core;
 import network.palace.core.dashboard.packets.dashboard.PacketGetPack;
 import network.palace.core.events.CorePlayerJoinDelayedEvent;
 import network.palace.core.player.CPlayer;
+import org.bukkit.Achievement;
 import org.bukkit.ChatColor;
 import org.bukkit.entity.Player;
 import org.bukkit.event.EventHandler;
@@ -22,6 +23,8 @@ public class CorePlayerManagerListener implements Listener {
 
     public CorePlayerManagerListener() {
         defaultScoreboard = new CorePlayerDefaultScoreboard();
+        new CorePlayerPickupItemListener();
+        new CorePlayerAchievementsListener();
     }
 
     @EventHandler(ignoreCancelled = true, priority = EventPriority.LOW)
@@ -57,6 +60,7 @@ public class CorePlayerManagerListener implements Listener {
         }, 10L);
         event.setJoinMessage("");
         event.getPlayer().setCollidable(false);
+        if (!event.getPlayer().hasAchievement(Achievement.OPEN_INVENTORY)) event.getPlayer().awardAchievement(Achievement.OPEN_INVENTORY);
     }
 
     @EventHandler(ignoreCancelled = true, priority = EventPriority.MONITOR)
