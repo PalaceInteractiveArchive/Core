@@ -52,7 +52,6 @@ public class DashboardConnection {
                         return;
                     }
                     int id = object.get("id").getAsInt();
-                    System.out.println(object.toString());
                     switch (id) {
                         case 41: {
                             PacketOnlineCount packet = new PacketOnlineCount().fromJSON(object);
@@ -73,15 +72,14 @@ public class DashboardConnection {
                         case 50: {
                             PacketMention packet = new PacketMention().fromJSON(object);
                             UUID uuid = packet.getUniqueId();
-                            Player player = Bukkit.getPlayer(uuid);
+                            CPlayer player = Core.getPlayerManager().getPlayer(uuid);
                             if (player == null) {
                                 return;
                             }
-                            player.playSound(player.getLocation(), Sound.ENTITY_EXPERIENCE_ORB_PICKUP, 50f, 1f);
+                            player.playSound(player.getLocation(), Sound.ENTITY_EXPERIENCE_ORB_PICKUP, 50F, 1F);
                             break;
                         }
                     }
-
                     IncomingPacketEvent event = new IncomingPacketEvent(id, object.toString());
                     Bukkit.getPluginManager().callEvent(event);
                 }

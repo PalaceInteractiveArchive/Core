@@ -9,10 +9,7 @@ import network.palace.core.config.LanguageFormatter;
 import network.palace.core.packets.AbstractPacket;
 import network.palace.core.player.*;
 import network.palace.core.plugin.Plugin;
-import org.bukkit.Bukkit;
-import org.bukkit.GameMode;
-import org.bukkit.Location;
-import org.bukkit.Material;
+import org.bukkit.*;
 import org.bukkit.entity.Player;
 import org.bukkit.inventory.Inventory;
 import org.bukkit.inventory.ItemStack;
@@ -70,6 +67,13 @@ public class CorePlayer implements CPlayer {
         if (getStatus() != PlayerStatus.JOINED) return false;
         if (getBukkitPlayer() == null) return false;
         return false;
+    }
+
+    @Override
+    public void playSound(Location location, Sound sound, float volume, float pitch) {
+        if (getStatus() != PlayerStatus.JOINED) return;
+        if (getBukkitPlayer() == null) return;
+        getBukkitPlayer().playSound(location, sound, volume, pitch);
     }
 
     @Override

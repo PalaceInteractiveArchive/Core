@@ -4,6 +4,7 @@ import network.palace.core.packets.AbstractPacket;
 import org.bukkit.GameMode;
 import org.bukkit.Location;
 import org.bukkit.Material;
+import org.bukkit.Sound;
 import org.bukkit.entity.Player;
 import org.bukkit.inventory.Inventory;
 import org.bukkit.inventory.ItemStack;
@@ -20,6 +21,8 @@ public interface  CPlayer {
 
     void setOp(boolean isOp);
     boolean isOp();
+
+    void playSound(Location location, Sound sound, float volume, float pitch);
 
     void setMaxHealth(double health);
     void setHealth(double health);
