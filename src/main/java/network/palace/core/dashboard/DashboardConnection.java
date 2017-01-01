@@ -10,6 +10,7 @@ import network.palace.core.events.CurrentPackReceivedEvent;
 import network.palace.core.events.IncomingPacketEvent;
 import network.palace.core.player.CPlayer;
 import org.bukkit.Bukkit;
+import org.bukkit.ChatColor;
 import org.bukkit.Sound;
 import org.bukkit.entity.Player;
 import org.java_websocket.client.WebSocketClient;
@@ -86,18 +87,15 @@ public class DashboardConnection {
 
                 @Override
                 public void onOpen(ServerHandshake handshake) {
-                    System.out.println("Successfully connected to Dashboard");
-
+                    Core.logMessage("Core", ChatColor.GREEN + "Successfully connected to Dashboard");
                     DashboardConnection.this.send(new PacketConnectionType(PacketConnectionType.ConnectionType.INSTANCE).getJSON().toString());
-
                     DashboardConnection.this.send(new PacketServerName(instance.getInstanceName()).getJSON().toString());
                     hasAttempted = false;
                 }
 
                 @Override
                 public void onClose(int code, String reason, boolean remote) {
-                    System.out.println(code + " Disconnected from Dashboard! Reconnecting...");
-
+                    Core.logMessage("Core", ChatColor.RED + String.valueOf(code) + " Disconnected from Dashboard! Reconnecting...");
                     new Timer().schedule(new TimerTask() {
                         @Override
                         public void run() {
@@ -108,7 +106,7 @@ public class DashboardConnection {
 
                 @Override
                 public void onError(Exception ex) {
-                    System.out.println("Error in Dashboard connection");
+                    Core.logMessage("Core", ChatColor.RED + "Error in Dashboard connection");
                     ex.printStackTrace();
                 }
 
