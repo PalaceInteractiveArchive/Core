@@ -56,6 +56,7 @@ public class CorePlayerManagerListener implements Listener {
             Core.getInstance().getDashboardConnection().send(packet);
         }, 10L);
         event.setJoinMessage("");
+        event.getPlayer().setCollidable(false);
     }
 
     @EventHandler(ignoreCancelled = true, priority = EventPriority.MONITOR)
