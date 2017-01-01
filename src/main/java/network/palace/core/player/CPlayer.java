@@ -18,6 +18,9 @@ public interface  CPlayer {
     String getName();
     boolean isOnline();
 
+    void setOp(boolean isOp);
+    boolean isOp();
+
     void setMaxHealth(double health);
     void setHealth(double health);
 

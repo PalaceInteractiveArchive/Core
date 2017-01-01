@@ -62,6 +62,12 @@ public class Core extends JavaPlugin {
         }
         // Libraries
         LibraryHandler.loadLibraries(this);
+        // Configurations
+        configFile = new YAMLConfigurationFile(this, "", "config.yml");
+        getConfig().getDefaults();
+        setServerType(getCoreConfig().getString("server-type"));
+        setInstanceName(getCoreConfig().getString("instance-name"));
+        setTestNetwork(getCoreConfig().getBoolean("test-network"));
         // Formatter
         languageFormatter = new LanguageFormatter(this);
         // Protocol lib adapters
@@ -76,12 +82,6 @@ public class Core extends JavaPlugin {
         resourceManager = new ResourceManager();
         economy = new Economy();
         commandMap = new CoreCommandMap(this);
-        // Configurations
-        configFile = new YAMLConfigurationFile(this, "", "config.yml");
-        getConfig().getDefaults();
-        setServerType(getCoreConfig().getString("server-type"));
-        setInstanceName(getCoreConfig().getString("instance-name"));
-        setTestNetwork(getCoreConfig().getBoolean("test-network"));
         //Dashboard
         dashboardConnection = new DashboardConnection();
         // Register Listeners

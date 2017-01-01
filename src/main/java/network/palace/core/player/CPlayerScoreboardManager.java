@@ -8,5 +8,7 @@ public interface CPlayerScoreboardManager {
     CPlayerScoreboardManager remove(int id);
     CPlayerScoreboardManager title(String title);
 
-    void destroy();
+    void setupPlayerTags();
+    void addPlayerTag(CPlayer otherPlayer);
+    void removePlayerTag(CPlayer otherPlayer);
 }

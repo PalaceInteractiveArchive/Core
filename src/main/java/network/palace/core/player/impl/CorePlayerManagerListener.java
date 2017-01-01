@@ -18,6 +18,11 @@ import org.bukkit.event.player.PlayerQuitEvent;
 public class CorePlayerManagerListener implements Listener {
 
     private Core instance = Core.getPlugin(Core.class);
+    private CorePlayerDefaultScoreboard defaultScoreboard;
+
+    public CorePlayerManagerListener() {
+        defaultScoreboard = new CorePlayerDefaultScoreboard();
+    }
 
     @EventHandler(ignoreCancelled = true, priority = EventPriority.LOW)
     public void onPlayerLogin(AsyncPlayerPreLoginEvent event) {
@@ -44,28 +49,50 @@ public class CorePlayerManagerListener implements Listener {
         } catch (Exception ignored) {
         }
         Core.getPlayerManager().playerJoined(player.getUniqueId(), textureHash);
-        CorePlayerJoinDelayedEvent delayedEvent = new CorePlayerJoinDelayedEvent(Core.getPlayerManager()
-                .getPlayer(player), event.getJoinMessage());
-
+        CorePlayerJoinDelayedEvent delayedEvent = new CorePlayerJoinDelayedEvent(Core.getPlayerManager().getPlayer(player));
         Core.runTaskLater(() -> {
             delayedEvent.call();
-            event.setJoinMessage(delayedEvent.getJoinMessage());
             PacketGetPack packet = new PacketGetPack(player.getUniqueId(), "");
             Core.getInstance().getDashboardConnection().send(packet);
         }, 10L);
+        event.setJoinMessage("");
+    }
+
+    @EventHandler(ignoreCancelled = true, priority = EventPriority.MONITOR)
+    public void onPlayerJoinDelayed(CorePlayerJoinDelayedEvent event) {
+        CPlayer player = event.getPlayer();
+        // Set op
+        boolean op = player.getRank().isOp();
+        if (player.isOp() != op) {
+            player.setOp(op);
+        }
+        // Scoreboard
+        player.getScoreboard().setupPlayerTags();
+        for (CPlayer otherPlayer : Core.getPlayerManager().getOnlinePlayers()) {
+            player.getScoreboard().addPlayerTag(otherPlayer);
+            otherPlayer.getScoreboard().addPlayerTag(player);
+        }
+        defaultScoreboard.setup(player);
     }
 
     @EventHandler(ignoreCancelled = true, priority = EventPriority.HIGHEST)
     public void onPlayerQuit(PlayerQuitEvent event) {
-        CPlayer player = Core.getPlayerManager().getPlayer(event.getPlayer());
-        if (player != null) player.getScoreboard().destroy();
-        Core.getPlayerManager().playerLoggedOut(event.getPlayer().getUniqueId());
+        onQuitOrKick(event.getPlayer());
     }
 
     @EventHandler(ignoreCancelled = true, priority = EventPriority.HIGHEST)
     public void onPlayerKick(PlayerKickEvent event) {
-        CPlayer player = Core.getPlayerManager().getPlayer(event.getPlayer());
-        if (player != null) player.getScoreboard().destroy();
-        Core.getPlayerManager().playerLoggedOut(event.getPlayer().getUniqueId());
+        onQuitOrKick(event.getPlayer());
+    }
+
+    private void onQuitOrKick(Player player) {
+        CPlayer eventPlayer = Core.getPlayerManager().getPlayer(player);
+        if (eventPlayer != null) {
+            for (CPlayer otherPlayer : Core.getPlayerManager().getOnlinePlayers()) {
+                eventPlayer.getScoreboard().removePlayerTag(otherPlayer);
+                otherPlayer.getScoreboard().removePlayerTag(eventPlayer);
+            }
+        }
+        Core.getPlayerManager().playerLoggedOut(player.getUniqueId());
     }
 }

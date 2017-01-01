@@ -33,7 +33,7 @@ public class CorePlayerManager implements CPlayerManager {
         player.setStatus(CPlayer.PlayerStatus.JOINED);
         player.setTextureHash(textureHash);
         //Setup permissions for player
-        Core.getInstance().getPermissionManager().login(player);
+        Core.getPermissionManager().login(player);
     }
 
     @Override

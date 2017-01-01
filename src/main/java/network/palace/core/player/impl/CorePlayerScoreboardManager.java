@@ -2,14 +2,18 @@ package network.palace.core.player.impl;
 
 import com.google.common.collect.BiMap;
 import com.google.common.collect.HashBiMap;
+import network.palace.core.Core;
 import network.palace.core.player.CPlayer;
 import network.palace.core.player.CPlayerScoreboardManager;
+import network.palace.core.player.Rank;
 import org.bukkit.Bukkit;
 import org.bukkit.ChatColor;
 import org.bukkit.scoreboard.DisplaySlot;
 import org.bukkit.scoreboard.Objective;
 import org.bukkit.scoreboard.Scoreboard;
+import org.bukkit.scoreboard.Team;
 
+import java.util.HashMap;
 import java.util.concurrent.ThreadLocalRandom;
 
 public class CorePlayerScoreboardManager implements CPlayerScoreboardManager {
@@ -30,7 +34,6 @@ public class CorePlayerScoreboardManager implements CPlayerScoreboardManager {
 
     @Override
     public CPlayerScoreboardManager set(int id, String text) {
-        if (scoreboard == null) setup();
         text = text.substring(0, Math.min(text.length(), MAX_STRING_LENGTH));
         while (text.endsWith("\u00A7")) text = text.substring(0, text.length() - 1);
         if (lines.containsKey(id)) {
@@ -57,7 +60,6 @@ public class CorePlayerScoreboardManager implements CPlayerScoreboardManager {
 
     @Override
     public CPlayerScoreboardManager remove(int id) {
-        if (scoreboard == null) setup();
         if (lines.containsKey(id)) {
             scoreboard.resetScores(lines.get(id));
         }
@@ -67,9 +69,7 @@ public class CorePlayerScoreboardManager implements CPlayerScoreboardManager {
 
     @Override
     public CPlayerScoreboardManager title(String title) {
-        if (scoreboard == null) setup();
         if (this.title != null && this.title.equals(title)) return this;
-        if (scoreboardObjective == null) setup();
 
         this.title = title;
         scoreboardObjective.setDisplayName(title);
@@ -90,11 +90,6 @@ public class CorePlayerScoreboardManager implements CPlayerScoreboardManager {
         scoreboardObjective.setDisplaySlot(DisplaySlot.SIDEBAR);
     }
 
-    @Override
-    public void destroy() {
-        if (scoreboardObjective != null) scoreboardObjective.unregister();
-    }
-
     private String nextNull() {
         String s;
         do {
@@ -102,5 +97,30 @@ public class CorePlayerScoreboardManager implements CPlayerScoreboardManager {
             s = ChatColor.values()[nullIndex].toString();
         } while (lines.containsValue(s));
         return s;
+    }
+
+    @Override
+    public void setupPlayerTags() {
+        if (scoreboard == null) {
+            setup();
+            for (Rank rank : Rank.values()) {
+                Team team = scoreboard.registerNewTeam(rank.getName());
+                team.setPrefix(rank.getScoreboardName());
+            }
+        }
+    }
+
+    @Override
+    public void addPlayerTag(CPlayer otherPlayer) {
+        if (scoreboard == null) setup();
+        if (scoreboard.getTeam(otherPlayer.getRank().getName()) != null) removePlayerTag(otherPlayer);
+        scoreboard.getTeam(otherPlayer.getRank().getName()).addEntry(otherPlayer.getName());
+    }
+
+    @Override
+    public void removePlayerTag(CPlayer otherPlayer) {
+        if (scoreboard == null) setup();
+        if (scoreboard.getTeam(otherPlayer.getRank().getName()) == null) return;
+        scoreboard.getTeam(otherPlayer.getRank().getName()).removeEntry(otherPlayer.getName());
     }
 }

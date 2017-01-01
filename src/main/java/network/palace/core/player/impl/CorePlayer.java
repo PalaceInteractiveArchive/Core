@@ -59,6 +59,20 @@ public class CorePlayer implements CPlayer {
     }
 
     @Override
+    public void setOp(boolean isOp) {
+        if (getStatus() != PlayerStatus.JOINED) return;
+        if (getBukkitPlayer() == null) return;
+        getBukkitPlayer().setOp(isOp);
+    }
+
+    @Override
+    public boolean isOp() {
+        if (getStatus() != PlayerStatus.JOINED) return false;
+        if (getBukkitPlayer() == null) return false;
+        return false;
+    }
+
+    @Override
     @SuppressWarnings("deprecation")
     public void setMaxHealth(double health) {
         if (getStatus() != PlayerStatus.JOINED) return;

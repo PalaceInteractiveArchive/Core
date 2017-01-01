@@ -124,7 +124,6 @@ public class Economy {
             PreparedStatement sql = connection.prepareStatement("UPDATE player_data SET tokens=? WHERE uuid=?;");
             sql.setInt(1, amount);
             sql.setString(2, uuid.toString());
-            sql.setString(3, uuid.toString());
             sql.execute();
             sql.close();
             new EconomyUpdateEvent(uuid, getTokens(uuid), false).call();

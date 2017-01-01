@@ -4,9 +4,7 @@ import network.palace.core.Core;
 import network.palace.core.player.CPlayer;
 import network.palace.core.player.Rank;
 import org.bukkit.ChatColor;
-import org.bukkit.configuration.file.YamlConfiguration;
 
-import java.io.File;
 import java.sql.*;
 import java.util.ArrayList;
 import java.util.HashMap;
@@ -24,10 +22,9 @@ public class SqlUtil {
     }
 
     public void loadLogin() {
-        YamlConfiguration config = YamlConfiguration.loadConfiguration(new File("plugins/Core/config.yml"));
-        url = config.getString("sql.url");
-        user = config.getString("sql.user");
-        password = config.getString("sql.password");
+        url = Core.getCoreConfig().getString("sql.url");
+        user = Core.getCoreConfig().getString("sql.user");
+        password = Core.getCoreConfig().getString("sql.password");
     }
 
     public Connection getConnection() {

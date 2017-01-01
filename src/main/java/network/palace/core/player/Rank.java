@@ -1,43 +1,40 @@
 package network.palace.core.player;
 
+import lombok.AllArgsConstructor;
+import lombok.Getter;
 import network.palace.core.Core;
 import org.bukkit.ChatColor;
 
 import java.util.HashMap;
 
 @SuppressWarnings({"CanBeFinal", "unused"})
+@AllArgsConstructor
 public enum Rank {
-    EMPRESS("Empress", ChatColor.RED, ChatColor.YELLOW, true, 11),
-    EMPEROR("Emperor", ChatColor.RED, ChatColor.YELLOW, true, 11),
-    WIZARD("Wizard", ChatColor.GOLD, ChatColor.YELLOW, true, 11),
-    PALADIN("Paladin", ChatColor.YELLOW, ChatColor.GREEN, true, 10),
-    ARCHITECT("Architect", ChatColor.GREEN, ChatColor.GREEN, true, 9),
-    KNIGHT("Knight", ChatColor.GREEN, ChatColor.GREEN, true, 9),
-    SQUIRE("Squire", ChatColor.DARK_GREEN, ChatColor.DARK_GREEN, false, 8),
-    CHARACTER("Character", ChatColor.BLUE, ChatColor.BLUE, false, 7),
-    SPECIALGUEST("Special Guest", ChatColor.DARK_PURPLE, ChatColor.WHITE, false, 6),
-    MCPROHOSTING("MCProHosting", ChatColor.RED, ChatColor.WHITE, false, 6),
-    HONORABLE("Honorable", ChatColor.LIGHT_PURPLE, ChatColor.WHITE, false, 5),
-    MAJESTIC("Majestic", ChatColor.DARK_PURPLE, ChatColor.WHITE, false, 4),
-    NOBLE("Noble", ChatColor.BLUE, ChatColor.WHITE, false, 3),
-    DWELLER("Dweller", ChatColor.AQUA, ChatColor.WHITE, false, 2),
-    SHAREHOLDER("Shareholder", ChatColor.LIGHT_PURPLE, ChatColor.WHITE, false, 3),
-    DVCMEMBER("DVC", ChatColor.AQUA, ChatColor.WHITE, false, 2),
-    SETTLER("Settler", ChatColor.DARK_AQUA, ChatColor.WHITE, false, 1);
 
-    public String name;
-    public ChatColor tagColor;
-    public ChatColor chatColor;
-    public boolean op;
-    public int rankId;
+    EMPRESS("Empress", ChatColor.RED + "[Empress] ", ChatColor.RED, ChatColor.YELLOW, true, 11),
+    EMPEROR("Emperor", ChatColor.RED + "[Emperor] ", ChatColor.RED, ChatColor.YELLOW, true, 11),
+    WIZARD("Wizard", ChatColor.GOLD + "[Wizard] ", ChatColor.GOLD, ChatColor.YELLOW, true, 11),
+    PALADIN("Paladin", ChatColor.YELLOW + "[Paladin] ", ChatColor.YELLOW, ChatColor.GREEN, true, 10),
+    ARCHITECT("Architect", ChatColor.GREEN + "[Architect] ", ChatColor.GREEN, ChatColor.GREEN, true, 9),
+    KNIGHT("Knight", ChatColor.GREEN + "[Knight] ", ChatColor.GREEN, ChatColor.GREEN, true, 9),
+    SQUIRE("Squire", ChatColor.DARK_GREEN + "[Squire] ", ChatColor.DARK_GREEN, ChatColor.DARK_GREEN, false, 8),
+    CHARACTER("Character", ChatColor.BLUE + "[Character] ", ChatColor.BLUE, ChatColor.BLUE, false, 7),
+    SPECIALGUEST("Special Guest", ChatColor.DARK_PURPLE + "[SG] ", ChatColor.DARK_PURPLE, ChatColor.WHITE, false, 6),
+    MCPROHOSTING("MCProHosting", ChatColor.RED + "[MCPro] ", ChatColor.RED, ChatColor.WHITE, false, 6),
+    HONORABLE("Honorable", ChatColor.LIGHT_PURPLE + "[Honorable] ", ChatColor.LIGHT_PURPLE, ChatColor.WHITE, false, 5),
+    MAJESTIC("Majestic", ChatColor.DARK_PURPLE + "[Majestic] ", ChatColor.DARK_PURPLE, ChatColor.WHITE, false, 4),
+    NOBLE("Noble", ChatColor.BLUE + "[Noble] " ,ChatColor.BLUE, ChatColor.WHITE, false, 3),
+    SHAREHOLDER("Shareholder", ChatColor.LIGHT_PURPLE + "[Shareholder] ", ChatColor.LIGHT_PURPLE, ChatColor.WHITE, false, 3),
+    DWELLER("Dweller", ChatColor.AQUA + "[Dweller] ", ChatColor.AQUA, ChatColor.WHITE, false, 2),
+    DVCMEMBER("DVC", ChatColor.AQUA + "[DVC] ", ChatColor.AQUA, ChatColor.WHITE, false, 2),
+    SETTLER("Settler", ChatColor.GRAY + "", ChatColor.DARK_AQUA, ChatColor.WHITE, false, 1);
 
-    Rank(String name, ChatColor tagColor, ChatColor chatColor, boolean op, int rankId) {
-        this.name = name;
-        this.tagColor = tagColor;
-        this.chatColor = chatColor;
-        this.op = op;
-        this.rankId = rankId;
-    }
+    @Getter private String name;
+    @Getter private String scoreboardName;
+    @Getter private ChatColor tagColor;
+    @Getter private ChatColor chatColor;
+    @Getter private boolean isOp;
+    @Getter private int rankId;
 
     public static Rank fromString(String string) {
         String rankName = string.toLowerCase();
@@ -79,14 +76,6 @@ public enum Rank {
         }
     }
 
-    public int getRankId() {
-        return rankId;
-    }
-
-    public String getName() {
-        return name;
-    }
-
     public String getSqlName() {
         return name.toLowerCase().replaceAll(" ", "");
     }
@@ -95,19 +84,7 @@ public enum Rank {
         return ChatColor.WHITE + "[" + getTagColor() + getName() + ChatColor.WHITE + "]";
     }
 
-    public boolean getOp() {
-        return op;
-    }
-
     public HashMap<String, Boolean> getPermissions() {
-        return Core.getInstance().getPermissionManager().getPermissions(this);
-    }
-
-    public ChatColor getChatColor() {
-        return chatColor;
-    }
-
-    public ChatColor getTagColor() {
-        return tagColor;
+        return Core.getPermissionManager().getPermissions(this);
     }
 }
