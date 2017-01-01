@@ -49,6 +49,7 @@ public class Plugin extends JavaPlugin {
         } catch (Exception e) {
             e.printStackTrace();
         }
+        if (getInfo() == null) return;
         Core.logMessage(getInfo().name(), ChatColor.DARK_RED + "Plugin Disabled");
     }
 
