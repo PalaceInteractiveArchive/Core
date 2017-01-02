@@ -41,8 +41,9 @@ public class SqlUtil {
      */
 
     public Rank getRank(UUID uuid) {
-        if (getConnection() == null) return Rank.WIZARD;
-        try (Connection connection = getConnection()) {
+        Connection connection = getConnection();
+        if (connection == null) return Rank.WIZARD;
+        try {
             PreparedStatement sql = connection.prepareStatement("SELECT rank FROM player_data WHERE uuid=?");
             sql.setString(1, uuid.toString());
             ResultSet result = sql.executeQuery();
@@ -52,6 +53,7 @@ public class SqlUtil {
             Rank rank = Rank.fromString(result.getString("rank"));
             result.close();
             sql.close();
+            connection.close();
             return rank;
         } catch (SQLException e) {
             e.printStackTrace();
@@ -60,8 +62,9 @@ public class SqlUtil {
     }
 
     public Rank getRank(String username) {
-        if (getConnection() == null) return Rank.WIZARD;
-        try (Connection connection = getConnection()) {
+        Connection connection = getConnection();
+        if (connection == null) return Rank.WIZARD;
+        try {
             PreparedStatement sql = connection.prepareStatement("SELECT rank FROM player_data WHERE username=?");
             sql.setString(1, username);
             ResultSet result = sql.executeQuery();
@@ -71,6 +74,7 @@ public class SqlUtil {
             Rank rank = Rank.fromString(result.getString("rank"));
             result.close();
             sql.close();
+            connection.close();
             return rank;
         } catch (SQLException e) {
             e.printStackTrace();
@@ -79,14 +83,16 @@ public class SqlUtil {
     }
 
     public boolean playerExists(String username) {
-        if (getConnection() == null) return false;
-        try (Connection connection = getConnection()) {
+        Connection connection = getConnection();
+        if (connection == null) return false;
+        try {
             PreparedStatement sql = connection.prepareStatement("SELECT id FROM player_data WHERE username=?");
             sql.setString(1, username);
             ResultSet result = sql.executeQuery();
             boolean contains = result.next();
             result.close();
             sql.close();
+            connection.close();
             return contains;
         } catch (SQLException e) {
             e.printStackTrace();
@@ -95,7 +101,9 @@ public class SqlUtil {
     }
 
     public UUID getUniqueIdFromName(String username) {
-        try (Connection connection = getConnection()) {
+        Connection connection = getConnection();
+        if (connection == null) return UUID.randomUUID();
+        try {
             PreparedStatement sql = connection.prepareStatement("SELECT uuid FROM player_data WHERE username=?");
             sql.setString(1, username);
             ResultSet result = sql.executeQuery();
@@ -107,6 +115,7 @@ public class SqlUtil {
             String uuid = result.getString("uuid");
             result.close();
             sql.close();
+            connection.close();
             return UUID.fromString(uuid);
         } catch (SQLException e) {
             e.printStackTrace();
@@ -118,8 +127,9 @@ public class SqlUtil {
      * Permission Methods
      */
     public HashMap<String, Boolean> getPermissions(Rank rank) {
-        if (getConnection() == null) return new HashMap<>();
-        try (Connection connection = getConnection()) {
+        Connection connection = getConnection();
+        if (connection == null) return new HashMap<>();
+        try {
             PreparedStatement sql = connection.prepareStatement("SELECT * FROM permissions WHERE rank=?");
             sql.setString(1, rank.getSqlName());
             ResultSet result = sql.executeQuery();
@@ -129,6 +139,7 @@ public class SqlUtil {
             }
             result.close();
             sql.close();
+            connection.close();
             return permissions;
         } catch (SQLException e) {
             e.printStackTrace();
@@ -141,7 +152,9 @@ public class SqlUtil {
     }
 
     public List<String> getMembers(Rank rank) {
-        try (Connection connection = getConnection()) {
+        Connection connection = getConnection();
+        if (connection == null) return new ArrayList<>();
+        try {
             PreparedStatement sql = connection.prepareStatement("SELECT username FROM player_data WHERE rank=?");
             sql.setString(1, rank.getSqlName());
             ResultSet result = sql.executeQuery();
@@ -151,6 +164,7 @@ public class SqlUtil {
             }
             result.close();
             sql.close();
+            connection.close();
             return members;
         } catch (SQLException e) {
             e.printStackTrace();
@@ -159,19 +173,24 @@ public class SqlUtil {
     }
 
     public void setRank(UUID uuid, Rank rank) {
-        try (Connection connection = getConnection()) {
+        Connection connection = getConnection();
+        if (connection == null) return;
+        try {
             PreparedStatement sql = connection.prepareStatement("UPDATE player_data SET rank=? WHERE uuid=?");
             sql.setString(1, rank.getSqlName());
             sql.setString(2, uuid.toString());
             sql.execute();
             sql.close();
+            connection.close();
         } catch (SQLException e) {
             e.printStackTrace();
         }
     }
 
     public void setPermission(String node, Rank rank, boolean value) {
-        try (Connection connection = getConnection()) {
+        Connection connection = getConnection();
+        if (connection == null) return;
+        try  {
             String s = "IF EXISTS (SELECT * FROM permissions WHERE rank=? AND node=?) UPDATE permissions SET value=? WHERE node=? AND rank=? ELSE INSERT INTO Table1 VALUES (0,?,?,?)";
             PreparedStatement sql = connection.prepareStatement(s);
             sql.setString(1, rank.getSqlName());
@@ -184,22 +203,26 @@ public class SqlUtil {
             sql.setInt(8, value ? 1 : 0);
             sql.execute();
             sql.close();
+            connection.close();
         } catch (SQLException e) {
             e.printStackTrace();
         }
-        Core.getInstance().getPermissionManager().setPermission(rank, node, value);
+        Core.getPermissionManager().setPermission(rank, node, value);
     }
 
     public void unsetPermission(String node, Rank rank) {
-        try (Connection connection = getConnection()) {
+        Connection connection = getConnection();
+        if (connection == null) return;
+        try {
             PreparedStatement sql = connection.prepareStatement("DELETE FROM permissions WHERE rank=? AND node=?");
             sql.setString(1, rank.getSqlName());
             sql.setString(2, node);
             sql.execute();
             sql.close();
+            connection.close();
         } catch (SQLException e) {
             e.printStackTrace();
         }
-        Core.getInstance().getPermissionManager().unsetPermission(rank, node);
+        Core.getPermissionManager().unsetPermission(rank, node);
     }
 }
