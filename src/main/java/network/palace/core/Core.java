@@ -15,6 +15,7 @@ import network.palace.core.packets.adapters.SettingsAdapter;
 import network.palace.core.permissions.PermissionManager;
 import network.palace.core.player.CPlayerManager;
 import network.palace.core.player.impl.CorePlayerManager;
+import network.palace.core.player.impl.CorePlayerWorldDownloadProtect;
 import network.palace.core.plugin.PluginInfo;
 import network.palace.core.resource.ResourceManager;
 import network.palace.core.utils.ItemUtil;
@@ -74,6 +75,7 @@ public class Core extends JavaPlugin {
         ProtocolLibrary.getProtocolManager().addPacketListener(new SettingsAdapter());
         // Register plugin channel
         getServer().getMessenger().registerOutgoingPluginChannel(this, "BungeeCord");
+        getServer().getMessenger().registerIncomingPluginChannel(this, "WDL|INIT", new CorePlayerWorldDownloadProtect());
         // SQL Classes
         sqlUtil = new SqlUtil();
         // Managers
@@ -194,6 +196,11 @@ public class Core extends JavaPlugin {
     @SuppressWarnings("UnusedReturnValue")
     public static int runTaskLater(Runnable task, long delay) {
         return getScheduler().runTaskLater(getInstance(), task, delay).getTaskId();
+    }
+
+    @SuppressWarnings("UnusedReturnValue")
+    public static int runTaskTimer(Runnable task, long delay, long period) {
+        return getScheduler().runTaskTimer(getInstance(), task, delay, period).getTaskId();
     }
 
     /* Log Utils */

@@ -23,8 +23,8 @@ public class CorePlayerManagerListener implements Listener {
 
     public CorePlayerManagerListener() {
         defaultScoreboard = new CorePlayerDefaultScoreboard();
-        new CorePlayerPickupItemListener();
-        new CorePlayerAchievementsListener();
+        Core.registerListener(new CorePlayerPickupItemListener());
+        Core.registerListener(new CorePlayerAchievementsListener());
     }
 
     @EventHandler(ignoreCancelled = true, priority = EventPriority.LOW)
@@ -44,6 +44,7 @@ public class CorePlayerManagerListener implements Listener {
 
     @EventHandler(ignoreCancelled = true, priority = EventPriority.LOW)
     public void onPlayerJoin(PlayerJoinEvent event) {
+        event.setJoinMessage("");
         String textureHash = "";
         final Player player = event.getPlayer();
         try {
@@ -58,8 +59,6 @@ public class CorePlayerManagerListener implements Listener {
             PacketGetPack packet = new PacketGetPack(player.getUniqueId(), "");
             Core.getInstance().getDashboardConnection().send(packet);
         }, 10L);
-        event.setJoinMessage("");
-        event.getPlayer().setCollidable(false);
         if (!event.getPlayer().hasAchievement(Achievement.OPEN_INVENTORY)) event.getPlayer().awardAchievement(Achievement.OPEN_INVENTORY);
     }
 
@@ -83,11 +82,13 @@ public class CorePlayerManagerListener implements Listener {
     @EventHandler(ignoreCancelled = true, priority = EventPriority.HIGHEST)
     public void onPlayerQuit(PlayerQuitEvent event) {
         onQuitOrKick(event.getPlayer());
+        event.setQuitMessage("");
     }
 
     @EventHandler(ignoreCancelled = true, priority = EventPriority.HIGHEST)
     public void onPlayerKick(PlayerKickEvent event) {
         onQuitOrKick(event.getPlayer());
+        event.setLeaveMessage("");
     }
 
     private void onQuitOrKick(Player player) {

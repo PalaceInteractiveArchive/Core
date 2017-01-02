@@ -13,6 +13,13 @@ public class CorePlayerDefaultScoreboard implements Listener {
     public CorePlayerDefaultScoreboard() {
         if (!isDefaultSidebarEnabled()) return;
         Core.registerListener(this);
+        Core.runTaskTimer(() -> {
+            for (CPlayer player : Core.getPlayerManager().getOnlinePlayers()) {
+                if (player.getStatus() != CPlayer.PlayerStatus.JOINED) return;
+                if (!player.getScoreboard().isSetup()) return;
+                setOnlinePlayers(player.getScoreboard());
+            }
+        }, 0L, 10L);
     }
 
     public void setup(CPlayer player) {
@@ -35,7 +42,7 @@ public class CorePlayerDefaultScoreboard implements Listener {
         // Blank space
         scoreboard.setBlank(2);
         // Players number
-        scoreboard.set(1, ChatColor.GREEN + "Online Players: " + Core.getPlayerManager().getOnlinePlayers().size());
+        setOnlinePlayers(scoreboard);
         // Server name
         scoreboard.set(0, ChatColor.GREEN + "Server: " + Core.getInstance().getServerType());
     }
@@ -51,6 +58,10 @@ public class CorePlayerDefaultScoreboard implements Listener {
         } else {
             setTokens(5, player.getScoreboard(), amount);
         }
+    }
+
+    public void setOnlinePlayers(CPlayerScoreboardManager scoreboard) {
+        scoreboard.set(1, ChatColor.GREEN + "Online Players: " + Core.getPlayerManager().getOnlinePlayers().size());
     }
 
     private void setTokens(int position, CPlayerScoreboardManager scoreboard, int tokens) {

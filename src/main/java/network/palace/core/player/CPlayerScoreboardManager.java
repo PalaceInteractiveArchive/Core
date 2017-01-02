@@ -11,4 +11,6 @@ public interface CPlayerScoreboardManager {
     void setupPlayerTags();
     void addPlayerTag(CPlayer otherPlayer);
     void removePlayerTag(CPlayer otherPlayer);
+
+    boolean isSetup();
 }

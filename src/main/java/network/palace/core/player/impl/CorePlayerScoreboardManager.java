@@ -2,6 +2,7 @@ package network.palace.core.player.impl;
 
 import com.google.common.collect.BiMap;
 import com.google.common.collect.HashBiMap;
+import lombok.Getter;
 import network.palace.core.Core;
 import network.palace.core.player.CPlayer;
 import network.palace.core.player.CPlayerScoreboardManager;
@@ -27,6 +28,7 @@ public class CorePlayerScoreboardManager implements CPlayerScoreboardManager {
     private Objective scoreboardObjective;
     private String title;
     private int nullIndex = 0;
+    @Getter private boolean isSetup = false;
 
     public CorePlayerScoreboardManager(CPlayer player) {
         this.player = player;
@@ -106,6 +108,7 @@ public class CorePlayerScoreboardManager implements CPlayerScoreboardManager {
             for (Rank rank : Rank.values()) {
                 Team team = scoreboard.registerNewTeam(rank.getName());
                 team.setPrefix(rank.getScoreboardName());
+                team.setOption(Team.Option.COLLISION_RULE, Team.OptionStatus.NEVER);
             }
         }
     }
