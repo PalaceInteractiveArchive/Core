@@ -12,7 +12,6 @@ import network.palace.core.player.CPlayer;
 import org.bukkit.Bukkit;
 import org.bukkit.ChatColor;
 import org.bukkit.Sound;
-import org.bukkit.entity.Player;
 import org.java_websocket.client.WebSocketClient;
 import org.java_websocket.drafts.Draft_10;
 import org.java_websocket.handshake.ServerHandshake;
@@ -36,7 +35,6 @@ public class DashboardConnection {
     private String dashboardURL = instance.getConfig().getString("dashboardURL");
 
     public DashboardConnection() {
-        if (isDisabled()) return;
         start();
     }
 
@@ -65,6 +63,7 @@ public class DashboardConnection {
                             UUID uuid = packet.getUniqueId();
                             String pack = packet.getPack();
                             CPlayer player = Core.getPlayerManager().getPlayer(uuid);
+                            if (player == null) break;
                             player.setPack(pack);
                             CurrentPackReceivedEvent e = new CurrentPackReceivedEvent(player, pack);
                             e.call();
@@ -128,10 +127,6 @@ public class DashboardConnection {
     @SuppressWarnings("BooleanMethodIsAlwaysInverted")
     public boolean isConnected() {
         return client != null && client.getConnection() != null && !client.getConnection().isConnecting() && client.getConnection().isOpen();
-    }
-
-    public boolean isDisabled() {
-        return dashboardURL.equalsIgnoreCase("disable");
     }
 
     public void stop() {

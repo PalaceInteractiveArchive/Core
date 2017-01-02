@@ -90,6 +90,7 @@ public class CorePlayerScoreboardManager implements CPlayerScoreboardManager {
 
         scoreboardObjective = scoreboard.registerNewObjective("obj" + ThreadLocalRandom.current().nextInt(1000000), "dummy");
         scoreboardObjective.setDisplaySlot(DisplaySlot.SIDEBAR);
+        isSetup = true;
     }
 
     private String nextNull() {
@@ -103,27 +104,29 @@ public class CorePlayerScoreboardManager implements CPlayerScoreboardManager {
 
     @Override
     public void setupPlayerTags() {
-        if (scoreboard == null) {
-            setup();
-            for (Rank rank : Rank.values()) {
-                Team team = scoreboard.registerNewTeam(rank.getName());
-                team.setPrefix(rank.getScoreboardName());
-                team.setOption(Team.Option.COLLISION_RULE, Team.OptionStatus.NEVER);
-            }
+        setup();
+        for (Rank rank : Rank.values()) {
+            Team team = scoreboard.registerNewTeam(rank.getName());
+            team.setPrefix(rank.getScoreboardName());
+            team.setOption(Team.Option.COLLISION_RULE, Team.OptionStatus.NEVER);
         }
     }
 
     @Override
     public void addPlayerTag(CPlayer otherPlayer) {
         if (scoreboard == null) setup();
-        if (scoreboard.getTeam(otherPlayer.getRank().getName()) != null) removePlayerTag(otherPlayer);
+        if (otherPlayer == null || otherPlayer.getRank() == null) return;
+        if (scoreboard.getTeam(otherPlayer.getRank().getName()) == null) return;
+        if (scoreboard.getTeam(otherPlayer.getRank().getName()).hasEntry(otherPlayer.getName())) return;
         scoreboard.getTeam(otherPlayer.getRank().getName()).addEntry(otherPlayer.getName());
     }
 
     @Override
     public void removePlayerTag(CPlayer otherPlayer) {
         if (scoreboard == null) setup();
+        if (otherPlayer == null || otherPlayer.getRank() == null) return;
         if (scoreboard.getTeam(otherPlayer.getRank().getName()) == null) return;
+        if (!scoreboard.getTeam(otherPlayer.getRank().getName()).hasEntry(otherPlayer.getName())) return;
         scoreboard.getTeam(otherPlayer.getRank().getName()).removeEntry(otherPlayer.getName());
     }
 }

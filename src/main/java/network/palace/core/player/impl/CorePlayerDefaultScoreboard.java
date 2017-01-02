@@ -1,6 +1,7 @@
 package network.palace.core.player.impl;
 
 import network.palace.core.Core;
+import network.palace.core.events.CoreOnlineCountUpdate;
 import network.palace.core.events.EconomyUpdateEvent;
 import network.palace.core.player.CPlayer;
 import network.palace.core.player.CPlayerScoreboardManager;
@@ -10,16 +11,11 @@ import org.bukkit.event.Listener;
 
 public class CorePlayerDefaultScoreboard implements Listener {
 
+    private int playerCount = 0;
+
     public CorePlayerDefaultScoreboard() {
         if (!isDefaultSidebarEnabled()) return;
         Core.registerListener(this);
-        Core.runTaskTimer(() -> {
-            for (CPlayer player : Core.getPlayerManager().getOnlinePlayers()) {
-                if (player.getStatus() != CPlayer.PlayerStatus.JOINED) return;
-                if (!player.getScoreboard().isSetup()) return;
-                setOnlinePlayers(player.getScoreboard());
-            }
-        }, 0L, 10L);
     }
 
     public void setup(CPlayer player) {
@@ -42,9 +38,19 @@ public class CorePlayerDefaultScoreboard implements Listener {
         // Blank space
         scoreboard.setBlank(2);
         // Players number
-        setOnlinePlayers(scoreboard);
+        scoreboard.set(1, ChatColor.GREEN + "Online Players: " + playerCount);
         // Server name
         scoreboard.set(0, ChatColor.GREEN + "Server: " + Core.getInstance().getServerType());
+    }
+
+    @EventHandler
+    public void onOnlineCountUpdate(CoreOnlineCountUpdate event) {
+        playerCount = event.getCount();
+        for (CPlayer player : Core.getPlayerManager().getOnlinePlayers()) {
+            if (player.getStatus() != CPlayer.PlayerStatus.JOINED) return;
+            if (!player.getScoreboard().isSetup()) return;
+            player.getScoreboard().set(1, ChatColor.GREEN + "Online Players: " + playerCount);
+        }
     }
 
     @EventHandler
@@ -58,10 +64,6 @@ public class CorePlayerDefaultScoreboard implements Listener {
         } else {
             setTokens(5, player.getScoreboard(), amount);
         }
-    }
-
-    public void setOnlinePlayers(CPlayerScoreboardManager scoreboard) {
-        scoreboard.set(1, ChatColor.GREEN + "Online Players: " + Core.getPlayerManager().getOnlinePlayers().size());
     }
 
     private void setTokens(int position, CPlayerScoreboardManager scoreboard, int tokens) {

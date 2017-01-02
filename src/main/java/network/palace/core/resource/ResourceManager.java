@@ -80,6 +80,7 @@ public class ResourceManager {
     }
 
     public void setCurrentPack(CPlayer player, String pack) {
+        if (player == null) return;
         player.setPack(pack);
         PacketSetPack packet = new PacketSetPack(player.getUniqueId(), pack);
         Core.getInstance().getDashboardConnection().send(packet);

@@ -29,7 +29,7 @@ public class CorePlayerManagerListener implements Listener {
 
     @EventHandler(ignoreCancelled = true, priority = EventPriority.LOW)
     public void onPlayerLogin(AsyncPlayerPreLoginEvent event) {
-        if (!instance.getDashboardConnection().isConnected() && !instance.getDashboardConnection().isDisabled()) {
+        if (!instance.getDashboardConnection().isConnected() || Core.getSqlUtil().getConnection() == null) {
             event.setKickMessage(ChatColor.AQUA + "Players can not join right now. Try again in a few seconds!");
             event.setLoginResult(AsyncPlayerPreLoginEvent.Result.KICK_OTHER);
             return;
@@ -66,6 +66,7 @@ public class CorePlayerManagerListener implements Listener {
     public void onPlayerJoinDelayed(CorePlayerJoinDelayedEvent event) {
         CPlayer player = event.getPlayer();
         // Set op
+        if (player == null) return;
         boolean op = player.getRank().isOp();
         if (player.isOp() != op) {
             player.setOp(op);
