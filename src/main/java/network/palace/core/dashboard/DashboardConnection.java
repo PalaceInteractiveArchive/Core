@@ -87,7 +87,7 @@ public class DashboardConnection {
 
                 @Override
                 public void onOpen(ServerHandshake handshake) {
-                    Core.logMessage("Core", ChatColor.GREEN + "Successfully connected to Dashboard");
+                    Core.logMessage("Core", ChatColor.DARK_GREEN + "Successfully connected to Dashboard");
                     DashboardConnection.this.send(new PacketConnectionType(PacketConnectionType.ConnectionType.INSTANCE).getJSON().toString());
                     DashboardConnection.this.send(new PacketServerName(instance.getInstanceName()).getJSON().toString());
                     hasAttempted = false;

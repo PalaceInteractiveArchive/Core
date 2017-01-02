@@ -1,6 +1,8 @@
 package network.palace.core.library;
 
 import lombok.Getter;
+import network.palace.core.Core;
+import org.bukkit.ChatColor;
 import org.bukkit.plugin.java.JavaPlugin;
 import org.json.simple.JSONArray;
 import org.json.simple.JSONObject;
@@ -44,7 +46,7 @@ public final class LibraryHandler {
                 handle(plugin, mavenObject);
             }
         } catch (ParseException | IOException e) {
-            plugin.getLogger().warning("Error parsing library for " + plugin.getName());
+            Core.logMessage(plugin.getName(), ChatColor.RED + "Error parsing library for " + plugin.getName());
             e.printStackTrace();
         }
     }
@@ -54,24 +56,24 @@ public final class LibraryHandler {
         try {
             File location = createAndGetWriteLocation(library);
             if (!location.exists()) {
-                plugin.getLogger().info("Downloading " + getFileName(library) + " from " + library.getRepo());
+                Core.logMessage(plugin.getName(), ChatColor.GRAY + "Downloading " + getFileName(library) + " from " + library.getRepo());
                 try (InputStream inputStream = getUrl(library.getRepo(), library).openStream()) {
                     Files.copy(inputStream, location.toPath(), StandardCopyOption.REPLACE_EXISTING);
                 }
             }
             jars.add(location);
         } catch (Exception e) {
-            plugin.getLogger().warning("Could not load library " + library.getArtifactId());
+            Core.logMessage(plugin.getName(), ChatColor.RED + "Could not load library " + library.getArtifactId());
             e.printStackTrace();
         }
         for (File jar : jars) {
             try {
                 addFile(jar);
             } catch (IOException e) {
-                plugin.getLogger().warning("Could not load jar file " + jar.getName());
+                Core.logMessage(plugin.getName(), ChatColor.RED + "Could not load jar file " + jar.getName());
                 continue;
             }
-            plugin.getLogger().info("Loaded library " + jar.getName());
+            Core.logMessage(plugin.getName(), ChatColor.DARK_GREEN + "Loaded library " + jar.getName());
         }
     }
 
