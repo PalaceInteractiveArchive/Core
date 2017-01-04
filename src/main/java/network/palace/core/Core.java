@@ -37,18 +37,10 @@ import java.util.List;
 
 @PluginInfo(name = "Core")
 public class Core extends JavaPlugin {
-    @Getter
-    @Setter
-    private String serverType = "Hub";
-    @Getter
-    @Setter
-    private String instanceName = "";
-    @Getter
-    @Setter
-    private boolean testNetwork = false;
-    @Getter
-    @Setter
-    private boolean debug = false;
+    @Getter @Setter private String serverType = "Hub";
+    @Getter @Setter private String instanceName = "";
+    @Getter @Setter private boolean testNetwork = false;
+    @Getter @Setter private boolean debug = false;
     private CoreCommandMap commandMap;
 
     @Getter
