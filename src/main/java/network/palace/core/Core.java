@@ -37,9 +37,18 @@ import java.util.List;
 
 @PluginInfo(name = "Core")
 public class Core extends JavaPlugin {
-    @Getter @Setter private String serverType = "Hub";
-    @Getter @Setter private String instanceName = "";
-    @Getter @Setter private boolean testNetwork = false;
+    @Getter
+    @Setter
+    private String serverType = "Hub";
+    @Getter
+    @Setter
+    private String instanceName = "";
+    @Getter
+    @Setter
+    private boolean testNetwork = false;
+    @Getter
+    @Setter
+    private boolean debug = false;
     private CoreCommandMap commandMap;
 
     @Getter
@@ -69,6 +78,7 @@ public class Core extends JavaPlugin {
         setServerType(getCoreConfig().getString("server-type"));
         setInstanceName(getCoreConfig().getString("instance-name"));
         setTestNetwork(getCoreConfig().getBoolean("test-network"));
+        setDebug(getCoreConfig().getBoolean("debug"));
         // Formatter
         languageFormatter = new LanguageFormatter(this);
         // Protocol lib adapters
@@ -206,6 +216,12 @@ public class Core extends JavaPlugin {
     /* Log Utils */
     public static void logMessage(String name, String message) {
         logInfo(ChatColor.GOLD + name + ChatColor.DARK_GRAY + " > " + message);
+    }
+
+    public static void debugLog(String s) {
+        if (Core.getInstance().isDebug()) {
+            logMessage("CORE-DEBUG", s);
+        }
     }
 
     public static void logInfo(String message) {

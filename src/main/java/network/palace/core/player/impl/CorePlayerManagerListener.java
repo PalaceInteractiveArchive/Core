@@ -53,13 +53,12 @@ public class CorePlayerManagerListener implements Listener {
         } catch (Exception ignored) {
         }
         Core.getPlayerManager().playerJoined(player.getUniqueId(), textureHash);
+        PacketGetPack packet = new PacketGetPack(player.getUniqueId(), "");
+        Core.getInstance().getDashboardConnection().send(packet);
         CorePlayerJoinDelayedEvent delayedEvent = new CorePlayerJoinDelayedEvent(Core.getPlayerManager().getPlayer(player));
-        Core.runTaskLater(() -> {
-            delayedEvent.call();
-            PacketGetPack packet = new PacketGetPack(player.getUniqueId(), "");
-            Core.getInstance().getDashboardConnection().send(packet);
-        }, 10L);
-        if (!event.getPlayer().hasAchievement(Achievement.OPEN_INVENTORY)) event.getPlayer().awardAchievement(Achievement.OPEN_INVENTORY);
+        Core.runTaskLater(delayedEvent::call, 10L);
+        if (!event.getPlayer().hasAchievement(Achievement.OPEN_INVENTORY))
+            event.getPlayer().awardAchievement(Achievement.OPEN_INVENTORY);
     }
 
     @EventHandler(ignoreCancelled = true, priority = EventPriority.MONITOR)

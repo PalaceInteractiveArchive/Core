@@ -51,6 +51,7 @@ public class DashboardConnection {
                         return;
                     }
                     int id = object.get("id").getAsInt();
+                    Core.debugLog("Incoming: " + object.toString());
                     switch (id) {
                         case 41: {
                             PacketOnlineCount packet = new PacketOnlineCount().fromJSON(object);
@@ -65,8 +66,7 @@ public class DashboardConnection {
                             CPlayer player = Core.getPlayerManager().getPlayer(uuid);
                             if (player == null) break;
                             player.setPack(pack);
-                            CurrentPackReceivedEvent e = new CurrentPackReceivedEvent(player, pack);
-                            e.call();
+                            new CurrentPackReceivedEvent(player, pack).call();
                             break;
                         }
                         case 50: {
@@ -121,6 +121,7 @@ public class DashboardConnection {
             Bukkit.getLogger().severe("WebSocket disconnected, cannot send packet!");
             return;
         }
+        Core.debugLog("Outgoing: " + s);
         client.send(s);
     }
 

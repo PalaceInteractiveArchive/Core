@@ -51,16 +51,27 @@ public class ResourceManager {
     }
 
     public void downloadingResult(UUID uuid, PackStatus status) {
+        String pack = downloading.remove(uuid);
         if (status != null) {
             switch (status) {
-                case LOADED:
-                    String pack = downloading.remove(uuid);
+                case LOADED: {
                     CPlayer player = Core.getPlayerManager().getPlayer(uuid);
+                    if (pack.equalsIgnoreCase("blank")) {
+                        pack = "none";
+                    }
                     setCurrentPack(player, pack);
                     break;
+                }
+                case FAILED:
+                case DECLINED: {
+                    CPlayer player = Core.getPlayerManager().getPlayer(uuid);
+                    if (pack.equalsIgnoreCase("blank")) {
+                        setCurrentPack(player, "none");
+                    }
+                    break;
+                }
             }
         }
-        downloading.remove(uuid);
     }
 
     public List<ResourcePack> getPacks() {
