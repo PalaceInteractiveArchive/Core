@@ -37,11 +37,22 @@ import java.util.List;
 
 @PluginInfo(name = "Core")
 public class Core extends JavaPlugin {
-    @Getter @Setter private String serverType = "Hub";
-    @Getter @Setter private String instanceName = "";
-    @Getter @Setter private boolean testNetwork = false;
-    @Getter @Setter private boolean debug = false;
+    @Getter
+    @Setter
+    private String serverType = "Hub";
+    @Getter
+    @Setter
+    private String instanceName = "";
+    @Getter
+    @Setter
+    private boolean testNetwork = false;
+    @Getter
+    @Setter
+    private boolean debug = false;
     private CoreCommandMap commandMap;
+    @Getter
+    @Setter
+    private boolean starting = false;
 
     @Getter
     private DashboardConnection dashboardConnection;
@@ -93,6 +104,7 @@ public class Core extends JavaPlugin {
         // Register Commands
         registerCommands();
         logMessage("Core", ChatColor.DARK_GREEN + "Enabled");
+        Bukkit.getScheduler().runTaskLater(this, () -> setStarting(false), 100L);
     }
 
     public void registerListeners() {
