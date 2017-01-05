@@ -340,6 +340,11 @@ public class CorePlayer implements CPlayer {
     }
 
     @Override
+    public boolean canSee(Player player) {
+        return getStatus() == PlayerStatus.JOINED && getBukkitPlayer() != null && player != null && getBukkitPlayer().canSee(player);
+    }
+
+    @Override
     public void sendPacket(AbstractPacket packet) {
         if (getStatus() != PlayerStatus.JOINED) return;
         if (getBukkitPlayer() == null) return;

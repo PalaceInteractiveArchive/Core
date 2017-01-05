@@ -14,7 +14,7 @@ import org.bukkit.plugin.java.JavaPlugin;
 import java.util.UUID;
 
 @SuppressWarnings("unused")
-public interface  CPlayer {
+public interface CPlayer {
 
     String getName();
     boolean isOnline();
@@ -62,10 +62,10 @@ public interface  CPlayer {
     ItemStack getOffHand();
     void setOffHand(ItemStack itemStack);
 
-
     void respawn();
     void showPlayer(CPlayer player);
     void hidePlayer(CPlayer player);
+    boolean canSee(Player player);
 
     CPlayerActionBarManager getActionBar();
     CPlayerBossBarManager getBossBar();
