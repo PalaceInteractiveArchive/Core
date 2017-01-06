@@ -73,6 +73,8 @@ public class CorePlayer implements CPlayer {
     public void playSound(Location location, Sound sound, float volume, float pitch) {
         if (getStatus() != PlayerStatus.JOINED) return;
         if (getBukkitPlayer() == null) return;
+        if (location == null) return;
+        if (sound == null) return;
         getBukkitPlayer().playSound(location, sound, volume, pitch);
     }
 
@@ -102,6 +104,7 @@ public class CorePlayer implements CPlayer {
     public void setGamemode(GameMode gamemode) {
         if (getStatus() != PlayerStatus.JOINED) return;
         if (getBukkitPlayer() == null) return;
+        if (gamemode == null) gamemode = GameMode.ADVENTURE;
         getBukkitPlayer().setGameMode(gamemode);
     }
 
@@ -116,6 +119,7 @@ public class CorePlayer implements CPlayer {
     public void teleport(Location location) {
         if (getStatus() != PlayerStatus.JOINED) return;
         if (getBukkitPlayer() == null) return;
+        if (location == null) return;
         getBukkitPlayer().teleport(location);
     }
 
@@ -123,6 +127,7 @@ public class CorePlayer implements CPlayer {
     public void sendMessage(String message) {
         if (getStatus() != PlayerStatus.JOINED) return;
         if (getBukkitPlayer() == null) return;
+        if (message == null) return;
         getBukkitPlayer().sendMessage(message);
     }
 
@@ -195,29 +200,33 @@ public class CorePlayer implements CPlayer {
     public void setDisplayName(String name) {
         if (getStatus() != PlayerStatus.JOINED) return;
         if (getBukkitPlayer() == null) return;
+        if (name == null) name = "";
         getBukkitPlayer().setDisplayName(name);
     }
 
     @Override
     public void setInventorySlot(int slot, ItemStack stack) {
         if (getInventory() == null) return;
+        if (stack == null) stack = new ItemStack(Material.AIR);
         getInventory().setItem(slot, stack);
     }
 
     @Override
-    public void addToInventory(ItemStack... itemStacks) {
+    public void addToInventory(ItemStack... stacks) {
         if (getInventory() == null) return;
-        getInventory().addItem(itemStacks);
+        if (stacks == null) return;
+        getInventory().addItem(stacks);
     }
 
     @Override
     public boolean doesInventoryContain(Material material) {
-        return getInventory() != null && getInventory().contains(material);
+        return material != null && getInventory() != null && getInventory().contains(material);
     }
 
     @Override
     public void removeFromInventory(Material material) {
         if (getInventory() == null) return;
+        if (material == null) return;
         getInventory().remove(material);
     }
 
@@ -229,7 +238,7 @@ public class CorePlayer implements CPlayer {
 
     @Override
     public void setHelmet(ItemStack itemStack) {
-        if (getInventory() == null) return;
+        if (getInventory() == null) itemStack = new ItemStack(Material.AIR);
         getInventory().setHelmet(itemStack);
     }
 
@@ -241,7 +250,7 @@ public class CorePlayer implements CPlayer {
 
     @Override
     public void setChestplate(ItemStack itemStack) {
-        if (getInventory() == null) return;
+        if (getInventory() == null) itemStack = new ItemStack(Material.AIR);
         getInventory().setChestplate(itemStack);
     }
 
@@ -253,7 +262,7 @@ public class CorePlayer implements CPlayer {
 
     @Override
     public void setLeggings(ItemStack itemStack) {
-        if (getInventory() == null) return;
+        if (getInventory() == null) itemStack = new ItemStack(Material.AIR);
         getInventory().setLeggings(itemStack);
     }
 
@@ -265,7 +274,7 @@ public class CorePlayer implements CPlayer {
 
     @Override
     public void setBoots(ItemStack itemStack) {
-        if (getInventory() == null) return;
+        if (getInventory() == null) itemStack = new ItemStack(Material.AIR);
         getInventory().setBoots(itemStack);
     }
 
@@ -277,7 +286,7 @@ public class CorePlayer implements CPlayer {
 
     @Override
     public void setMainHand(ItemStack itemStack) {
-        if (getInventory() == null) return;
+        if (getInventory() == null) itemStack = new ItemStack(Material.AIR);
         getInventory().setItemInMainHand(itemStack);
     }
 
@@ -289,7 +298,7 @@ public class CorePlayer implements CPlayer {
 
     @Override
     public void setOffHand(ItemStack itemStack) {
-        if (getInventory() == null) return;
+        if (getInventory() == null) itemStack = new ItemStack(Material.AIR);
         getInventory().setItemInOffHand(itemStack);
     }
 
@@ -304,6 +313,7 @@ public class CorePlayer implements CPlayer {
     public void openInventory(Inventory inventory) {
         if (getStatus() != PlayerStatus.JOINED) return;
         if (getBukkitPlayer() == null) return;
+        if (inventory == null) return;
         getBukkitPlayer().openInventory(inventory);
     }
 
@@ -348,6 +358,7 @@ public class CorePlayer implements CPlayer {
     public void sendPacket(AbstractPacket packet) {
         if (getStatus() != PlayerStatus.JOINED) return;
         if (getBukkitPlayer() == null) return;
+        if (packet == null) return;
         packet.sendPacket(getBukkitPlayer());
     }
 
@@ -355,6 +366,7 @@ public class CorePlayer implements CPlayer {
     public void sendToServer(String server) {
         if (getStatus() != PlayerStatus.JOINED) return;
         if (getBukkitPlayer() == null) return;
+        if (server == null) return;
         ByteArrayDataOutput out = ByteStreams.newDataOutput();
         out.writeUTF("Connect");
         out.writeUTF(server);
