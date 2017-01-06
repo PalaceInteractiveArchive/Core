@@ -328,6 +328,7 @@ public class CorePlayer implements CPlayer {
     public void respawn() {
         if (getStatus() != PlayerStatus.JOINED) return;
         if (getBukkitPlayer() == null) return;
+        if (getBukkitPlayer().spigot() == null) return;
         getBukkitPlayer().spigot().respawn();
     }
 
