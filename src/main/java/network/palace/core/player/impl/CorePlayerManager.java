@@ -6,10 +6,7 @@ import network.palace.core.player.CPlayerManager;
 import network.palace.core.player.Rank;
 import org.bukkit.entity.Player;
 
-import java.util.Collection;
-import java.util.HashMap;
-import java.util.Iterator;
-import java.util.UUID;
+import java.util.*;
 
 public class CorePlayerManager implements CPlayerManager {
 
@@ -61,7 +58,7 @@ public class CorePlayerManager implements CPlayerManager {
 
     @Override
     public Collection<CPlayer> getOnlinePlayers() {
-        return onlinePlayers.values();
+        return new ArrayList<>(onlinePlayers.values());
     }
 
     @Override
