@@ -127,6 +127,17 @@ public final class CoreCommandMap {
     }
 
     /**
+     * Removes a known command from bukkit, minecraft, and more.
+     *
+     * @param commandName The command name to unregister.
+     */
+    public void removeKnownCommands(String commandName) {
+        removeKnownCommand("minecraft:" + commandName);
+        removeKnownCommand("bukkit:" + commandName);
+        removeKnownCommand(commandName);
+    }
+
+    /**
      * Gets a current command by the name you specify.
      * @param name The name you are looking for.
      * @return The command by that name or null if it cannot find the command.

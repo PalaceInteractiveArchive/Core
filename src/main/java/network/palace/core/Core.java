@@ -123,6 +123,13 @@ public class Core extends JavaPlugin {
         registerCommand(new TokenCommand());
     }
 
+    public void removeCommand(String command) {
+        commandMap.removeKnownCommand("minecraft:" + command);
+        commandMap.removeKnownCommand("bukkit:" + command);
+        commandMap.removeKnownCommand(command);
+        Core.logMessage("Core", "Removed Command > " + command);
+    }
+
     public final void registerCommand(CoreCommand command) {
         commandMap.registerCommand(command);
     }

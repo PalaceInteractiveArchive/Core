@@ -59,6 +59,15 @@ public class Plugin extends JavaPlugin {
 
     /* Command Methods */
     @SuppressWarnings("unused")
+    public void removeCommand(String command) {
+        getCommandMap().removeKnownCommand("minecraft:" + command);
+        getCommandMap().removeKnownCommand("bukkit:" + command);
+        getCommandMap().removeKnownCommand(command);
+        if (getInfo() == null) return;
+        Core.logMessage(getInfo().name(), "Removed Command > " + command);
+    }
+
+    @SuppressWarnings("unused")
     public void registerCommand(CoreCommand command) {
         getCommandMap().registerCommand(command);
     }
