@@ -103,6 +103,7 @@ public class Core extends JavaPlugin {
         registerListeners();
         // Register Commands
         registerCommands();
+        removeCommands();
         logMessage("Core", ChatColor.DARK_GREEN + "Enabled");
         Bukkit.getScheduler().runTaskLater(this, () -> setStarting(false), 100L);
     }
@@ -115,12 +116,15 @@ public class Core extends JavaPlugin {
         registerCommand(new BalanceCommand());
         registerCommand(new HelpopCommand());
         registerCommand(new ListCommand());
-        registerCommand(new MeCommand());
         registerCommand(new PermCommand());
         registerCommand(new PluginsCommand());
         registerCommand(new ReloadCommand());
         registerCommand(new SafestopCommand());
         registerCommand(new TokenCommand());
+    }
+
+    public void removeCommands() {
+        removeCommand("me");
     }
 
     public void removeCommand(String command) {
@@ -220,7 +224,7 @@ public class Core extends JavaPlugin {
         return getScheduler().runTaskLater(getInstance(), task, delay).getTaskId();
     }
 
-    @SuppressWarnings("UnusedReturnValue")
+    @SuppressWarnings({"unused", "UnusedReturnValue"})
     public static int runTaskTimer(Runnable task, long delay, long period) {
         return getScheduler().runTaskTimer(getInstance(), task, delay, period).getTaskId();
     }
