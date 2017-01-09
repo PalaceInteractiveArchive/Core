@@ -24,7 +24,7 @@ import java.net.URLEncoder;
 import java.util.*;
 import java.util.concurrent.locks.ReentrantLock;
 
-@CommandMeta(aliases = {"about", "pl", "ver", "version"}, description = "Lists the plugins for the server.")
+@CommandMeta(aliases = {"about", "pl", "ver", "version", "help", "?"}, description = "Lists the plugins for the server.")
 @CommandPermission(rank = Rank.WIZARD)
 public class PluginsCommand extends CoreCommand {
 
