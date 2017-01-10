@@ -1,17 +1,26 @@
-package network.palace.core.player.impl;
+package network.palace.core.player.impl.managers;
 
 import network.palace.core.Core;
 import network.palace.core.player.CPlayer;
 import network.palace.core.player.CPlayerManager;
+import network.palace.core.player.PlayerStatus;
 import network.palace.core.player.Rank;
+import network.palace.core.player.impl.CorePlayer;
+import network.palace.core.player.impl.listeners.CorePlayerManagerListener;
 import org.bukkit.entity.Player;
 
 import java.util.*;
 
+/**
+ * The type Core player manager.
+ */
 public class CorePlayerManager implements CPlayerManager {
 
     private final HashMap<UUID, CPlayer> onlinePlayers = new HashMap<>();
 
+    /**
+     * Instantiates a new Core player manager.
+     */
     public CorePlayerManager() {
         Core.registerListener(new CorePlayerManagerListener());
     }
@@ -27,7 +36,7 @@ public class CorePlayerManager implements CPlayerManager {
     public void playerJoined(UUID uuid, String textureHash) {
         CPlayer player = getPlayer(uuid);
         if (player == null) return;
-        player.setStatus(CPlayer.PlayerStatus.JOINED);
+        player.setStatus(PlayerStatus.JOINED);
         player.setTextureHash(textureHash);
         //Setup permissions for player
         Core.getPermissionManager().login(player);
@@ -37,7 +46,7 @@ public class CorePlayerManager implements CPlayerManager {
     public void playerLoggedOut(UUID uuid) {
         if (getPlayer(uuid) == null) return;
         getPlayer(uuid).resetManagers();
-        getPlayer(uuid).setStatus(CPlayer.PlayerStatus.LEFT);
+        getPlayer(uuid).setStatus(PlayerStatus.LEFT);
         onlinePlayers.remove(uuid);
     }
 
@@ -59,10 +68,5 @@ public class CorePlayerManager implements CPlayerManager {
     @Override
     public Collection<CPlayer> getOnlinePlayers() {
         return new ArrayList<>(onlinePlayers.values());
-    }
-
-    @Override
-    public Iterator<CPlayer> iterator() {
-        return getOnlinePlayers().iterator();
     }
 }

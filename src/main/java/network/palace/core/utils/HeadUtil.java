@@ -13,14 +13,15 @@ import org.bukkit.inventory.meta.ItemMeta;
 import java.util.UUID;
 
 /**
- * Created by Marc on 7/1/15
+ * The type Head util.
  */
 public class HeadUtil {
 
     /**
      * Get a player skull ItemStack with texture of player's skin
+     *
      * @param player player
-     * @return ItemStack
+     * @return ItemStack player head
      */
     public static ItemStack getPlayerHead(CPlayer player) {
         return getPlayerHead(player.getTextureHash());
@@ -28,8 +29,9 @@ public class HeadUtil {
 
     /**
      * Get a player skull ItemStack from a texture hash
+     *
      * @param hash hash
-     * @return ItemStack
+     * @return ItemStack player head
      */
     public static ItemStack getPlayerHead(String hash) {
         return getPlayerHead(hash, "Head");
@@ -37,9 +39,10 @@ public class HeadUtil {
 
     /**
      * Get a player skull ItemStack with a custom name from a texture hash
-     * @param hash hash
+     *
+     * @param hash    hash
      * @param display display
-     * @return ItemStack
+     * @return ItemStack player head
      */
     public static ItemStack getPlayerHead(String hash, String display) {
         ItemStack head = getHead(hash);
@@ -49,6 +52,12 @@ public class HeadUtil {
         return head;
     }
 
+    /**
+     * Get a player skull ItemStack from a texture hash
+     *
+     * @param hash hash
+     * @return ItemStack player head
+     */
     private static ItemStack getHead(String hash) {
         ItemStack item = new ItemStack(Material.SKULL_ITEM, 1, (short) 3);
         item = MinecraftReflection.getBukkitItemStack(item);

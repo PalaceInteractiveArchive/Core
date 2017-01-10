@@ -1,49 +1,53 @@
 package network.palace.core.dashboard.packets.audio;
 
 import com.google.gson.JsonObject;
+import lombok.Getter;
 import network.palace.core.dashboard.packets.BasePacket;
 import network.palace.core.dashboard.packets.PacketID;
 
 /**
- * Created by Marc on 6/15/15
+ * The type Packet play once global.
  */
-@SuppressWarnings("unused")
 public class PacketPlayOnceGlobal extends BasePacket {
-    private int audioid = 0;
-    private String name = "";
-    private float volume = 1.0F;
 
+    @Getter private int audioID = 0;
+    @Getter private String name = "";
+    @Getter private float volume = 1.0F;
+
+    /**
+     * Instantiates a new Packet play once global.
+     */
     public PacketPlayOnceGlobal() {
         this(-1, "", 1.0F);
     }
 
+    /**
+     * Instantiates a new Packet play once global.
+     *
+     * @param audioid the audioid
+     * @param name    the name
+     */
     public PacketPlayOnceGlobal(int audioid, String name) {
         this(audioid, name, 1.0F);
     }
 
-    public PacketPlayOnceGlobal(int audioid, String name, float volume) {
-        this.id = PacketID.GLOBAL_PLAY_ONCE.getID();
-
-        this.audioid = audioid;
+    /**
+     * Instantiates a new Packet play once global.
+     *
+     * @param audioID the audio id
+     * @param name    the name
+     * @param volume  the volume
+     */
+    public PacketPlayOnceGlobal(int audioID, String name, float volume) {
+        super(PacketID.GLOBAL_PLAY_ONCE.getID());
+        this.audioID = audioID;
         this.name = name;
         this.volume = volume;
     }
 
-    public float getVolume() {
-        return this.volume;
-    }
-
-    public int getAudioID() {
-        return this.audioid;
-    }
-
-    public String getName() {
-        return this.name;
-    }
-
     public PacketPlayOnceGlobal fromJSON(JsonObject obj) {
         try {
-            this.audioid = obj.get("audioid").getAsInt();
+            this.audioID = obj.get("audioid").getAsInt();
             this.name = obj.get("name").getAsString();
             this.volume = obj.get("volume").getAsFloat();
         } catch (Exception e) {
@@ -56,7 +60,7 @@ public class PacketPlayOnceGlobal extends BasePacket {
         JsonObject obj = new JsonObject();
         try {
             obj.addProperty("id", this.id);
-            obj.addProperty("audioid", this.audioid);
+            obj.addProperty("audioid", this.audioID);
             obj.addProperty("name", this.name);
             obj.addProperty("volume", this.volume);
         } catch (Exception e) {

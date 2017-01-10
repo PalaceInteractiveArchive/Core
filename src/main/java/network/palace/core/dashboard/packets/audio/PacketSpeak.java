@@ -1,33 +1,37 @@
 package network.palace.core.dashboard.packets.audio;
 
 import com.google.gson.JsonObject;
+import lombok.Getter;
 import network.palace.core.dashboard.packets.BasePacket;
 import network.palace.core.dashboard.packets.PacketID;
 
 /**
- * Created by Marc on 6/15/15
+ * The type Packet speak.
  */
-@SuppressWarnings("unused")
 public class PacketSpeak extends BasePacket {
-    private String voiceText = "";
 
+    @Getter private String script = "";
+
+    /**
+     * Instantiates a new Packet speak.
+     */
     public PacketSpeak() {
         this("");
     }
 
+    /**
+     * Instantiates a new Packet speak.
+     *
+     * @param script the script
+     */
     public PacketSpeak(String script) {
-        this.id = PacketID.COMPUTER_SPEAK.getID();
-
-        this.voiceText = script;
-    }
-
-    public String getScript() {
-        return this.voiceText;
+        super(PacketID.COMPUTER_SPEAK.getID());
+        this.script = script;
     }
 
     public PacketSpeak fromJSON(JsonObject obj) {
         try {
-            this.voiceText = obj.get("voicetext").getAsString();
+            this.script = obj.get("voicetext").getAsString();
         } catch (Exception e) {
             return null;
         }
@@ -38,7 +42,7 @@ public class PacketSpeak extends BasePacket {
         JsonObject obj = new JsonObject();
         try {
             obj.addProperty("id", this.id);
-            obj.addProperty("voicetext", this.voiceText);
+            obj.addProperty("voicetext", this.script);
         } catch (Exception e) {
             return null;
         }

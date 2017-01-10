@@ -6,7 +6,7 @@ import lombok.Getter;
 import java.util.UUID;
 
 /**
- * Created by Marc on 12/12/16.
+ * The type Economy update event.
  */
 @AllArgsConstructor
 public class EconomyUpdateEvent extends CoreEvent {

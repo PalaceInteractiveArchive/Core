@@ -1,4 +1,4 @@
-package network.palace.core.player.impl;
+package network.palace.core.player.impl.managers;
 
 import network.palace.core.packets.server.WrapperPlayServerTitle;
 import network.palace.core.player.CPlayer;
@@ -7,6 +7,9 @@ import com.comphenix.protocol.wrappers.EnumWrappers;
 import com.comphenix.protocol.wrappers.WrappedChatComponent;
 import lombok.AllArgsConstructor;
 
+/**
+ * The type Core player title manager.
+ */
 @AllArgsConstructor
 public class CorePlayerTitleManager implements CPlayerTitleManager {
 

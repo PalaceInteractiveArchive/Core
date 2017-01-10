@@ -22,18 +22,22 @@ import network.palace.core.packets.AbstractPacket;
 import com.comphenix.protocol.PacketType;
 import com.comphenix.protocol.events.PacketContainer;
 
-@SuppressWarnings("unused")
+/**
+ * The type Wrapper play server resource pack send.
+ */
 public class WrapperPlayServerResourcePackSend extends AbstractPacket {
 
+    /**
+     * The constant TYPE.
+     */
     public static final PacketType TYPE = PacketType.Play.Server.RESOURCE_PACK_SEND;
 
+    /**
+     * Instantiates a new Wrapper play server resource pack send.
+     */
     public WrapperPlayServerResourcePackSend() {
         super(new PacketContainer(TYPE), TYPE);
         handle.getModifier().writeDefaults();
-    }
-
-    public WrapperPlayServerResourcePackSend(PacketContainer packet) {
-        super(packet, TYPE);
     }
 
     /**

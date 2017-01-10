@@ -1,16 +1,24 @@
-package network.palace.core.player.impl;
+package network.palace.core.player.impl.managers;
 
 import network.palace.core.packets.server.WrapperPlayServerPlayerListHeaderFooter;
 import network.palace.core.player.CPlayer;
 import network.palace.core.player.CPlayerHeaderFooterManager;
 import com.comphenix.protocol.wrappers.WrappedChatComponent;
 
+/**
+ * The type Core player header footer manager.
+ */
 public class CorePlayerHeaderFooterManager implements CPlayerHeaderFooterManager {
 
     private final CPlayer player;
     private String header = " ";
     private String footer = " ";
 
+    /**
+     * Instantiates a new Core player header footer manager.
+     *
+     * @param player the player
+     */
     public CorePlayerHeaderFooterManager(CPlayer player) {
         this.player = player;
     }

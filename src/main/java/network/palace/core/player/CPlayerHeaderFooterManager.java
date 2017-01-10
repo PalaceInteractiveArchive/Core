@@ -1,11 +1,30 @@
 package network.palace.core.player;
 
-@SuppressWarnings("unused")
+/**
+ * The interface C player header footer manager.
+ */
 public interface CPlayerHeaderFooterManager {
-
+    /**
+     * Sets footer.
+     *
+     * @param footer the footer
+     */
     void setFooter(String footer);
-    void setHeader(String header);
-    void hide();
-    void update();
 
+    /**
+     * Sets header.
+     *
+     * @param header the header
+     */
+    void setHeader(String header);
+
+    /**
+     * Hide header and footer.
+     */
+    void hide();
+
+    /**
+     * Update header and footer.
+     */
+    void update();
 }

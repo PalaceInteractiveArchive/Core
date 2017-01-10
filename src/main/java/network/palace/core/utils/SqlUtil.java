@@ -11,22 +11,36 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.UUID;
 
+/**
+ * The type Sql util.
+ */
 public class SqlUtil {
 
     private String url = "";
     private String user = "";
     private String password = "";
 
+    /**
+     * Instantiates a new Sql util.
+     */
     public SqlUtil() {
         loadLogin();
     }
 
+    /**
+     * Load login.
+     */
     public void loadLogin() {
         url = Core.getCoreConfig().getString("sql.url");
         user = Core.getCoreConfig().getString("sql.user");
         password = Core.getCoreConfig().getString("sql.password");
     }
 
+    /**
+     * Gets sql connection.
+     *
+     * @return the connection
+     */
     public Connection getConnection() {
         try {
             return DriverManager.getConnection(url, user, password);
@@ -36,10 +50,14 @@ public class SqlUtil {
         }
     }
 
-    /**
-     * Player Methods
-     */
+    /* Player Methods */
 
+    /**
+     * Get rank.
+     *
+     * @param uuid the uuid
+     * @return the rank
+     */
     public Rank getRank(UUID uuid) {
         Connection connection = getConnection();
         if (connection == null) return Rank.WIZARD;
@@ -61,6 +79,12 @@ public class SqlUtil {
         }
     }
 
+    /**
+     * Gets rank.
+     *
+     * @param username the username
+     * @return the rank
+     */
     public Rank getRank(String username) {
         Connection connection = getConnection();
         if (connection == null) return Rank.WIZARD;
@@ -82,6 +106,12 @@ public class SqlUtil {
         }
     }
 
+    /**
+     * Player exists boolean.
+     *
+     * @param username the username
+     * @return the boolean
+     */
     public boolean playerExists(String username) {
         Connection connection = getConnection();
         if (connection == null) return false;
@@ -100,6 +130,12 @@ public class SqlUtil {
         }
     }
 
+    /**
+     * Gets unique id from name.
+     *
+     * @param username the username
+     * @return the unique id from name
+     */
     public UUID getUniqueIdFromName(String username) {
         Connection connection = getConnection();
         if (connection == null) return UUID.randomUUID();
@@ -123,8 +159,13 @@ public class SqlUtil {
         }
     }
 
+    /* Permission Methods */
+
     /**
-     * Permission Methods
+     * Gets permissions.
+     *
+     * @param rank the rank
+     * @return the permissions
      */
     public HashMap<String, Boolean> getPermissions(Rank rank) {
         Connection connection = getConnection();
@@ -147,10 +188,22 @@ public class SqlUtil {
         }
     }
 
+    /**
+     * Gets permissions.
+     *
+     * @param player the player
+     * @return the permissions
+     */
     public HashMap<String, Boolean> getPermissions(CPlayer player) {
         return getPermissions(player.getRank());
     }
 
+    /**
+     * Gets members.
+     *
+     * @param rank the rank
+     * @return the members
+     */
     public List<String> getMembers(Rank rank) {
         Connection connection = getConnection();
         if (connection == null) return new ArrayList<>();
@@ -172,6 +225,12 @@ public class SqlUtil {
         }
     }
 
+    /**
+     * Sets rank.
+     *
+     * @param uuid the uuid
+     * @param rank the rank
+     */
     public void setRank(UUID uuid, Rank rank) {
         Connection connection = getConnection();
         if (connection == null) return;
@@ -187,6 +246,13 @@ public class SqlUtil {
         }
     }
 
+    /**
+     * Sets permission.
+     *
+     * @param node  the node
+     * @param rank  the rank
+     * @param value the value
+     */
     public void setPermission(String node, Rank rank, boolean value) {
         Connection connection = getConnection();
         if (connection == null) return;
@@ -210,6 +276,12 @@ public class SqlUtil {
         Core.getPermissionManager().setPermission(rank, node, value);
     }
 
+    /**
+     * Unset permission.
+     *
+     * @param node the node
+     * @param rank the rank
+     */
     public void unsetPermission(String node, Rank rank) {
         Connection connection = getConnection();
         if (connection == null) return;

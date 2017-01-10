@@ -14,10 +14,16 @@ import java.util.Collections;
 import java.util.List;
 import java.util.stream.Collectors;
 
+/**
+ * The type List command.
+ */
 @CommandMeta(aliases = {"who"}, description = "Lists all players on the server.")
 @CommandPermission(rank = Rank.SQUIRE)
 public class ListCommand extends CoreCommand {
 
+    /**
+     * Instantiates a new List command.
+     */
     public ListCommand() {
         super("list");
     }

@@ -1,31 +1,36 @@
 package network.palace.core.dashboard.packets.audio;
 
 import com.google.gson.JsonObject;
+import lombok.Getter;
 import network.palace.core.dashboard.packets.BasePacket;
 import network.palace.core.dashboard.packets.PacketID;
 
 /**
- * Created by Marc on 6/15/15
+ * The type Packet get player.
  */
-@SuppressWarnings("unused")
 public class PacketGetPlayer extends BasePacket {
-    private String playername = "";
 
+    @Getter private String playerName = "";
+
+    /**
+     * Instantiates a new Packet get player.
+     */
     public PacketGetPlayer() {
         this("");
     }
 
-    public PacketGetPlayer(String playername) {
-        this.id = PacketID.GETPLAYER.getID();
-        this.playername = playername;
-    }
-
-    public String getPlayerName() {
-        return this.playername;
+    /**
+     * Instantiates a new Packet get player.
+     *
+     * @param playerName the player name
+     */
+    public PacketGetPlayer(String playerName) {
+        super(PacketID.GETPLAYER.getID());
+        this.playerName = playerName;
     }
 
     public PacketGetPlayer fromJSON(JsonObject obj) {
-        this.playername = obj.get("playername").getAsString();
+        this.playerName = obj.get("playername").getAsString();
         return this;
     }
 
@@ -33,7 +38,7 @@ public class PacketGetPlayer extends BasePacket {
         JsonObject obj = new JsonObject();
         try {
             obj.addProperty("id", this.id);
-            obj.addProperty("playername", this.playername);
+            obj.addProperty("playername", this.playerName);
         } catch (Exception e) {
             return null;
         }

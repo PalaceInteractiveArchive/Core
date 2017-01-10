@@ -17,13 +17,17 @@ import java.util.List;
 import java.util.UUID;
 
 /**
- * Created by Marc on 3/17/15
+ * The type Resource manager.
  */
 public class ResourceManager {
+
     private HashMap<String, ResourcePack> packs = new HashMap<>();
     private boolean first = true;
     private HashMap<UUID, String> downloading = new HashMap<>();
 
+    /**
+     * Instantiates a new Resource manager.
+     */
     public ResourceManager() {
         try {
             initialize();
@@ -32,6 +36,11 @@ public class ResourceManager {
         }
     }
 
+    /**
+     * Initialize.
+     *
+     * @throws SQLException the sql exception
+     */
     public void initialize() throws SQLException {
         packs.clear();
         if (Core.getSqlUtil().getConnection() == null) return;
@@ -44,12 +53,17 @@ public class ResourceManager {
         result.close();
         sql.close();
         if (first) {
-            ProtocolLibrary.getProtocolManager().addPacketListener(new ResourceListener(Core.getInstance(),
-                    PacketType.Play.Client.RESOURCE_PACK_STATUS));
+            Core.addPacketListener(new ResourceListener(Core.getInstance(), PacketType.Play.Client.RESOURCE_PACK_STATUS));
             first = false;
         }
     }
 
+    /**
+     * Downloading result.
+     *
+     * @param uuid   the uuid
+     * @param status the status
+     */
     public void downloadingResult(UUID uuid, PackStatus status) {
         String pack = downloading.remove(uuid);
         if (status != null) {
@@ -74,14 +88,31 @@ public class ResourceManager {
         }
     }
 
+    /**
+     * Gets packs.
+     *
+     * @return the packs
+     */
     public List<ResourcePack> getPacks() {
         return new ArrayList<>(packs.values());
     }
 
+    /**
+     * Gets pack.
+     *
+     * @param name the name
+     * @return the pack
+     */
     public ResourcePack getPack(String name) {
         return packs.get(name);
     }
 
+    /**
+     * Send pack.
+     *
+     * @param player the player
+     * @param pack   the pack
+     */
     public void sendPack(CPlayer player, ResourcePack pack) {
         player.sendMessage(ChatColor.GREEN + "Attempting to send you the " + ChatColor.YELLOW + pack.getName() +
                 ChatColor.GREEN + " Resource Pack!");
@@ -90,13 +121,25 @@ public class ResourceManager {
 
     }
 
+    /**
+     * Sets current pack.
+     *
+     * @param player the player
+     * @param pack   the pack
+     */
     public void setCurrentPack(CPlayer player, String pack) {
         if (player == null) return;
         player.setPack(pack);
         PacketSetPack packet = new PacketSetPack(player.getUniqueId(), pack);
-        Core.getInstance().getDashboardConnection().send(packet);
+        Core.getDashboardConnection().send(packet);
     }
 
+    /**
+     * Send pack.
+     *
+     * @param player the player
+     * @param name   the name
+     */
     public void sendPack(CPlayer player, String name) {
         ResourcePack pack = getPack(name);
         if (pack == null) {
@@ -107,6 +150,9 @@ public class ResourceManager {
         sendPack(player, pack);
     }
 
+    /**
+     * Reload.
+     */
     public void reload() {
         packs.clear();
         try {

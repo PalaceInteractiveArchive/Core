@@ -7,7 +7,6 @@ import org.bukkit.ChatColor;
 
 import java.util.HashMap;
 
-@SuppressWarnings({"CanBeFinal", "unused"})
 @AllArgsConstructor
 public enum Rank {
 

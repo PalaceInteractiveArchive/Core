@@ -1,27 +1,25 @@
 package network.palace.core.dashboard.packets.dashboard;
 
 import com.google.gson.JsonObject;
+import lombok.Getter;
 import network.palace.core.dashboard.packets.BasePacket;
 import network.palace.core.dashboard.packets.PacketID;
 
 /**
- * Created by Marc on 9/18/16
+ * The type Packet empty server.
  */
-@SuppressWarnings("unused")
 public class PacketEmptyServer extends BasePacket {
-    private String server;
 
-    public PacketEmptyServer() {
-        this("");
-    }
+    @Getter private String server = "";
 
+    /**
+     * Instantiates a new Packet empty server.
+     *
+     * @param server the server
+     */
     public PacketEmptyServer(String server) {
-        this.id = PacketID.Dashboard.EMPTYSERVER.getID();
+        super(PacketID.Dashboard.EMPTYSERVER.getID());
         this.server = server;
-    }
-
-    public String getServer() {
-        return server;
     }
 
     public PacketEmptyServer fromJSON(JsonObject obj) {

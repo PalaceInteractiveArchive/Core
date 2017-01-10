@@ -1,24 +1,23 @@
 package network.palace.core.resource;
 
-
-import com.comphenix.protocol.wrappers.EnumWrappers;
-
 /**
- * Created by Marc on 3/18/15
+ * The enum Pack status.
  */
 public enum PackStatus {
-    ACCEPTED, LOADED, FAILED, DECLINED;
-
-    public EnumWrappers.ResourcePackStatus getNative() {
-        switch (this) {
-            case ACCEPTED:
-                return EnumWrappers.ResourcePackStatus.ACCEPTED;
-            case LOADED:
-                return EnumWrappers.ResourcePackStatus.SUCCESSFULLY_LOADED;
-            case FAILED:
-                return EnumWrappers.ResourcePackStatus.FAILED_DOWNLOAD;
-            default:
-                return EnumWrappers.ResourcePackStatus.DECLINED;
-        }
-    }
+    /**
+     * Accepted pack status.
+     */
+    ACCEPTED,
+    /**
+     * Loaded pack status.
+     */
+    LOADED,
+    /**
+     * Failed pack status.
+     */
+    FAILED,
+    /**
+     * Declined pack status.
+     */
+    DECLINED
 }

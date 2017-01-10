@@ -28,15 +28,21 @@ import com.comphenix.protocol.ProtocolLibrary;
 import com.comphenix.protocol.events.PacketContainer;
 import com.google.common.base.Objects;
 
+/**
+ * The type Abstract packet.
+ */
 public abstract class AbstractPacket {
 
-    // The packet we will be modifying
+    /**
+     * The Handle.
+     */
     @Getter protected PacketContainer handle;
 
     /**
      * Constructs a new strongly typed wrapper for the given packet.
+     *
      * @param handle - handle to the raw packet data.
-     * @param type - the packet type.
+     * @param type   - the packet type.
      */
     protected AbstractPacket(PacketContainer handle, PacketType type) {
         // Make sure we're given a valid packet
@@ -51,6 +57,7 @@ public abstract class AbstractPacket {
 
     /**
      * Send the current packet to the given receiver.
+     *
      * @param player - the player.
      * @throws RuntimeException If the packet cannot be sent.
      */

@@ -1,22 +1,24 @@
 package network.palace.core.dashboard.packets.dashboard;
 
 import com.google.gson.JsonObject;
+import lombok.Getter;
 import network.palace.core.dashboard.packets.BasePacket;
 import network.palace.core.dashboard.packets.PacketID;
 
 /**
- * Created by Marc on 7/14/16
+ * The type Packet connection type.
  */
-@SuppressWarnings("unused")
 public class PacketConnectionType extends BasePacket {
-    private ConnectionType type;
 
-    public PacketConnectionType() {
-        this(null);
-    }
+    @Getter private ConnectionType type = null;
 
+    /**
+     * Instantiates a new Packet connection type.
+     *
+     * @param type the type
+     */
     public PacketConnectionType(ConnectionType type) {
-        this.id = PacketID.Dashboard.CONNECTIONTYPE.getID();
+        super(PacketID.Dashboard.CONNECTIONTYPE.getID());
         this.type = type;
     }
 
@@ -36,13 +38,37 @@ public class PacketConnectionType extends BasePacket {
         return obj;
     }
 
-    public ConnectionType getType() {
-        return type;
-    }
-
+    /**
+     * The enum Connection type.
+     */
     public enum ConnectionType {
-        BUNGEECORD, DAEMON, WEBCLIENT, INSTANCE, AUDIOSERVER;
+        /**
+         * Bungeecord connection type.
+         */
+        BUNGEECORD,
+        /**
+         * Daemon connection type.
+         */
+        DAEMON,
+        /**
+         * Webclient connection type.
+         */
+        WEBCLIENT,
+        /**
+         * Instance connection type.
+         */
+        INSTANCE,
+        /**
+         * Audioserver connection type.
+         */
+        AUDIOSERVER;
 
+        /**
+         * From string connection type.
+         *
+         * @param s the s
+         * @return the connection type
+         */
         public static ConnectionType fromString(String s) {
             switch (s.toLowerCase()) {
                 case "bungeecord":

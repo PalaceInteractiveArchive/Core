@@ -7,10 +7,23 @@ import java.lang.annotation.Retention;
 import java.lang.annotation.RetentionPolicy;
 import java.lang.annotation.Target;
 
+/**
+ * The interface Command permission.
+ */
 @Target(ElementType.TYPE)
 @Retention(RetentionPolicy.RUNTIME)
 public @interface CommandPermission {
+    /**
+     * Rank rank.
+     *
+     * @return the rank
+     */
     Rank rank();
-    @SuppressWarnings("BooleanMethodIsAlwaysInverted")
+
+    /**
+     * Is op exempt boolean.
+     *
+     * @return the boolean
+     */
     boolean isOpExempt() default true;
 }

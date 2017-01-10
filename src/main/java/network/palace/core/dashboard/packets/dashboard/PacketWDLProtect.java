@@ -1,29 +1,27 @@
 package network.palace.core.dashboard.packets.dashboard;
 
 import com.google.gson.JsonObject;
+import lombok.Getter;
 import network.palace.core.dashboard.packets.BasePacket;
 import network.palace.core.dashboard.packets.PacketID;
 
 import java.util.UUID;
 
 /**
- * Created by Marc on 9/17/16
+ * The type Packet wdl protect.
  */
-@SuppressWarnings("unused")
 public class PacketWDLProtect extends BasePacket {
-    private UUID uuid;
 
-    public PacketWDLProtect() {
-        this(null);
-    }
+    @Getter private UUID uuid = null;
 
+    /**
+     * Instantiates a new Packet wdl protect.
+     *
+     * @param uuid the uuid
+     */
     public PacketWDLProtect(UUID uuid) {
-        this.id = PacketID.Dashboard.WDLPROTECT.getID();
+        super(PacketID.Dashboard.WDLPROTECT.getID());
         this.uuid = uuid;
-    }
-
-    public UUID getUniqueId() {
-        return uuid;
     }
 
     public PacketWDLProtect fromJSON(JsonObject obj) {

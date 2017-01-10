@@ -1,14 +1,15 @@
 package network.palace.core.command;
 
+import com.comphenix.protocol.utility.MinecraftReflection;
 import network.palace.core.Core;
 import network.palace.core.plugin.Plugin;
 import lombok.Getter;
 import org.bukkit.Bukkit;
+import org.bukkit.Server;
 import org.bukkit.command.Command;
 import org.bukkit.command.CommandMap;
 import org.bukkit.command.PluginCommand;
 import org.bukkit.command.SimpleCommandMap;
-import org.bukkit.plugin.PluginManager;
 import org.bukkit.plugin.java.JavaPlugin;
 
 import java.lang.reflect.Constructor;
@@ -49,8 +50,7 @@ public final class CoreCommandMap {
             tempList.addAll(Arrays.asList(annotation.aliases()));
         }
         for (String oldCommand : tempList) {
-            removeKnownCommand("bukkit:" + oldCommand);
-            removeKnownCommand(oldCommand);
+            removeKnownCommands(oldCommand);
         }
         getCommandMap().register(plugin.getDescription().getName(), command1); // Register it with Bukkit
         String pluginName = "Unknown";
@@ -85,13 +85,13 @@ public final class CoreCommandMap {
      *
      * @return The command map from bukkit
      */
-    private CommandMap getCommandMap() {
+    public CommandMap getCommandMap() {
         CommandMap commandMap = null;
         try {
-            PluginManager pluginManager = Bukkit.getPluginManager();
-            Field commandMapField = pluginManager.getClass().getDeclaredField("commandMap");
+            Server server = Bukkit.getServer();
+            Field commandMapField = server.getClass().getDeclaredField("commandMap");
             commandMapField.setAccessible(true);
-            commandMap = (CommandMap) commandMapField.get(pluginManager);
+            commandMap = (CommandMap) commandMapField.get(server);
         } catch (Exception ex) {
             ex.printStackTrace();
         }
@@ -121,7 +121,7 @@ public final class CoreCommandMap {
      *
      * @param commandName The command name to unregister.
      */
-    public void removeKnownCommand(String commandName) {
+    private void removeKnownCommand(String commandName) {
         HashMap<String, Command> knownCommands = getKnownCommands(getCommandMap());
         knownCommands.remove(commandName);
     }
@@ -142,7 +142,6 @@ public final class CoreCommandMap {
      * @param name The name you are looking for.
      * @return The command by that name or null if it cannot find the command.
      */
-    @SuppressWarnings("unused")
     public CoreCommand getCommandByName(String name) {
         return topLevelCommands.get(name);
     }

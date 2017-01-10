@@ -5,6 +5,9 @@ import lombok.AllArgsConstructor;
 import lombok.Getter;
 import lombok.Setter;
 
+/**
+ * The type Core player join delayed event.
+ */
 @AllArgsConstructor
 public class CorePlayerJoinDelayedEvent extends CoreEvent {
     @Getter private final CPlayer player;

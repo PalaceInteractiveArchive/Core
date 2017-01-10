@@ -24,18 +24,22 @@ import com.comphenix.protocol.events.PacketContainer;
 import com.comphenix.protocol.wrappers.EnumWrappers.TitleAction;
 import com.comphenix.protocol.wrappers.WrappedChatComponent;
 
-@SuppressWarnings("unused")
+/**
+ * The type Wrapper play server title.
+ */
 public class WrapperPlayServerTitle extends AbstractPacket {
 
+    /**
+     * The constant TYPE.
+     */
     public static final PacketType TYPE = PacketType.Play.Server.TITLE;
 
+    /**
+     * Instantiates a new Wrapper play server title.
+     */
     public WrapperPlayServerTitle() {
         super(new PacketContainer(TYPE), TYPE);
         handle.getModifier().writeDefaults();
-    }
-
-    public WrapperPlayServerTitle(PacketContainer packet) {
-        super(packet, TYPE);
     }
 
     /**

@@ -3,7 +3,7 @@ package network.palace.core.plugin;
 import network.palace.core.Core;
 import network.palace.core.command.CoreCommand;
 import network.palace.core.command.CoreCommandMap;
-import network.palace.core.config.LanguageFormatter;
+import network.palace.core.config.LanguageManager;
 import network.palace.core.library.LibraryHandler;
 import lombok.Getter;
 import org.bukkit.Bukkit;
@@ -12,10 +12,13 @@ import org.bukkit.event.Listener;
 import org.bukkit.plugin.java.JavaPlugin;
 import org.bukkit.scheduler.BukkitRunnable;
 
+/**
+ * The type Plugin.
+ */
 public class Plugin extends JavaPlugin {
 
     @Getter private PluginInfo info;
-    @Getter private LanguageFormatter languageFormatter;
+    @Getter private LanguageManager languageManager;
     @Getter private CoreCommandMap commandMap;
 
     @Override
@@ -30,7 +33,7 @@ public class Plugin extends JavaPlugin {
             if (info == null)
                 throw new IllegalStateException("You must annotate your class with the @PluginInfo annotation!");
             // Load languages
-            languageFormatter = new LanguageFormatter(this);
+            languageManager = new LanguageManager(this);
             // Start command map
             commandMap = new CoreCommandMap(this);
             // Plugin enabled finally
@@ -53,52 +56,92 @@ public class Plugin extends JavaPlugin {
         Core.logMessage(getInfo().name(), ChatColor.DARK_RED + "Plugin Disabled");
     }
 
-    /* Delegated Methods */
-    @SuppressWarnings("RedundantThrows") protected void onPluginEnable() throws Exception { Core.logMessage(getInfo().name(), ChatColor.RED + "Did not run any code on enable!"); }
-    @SuppressWarnings({"EmptyMethod", "RedundantThrows"}) protected void onPluginDisable() throws Exception {}
+    /**
+     * On plugin enable.
+     *
+     * @throws Exception the exception
+     */
+    protected void onPluginEnable() throws Exception { Core.logMessage(getInfo().name(), ChatColor.RED + "Did not run any code on enable!"); }
 
-    /* Command Methods */
-    @SuppressWarnings("unused")
-    public void removeCommand(String command) {
-        getCommandMap().removeKnownCommand("minecraft:" + command);
-        getCommandMap().removeKnownCommand("bukkit:" + command);
-        getCommandMap().removeKnownCommand(command);
-        if (getInfo() == null) return;
-        Core.logMessage(getInfo().name(), "Removed Command > " + command);
-    }
+    /**
+     * On plugin disable.
+     *
+     * @throws Exception the exception
+     */
+    protected void onPluginDisable() throws Exception {}
 
-    @SuppressWarnings("unused")
+    /**
+     * Register command.
+     *
+     * @param command the command
+     */
     public void registerCommand(CoreCommand command) {
         getCommandMap().registerCommand(command);
     }
 
-    /* Bukkit Utils */
-    @SuppressWarnings("unused")
+    /**
+     * Register listener.
+     *
+     * @param listener the listener
+     */
     public void registerListener(Listener listener) {
         getServer().getPluginManager().registerEvents(listener, this);
     }
 
-    @SuppressWarnings("unused")
+    /**
+     * Run task timer int.
+     *
+     * @param runnable the runnable
+     * @param delay    the delay
+     * @param period   the period
+     * @return the int
+     */
     public int runTaskTimer(Runnable runnable, long delay, long period) {
         return Bukkit.getScheduler().runTaskTimer(this, runnable, delay, period).getTaskId();
     }
 
-    @SuppressWarnings("unused")
+    /**
+     * Run task timer bukkit int.
+     *
+     * @param runnable the runnable
+     * @param delay    the delay
+     * @param period   the period
+     * @return the int
+     */
     public int runTaskTimerBukkit(BukkitRunnable runnable, long delay, long period) {
         return runnable.runTaskTimer(this, delay, period).getTaskId();
     }
 
-    @SuppressWarnings("unused")
+    /**
+     * Run task later int.
+     *
+     * @param runnable the runnable
+     * @param delay    the delay
+     * @return the int
+     */
     public int runTaskLater(Runnable runnable, long delay) {
         return Bukkit.getScheduler().runTaskLater(this, runnable, delay).getTaskId();
     }
 
-    @SuppressWarnings("unused")
+    /**
+     * Schedule sync delayed task int.
+     *
+     * @param runnable the runnable
+     * @param delay    the delay
+     * @return the int
+     */
     public int scheduleSyncDelayedTask(Runnable runnable, long delay) {
         return Bukkit.getScheduler().scheduleSyncDelayedTask(this, runnable, delay);
     }
 
-    @SuppressWarnings("unused")
+    /**
+     * Schedule sync repeating task int.
+     *
+     * @param runnable the runnable
+     * @param delay    the delay
+     * @param period   the period
+     * @return the int
+     */
     public int scheduleSyncRepeatingTask(Runnable runnable, long delay, long period) {
         return Bukkit.getScheduler().scheduleSyncRepeatingTask(this, runnable, delay, period);
     }

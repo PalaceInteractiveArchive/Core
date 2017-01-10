@@ -14,12 +14,15 @@ import org.bukkit.command.CommandSender;
 import org.bukkit.entity.Player;
 
 /**
- * Created by Marc on 12/19/16.
+ * The type Balance command.
  */
 @CommandMeta(aliases = "bal", description = "Manage economy balances")
 @CommandPermission(rank = Rank.KNIGHT)
 public class BalanceCommand extends CoreCommand {
 
+    /**
+     * Instantiates a new Balance command.
+     */
     public BalanceCommand() {
         super("balance");
     }

@@ -1,4 +1,4 @@
-package network.palace.core.commands;
+package network.palace.core.commands.disabled;
 
 import network.palace.core.command.CommandException;
 import network.palace.core.command.CommandMeta;
@@ -6,17 +6,11 @@ import network.palace.core.command.CoreCommand;
 import org.bukkit.ChatColor;
 import org.bukkit.command.CommandSender;
 
-/**
- * The type Reload command.
- */
-@CommandMeta(aliases = {"rl"}, description = "Safely stop the server.")
-public class ReloadCommand extends CoreCommand {
+@CommandMeta(description = "Disable me command")
+public class MeCommand extends CoreCommand {
 
-    /**
-     * Instantiates a new Reload command.
-     */
-    public ReloadCommand() {
-        super("reload");
+    public MeCommand() {
+        super("me");
     }
 
     @Override

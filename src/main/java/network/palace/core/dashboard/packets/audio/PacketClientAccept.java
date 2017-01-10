@@ -1,19 +1,25 @@
 package network.palace.core.dashboard.packets.audio;
 
 import com.google.gson.JsonObject;
+import lombok.Getter;
+import lombok.Setter;
 import network.palace.core.dashboard.packets.BasePacket;
 import network.palace.core.dashboard.packets.PacketID;
 
 /**
- * Created by Marc on 6/15/15
+ * The type Packet client accept.
  */
-@SuppressWarnings("unused")
 public class PacketClientAccept extends BasePacket {
-    private String servername = "";
 
+    @Getter private String servername = "";
+
+    /**
+     * Instantiates a new Packet client accept.
+     *
+     * @param servername the servername
+     */
     public PacketClientAccept(String servername) {
-        this.id = PacketID.CLIENT_ACCEPTED.getID();
-
+        super(PacketID.CLIENT_ACCEPTED.getID());
         this.servername = servername;
     }
 

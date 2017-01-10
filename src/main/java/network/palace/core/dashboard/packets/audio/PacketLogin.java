@@ -1,45 +1,43 @@
 package network.palace.core.dashboard.packets.audio;
 
 import com.google.gson.JsonObject;
+import lombok.Getter;
 import network.palace.core.dashboard.packets.BasePacket;
 import network.palace.core.dashboard.packets.PacketID;
 
 /**
- * Created by Marc on 6/15/15
+ * The type Packet login.
  */
-@SuppressWarnings("unused")
 public class PacketLogin extends BasePacket {
-    private int version = 7;
-    private String playername = "";
-    private String auth = "";
 
+    @Getter private int protocolVersion = 7;
+    @Getter private String playerName = "";
+    @Getter private String auth = "";
+
+    /**
+     * Instantiates a new Packet login.
+     */
     public PacketLogin() {
         this(0, "", "");
     }
 
-    public PacketLogin(int version, String playername, String auth) {
-        this.id = PacketID.LOGIN.getID();
-
-        this.version = version;
-        this.playername = playername;
+    /**
+     * Instantiates a new Packet login.
+     *
+     * @param protocolVersion the protocol version
+     * @param playerName      the player name
+     * @param auth            the auth
+     */
+    public PacketLogin(int protocolVersion, String playerName, String auth) {
+        super(PacketID.LOGIN.getID());
+        this.protocolVersion = protocolVersion;
+        this.playerName = playerName;
         this.auth = auth;
     }
 
-    public int getProtocolVersion() {
-        return this.version;
-    }
-
-    public String getPlayerName() {
-        return this.playername;
-    }
-
-    public String getAuth() {
-        return this.auth;
-    }
-
     public PacketLogin fromJSON(JsonObject obj) {
-        this.version = obj.get("version").getAsInt();
-        this.playername = obj.get("playername").getAsString();
+        this.protocolVersion = obj.get("version").getAsInt();
+        this.playerName = obj.get("playername").getAsString();
         this.auth = obj.get("auth").getAsString();
         return this;
     }
@@ -48,8 +46,8 @@ public class PacketLogin extends BasePacket {
         JsonObject obj = new JsonObject();
         try {
             obj.addProperty("id", this.id);
-            obj.addProperty("version", this.version);
-            obj.addProperty("playername", this.playername);
+            obj.addProperty("version", this.protocolVersion);
+            obj.addProperty("playername", this.playerName);
             obj.addProperty("auth", this.auth);
         } catch (Exception e) {
             return null;

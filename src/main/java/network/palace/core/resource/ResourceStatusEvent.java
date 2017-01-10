@@ -6,7 +6,7 @@ import network.palace.core.events.CoreEvent;
 import network.palace.core.player.CPlayer;
 
 /**
- * Created by Marc on 3/18/15
+ * The type Resource status event.
  */
 @AllArgsConstructor
 public class ResourceStatusEvent extends CoreEvent {

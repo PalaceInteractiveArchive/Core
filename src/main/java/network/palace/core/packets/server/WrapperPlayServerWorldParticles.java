@@ -24,18 +24,22 @@ import com.comphenix.protocol.events.PacketContainer;
 import com.comphenix.protocol.wrappers.EnumWrappers.Particle;
 import org.bukkit.Location;
 
-@SuppressWarnings("unused")
+/**
+ * The type Wrapper play server world particles.
+ */
 public class WrapperPlayServerWorldParticles extends AbstractPacket {
 
+    /**
+     * The constant TYPE.
+     */
     public static final PacketType TYPE = PacketType.Play.Server.WORLD_PARTICLES;
 
+    /**
+     * Instantiates a new Wrapper play server world particles.
+     */
     public WrapperPlayServerWorldParticles() {
         super(new PacketContainer(TYPE), TYPE);
         handle.getModifier().writeDefaults();
-    }
-
-    public WrapperPlayServerWorldParticles(PacketContainer packet) {
-        super(packet, TYPE);
     }
 
     /**
@@ -260,7 +264,7 @@ public class WrapperPlayServerWorldParticles extends AbstractPacket {
      * BLOCK_CRACK and BLOCK_DUST have lengths of 1, the rest have 0.
      *
      * @return The current Data
-     * @see Particle#getDataLength()
+     * @see Particle#getDataLength() Particle#getDataLength()
      */
     public int[] getData() {
         return handle.getIntegerArrays().read(0);

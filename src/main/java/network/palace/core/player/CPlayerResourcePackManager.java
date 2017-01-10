@@ -1,9 +1,21 @@
 package network.palace.core.player;
 
-@SuppressWarnings("unused")
+/**
+ * The interface C player resource pack manager.
+ */
 public interface CPlayerResourcePackManager {
-
+    /**
+     * Sends resource pack from url.
+     *
+     * @param url the url
+     */
     void send(String url);
-    void send(String url, String hash);
 
+    /**
+     * Sends resource pack from url.
+     *
+     * @param url  the url
+     * @param hash the hash
+     */
+    void send(String url, String hash);
 }

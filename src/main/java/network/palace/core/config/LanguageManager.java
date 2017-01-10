@@ -13,7 +13,10 @@ import java.io.IOException;
 import java.io.InputStreamReader;
 import java.util.HashMap;
 
-public class LanguageFormatter {
+/**
+ * The type Language manager.
+ */
+public class LanguageManager {
 
     private static final String DEFAULT_LANG = "en_US";
     private static final String PATH = "lang/";
@@ -22,7 +25,12 @@ public class LanguageFormatter {
 
     private final HashMap<String, YAMLConfigurationFile> languages = new HashMap<>();
 
-    public LanguageFormatter(JavaPlugin plugin) {
+    /**
+     * Instantiates a new Language manager.
+     *
+     * @param plugin the plugin
+     */
+    public LanguageManager(JavaPlugin plugin) {
         if (plugin == null) return;
         // Return if languages file does not exist
         if (plugin.getResource(PATH + LANG_FILE_NAME) == null) return;
@@ -41,6 +49,13 @@ public class LanguageFormatter {
         }
     }
 
+    /**
+     * Gets format.
+     *
+     * @param sender the sender
+     * @param key    the key
+     * @return the format
+     */
     public final String getFormat(CommandSender sender, String key) {
         String locale = DEFAULT_LANG;
         if (sender instanceof Player) {
@@ -50,6 +65,13 @@ public class LanguageFormatter {
         return getFormat(locale, key);
     }
 
+    /**
+     * Gets format.
+     *
+     * @param locale the locale
+     * @param key    the key
+     * @return the format
+     */
     public final String getFormat(String locale, String key) {
         String format = getFormatFromLang(locale, key);
         if (format != null) {

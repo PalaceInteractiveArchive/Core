@@ -1,29 +1,30 @@
 package network.palace.core.dashboard.packets.audio;
 
 import com.google.gson.JsonObject;
+import lombok.Getter;
 import network.palace.core.dashboard.packets.BasePacket;
 import network.palace.core.dashboard.packets.PacketID;
 
 /**
- * Created by Marc on 6/15/15
+ * The type Packet server switch.
  */
-@SuppressWarnings("unused")
 public class PacketServerSwitch extends BasePacket {
-    private String servername = "";
 
-    public PacketServerSwitch(String servername) {
-        this.id = PacketID.SERVER_SWITCH.getID();
+    @Getter private String server = "";
 
-        this.servername = servername;
-    }
-
-    public String getServer() {
-        return this.servername;
+    /**
+     * Instantiates a new Packet server switch.
+     *
+     * @param server the server
+     */
+    public PacketServerSwitch(String server) {
+        super(PacketID.SERVER_SWITCH.getID());
+        this.server = server;
     }
 
     public PacketServerSwitch fromJSON(JsonObject obj) {
         try {
-            this.servername = obj.get("servername").getAsString();
+            this.server = obj.get("servername").getAsString();
         } catch (Exception e) {
             return null;
         }
@@ -34,7 +35,7 @@ public class PacketServerSwitch extends BasePacket {
         JsonObject obj = new JsonObject();
         try {
             obj.addProperty("id", this.id);
-            obj.addProperty("servername", this.servername);
+            obj.addProperty("servername", this.server);
         } catch (Exception e) {
             return null;
         }

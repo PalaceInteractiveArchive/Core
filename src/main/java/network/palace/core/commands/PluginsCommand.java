@@ -2,12 +2,14 @@ package network.palace.core.commands;
 
 import com.google.common.base.Charsets;
 import com.google.common.io.Resources;
+import lombok.AllArgsConstructor;
+import lombok.Getter;
 import network.palace.core.Core;
 import network.palace.core.command.CommandException;
 import network.palace.core.command.CommandMeta;
 import network.palace.core.command.CommandPermission;
 import network.palace.core.command.CoreCommand;
-import network.palace.core.config.LanguageFormatter;
+import network.palace.core.config.LanguageManager;
 import network.palace.core.player.Rank;
 import org.bukkit.Bukkit;
 import org.bukkit.ChatColor;
@@ -24,10 +26,16 @@ import java.net.URLEncoder;
 import java.util.*;
 import java.util.concurrent.locks.ReentrantLock;
 
+/**
+ * The type Plugins command.
+ */
 @CommandMeta(aliases = {"about", "pl", "ver", "version", "help", "?"}, description = "Lists the plugins for the server.")
 @CommandPermission(rank = Rank.WIZARD)
 public class PluginsCommand extends CoreCommand {
 
+    /**
+     * Instantiates a new Plugins command.
+     */
     public PluginsCommand() {
         super("plugins");
         Bukkit.getScheduler().runTaskAsynchronously(Core.getInstance(), this::obtainVersion);
@@ -36,7 +44,7 @@ public class PluginsCommand extends CoreCommand {
     @Override
     protected void handleCommandUnspecific(CommandSender sender, String[] args) throws CommandException {
         // Formatter
-        LanguageFormatter formatter = Core.getLanguageFormatter();
+        LanguageManager formatter = Core.getLanguageFormatter();
         // Lists
         List<PluginInfo> pluginsList = new ArrayList<>();
         List<PluginInfo> thirdPartyList = new ArrayList<>();
@@ -96,22 +104,13 @@ public class PluginsCommand extends CoreCommand {
         sender.sendMessage(boilerPlate);
     }
 
+    /**
+     * The type Plugin info.
+     */
+    @AllArgsConstructor
     public class PluginInfo {
-        private final String name;
-        private final boolean enabled;
-
-        public PluginInfo(String name, boolean enabled) {
-            this.name = name;
-            this.enabled = enabled;
-        }
-
-        public String getName() {
-            return name;
-        }
-
-        public boolean isEnabled() {
-            return enabled;
-        }
+        @Getter private final String name;
+        @Getter private final boolean enabled;
     }
 
     private final ReentrantLock versionLock = new ReentrantLock();

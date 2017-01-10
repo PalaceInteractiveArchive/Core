@@ -6,8 +6,14 @@ import com.comphenix.protocol.events.PacketEvent;
 import network.palace.core.Core;
 import network.palace.core.player.CPlayer;
 
+/**
+ * The type Settings adapter.
+ */
 public class SettingsAdapter extends PacketAdapter {
 
+    /**
+     * Instantiates a new Settings adapter.
+     */
     public SettingsAdapter() {
         super(Core.getInstance(), PacketType.Play.Client.SETTINGS);
     }

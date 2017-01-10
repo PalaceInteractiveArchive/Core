@@ -16,17 +16,30 @@ import org.bukkit.inventory.meta.SkullMeta;
 import java.util.ArrayList;
 import java.util.List;
 
+/**
+ * The type Item util.
+ */
 public class ItemUtil implements Listener {
 
     private static final String UNABLE_TO_MOVE = "unableToMove";
     private static final String UNABLE_TO_DROP = "unableToDrop";
 
-    @SuppressWarnings("unused")
+    /**
+     * Make unable to move item stack.
+     *
+     * @param stack the stack
+     * @return the item stack
+     */
     public static ItemStack makeUnableToMove(ItemStack stack) {
         return setNBTForItemstack(stack, UNABLE_TO_MOVE);
     }
 
-    @SuppressWarnings("unused")
+    /**
+     * Make unable to drop item stack.
+     *
+     * @param stack the stack
+     * @return the item stack
+     */
     public static ItemStack makeUnableToDrop(ItemStack stack) {
         return setNBTForItemstack(stack, UNABLE_TO_DROP);
     }
@@ -48,6 +61,13 @@ public class ItemUtil implements Listener {
         }
     }
 
+    /**
+     * Has nbt boolean.
+     *
+     * @param stack the stack
+     * @param tag   the tag
+     * @return the boolean
+     */
     public static boolean hasNBT(ItemStack stack, String tag) {
         if (stack.getType() == Material.AIR) return false;
         ItemStack craftStack = stack;
@@ -58,6 +78,13 @@ public class ItemUtil implements Listener {
         return nbt.containsKey(tag) && nbt.getInteger(tag) == 1;
     }
 
+    /**
+     * Sets nbt for itemstack.
+     *
+     * @param stack the stack
+     * @param tag   the tag
+     * @return the nbt for itemstack
+     */
     public static ItemStack setNBTForItemstack(ItemStack stack, String tag) {
         ItemStack craftStack = stack;
         if (!MinecraftReflection.isCraftItemStack(stack)) {
@@ -69,30 +96,85 @@ public class ItemUtil implements Listener {
         return craftStack;
     }
 
+    /**
+     * Create item stack.
+     *
+     * @param type the type
+     * @return the item stack
+     */
     public static ItemStack create(Material type) {
         return create(type, 1);
     }
 
+    /**
+     * Create item stack.
+     *
+     * @param type   the type
+     * @param amount the amount
+     * @return the item stack
+     */
     public static ItemStack create(Material type, int amount) {
         return create(type, amount, (byte) 0);
     }
 
+    /**
+     * Create item stack.
+     *
+     * @param type   the type
+     * @param amount the amount
+     * @param data   the data
+     * @return the item stack
+     */
     public static ItemStack create(Material type, int amount, byte data) {
         return new ItemStack(type, amount, data);
     }
 
+    /**
+     * Create item stack.
+     *
+     * @param type the type
+     * @param name the name
+     * @return the item stack
+     */
     public static ItemStack create(Material type, String name) {
         return create(type, name, new ArrayList<>());
     }
 
+    /**
+     * Create item stack.
+     *
+     * @param type the type
+     * @param name the name
+     * @param lore the lore
+     * @return the item stack
+     */
     public static ItemStack create(Material type, String name, List<String> lore) {
         return create(type, 1, name, lore);
     }
 
+    /**
+     * Create item stack.
+     *
+     * @param type   the type
+     * @param amount the amount
+     * @param name   the name
+     * @param lore   the lore
+     * @return the item stack
+     */
     public static ItemStack create(Material type, int amount, String name, List<String> lore) {
         return create(type, amount, (byte) 0, name, lore);
     }
 
+    /**
+     * Create item stack.
+     *
+     * @param type   the type
+     * @param amount the amount
+     * @param data   the data
+     * @param name   the name
+     * @param lore   the lore
+     * @return the item stack
+     */
     public static ItemStack create(Material type, int amount, byte data, String name, List<String> lore) {
         ItemStack item = create(type, amount, data);
         ItemMeta meta = item.getItemMeta();
@@ -102,14 +184,35 @@ public class ItemUtil implements Listener {
         return item;
     }
 
+    /**
+     * Create item stack.
+     *
+     * @param owner the owner
+     * @return the item stack
+     */
     public static ItemStack create(String owner) {
         return create(owner, owner, new ArrayList<>());
     }
 
+    /**
+     * Create item stack.
+     *
+     * @param owner       the owner
+     * @param displayName the display name
+     * @return the item stack
+     */
     public static ItemStack create(String owner, String displayName) {
         return create(owner, displayName, new ArrayList<>());
     }
 
+    /**
+     * Create skull item stack.
+     *
+     * @param owner       the owner
+     * @param displayName the display name
+     * @param lore        the lore
+     * @return the item stack
+     */
     public static ItemStack create(String owner, String displayName, List<String> lore) {
         ItemStack item = create(Material.SKULL_ITEM, 1, (byte) 3);
         SkullMeta sm = (SkullMeta) item.getItemMeta();

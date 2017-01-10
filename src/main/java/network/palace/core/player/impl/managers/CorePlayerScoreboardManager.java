@@ -1,4 +1,4 @@
-package network.palace.core.player.impl;
+package network.palace.core.player.impl.managers;
 
 import com.google.common.collect.BiMap;
 import com.google.common.collect.HashBiMap;
@@ -17,6 +17,9 @@ import org.bukkit.scoreboard.Team;
 import java.util.HashMap;
 import java.util.concurrent.ThreadLocalRandom;
 
+/**
+ * The type Core player scoreboard manager.
+ */
 public class CorePlayerScoreboardManager implements CPlayerScoreboardManager {
 
     private static final int MAX_STRING_LENGTH = 64;
@@ -30,6 +33,11 @@ public class CorePlayerScoreboardManager implements CPlayerScoreboardManager {
     private int nullIndex = 0;
     @Getter private boolean isSetup = false;
 
+    /**
+     * Instantiates a new Core player scoreboard manager.
+     *
+     * @param player the player
+     */
     public CorePlayerScoreboardManager(CPlayer player) {
         this.player = player;
     }

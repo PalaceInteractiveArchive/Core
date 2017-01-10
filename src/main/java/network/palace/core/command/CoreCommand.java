@@ -28,11 +28,9 @@ import java.util.stream.Collectors;
  * <p>
  * If you require usage of a sub-command, please override {@link #isUsingSubCommandsOnly()} and have it return true.
  *
- * @version 1.1
  * @see org.bukkit.command.CommandExecutor
  * @see org.bukkit.command.TabCompleter
  */
-@SuppressWarnings({"UnusedParameters", "unused"})
 public abstract class CoreCommand implements CommandExecutor, TabCompleter {
 
     /**
@@ -230,7 +228,6 @@ public abstract class CoreCommand implements CommandExecutor, TabCompleter {
      * @param args   The arguments passed to the command.
      * @param sender The sender of the command, cannot be directly cast to {@link CPlayer}.
      */
-    @SuppressWarnings("UnusedParameters")
     protected void handleCommandException(CommandException ex, String[] args, CommandSender sender) {
         //Get the friendly message if supported
         if (ex instanceof FriendlyException) {
@@ -243,7 +240,6 @@ public abstract class CoreCommand implements CommandExecutor, TabCompleter {
         }
     }
 
-    @SuppressWarnings({"UnusedParameters", "EmptyMethod"})
     protected void preSubCommandDispatch(CommandSender sender, String[] args, CoreCommand subCommand) {
     }
 
@@ -293,7 +289,6 @@ public abstract class CoreCommand implements CommandExecutor, TabCompleter {
         throw new EmptyHandlerException();
     }
 
-    @SuppressWarnings("SameReturnValue")
     protected boolean shouldGenerateHelpCommand() {
         return true;
     }
@@ -311,7 +306,6 @@ public abstract class CoreCommand implements CommandExecutor, TabCompleter {
         return ss; //Return what we found.
     }
 
-    @SuppressWarnings("SameReturnValue")
     protected boolean isUsingSubCommandsOnly() {
         return false;
     }

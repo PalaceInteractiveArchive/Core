@@ -5,7 +5,7 @@ import lombok.Getter;
 import network.palace.core.player.CPlayer;
 
 /**
- * Created by Marc on 12/21/16.
+ * The type Current pack received event.
  */
 @AllArgsConstructor
 public class CurrentPackReceivedEvent extends CoreEvent {

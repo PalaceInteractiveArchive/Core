@@ -11,10 +11,16 @@ import org.bukkit.ChatColor;
 import org.bukkit.plugin.Plugin;
 
 /**
- * Created by Marc on 3/6/15
+ * The type Resource listener.
  */
 public class ResourceListener extends PacketAdapter {
 
+    /**
+     * Instantiates a new Resource listener.
+     *
+     * @param plugin the plugin
+     * @param types  the types
+     */
     public ResourceListener(Plugin plugin, PacketType... types) {
         super(plugin, types);
     }

@@ -1,26 +1,41 @@
 package network.palace.core.dashboard.packets.dashboard;
 
 import com.google.gson.JsonObject;
+import lombok.Getter;
 import network.palace.core.dashboard.packets.BasePacket;
 import network.palace.core.dashboard.packets.PacketID;
 
 import java.util.UUID;
 
 /**
- * Created by Marc on 9/17/16
+ * The type Packet mention.
  */
 public class PacketMention extends BasePacket {
-    private UUID uuid;
 
+    @Getter private UUID uuid = null;
+
+    /**
+     * Instantiates a new Packet mention.
+     */
     public PacketMention() {
         this(null);
     }
 
+    /**
+     * Instantiates a new Packet mention.
+     *
+     * @param uuid the uuid
+     */
     public PacketMention(UUID uuid) {
-        this.id = PacketID.Dashboard.MENTION.getID();
+        super(PacketID.Dashboard.MENTION.getID());
         this.uuid = uuid;
     }
 
+    /**
+     * Gets unique id.
+     *
+     * @return the unique id
+     */
     public UUID getUniqueId() {
         return uuid;
     }

@@ -1,4 +1,4 @@
-package network.palace.core.player.impl;
+package network.palace.core.player.impl.managers;
 
 import network.palace.core.packets.server.WrapperPlayServerChat;
 import network.palace.core.player.CPlayer;
@@ -6,6 +6,9 @@ import network.palace.core.player.CPlayerActionBarManager;
 import com.comphenix.protocol.wrappers.WrappedChatComponent;
 import lombok.AllArgsConstructor;
 
+/**
+ * The type Core player action bar manager.
+ */
 @AllArgsConstructor
 public class CorePlayerActionBarManager implements CPlayerActionBarManager {
 

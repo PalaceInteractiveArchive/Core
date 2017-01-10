@@ -1,4 +1,4 @@
-package network.palace.core.player.impl;
+package network.palace.core.player.impl.managers;
 
 import com.comphenix.protocol.wrappers.EnumWrappers;
 import lombok.AllArgsConstructor;
@@ -7,6 +7,9 @@ import network.palace.core.player.CPlayer;
 import network.palace.core.player.CPlayerParticlesManager;
 import org.bukkit.Location;
 
+/**
+ * The type Core player particles manager.
+ */
 @AllArgsConstructor
 public class CorePlayerParticlesManager implements CPlayerParticlesManager {
 

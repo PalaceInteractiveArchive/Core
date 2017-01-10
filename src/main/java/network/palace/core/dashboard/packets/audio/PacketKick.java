@@ -1,38 +1,44 @@
 package network.palace.core.dashboard.packets.audio;
 
 import com.google.gson.JsonObject;
+import lombok.Getter;
 import network.palace.core.dashboard.packets.BasePacket;
 import network.palace.core.dashboard.packets.PacketID;
 
 /**
- * Created by Marc on 6/15/15
+ * The type Packet kick.
  */
-@SuppressWarnings("unused")
 public class PacketKick extends BasePacket {
-    private String message = "";
-    private String reason = "";
 
+    @Getter private String message = "";
+    @Getter private String reason = "";
+
+    /**
+     * Instantiates a new Packet kick.
+     */
     public PacketKick() {
         this("", "");
     }
 
+    /**
+     * Instantiates a new Packet kick.
+     *
+     * @param message the message
+     */
     public PacketKick(String message) {
-        this(message, "");
+        this(message, "DEFAULT");
     }
 
-    public PacketKick(String kickmessage, String reason) {
-        this.id = PacketID.KICK.getID();
-
-        this.message = kickmessage;
-        this.reason = "DEFAULT";
-    }
-
-    public String getMessage() {
-        return this.message;
-    }
-
-    public String getReason() {
-        return this.reason;
+    /**
+     * Instantiates a new Packet kick.
+     *
+     * @param message the message
+     * @param reason  the reason
+     */
+    public PacketKick(String message, String reason) {
+        super(PacketID.KICK.getID());
+        this.message = message;
+        this.reason = reason;
     }
 
     public PacketKick fromJSON(JsonObject obj) {

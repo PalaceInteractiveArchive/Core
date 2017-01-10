@@ -14,17 +14,19 @@ import org.bukkit.command.CommandSender;
 import org.bukkit.entity.Player;
 
 import java.util.HashMap;
-import java.util.List;
 import java.util.Map;
 import java.util.UUID;
 
 /**
- * Created by Marc on 12/19/16.
+ * The type Perm command.
  */
 @CommandMeta(description = "Permissions command")
 @CommandPermission(rank = Rank.WIZARD)
 public class PermCommand extends CoreCommand {
 
+    /**
+     * Instantiates a new Perm command.
+     */
     public PermCommand() {
         super("perm");
     }
@@ -83,7 +85,7 @@ public class PermCommand extends CoreCommand {
             if (arg1.equalsIgnoreCase("group")) {
                 Rank rank = Rank.fromString(arg2);
                 if (arg3.equalsIgnoreCase("members")) {
-                    List<String> members = Core.getSqlUtil().getMembers(rank);
+                    Core.getSqlUtil().getMembers(rank);
                     return;
                 }
                 if (arg3.equalsIgnoreCase("perms")) {
@@ -115,9 +117,8 @@ public class PermCommand extends CoreCommand {
                 switch (arg3) {
                     case "setgroup":
                         Rank rank = Rank.fromString(arg4);
-                        final Rank currentRank = Core.getSqlUtil().getRank(arg2);
                         Player tp = Bukkit.getPlayer(arg2);
-                        UUID uuid = null;
+                        UUID uuid;
                         if (tp != null) {
                             uuid = tp.getUniqueId();
                             Core.getPlayerManager().getPlayer(tp).setRank(rank);
@@ -125,10 +126,9 @@ public class PermCommand extends CoreCommand {
                             uuid = Core.getSqlUtil().getUniqueIdFromName(arg2);
                         }
                         Core.getSqlUtil().setRank(uuid, rank);
-                        String source = sender instanceof Player ? sender.getName() : "Console on " +
-                                Core.getInstance().getInstanceName();
+                        String source = sender instanceof Player ? sender.getName() : "Console on " + Core.getInstanceName();
                         PacketRankChange packet = new PacketRankChange(uuid, rank, source);
-                        Core.getInstance().getDashboardConnection().send(packet);
+                        Core.getDashboardConnection().send(packet);
                         sender.sendMessage(ChatColor.YELLOW + arg2 + "'s rank has been changed to " + rank.getNameWithBrackets());
                         return;
                     case "get":
@@ -196,7 +196,6 @@ public class PermCommand extends CoreCommand {
             String arg5 = args[4];
             if (arg1.equalsIgnoreCase("group")) {
                 Rank rank = Rank.fromString(arg2);
-                HashMap<String, Boolean> permissions = rank.getPermissions();
                 if (arg3.equalsIgnoreCase("set")) {
                     boolean value = arg5.equalsIgnoreCase("true");
                     Core.getSqlUtil().setPermission(arg4, rank, value);
@@ -220,8 +219,6 @@ public class PermCommand extends CoreCommand {
     }
 
     private void helpMenu(CommandSender sender, String menu) {
-        String playerKey = ChatColor.LIGHT_PURPLE + "<player>";
-        String groupKey = ChatColor.LIGHT_PURPLE + "<group>";
         sender.sendMessage(ChatColor.YELLOW + "----------------------------------------------------");
         switch (menu) {
             case "player":

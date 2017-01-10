@@ -14,12 +14,15 @@ import org.bukkit.command.BlockCommandSender;
 import org.bukkit.command.ConsoleCommandSender;
 
 /**
- * Created by Marc on 12/21/16.
+ * The type Helpop command.
  */
 @CommandMeta(aliases = "ac", description = "Staff Chat command")
 @CommandPermission(rank = Rank.SQUIRE)
 public class HelpopCommand extends CoreCommand {
 
+    /**
+     * Instantiates a new Helpop command.
+     */
     public HelpopCommand() {
         super("helpop");
     }

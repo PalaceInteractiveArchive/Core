@@ -1,4 +1,4 @@
-package network.palace.core.player.impl;
+package network.palace.core.player.impl.managers;
 
 import network.palace.core.player.CPlayer;
 import network.palace.core.player.CPlayerBossBarManager;
@@ -7,11 +7,19 @@ import org.bukkit.boss.BarColor;
 import org.bukkit.boss.BarStyle;
 import org.bukkit.boss.BossBar;
 
+/**
+ * The type Core player boss bar manager.
+ */
 public class CorePlayerBossBarManager implements CPlayerBossBarManager {
 
     private final CPlayer player;
     private BossBar bossBar = null;
 
+    /**
+     * Instantiates a new Core player boss bar manager.
+     *
+     * @param player the player
+     */
     public CorePlayerBossBarManager(CPlayer player) {
         this.player = player;
     }

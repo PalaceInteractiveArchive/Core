@@ -1,28 +1,32 @@
 package network.palace.core.dashboard.packets.audio;
 
 import com.google.gson.JsonObject;
+import lombok.Getter;
 import network.palace.core.dashboard.packets.BasePacket;
 import network.palace.core.dashboard.packets.PacketID;
 
 /**
- * Created by Marc on 6/15/15
+ * The type Packet exec script.
  */
-@SuppressWarnings("unused")
 public class PacketExecScript extends BasePacket {
-    private String script = "";
 
+    @Getter private String script = "";
+
+    /**
+     * Instantiates a new Packet exec script.
+     */
     public PacketExecScript() {
         this("");
     }
 
+    /**
+     * Instantiates a new Packet exec script.
+     *
+     * @param script the script
+     */
     public PacketExecScript(String script) {
-        this.id = PacketID.EXEC_SCRIPT.getID();
-
+        super(PacketID.EXEC_SCRIPT.getID());
         this.script = script;
-    }
-
-    public String getScript() {
-        return this.script;
     }
 
     public PacketExecScript fromJSON(JsonObject obj) {

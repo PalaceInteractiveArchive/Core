@@ -23,18 +23,15 @@ import java.util.TimerTask;
 import java.util.UUID;
 
 /**
- * Created by Marc on 5/22/16
+ * The type Dashboard connection.
  */
-@SuppressWarnings("unused")
 public class DashboardConnection {
+
     private WebSocketClient client;
-    private boolean hasAttempted = false;
-
-    private Core instance = Core.getPlugin(Core.class);
-
-    private String dashboardURL = instance.getConfig().getString("dashboardURL");
+    private final String dashboardURL;
 
     public DashboardConnection() {
+        dashboardURL = Core.getCoreConfig().getString("dashboardURL");
         start();
     }
 
@@ -61,7 +58,7 @@ public class DashboardConnection {
                         }
                         case 49: {
                             PacketGetPack packet = new PacketGetPack().fromJSON(object);
-                            UUID uuid = packet.getUniqueId();
+                            UUID uuid = packet.getUuid();
                             String pack = packet.getPack();
                             CPlayer player = Core.getPlayerManager().getPlayer(uuid);
                             if (player == null) break;
@@ -80,18 +77,14 @@ public class DashboardConnection {
                             break;
                         }
                     }
-                    IncomingPacketEvent event = new IncomingPacketEvent(id, object.toString());
-                    Bukkit.getPluginManager().callEvent(event);
+                    new IncomingPacketEvent(id, object.toString()).call();
                 }
-
                 @Override
                 public void onOpen(ServerHandshake handshake) {
                     Core.logMessage("Core", ChatColor.DARK_GREEN + "Successfully connected to Dashboard");
                     DashboardConnection.this.send(new PacketConnectionType(PacketConnectionType.ConnectionType.INSTANCE).getJSON().toString());
-                    DashboardConnection.this.send(new PacketServerName(instance.getInstanceName()).getJSON().toString());
-                    hasAttempted = false;
+                    DashboardConnection.this.send(new PacketServerName(Core.getInstanceName()).getJSON().toString());
                 }
-
                 @Override
                 public void onClose(int code, String reason, boolean remote) {
                     Core.logMessage("Core", ChatColor.RED + String.valueOf(code) + " Disconnected from Dashboard! Reconnecting...");
@@ -102,13 +95,11 @@ public class DashboardConnection {
                         }
                     }, 5000L);
                 }
-
                 @Override
                 public void onError(Exception ex) {
                     Core.logMessage("Core", ChatColor.RED + "Error in Dashboard connection");
                     ex.printStackTrace();
                 }
-
             };
         } catch (URISyntaxException e) {
             e.printStackTrace();
@@ -124,8 +115,6 @@ public class DashboardConnection {
         Core.debugLog("Outgoing: " + s);
         client.send(s);
     }
-
-    @SuppressWarnings("BooleanMethodIsAlwaysInverted")
     public boolean isConnected() {
         return client != null && client.getConnection() != null && !client.getConnection().isConnecting() && client.getConnection().isOpen();
     }

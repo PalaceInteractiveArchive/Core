@@ -1,27 +1,25 @@
 package network.palace.core.dashboard.packets.dashboard;
 
 import com.google.gson.JsonObject;
+import lombok.Getter;
 import network.palace.core.dashboard.packets.BasePacket;
 import network.palace.core.dashboard.packets.PacketID;
 
 /**
- * Created by Marc on 9/17/16
+ * The type Packet server name.
  */
-@SuppressWarnings("unused")
 public class PacketServerName extends BasePacket {
-    private String name;
 
-    public PacketServerName() {
-        this("");
-    }
+    @Getter private String name = "";
 
+    /**
+     * Instantiates a new Packet server name.
+     *
+     * @param name the name
+     */
     public PacketServerName(String name) {
-        this.id = PacketID.Dashboard.SERVERNAME.getID();
+        super(PacketID.Dashboard.SERVERNAME.getID());
         this.name = name;
-    }
-
-    public String getName() {
-        return name;
     }
 
     public PacketServerName fromJSON(JsonObject obj) {

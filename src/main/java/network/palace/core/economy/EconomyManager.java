@@ -17,25 +17,23 @@ import java.util.Map;
 import java.util.UUID;
 
 /**
- * Created by Marc on 2/15/15
+ * The type Economy manager.
  */
-public class Economy {
+public class EconomyManager {
+
     private HashMap<UUID, Payment> balance = new HashMap<>();
     private HashMap<UUID, Payment> tokens = new HashMap<>();
-    private String connUrl;
-    private String user;
-    private String pass;
 
-    public Economy() {
+    /**
+     * Instantiates a new Economy manager.
+     */
+    public EconomyManager() {
         Bukkit.getScheduler().runTaskTimerAsynchronously(Core.getInstance(), () -> {
             HashMap<UUID, Payment> localMap = new HashMap<>(balance);
             balance.clear();
             for (Map.Entry<UUID, Payment> entry : new HashSet<>(localMap.entrySet())) {
                 Payment payment = new Payment(entry.getKey(), entry.getValue().getAmount(), entry.getValue().getSource());
                 balance.remove(entry.getKey());
-                if (payment == null) {
-                    continue;
-                }
                 if (payment.getAmount() == 0) {
                     continue;
                 }
@@ -48,9 +46,6 @@ public class Economy {
             for (Map.Entry<UUID, Payment> entry : new HashSet<>(localMap.entrySet())) {
                 Payment payment = new Payment(entry.getKey(), entry.getValue().getAmount(), entry.getValue().getSource());
                 tokens.remove(entry.getKey());
-                if (payment == null) {
-                    continue;
-                }
                 if (payment.getAmount() == 0) {
                     continue;
                 }
@@ -103,6 +98,14 @@ public class Economy {
         }
     }
 
+    /**
+     * Sets balance.
+     *
+     * @param uuid   the uuid
+     * @param amount the amount
+     * @param source the source
+     * @param set    the set
+     */
     public void setBalance(UUID uuid, int amount, String source, boolean set) {
         try (Connection connection = Core.getSqlUtil().getConnection()) {
             PreparedStatement sql = connection.prepareStatement("UPDATE player_data SET balance=? WHERE uuid=?;");
@@ -119,6 +122,14 @@ public class Economy {
         }
     }
 
+    /**
+     * Sets tokens.
+     *
+     * @param uuid   the uuid
+     * @param amount the amount
+     * @param source the source
+     * @param set    the set
+     */
     public void setTokens(UUID uuid, int amount, String source, boolean set) {
         try (Connection connection = Core.getSqlUtil().getConnection()) {
             PreparedStatement sql = connection.prepareStatement("UPDATE player_data SET tokens=? WHERE uuid=?;");
@@ -135,6 +146,11 @@ public class Economy {
         }
     }
 
+    /**
+     * Logout.
+     *
+     * @param uuid the uuid
+     */
     public void logout(UUID uuid) {
         if (balance.containsKey(uuid)) {
             Payment payment = balance.remove(uuid);
@@ -146,6 +162,13 @@ public class Economy {
         }
     }
 
+    /**
+     * Gets balance.
+     *
+     * @param requester the requester
+     * @param name      the name
+     * @return the balance
+     */
     public int getBalance(CommandSender requester, String name) {
         try (Connection connection = Core.getSqlUtil().getConnection()) {
             PreparedStatement sql = connection.prepareStatement("SELECT balance FROM player_data WHERE username=?");
@@ -170,6 +193,12 @@ public class Economy {
         return 0;
     }
 
+    /**
+     * Gets balance.
+     *
+     * @param uuid the uuid
+     * @return the balance
+     */
     public int getBalance(UUID uuid) {
         try (Connection connection = Core.getSqlUtil().getConnection()) {
             PreparedStatement sql = connection.prepareStatement("SELECT balance FROM player_data WHERE uuid=?");
@@ -190,6 +219,13 @@ public class Economy {
         }
     }
 
+    /**
+     * Gets tokens.
+     *
+     * @param requester the requester
+     * @param name      the name
+     * @return the tokens
+     */
     public int getTokens(CommandSender requester, String name) {
         try (Connection connection = Core.getSqlUtil().getConnection()) {
             PreparedStatement sql = connection.prepareStatement("SELECT tokens FROM player_data WHERE username=?");
@@ -214,6 +250,12 @@ public class Economy {
         return 0;
     }
 
+    /**
+     * Gets tokens.
+     *
+     * @param uuid the uuid
+     * @return the tokens
+     */
     public int getTokens(UUID uuid) {
         try (Connection connection = Core.getSqlUtil().getConnection()) {
             PreparedStatement sql = connection.prepareStatement("SELECT tokens FROM player_data WHERE uuid=?");
@@ -234,10 +276,23 @@ public class Economy {
         }
     }
 
+    /**
+     * Add balance.
+     *
+     * @param uuid   the uuid
+     * @param amount the amount
+     */
     public void addBalance(UUID uuid, int amount) {
         addBalance(uuid, amount, "plugin");
     }
 
+    /**
+     * Add balance.
+     *
+     * @param uuid   the uuid
+     * @param amount the amount
+     * @param source the source
+     */
     public void addBalance(UUID uuid, int amount, String source) {
         String sign = amount > 0 ? "+ " : "- ";
         CPlayer player = Core.getPlayerManager().getPlayer(uuid);
@@ -253,10 +308,23 @@ public class Economy {
         }
     }
 
+    /**
+     * Add tokens.
+     *
+     * @param uuid   the uuid
+     * @param amount the amount
+     */
     public void addTokens(UUID uuid, int amount) {
         addTokens(uuid, amount, "plugin");
     }
 
+    /**
+     * Add tokens.
+     *
+     * @param uuid   the uuid
+     * @param amount the amount
+     * @param source the source
+     */
     public void addTokens(UUID uuid, int amount, String source) {
         String sign = amount > 0 ? "+ " : "- ";
         CPlayer player = Core.getPlayerManager().getPlayer(uuid);
@@ -279,7 +347,7 @@ public class Economy {
         try (Connection connection = Core.getSqlUtil().getConnection()) {
             PreparedStatement sql = connection.prepareStatement("INSERT INTO economy_logs (uuid, amount, type, source, server, timestamp)" +
                     " VALUES ('" + uuid.toString() + "', '" + amount + "', '" + type + "', '" + source + "', '" +
-                    Core.getInstance().getInstanceName() + "', '" + System.currentTimeMillis() / 1000 + "')");
+                    Core.getInstanceName() + "', '" + System.currentTimeMillis() / 1000 + "')");
             sql.execute();
             sql.close();
         } catch (SQLException e) {

@@ -5,19 +5,31 @@ import network.palace.core.events.CoreOnlineCountUpdate;
 import network.palace.core.events.EconomyUpdateEvent;
 import network.palace.core.player.CPlayer;
 import network.palace.core.player.CPlayerScoreboardManager;
+import network.palace.core.player.PlayerStatus;
 import org.bukkit.ChatColor;
 import org.bukkit.event.EventHandler;
 import org.bukkit.event.Listener;
 
+/**
+ * The type Core player default scoreboard.
+ */
 public class CorePlayerDefaultScoreboard implements Listener {
 
     private int playerCount = 0;
 
+    /**
+     * Instantiates a new Core player default scoreboard.
+     */
     public CorePlayerDefaultScoreboard() {
         if (!isDefaultSidebarEnabled()) return;
         Core.registerListener(this);
     }
 
+    /**
+     * Setups the scoreboard for the player.
+     *
+     * @param player the player
+     */
     public void setup(CPlayer player) {
         if (!isDefaultSidebarEnabled()) return;
         CPlayerScoreboardManager scoreboard = player.getScoreboard();
@@ -40,19 +52,29 @@ public class CorePlayerDefaultScoreboard implements Listener {
         // Players number
         scoreboard.set(1, ChatColor.GREEN + "Online Players: " + playerCount);
         // Server name
-        scoreboard.set(0, ChatColor.GREEN + "Server: " + Core.getInstance().getServerType());
+        scoreboard.set(0, ChatColor.GREEN + "Server: " + Core.getServerType());
     }
 
+    /**
+     * On online count update.
+     *
+     * @param event the event
+     */
     @EventHandler
     public void onOnlineCountUpdate(CoreOnlineCountUpdate event) {
         playerCount = event.getCount();
         for (CPlayer player : Core.getPlayerManager().getOnlinePlayers()) {
-            if (player.getStatus() != CPlayer.PlayerStatus.JOINED) return;
+            if (player.getStatus() != PlayerStatus.JOINED) return;
             if (!player.getScoreboard().isSetup()) return;
             player.getScoreboard().set(1, ChatColor.GREEN + "Online Players: " + playerCount);
         }
     }
 
+    /**
+     * On economy update.
+     *
+     * @param event the event
+     */
     @EventHandler
     public void onEconomyUpdate(EconomyUpdateEvent event) {
         int amount = event.getAmount();

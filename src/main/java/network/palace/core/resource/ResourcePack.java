@@ -1,22 +1,13 @@
 package network.palace.core.resource;
 
+import lombok.AllArgsConstructor;
+import lombok.Getter;
+
 /**
- * Created by Marc on 3/18/15
+ * The type Resource pack.
  */
+@AllArgsConstructor
 public class ResourcePack {
-    private String name;
-    private String url;
-
-    public ResourcePack(String name, String url) {
-        this.name = name;
-        this.url = url;
-    }
-
-    public String getName() {
-        return name;
-    }
-
-    public String getUrl() {
-        return url;
-    }
+    @Getter private String name;
+    @Getter private String url;
 }

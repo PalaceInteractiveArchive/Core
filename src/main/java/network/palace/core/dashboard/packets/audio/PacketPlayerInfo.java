@@ -1,54 +1,50 @@
 package network.palace.core.dashboard.packets.audio;
 
 import com.google.gson.JsonObject;
+import lombok.Getter;
 import network.palace.core.dashboard.packets.BasePacket;
 import network.palace.core.dashboard.packets.PacketID;
 
 import java.util.UUID;
 
 /**
- * Created by Marc on 6/15/15
+ * The type Packet player info.
  */
-@SuppressWarnings("unused")
 public class PacketPlayerInfo extends BasePacket {
-    private UUID uuid;
-    private String username;
-    private int auth;
-    private String server;
 
+    @Getter private UUID uniqueId = null;
+    @Getter private String username = "";
+    @Getter private int auth = 0;
+    @Getter private String server = "";
+
+    /**
+     * Instantiates a new Packet player info.
+     */
     public PacketPlayerInfo() {
         this(null, "", 0, "");
     }
 
-    public PacketPlayerInfo(UUID uuid, String username, int auth, String server) {
-        this.id = PacketID.PLAYERINFO.getID();
-        this.uuid = uuid;
+    /**
+     * Instantiates a new Packet player info.
+     *
+     * @param uniqueId the unique id
+     * @param username the username
+     * @param auth     the auth
+     * @param server   the server
+     */
+    public PacketPlayerInfo(UUID uniqueId, String username, int auth, String server) {
+        super(PacketID.PLAYERINFO.getID());
+        this.uniqueId = uniqueId;
         this.username = username;
         this.auth = auth;
         this.server = server;
     }
 
-    public UUID getUniqueId() {
-        return uuid;
-    }
-
-    public String getUsername() {
-        return username;
-    }
-
-    public int getAuth() {
-        return auth;
-    }
-
-    public String getServer() {
-        return server;
-    }
-
     public PacketPlayerInfo fromJSON(JsonObject obj) {
         try {
-            this.uuid = UUID.fromString(obj.get("uuid").getAsString());
+            this.uniqueId = UUID.fromString(obj.get("uuid").getAsString());
         } catch (Exception e) {
-            this.uuid = null;
+            this.uniqueId = null;
         }
         this.username = obj.get("username").getAsString();
         this.auth = obj.get("auth").getAsInt();
@@ -60,7 +56,7 @@ public class PacketPlayerInfo extends BasePacket {
         JsonObject obj = new JsonObject();
         try {
             obj.addProperty("id", this.id);
-            obj.addProperty("uuid", uuid != null ? uuid.toString() : null);
+            obj.addProperty("uuid", uniqueId != null ? uniqueId.toString() : null);
             obj.addProperty("username", this.username);
             obj.addProperty("auth", this.auth);
             obj.addProperty("server", this.server);

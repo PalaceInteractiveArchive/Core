@@ -1,27 +1,32 @@
 package network.palace.core.dashboard.packets.dashboard;
 
 import com.google.gson.JsonObject;
+import lombok.Getter;
 import network.palace.core.dashboard.packets.BasePacket;
 import network.palace.core.dashboard.packets.PacketID;
 
 /**
- * Created by Marc on 9/1/16
+ * The type Packet online count.
  */
-@SuppressWarnings("unused")
 public class PacketOnlineCount extends BasePacket {
-    private int count;
 
+    @Getter private int count = 0;
+
+    /**
+     * Instantiates a new Packet online count.
+     */
     public PacketOnlineCount() {
         this(0);
     }
 
+    /**
+     * Instantiates a new Packet online count.
+     *
+     * @param count the count
+     */
     public PacketOnlineCount(int count) {
-        this.id = PacketID.Dashboard.ONLINECOUNT.getID();
+        super(PacketID.Dashboard.ONLINECOUNT.getID());
         this.count = count;
-    }
-
-    public int getCount() {
-        return count;
     }
 
     public PacketOnlineCount fromJSON(JsonObject obj) {

@@ -1,39 +1,34 @@
 package network.palace.core.dashboard.packets.dashboard;
 
 import com.google.gson.JsonObject;
+import lombok.Getter;
 import network.palace.core.dashboard.packets.BasePacket;
 import network.palace.core.dashboard.packets.PacketID;
 import network.palace.core.player.Rank;
 
 import java.util.UUID;
 
-@SuppressWarnings("unused")
+/**
+ * The type Packet rank change.
+ */
 public class PacketRankChange extends BasePacket {
-    private UUID uuid;
-    private Rank rank;
-    private String source;
 
-    public PacketRankChange() {
-        this(null, Rank.SETTLER, "");
-    }
+    @Getter private UUID uuid = null;
+    @Getter private Rank rank =  Rank.SETTLER;
+    @Getter private String source = "";
 
+    /**
+     * Instantiates a new Packet rank change.
+     *
+     * @param uuid   the uuid
+     * @param rank   the rank
+     * @param source the source
+     */
     public PacketRankChange(UUID uuid, Rank rank, String source) {
-        this.id = PacketID.Dashboard.RANKCHANGE.getID();
+        super(PacketID.Dashboard.RANKCHANGE.getID());
         this.uuid = uuid;
         this.rank = rank;
         this.source = source;
-    }
-
-    public UUID getUniqueId() {
-        return uuid;
-    }
-
-    public Rank getRank() {
-        return rank;
-    }
-
-    public String getSource() {
-        return source;
     }
 
     public PacketRankChange fromJSON(JsonObject obj) {

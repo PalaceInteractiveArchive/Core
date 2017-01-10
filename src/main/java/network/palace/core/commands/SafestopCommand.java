@@ -13,7 +13,7 @@ import org.bukkit.World;
 import org.bukkit.command.CommandSender;
 
 /**
- * Created by Marc on 12/9/16.
+ * The type Safestop command.
  */
 @CommandMeta(description = "Safely stop the server.")
 @CommandPermission(rank = Rank.WIZARD)
@@ -21,6 +21,9 @@ public class SafestopCommand extends CoreCommand {
 
     private Core instance = Core.getPlugin(Core.class);
 
+    /**
+     * Instantiates a new Safestop command.
+     */
     public SafestopCommand() {
         super("safestop");
     }
@@ -28,17 +31,15 @@ public class SafestopCommand extends CoreCommand {
     @Override
     protected void handleCommandUnspecific(CommandSender sender, String[] args) throws CommandException {
         sender.sendMessage(ChatColor.RED + "Shutting the server down...");
-        Core.getInstance().setStarting(true);
+        Core.setStarting(true);
         for (World world : Bukkit.getWorlds()) {
             world.save();
         }
-
-        PacketEmptyServer packet = new PacketEmptyServer(instance.getInstanceName());
-        instance.getDashboardConnection().send(packet);
-
+        PacketEmptyServer packet = new PacketEmptyServer(Core.getInstanceName());
+        Core.getDashboardConnection().send(packet);
         Bukkit.getScheduler().runTaskTimer(Core.getInstance(), () -> {
             if (Bukkit.getOnlinePlayers().size() <= 0) {
-                instance.getDashboardConnection().stop();
+                Core.getDashboardConnection().stop();
                 Bukkit.shutdown();
             }
         }, 0L, 40L);

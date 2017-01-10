@@ -14,12 +14,15 @@ import org.bukkit.command.CommandSender;
 import org.bukkit.entity.Player;
 
 /**
- * Created by Marc on 12/19/16.
+ * The type Token command.
  */
 @CommandMeta(description = "Manage economy tokens")
 @CommandPermission(rank = Rank.KNIGHT)
 public class TokenCommand extends CoreCommand {
 
+    /**
+     * Instantiates a new Token command.
+     */
     public TokenCommand() {
         super("token");
     }

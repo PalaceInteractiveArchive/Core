@@ -1,50 +1,49 @@
 package network.palace.core.dashboard.packets.audio;
 
 import com.google.gson.JsonObject;
+import lombok.Getter;
 import network.palace.core.dashboard.packets.BasePacket;
 import network.palace.core.dashboard.packets.PacketID;
 
-@SuppressWarnings("unused")
+/**
+ * The type Packet area start.
+ */
 public class PacketAreaStart extends BasePacket {
 
-    private int audioid = 0;
-    private String name = "";
-    private float volume = 1.0F;
-    private int fadetime = 0;
-    private boolean repeat = true;
+    @Getter private int audioID = 0;
+    @Getter private String name = "";
+    @Getter private float volume = 1.0F;
+    @Getter private int fadetime = 0;
+    @Getter private boolean repeat = true;
 
+    /**
+     * Instantiates a new Packet area start.
+     */
     public PacketAreaStart() {
         this(-1, "", 1.0F, 0, true);
     }
 
-    public PacketAreaStart(int audioid, String name, float volume, int fadetime, boolean repeat) {
-        this.id = PacketID.AREA_START.getID();
-        this.audioid = audioid;
+    /**
+     * Instantiates a new Packet area start.
+     *
+     * @param audioID  the audio id
+     * @param name     the name
+     * @param volume   the volume
+     * @param fadetime the fadetime
+     * @param repeat   the repeat
+     */
+    public PacketAreaStart(int audioID, String name, float volume, int fadetime, boolean repeat) {
+        super(PacketID.AREA_START.getID());
+        this.audioID = audioID;
         this.name = name;
         this.volume = volume;
         this.fadetime = fadetime;
         this.repeat = repeat;
     }
 
-    public float getVolume() {
-        return this.volume;
-    }
-
-    public int getAudioID() {
-        return this.audioid;
-    }
-
-    public int getFadetime() {
-        return this.fadetime;
-    }
-
-    public String getName() {
-        return this.name;
-    }
-
     public PacketAreaStart fromJSON(JsonObject obj) {
         try {
-            this.audioid = obj.get("audioid").getAsInt();
+            this.audioID = obj.get("audioid").getAsInt();
             this.name = obj.get("name").getAsString();
             this.volume = obj.get("volume").getAsFloat();
             this.fadetime = obj.get("fadetime").getAsInt();
@@ -59,7 +58,7 @@ public class PacketAreaStart extends BasePacket {
         JsonObject obj = new JsonObject();
         try {
             obj.addProperty("id", this.id);
-            obj.addProperty("audioid", this.audioid);
+            obj.addProperty("audioid", this.audioID);
             obj.addProperty("name", this.name);
             obj.addProperty("volume", this.volume);
             obj.addProperty("fadetime", this.fadetime);

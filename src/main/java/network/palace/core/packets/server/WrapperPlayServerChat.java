@@ -23,24 +23,29 @@ import com.comphenix.protocol.PacketType;
 import com.comphenix.protocol.events.PacketContainer;
 import com.comphenix.protocol.wrappers.WrappedChatComponent;
 
-@SuppressWarnings("unused")
+/**
+ * The type Wrapper play server chat.
+ */
 public class WrapperPlayServerChat extends AbstractPacket {
 
+    /**
+     * The constant TYPE.
+     */
     public static final PacketType TYPE = PacketType.Play.Server.CHAT;
 
+    /**
+     * Instantiates a new Wrapper play server chat.
+     */
     public WrapperPlayServerChat() {
         super(new PacketContainer(TYPE), TYPE);
         handle.getModifier().writeDefaults();
-    }
-
-    public WrapperPlayServerChat(PacketContainer packet) {
-        super(packet, TYPE);
     }
 
     /**
      * Retrieve the chat message.
      * <p>
      * Limited to 32767 bytes
+     *
      * @return The current message
      */
     public WrappedChatComponent getMessage() {
@@ -49,6 +54,7 @@ public class WrapperPlayServerChat extends AbstractPacket {
 
     /**
      * Set the message.
+     *
      * @param value - new value.
      */
     public void setMessage(WrappedChatComponent value) {
@@ -59,6 +65,7 @@ public class WrapperPlayServerChat extends AbstractPacket {
      * Retrieve Position.
      * <p>
      * Notes: 0 - Chat (chat box) ,1 - System Message (chat box), 2 - Above action bar
+     *
      * @return The current Position
      */
     public Position getPosition() {
@@ -67,15 +74,28 @@ public class WrapperPlayServerChat extends AbstractPacket {
 
     /**
      * Set Position.
+     *
      * @param value - new value.
      */
     public void setPosition(Position value) {
         handle.getBytes().write(0, value.value);
     }
 
+    /**
+     * The enum Position.
+     */
     public enum Position {
+        /**
+         * Chat position.
+         */
         CHAT((byte) 0),
+        /**
+         * Chat system position.
+         */
         CHAT_SYSTEM((byte) 1),
+        /**
+         * Action bar position.
+         */
         ACTION_BAR((byte) 2);
 
         private final byte value;

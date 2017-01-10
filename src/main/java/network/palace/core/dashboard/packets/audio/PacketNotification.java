@@ -1,40 +1,38 @@
 package network.palace.core.dashboard.packets.audio;
 
 import com.google.gson.JsonObject;
+import lombok.Getter;
 import network.palace.core.dashboard.packets.BasePacket;
 import network.palace.core.dashboard.packets.PacketID;
 
 /**
- * Created by Marc on 6/15/15
+ * The type Packet notification.
  */
-@SuppressWarnings("unused")
 public class PacketNotification extends BasePacket {
-    private String text = "";
-    private String body = "";
-    private String icon = "";
 
+    @Getter private String text = "";
+    @Getter private String body = "";
+    @Getter private String icon = "";
+
+    /**
+     * Instantiates a new Packet notification.
+     */
     public PacketNotification() {
         this("", "", "");
     }
 
+    /**
+     * Instantiates a new Packet notification.
+     *
+     * @param text the text
+     * @param body the body
+     * @param icon the icon
+     */
     public PacketNotification(String text, String body, String icon) {
-        this.id = PacketID.NOTIFICATION.getID();
-
+        super(PacketID.NOTIFICATION.getID());
         this.text = text;
         this.body = body;
         this.icon = icon;
-    }
-
-    public String getText() {
-        return this.text;
-    }
-
-    public String getBody() {
-        return this.body;
-    }
-
-    public String getIcon() {
-        return this.icon;
     }
 
     public PacketNotification fromJSON(JsonObject obj) {

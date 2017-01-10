@@ -1,35 +1,30 @@
 package network.palace.core.dashboard.packets.dashboard;
 
 import com.google.gson.JsonObject;
+import lombok.Getter;
 import network.palace.core.dashboard.packets.BasePacket;
 import network.palace.core.dashboard.packets.PacketID;
 
 import java.util.UUID;
 
 /**
- * Created by Marc on 9/17/16
+ * The type Packet set pack.
  */
-@SuppressWarnings("unused")
 public class PacketSetPack extends BasePacket {
-    private UUID uuid;
-    private String pack;
 
-    public PacketSetPack() {
-        this(null, "");
-    }
+    @Getter private UUID uuid = null;
+    @Getter private String pack = "";
 
+    /**
+     * Instantiates a new Packet set pack.
+     *
+     * @param uuid the uuid
+     * @param pack the pack
+     */
     public PacketSetPack(UUID uuid, String pack) {
-        this.id = PacketID.Dashboard.SETPACK.getID();
+        super(PacketID.Dashboard.SETPACK.getID());
         this.uuid = uuid;
         this.pack = pack == null ? "none" : pack;
-    }
-
-    public UUID getUniqueId() {
-        return uuid;
-    }
-
-    public String getPack() {
-        return pack;
     }
 
     public PacketSetPack fromJSON(JsonObject obj) {

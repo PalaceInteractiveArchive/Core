@@ -4,7 +4,7 @@ import lombok.AllArgsConstructor;
 import lombok.Getter;
 
 /**
- * Created by Marc on 9/18/16
+ * The type Incoming packet event.
  */
 @AllArgsConstructor
 public class IncomingPacketEvent extends CoreEvent {

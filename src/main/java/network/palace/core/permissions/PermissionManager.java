@@ -15,16 +15,26 @@ import java.util.Map;
 import java.util.UUID;
 
 /**
- * Created by Marc on 12/19/16.
+ * The type Permission manager.
  */
 public class PermissionManager {
+
+    /**
+     * The Attachments.
+     */
     public HashMap<UUID, PermissionAttachment> attachments = new HashMap<>();
     private HashMap<Rank, HashMap<String, Boolean>> permissions = new HashMap<>();
 
+    /**
+     * Instantiates a new Permission manager.
+     */
     public PermissionManager() {
         initialize();
     }
 
+    /**
+     * Initialize.
+     */
     public void initialize() {
         permissions.clear();
         Rank[] ranks = Rank.values();
@@ -56,6 +66,11 @@ public class PermissionManager {
         }
     }
 
+    /**
+     * Set permissions on login.
+     *
+     * @param player the player
+     */
     public void login(CPlayer player) {
         setPermissions(player.getBukkitPlayer(), getPermissions(player.getRank()));
     }
@@ -76,11 +91,22 @@ public class PermissionManager {
         }
     }
 
+    /**
+     * Gets permissions.
+     *
+     * @param rank the rank
+     * @return the permissions
+     */
     public HashMap<String, Boolean> getPermissions(Rank rank) {
         HashMap<String, Boolean> map = permissions.get(rank);
         return map == null ? new HashMap<>() : map;
     }
 
+    /**
+     * Refresh permissions.
+     *
+     * @param sender the sender
+     */
     public void refresh(CommandSender sender) {
         Bukkit.getScheduler().runTaskAsynchronously(Core.getInstance(), () -> {
             sender.sendMessage(ChatColor.YELLOW + "Refreshing permissions...");
@@ -89,12 +115,25 @@ public class PermissionManager {
         });
     }
 
+    /**
+     * Sets permission.
+     *
+     * @param rank  the rank
+     * @param node  the node
+     * @param value the value
+     */
     public void setPermission(Rank rank, String node, boolean value) {
         HashMap<String, Boolean> map = new HashMap<>(permissions.get(rank));
         map.put(node, value);
         permissions.put(rank, map);
     }
 
+    /**
+     * Unset permission.
+     *
+     * @param rank the rank
+     * @param node the node
+     */
     public void unsetPermission(Rank rank, String node) {
         HashMap<String, Boolean> map = new HashMap<>(permissions.get(rank));
         map.remove(node);

@@ -6,6 +6,9 @@ import org.bukkit.ChatColor;
 import org.bukkit.entity.Player;
 import org.bukkit.plugin.messaging.PluginMessageListener;
 
+/**
+ * The type Core player world download protect.
+ */
 public class CorePlayerWorldDownloadProtect implements PluginMessageListener {
 
     @Override
@@ -13,7 +16,7 @@ public class CorePlayerWorldDownloadProtect implements PluginMessageListener {
         if (channel.equals("WDL|INIT")) {
             player.sendMessage(ChatColor.RED + "Palace Network does not authorize the use of World Downloader Mods!");
             PacketWDLProtect packet = new PacketWDLProtect(player.getUniqueId());
-            Core.getInstance().getDashboardConnection().send(packet);
+            Core.getDashboardConnection().send(packet);
         }
     }
 }

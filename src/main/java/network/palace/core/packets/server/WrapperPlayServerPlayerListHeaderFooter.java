@@ -23,18 +23,22 @@ import com.comphenix.protocol.PacketType;
 import com.comphenix.protocol.events.PacketContainer;
 import com.comphenix.protocol.wrappers.WrappedChatComponent;
 
-@SuppressWarnings("unused")
+/**
+ * The type Wrapper play server player list header footer.
+ */
 public class WrapperPlayServerPlayerListHeaderFooter extends AbstractPacket {
 
+    /**
+     * The constant TYPE.
+     */
     public static final PacketType TYPE = PacketType.Play.Server.PLAYER_LIST_HEADER_FOOTER;
 
+    /**
+     * Instantiates a new Wrapper play server player list header footer.
+     */
     public WrapperPlayServerPlayerListHeaderFooter() {
         super(new PacketContainer(TYPE), TYPE);
         handle.getModifier().writeDefaults();
-    }
-
-    public WrapperPlayServerPlayerListHeaderFooter(PacketContainer packet) {
-        super(packet, TYPE);
     }
 
     /**

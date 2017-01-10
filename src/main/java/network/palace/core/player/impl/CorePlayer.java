@@ -5,11 +5,13 @@ import com.google.common.io.ByteStreams;
 import lombok.Getter;
 import lombok.Setter;
 import network.palace.core.Core;
-import network.palace.core.config.LanguageFormatter;
+import network.palace.core.config.LanguageManager;
 import network.palace.core.packets.AbstractPacket;
 import network.palace.core.player.*;
+import network.palace.core.player.impl.managers.*;
 import network.palace.core.plugin.Plugin;
 import org.bukkit.*;
+import org.bukkit.attribute.Attribute;
 import org.bukkit.entity.Player;
 import org.bukkit.inventory.Inventory;
 import org.bukkit.inventory.ItemStack;
@@ -20,6 +22,9 @@ import org.bukkit.util.Vector;
 import java.util.UUID;
 import java.util.logging.Level;
 
+/**
+ * The type Core player.
+ */
 public class CorePlayer implements CPlayer {
 
     @Getter private final UUID uuid;
@@ -34,9 +39,16 @@ public class CorePlayer implements CPlayer {
     @Getter private CPlayerTitleManager title = new CorePlayerTitleManager(this);
     @Getter private CPlayerParticlesManager particles = new CorePlayerParticlesManager(this);
     @Getter private CPlayerResourcePackManager resourcePack = new CorePlayerResourcePackManager(this);
-    @Getter @Setter String textureHash = "";
-    @Getter @Setter String pack = "none";
+    @Getter @Setter private String textureHash = "";
+    @Getter @Setter private String pack = "none";
 
+    /**
+     * Instantiates a new Core player.
+     *
+     * @param uuid the uuid
+     * @param name the name
+     * @param rank the rank
+     */
     public CorePlayer(UUID uuid, String name, Rank rank) {
         this.uuid = uuid;
         this.name = name;
@@ -79,11 +91,10 @@ public class CorePlayer implements CPlayer {
     }
 
     @Override
-    @SuppressWarnings("deprecation")
     public void setMaxHealth(double health) {
         if (getStatus() != PlayerStatus.JOINED) return;
         if (getBukkitPlayer() == null) return;
-        getBukkitPlayer().setMaxHealth(health);
+        getBukkitPlayer().getAttribute(Attribute.GENERIC_MAX_HEALTH).setBaseValue(health);
     }
 
     @Override
@@ -135,17 +146,17 @@ public class CorePlayer implements CPlayer {
     public void sendFormatMessage(JavaPlugin plugin, String key) {
         if (getStatus() != PlayerStatus.JOINED) return;
         if (getBukkitPlayer() == null) return;
-        LanguageFormatter languageFormatter = null;
+        LanguageManager languageManager = null;
         if (plugin instanceof Core) {
-            languageFormatter = Core.getLanguageFormatter();
+            languageManager = Core.getLanguageFormatter();
         } else if (plugin instanceof Plugin) {
-            languageFormatter = ((Plugin) plugin).getLanguageFormatter();
+            languageManager = ((Plugin) plugin).getLanguageManager();
         }
-        if (languageFormatter == null) {
+        if (languageManager == null) {
             plugin.getLogger().log(Level.SEVERE, "PROBLEM GETTING LANGUAGE FORMATTER for key: " + key);
             return;
         }
-        String message = languageFormatter.getFormat(getLocale(), key);
+        String message = languageManager.getFormat(getLocale(), key);
         if (message.equals("")) {
             plugin.getLogger().log(Level.SEVERE, "MESSAGE NULL for key: " + key);
             return;
@@ -154,7 +165,6 @@ public class CorePlayer implements CPlayer {
     }
 
     @Override
-    @SuppressWarnings("deprecation")
     public void resetPlayer() {
         if (getStatus() != PlayerStatus.JOINED) return;
         if (getBukkitPlayer() == null) return;
@@ -171,7 +181,7 @@ public class CorePlayer implements CPlayer {
         player.setHealth(20);
         player.setFallDistance(0);
         player.setFireTicks(0);
-        player.resetMaxHealth();
+        player.getAttribute(Attribute.GENERIC_MAX_HEALTH).setBaseValue(player.getAttribute(Attribute.GENERIC_MAX_HEALTH).getDefaultValue());
         player.setExp(0);
         player.setTotalExperience(0);
         player.setLevel(0);

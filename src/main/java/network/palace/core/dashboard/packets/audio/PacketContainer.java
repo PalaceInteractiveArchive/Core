@@ -1,34 +1,30 @@
 package network.palace.core.dashboard.packets.audio;
 
 import com.google.gson.JsonObject;
+import lombok.Getter;
 import network.palace.core.dashboard.packets.BasePacket;
 import network.palace.core.dashboard.packets.PacketID;
 
 import java.util.UUID;
 
 /**
- * Created by Marc on 5/24/16
+ * The type Packet container.
  */
-@SuppressWarnings("unused")
 public class PacketContainer extends BasePacket {
-    private UUID uuid;
-    private String container;
 
-    public PacketContainer() {
-    }
+    @Getter private UUID uuid = null;
+    @Getter private String container = "";
 
+    /**
+     * Instantiates a new Packet container.
+     *
+     * @param uuid      the uuid
+     * @param container the container
+     */
     public PacketContainer(UUID uuid, String container) {
-        this.id = PacketID.CONTAINER.getID();
+        super(PacketID.CONTAINER.getID());
         this.uuid = uuid;
         this.container = container;
-    }
-
-    public UUID getUniqueId() {
-        return uuid;
-    }
-
-    public String getContainer() {
-        return container;
     }
 
     public PacketContainer fromJSON(JsonObject obj) {

@@ -1,20 +1,19 @@
 package network.palace.core.dashboard.packets;
 
 import com.google.gson.JsonObject;
+import lombok.AllArgsConstructor;
+import lombok.Getter;
 
 /**
- * Created by Marc on 6/15/15
+ * The type Base packet.
  */
-@SuppressWarnings("unused")
+@AllArgsConstructor
 public class BasePacket {
-    protected int id = 0;
+
+    @Getter protected int id = 0;
 
     public BasePacket fromJSON(JsonObject obj) {
         return this;
-    }
-
-    public int getId() {
-        return id;
     }
 
     public JsonObject getJSON() {
