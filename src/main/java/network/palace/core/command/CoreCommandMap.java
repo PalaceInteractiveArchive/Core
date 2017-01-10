@@ -85,7 +85,7 @@ public final class CoreCommandMap {
      *
      * @return The command map from bukkit
      */
-    public CommandMap getCommandMap() {
+    private CommandMap getCommandMap() {
         CommandMap commandMap = null;
         try {
             Server server = Bukkit.getServer();

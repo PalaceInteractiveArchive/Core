@@ -19,8 +19,6 @@ import org.bukkit.command.CommandSender;
 @CommandPermission(rank = Rank.WIZARD)
 public class SafestopCommand extends CoreCommand {
 
-    private Core instance = Core.getPlugin(Core.class);
-
     /**
      * Instantiates a new Safestop command.
      */
