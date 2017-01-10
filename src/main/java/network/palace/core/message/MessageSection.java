@@ -1,7 +1,7 @@
 package network.palace.core.message;
 
 import org.bukkit.ChatColor;
-import org.json.JSONWriter;
+import org.json.simple.JSONObject;
 
 public class MessageSection {
 
@@ -17,24 +17,29 @@ public class MessageSection {
         this.text = text;
     }
 
-    public JSONWriter writeJson(final JSONWriter json) {
-        json.object().key("text").value(text);
+    public JSONObject getJsonObject() {
+        JSONObject json = new JSONObject();
+        json.put("text", text);
         if (color != null) {
-            json.key("color").value(color.name().toLowerCase());
+            json.put("color", color.name().toLowerCase());
         }
         if (styles != null) {
             for (final ChatColor style : styles) {
-                json.key(style == ChatColor.UNDERLINE ? "underlined" : style.name().toLowerCase()).value(true);
+                json.put(style == ChatColor.UNDERLINE ? "underlined" : style.name().toLowerCase(), true);
             }
         }
         if (clickActionName != null && clickActionData != null) {
-            json.key("clickEvent").object().key("action").value(clickActionName).key("value").value(clickActionData)
-                    .endObject();
+            JSONObject clickEvent = new JSONObject();
+            clickEvent.put("action", clickActionName);
+            clickEvent.put("value", clickActionData);
+            json.put("clickEvent", clickEvent);
         }
         if (hoverActionName != null && hoverActionData != null) {
-            json.key("hoverEvent").object().key("action").value(hoverActionName).key("value").value(hoverActionData)
-                    .endObject();
+            JSONObject hoverEvent = new JSONObject();
+            hoverEvent.put("action", hoverActionName);
+            hoverEvent.put("value", hoverActionData);
+            json.put("hoverEvent", hoverEvent);
         }
-        return json.endObject();
+        return json;
     }
 }

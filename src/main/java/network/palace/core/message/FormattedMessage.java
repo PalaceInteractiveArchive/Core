@@ -7,8 +7,8 @@ import com.comphenix.protocol.wrappers.WrappedChatComponent;
 import network.palace.core.player.CPlayer;
 import org.bukkit.ChatColor;
 import org.bukkit.entity.Player;
-import org.json.JSONException;
-import org.json.JSONStringer;
+import org.json.simple.JSONArray;
+import org.json.simple.JSONObject;
 
 import java.lang.reflect.InvocationTargetException;
 import java.util.ArrayList;
@@ -87,19 +87,18 @@ public class FormattedMessage {
     }
 
     public String toJSONString() {
-        final JSONStringer json = new JSONStringer();
-        try {
-            if (messageSections.size() == 1) {
-                latest().writeJson(json);
-            } else {
-                json.object().key("text").value("").key("extra").array();
-                for (final MessageSection part : messageSections) {
-                    part.writeJson(json);
-                }
-                json.endArray().endObject();
+        JSONObject json = new JSONObject();
+        if (messageSections.size() != 1) {
+            json.put("text", "");
+            if (!json.containsKey("extra")) {
+                json.put("extra", new JSONArray());
             }
-        } catch (final JSONException e) {
-            throw new RuntimeException("invalid message");
+            JSONArray extra = (JSONArray) json.get("extra");
+            for (final MessageSection part : messageSections) {
+                extra.add(part.getJsonObject());
+            }
+        } else {
+            json = latest().getJsonObject();
         }
         return json.toString();
     }
@@ -124,20 +123,16 @@ public class FormattedMessage {
     }
 
     private String makeMultilineTooltip(final String[] lines) {
-        final JSONStringer json = new JSONStringer();
-        try {
-            json.object().key("id").value(1);
-            json.key("tag").object().key("display").object();
-            json.key("Name").value("\\u00A7f" + lines[0].replace("\"", "\\\""));
-            json.key("Lore").array();
-            for (int i = 1; i < lines.length; i++) {
-                final String line = lines[i];
-                json.value(line.isEmpty() ? " " : line.replace("\"", "\\\""));
-            }
-            json.endArray().endObject().endObject().endObject();
-        } catch (final JSONException e) {
-            throw new RuntimeException("invalid tooltip");
+        final JSONObject json = new JSONObject();
+        JSONObject display = new JSONObject();
+        display.put("Name", "\\u00A7f" + lines[0].replace("\"", "\\\""));
+        JSONArray lore = new JSONArray();
+        for (int i = 1; i < lines.length; i++) {
+            final String line = lines[i];
+            lore.add(line.isEmpty() ? " " : line.replace("\"", "\\\""));
         }
+        display.put("Lore", lore);
+        json.put("display", display);
         return json.toString();
     }
 
