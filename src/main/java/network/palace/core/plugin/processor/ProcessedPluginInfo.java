@@ -14,13 +14,15 @@ import java.util.Set;
 public class ProcessedPluginInfo {
 
     private String name = "";
+    private String author = "";
     private String version = "";
     private String[] depend = {};
     private String[] softdepend = {};
     private String main = "";
 
-    public ProcessedPluginInfo(String name, String version, String[] depend, String[] softdepend, String main) {
+    public ProcessedPluginInfo(String name, String author, String version, String[] depend, String[] softdepend, String main) {
         this.name = name;
+        this.author = author;
         this.version = version;
         this.depend = depend;
         this.softdepend = softdepend;

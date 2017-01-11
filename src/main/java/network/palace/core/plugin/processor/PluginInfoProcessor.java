@@ -64,10 +64,11 @@ public class PluginInfoProcessor extends AbstractProcessor {
         final String mainName = mainType.getQualifiedName().toString();
 
         String name = process("name", mainType, mainName.substring(mainName.lastIndexOf('.') + 1), PluginInfo.class, String.class);
+        String author = "Palace Network";
         String version = process("version", mainType, "1.0.0", PluginInfo.class, String.class);
         String[] depend = process("depend", mainType, null, PluginInfo.class, String[].class);
         String[] softdepend = process("softdepend", mainType, null, PluginInfo.class, String[].class);
-        final ProcessedPluginInfo processedPluginInfo = new ProcessedPluginInfo(name, version, depend, softdepend, mainName);
+        final ProcessedPluginInfo processedPluginInfo = new ProcessedPluginInfo(name, author, version, depend, softdepend, mainName);
 
         // Save to plugin.yml
         try {
