@@ -46,21 +46,15 @@ public class ProcessedPluginInfo {
         protected NodeTuple representJavaBeanProperty(Object javaBean, Property property, Object propertyValue, Tag customTag) {
             NodeTuple tuple = super.representJavaBeanProperty(javaBean, property, propertyValue, customTag);
             Node valueNode = tuple.getValueNode();
-            if (Tag.NULL.equals(valueNode.getTag())) {
-                return null;
-            }
+            if (Tag.NULL.equals(valueNode.getTag())) return null;
             if (valueNode instanceof CollectionNode) {
                 if (Tag.SEQ.equals(valueNode.getTag())) {
                     SequenceNode seq = (SequenceNode) valueNode;
-                    if (seq.getValue().isEmpty()) {
-                        return null;
-                    }
+                    if (seq.getValue().isEmpty()) return null;
                 }
                 if (Tag.MAP.equals(valueNode.getTag())) {
                     MappingNode seq = (MappingNode) valueNode;
-                    if (seq.getValue().isEmpty()) {
-                        return null;
-                    }
+                    if (seq.getValue().isEmpty()) return null;
                 }
             }
             return tuple;

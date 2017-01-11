@@ -37,7 +37,6 @@ public class PluginInfoProcessor extends AbstractProcessor {
             }
             pluginInfo = el;
         }
-
         if (pluginInfo == null) return false;
 
         if (hasMainBeenFound) {
@@ -53,25 +52,24 @@ public class PluginInfoProcessor extends AbstractProcessor {
             raiseError("Element annotated with @Main is not a type!");
             return false;
         }
-
         if (!(mainType.getEnclosingElement() instanceof PackageElement) && !mainType.getModifiers().contains(Modifier.STATIC)) {
             raiseError("Element annotated with @Main is not top-level or static nested!");
             return false;
         }
-
         if (!processingEnv.getTypeUtils().isSubtype(mainType.asType(), fromClass(JavaPlugin.class))) {
             raiseError("Class annotated with @Main is not an subclass of JavaPlugin!");
         }
 
+        // Process All
         final String mainName = mainType.getQualifiedName().toString();
 
         String name = process("name", mainType, mainName.substring(mainName.lastIndexOf('.') + 1), PluginInfo.class, String.class);
         String version = process("version", mainType, "1.0.0", PluginInfo.class, String.class);
         String[] depend = process("depend", mainType, null, PluginInfo.class, String[].class);
         String[] softdepend = process("softdepend", mainType, null, PluginInfo.class, String[].class);
-
         final ProcessedPluginInfo processedPluginInfo = new ProcessedPluginInfo(name, version, depend, softdepend, mainName);
 
+        // Save to plugin.yml
         try {
             FileObject file = processingEnv.getFiler().createResource(StandardLocation.CLASS_OUTPUT, "", "plugin.yml");
             Writer writer = file.openWriter();
