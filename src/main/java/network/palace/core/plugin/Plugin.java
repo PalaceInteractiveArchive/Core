@@ -30,8 +30,9 @@ public class Plugin extends JavaPlugin {
             if (!Core.getInstance().isEnabled()) return;
             // Get plugin info
             info = getClass().getAnnotation(PluginInfo.class);
-            if (info == null)
+            if (info == null) {
                 throw new IllegalStateException("You must annotate your class with the @PluginInfo annotation!");
+            }
             // Load languages
             languageManager = new LanguageManager(this);
             // Start command map
