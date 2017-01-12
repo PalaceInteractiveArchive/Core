@@ -15,8 +15,8 @@ import network.palace.core.library.LibraryHandler;
 import network.palace.core.packets.adapters.SettingsAdapter;
 import network.palace.core.permissions.PermissionManager;
 import network.palace.core.player.CPlayerManager;
-import network.palace.core.player.impl.managers.CorePlayerManager;
 import network.palace.core.player.impl.CorePlayerWorldDownloadProtect;
+import network.palace.core.player.impl.managers.CorePlayerManager;
 import network.palace.core.plugin.PluginInfo;
 import network.palace.core.resource.ResourceManager;
 import network.palace.core.utils.ItemUtil;
@@ -33,13 +33,11 @@ import org.bukkit.plugin.java.JavaPlugin;
 import java.util.List;
 
 /**
- *
  * This will manage all Modules and also the Core Managers.
- *
+ * <p>
  * You can access instances of other modules by depending on Core in your pom.xml, and then executing Core.get
- *
  */
-@PluginInfo(name = "Core", version = "1.5.1", depend = {"ProtocolLib"})
+@PluginInfo(name = "Core", version = "1.5.1", depend = {"ProtocolLib"}, canReload = false)
 public class Core extends JavaPlugin {
 
     private boolean starting = true;

@@ -39,4 +39,11 @@ public @interface PluginInfo {
      * @return the array of plugins soft depended
      */
     String[] softdepend() default {};
+
+    /**
+     * Define if the plugin can be reloaded by Core.
+     *
+     * @return
+     */
+    boolean canReload() default false;
 }
