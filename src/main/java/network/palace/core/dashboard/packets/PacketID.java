@@ -238,7 +238,8 @@ public enum PacketID {
         /**
          * Emptyserver dashboard.
          */
-        EMPTYSERVER(57);
+        EMPTYSERVER(57), PARTYREQUEST(58), MYMCMAGICREGISTER(59),
+        TITLE(60), PLAYERLIST(63), UPDATEECONOMY(67);
 
         /**
          * The Id.

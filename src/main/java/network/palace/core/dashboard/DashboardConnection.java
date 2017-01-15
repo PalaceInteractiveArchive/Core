@@ -7,6 +7,7 @@ import network.palace.core.dashboard.packets.BasePacket;
 import network.palace.core.dashboard.packets.dashboard.*;
 import network.palace.core.events.CoreOnlineCountUpdate;
 import network.palace.core.events.CurrentPackReceivedEvent;
+import network.palace.core.events.EconomyUpdateEvent;
 import network.palace.core.events.IncomingPacketEvent;
 import network.palace.core.player.CPlayer;
 import org.bukkit.Bukkit;
@@ -76,15 +77,30 @@ public class DashboardConnection {
                             player.playSound(player.getLocation(), Sound.ENTITY_EXPERIENCE_ORB_PICKUP, 50F, 1F);
                             break;
                         }
+                        case 67: {
+                            PacketUpdateEconomy packet = new PacketUpdateEconomy().fromJSON(object);
+                            UUID uuid = packet.getUniqueId();
+                            CPlayer player = Core.getPlayerManager().getPlayer(uuid);
+                            if (player == null) {
+                                return;
+                            }
+                            int bal = Core.getEconomy().getBalance(player.getUniqueId());
+                            int tok = Core.getEconomy().getTokens(player.getUniqueId());
+                            new EconomyUpdateEvent(player.getUniqueId(), bal, true).call();
+                            new EconomyUpdateEvent(player.getUniqueId(), tok, false).call();
+                            break;
+                        }
                     }
                     new IncomingPacketEvent(id, object.toString()).call();
                 }
+
                 @Override
                 public void onOpen(ServerHandshake handshake) {
                     Core.logMessage("Core", ChatColor.DARK_GREEN + "Successfully connected to Dashboard");
                     DashboardConnection.this.send(new PacketConnectionType(PacketConnectionType.ConnectionType.INSTANCE).getJSON().toString());
                     DashboardConnection.this.send(new PacketServerName(Core.getInstanceName()).getJSON().toString());
                 }
+
                 @Override
                 public void onClose(int code, String reason, boolean remote) {
                     Core.logMessage("Core", ChatColor.RED + String.valueOf(code) + " Disconnected from Dashboard! Reconnecting...");
@@ -95,6 +111,7 @@ public class DashboardConnection {
                         }
                     }, 5000L);
                 }
+
                 @Override
                 public void onError(Exception ex) {
                     Core.logMessage("Core", ChatColor.RED + "Error in Dashboard connection");
@@ -115,6 +132,7 @@ public class DashboardConnection {
         Core.debugLog("Outgoing: " + s);
         client.send(s);
     }
+
     public boolean isConnected() {
         return client != null && client.getConnection() != null && !client.getConnection().isConnecting() && client.getConnection().isOpen();
     }
