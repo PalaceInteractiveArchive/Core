@@ -38,7 +38,7 @@ import java.util.List;
  * <p>
  * You can access instances of other modules by depending on Core in your pom.xml, and then executing Core.get
  */
-@PluginInfo(name = "Core", version = "1.5.2", depend = {"ProtocolLib"}, canReload = false)
+@PluginInfo(name = "Core", version = "1.5.3", depend = {"ProtocolLib"}, canReload = false)
 public class Core extends JavaPlugin {
 
     private boolean starting = true;
