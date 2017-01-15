@@ -94,7 +94,7 @@ public class AchievementManager {
             Integer row = Integer.parseInt(column.substring(1, 2));
             switch (column.substring(0, 1).toLowerCase()) {
                 case "a":
-                    lastAch = new CoreAchievement((Integer) content.get("$t"), null, null);
+                    lastAch = new CoreAchievement(Integer.parseInt((String) content.get("$t")), null, null);
                     break;
                 case "b":
                     lastAch.setDisplayName((String) content.get("$t"));
