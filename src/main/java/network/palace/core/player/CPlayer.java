@@ -286,7 +286,15 @@ public interface CPlayer {
      * Can see boolean.
      *
      * @param player the player
-     * @return the boolean
+     * @return if player can be seen
+     */
+    boolean canSee(CPlayer player);
+
+    /**
+     * Can see boolean.
+     *
+     * @param player the player
+     * @return if player can be seen
      */
     boolean canSee(Player player);
 
@@ -443,4 +451,19 @@ public interface CPlayer {
      * @return the pack
      */
     String getPack();
+
+    /**
+     * Check if player has an achievement
+     *
+     * @param i achievement ID
+     * @return if player has achievement
+     */
+    boolean hasAchievement(int i);
+
+    /**
+     * Give player an achievement
+     *
+     * @param i ID of achievement
+     */
+    void giveAchievement(int i);
 }

@@ -256,7 +256,7 @@ public class SqlUtil {
     public void setPermission(String node, Rank rank, boolean value) {
         Connection connection = getConnection();
         if (connection == null) return;
-        try  {
+        try {
             String s = "IF EXISTS (SELECT * FROM permissions WHERE rank=? AND node=?) UPDATE permissions SET value=? WHERE node=? AND rank=? ELSE INSERT INTO Table1 VALUES (0,?,?,?)";
             PreparedStatement sql = connection.prepareStatement(s);
             sql.setString(1, rank.getSqlName());
@@ -296,5 +296,41 @@ public class SqlUtil {
             e.printStackTrace();
         }
         Core.getPermissionManager().unsetPermission(rank, node);
+    }
+
+    /**
+     * Give player Achievement
+     *
+     * @param player the player
+     * @param id     achievement ID
+     */
+    public void addAchievement(CPlayer player, int id) {
+        try (Connection connection = getConnection()) {
+            PreparedStatement sql = connection.prepareStatement("INSERT INTO achievements (uuid, achid, time) VALUES (?,?,?)");
+            sql.setString(1, player.getUniqueId().toString());
+            sql.setInt(2, id);
+            sql.setInt(3, (int) (System.currentTimeMillis() / 1000));
+            sql.execute();
+            sql.close();
+        } catch (SQLException e) {
+            e.printStackTrace();
+        }
+    }
+
+    public List<Integer> getAchievements(UUID uuid) {
+        List<Integer> list = new ArrayList<>();
+        try (Connection connection = getConnection()) {
+            PreparedStatement ach = connection.prepareStatement("SELECT * FROM achievements WHERE uuid=?");
+            ach.setString(1, uuid.toString());
+            ResultSet achresult = ach.executeQuery();
+            while (achresult.next()) {
+                list.add(achresult.getInt("achid"));
+            }
+            achresult.close();
+            ach.close();
+        } catch (SQLException e) {
+            e.printStackTrace();
+        }
+        return list;
     }
 }

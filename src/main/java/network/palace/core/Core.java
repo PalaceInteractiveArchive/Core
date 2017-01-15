@@ -2,6 +2,7 @@ package network.palace.core;
 
 import com.comphenix.protocol.ProtocolLibrary;
 import com.comphenix.protocol.events.PacketListener;
+import network.palace.core.achievements.AchievementManager;
 import network.palace.core.command.CoreCommand;
 import network.palace.core.command.CoreCommandMap;
 import network.palace.core.commands.*;
@@ -37,7 +38,7 @@ import java.util.List;
  * <p>
  * You can access instances of other modules by depending on Core in your pom.xml, and then executing Core.get
  */
-@PluginInfo(name = "Core", version = "1.5.1", depend = {"ProtocolLib"}, canReload = false)
+@PluginInfo(name = "Core", version = "1.5.2", depend = {"ProtocolLib"}, canReload = false)
 public class Core extends JavaPlugin {
 
     private boolean starting = true;
@@ -54,6 +55,7 @@ public class Core extends JavaPlugin {
     private PermissionManager permissionManager;
     private EconomyManager economyManager;
     private ResourceManager resourceManager;
+    private AchievementManager achievementManager;
 
     private CoreCommandMap commandMap;
     private SqlUtil sqlUtil;
@@ -86,6 +88,7 @@ public class Core extends JavaPlugin {
         permissionManager = new PermissionManager();
         resourceManager = new ResourceManager();
         economyManager = new EconomyManager();
+        achievementManager = new AchievementManager();
         // Core command map
         commandMap = new CoreCommandMap(this);
         // Dashboard
@@ -259,6 +262,15 @@ public class Core extends JavaPlugin {
      */
     public static ResourceManager getResourceManager() {
         return getInstance().resourceManager;
+    }
+
+    /**
+     * Gets achievement manager.
+     *
+     * @return the achievement manager
+     */
+    public static AchievementManager getAchievementManager() {
+        return getInstance().achievementManager;
     }
 
     /**

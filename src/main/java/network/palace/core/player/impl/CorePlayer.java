@@ -19,6 +19,7 @@ import org.bukkit.inventory.PlayerInventory;
 import org.bukkit.plugin.java.JavaPlugin;
 import org.bukkit.util.Vector;
 
+import java.util.List;
 import java.util.UUID;
 import java.util.logging.Level;
 
@@ -32,6 +33,7 @@ public class CorePlayer implements CPlayer {
     @Getter @Setter private Rank rank = Rank.SETTLER;
     @Getter @Setter private String locale = "en_US";
     @Getter @Setter private PlayerStatus status = PlayerStatus.LOGIN;
+    @Getter private CPlayerAchievementManager achievement;
     @Getter private CPlayerActionBarManager actionBar = new CorePlayerActionBarManager(this);
     @Getter private CPlayerBossBarManager bossBar = new CorePlayerBossBarManager(this);
     @Getter private CPlayerHeaderFooterManager headerFooter = new CorePlayerHeaderFooterManager(this);
@@ -48,11 +50,13 @@ public class CorePlayer implements CPlayer {
      * @param uuid the uuid
      * @param name the name
      * @param rank the rank
+     * @param ids  achievement list
      */
-    public CorePlayer(UUID uuid, String name, Rank rank) {
+    public CorePlayer(UUID uuid, String name, Rank rank, List<Integer> ids) {
         this.uuid = uuid;
         this.name = name;
         this.rank = rank;
+        this.achievement = new CorePlayerAchievementManager(this, ids);
     }
 
     @Override
@@ -361,6 +365,11 @@ public class CorePlayer implements CPlayer {
     }
 
     @Override
+    public boolean canSee(CPlayer player) {
+        return canSee(player.getBukkitPlayer());
+    }
+
+    @Override
     public boolean canSee(Player player) {
         return getStatus() == PlayerStatus.JOINED && getBukkitPlayer() != null && player != null && getBukkitPlayer().canSee(player);
     }
@@ -393,5 +402,17 @@ public class CorePlayer implements CPlayer {
     @Override
     public UUID getUniqueId() {
         return getUuid();
+    }
+
+    @Override
+    public boolean hasAchievement(int i) {
+        return getStatus() == PlayerStatus.JOINED && getBukkitPlayer() != null && achievement.hasAchievement(i);
+    }
+
+    @Override
+    public void giveAchievement(int i) {
+        if (getStatus() != PlayerStatus.JOINED) return;
+        if (getBukkitPlayer() == null) return;
+        achievement.giveAchievement(i);
     }
 }

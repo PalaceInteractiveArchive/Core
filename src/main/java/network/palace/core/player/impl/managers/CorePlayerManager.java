@@ -29,7 +29,8 @@ public class CorePlayerManager implements CPlayerManager {
     public void playerLoggedIn(UUID uuid, String name) {
         playerLoggedOut(uuid);
         Rank rank = Core.getSqlUtil().getRank(uuid);
-        onlinePlayers.put(uuid, new CorePlayer(uuid, name, rank));
+        List<Integer> ids = Core.getSqlUtil().getAchievements(uuid);
+        onlinePlayers.put(uuid, new CorePlayer(uuid, name, rank, ids));
     }
 
     @Override
