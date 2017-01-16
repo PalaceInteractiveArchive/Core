@@ -32,7 +32,7 @@ public class BalanceCommand extends CoreCommand {
         boolean isPlayer = sender instanceof Player;
         if (args.length == 0) {
             if (isPlayer) {
-                Bukkit.getScheduler().runTaskAsynchronously(Core.getInstance(), () -> sender.sendMessage(ChatColor.YELLOW +
+                Core.runTaskAsynchronously(() -> sender.sendMessage(ChatColor.YELLOW +
                         "" + ChatColor.BOLD + "Your Balance: " + ChatColor.GREEN + "$" +
                         Core.getEconomy().getBalance(((Player) sender).getUniqueId())));
             } else {
@@ -42,7 +42,7 @@ public class BalanceCommand extends CoreCommand {
         }
         if (args.length == 1) {
             final String user = args[0];
-            Bukkit.getScheduler().runTaskAsynchronously(Core.getInstance(), () -> sender.sendMessage(ChatColor.YELLOW +
+            Core.runTaskAsynchronously(() -> sender.sendMessage(ChatColor.YELLOW +
                     "" + ChatColor.BOLD + "Balance for " + user + ": " + ChatColor.GREEN + "$" +
                     Core.getEconomy().getBalance(sender, user)));
             return;

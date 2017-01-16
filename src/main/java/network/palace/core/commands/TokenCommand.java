@@ -32,7 +32,7 @@ public class TokenCommand extends CoreCommand {
         boolean isPlayer = sender instanceof Player;
         if (args.length == 0) {
             if (isPlayer) {
-                Bukkit.getScheduler().runTaskAsynchronously(Core.getInstance(), () -> sender.sendMessage(ChatColor.YELLOW + "" + ChatColor.BOLD + "Your Tokens: " + ChatColor.GREEN +
+                Core.runTaskAsynchronously(() -> sender.sendMessage(ChatColor.YELLOW + "" + ChatColor.BOLD + "Your Tokens: " + ChatColor.GREEN +
                         "✪ " + Core.getEconomy().getTokens(((Player) sender).getUniqueId())));
             } else {
                 helpMenu(sender);
@@ -41,7 +41,7 @@ public class TokenCommand extends CoreCommand {
         }
         if (args.length == 1) {
             final String user = args[0];
-            Bukkit.getScheduler().runTaskAsynchronously(Core.getInstance(), () -> sender.sendMessage(ChatColor.YELLOW + "" + ChatColor.BOLD + "Tokens for " + user + ": " +
+            Core.runTaskAsynchronously(() -> sender.sendMessage(ChatColor.YELLOW + "" + ChatColor.BOLD + "Tokens for " + user + ": " +
                     ChatColor.GREEN + "✪ " + Core.getEconomy().getTokens(sender, user)));
             return;
         }

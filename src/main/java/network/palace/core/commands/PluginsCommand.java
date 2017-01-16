@@ -38,7 +38,7 @@ public class PluginsCommand extends CoreCommand {
      */
     public PluginsCommand() {
         super("plugins");
-        Bukkit.getScheduler().runTaskAsynchronously(Core.getInstance(), this::obtainVersion);
+        Core.runTaskAsynchronously(this::obtainVersion);
     }
 
     @Override

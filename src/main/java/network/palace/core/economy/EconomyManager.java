@@ -28,7 +28,7 @@ public class EconomyManager {
      * Instantiates a new Economy manager.
      */
     public EconomyManager() {
-        Bukkit.getScheduler().runTaskTimerAsynchronously(Core.getInstance(), () -> {
+        Core.runTaskTimerAsynchronously(() -> {
             HashMap<UUID, Payment> localMap = new HashMap<>(balance);
             balance.clear();
             for (Map.Entry<UUID, Payment> entry : new HashSet<>(localMap.entrySet())) {
@@ -40,7 +40,7 @@ public class EconomyManager {
                 changeBalance(entry.getKey(), payment.getAmount(), payment.getSource());
             }
         }, 0L, 20L);
-        Bukkit.getScheduler().runTaskTimerAsynchronously(Core.getInstance(), () -> {
+        Core.runTaskTimerAsynchronously(() -> {
             HashMap<UUID, Payment> localMap = new HashMap<>(tokens);
             tokens.clear();
             for (Map.Entry<UUID, Payment> entry : new HashSet<>(localMap.entrySet())) {

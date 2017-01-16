@@ -108,7 +108,7 @@ public class PermissionManager {
      * @param sender the sender
      */
     public void refresh(CommandSender sender) {
-        Bukkit.getScheduler().runTaskAsynchronously(Core.getInstance(), () -> {
+        Core.runTaskAsynchronously(() -> {
             sender.sendMessage(ChatColor.YELLOW + "Refreshing permissions...");
             initialize();
             sender.sendMessage(ChatColor.YELLOW + "Permissions refreshed!");

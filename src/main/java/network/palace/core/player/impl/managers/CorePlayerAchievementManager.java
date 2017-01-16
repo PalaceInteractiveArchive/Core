@@ -41,7 +41,7 @@ public class CorePlayerAchievementManager implements CPlayerAchievementManager {
                 ChatColor.GREEN + "--------------\n" + ChatColor.AQUA + ach.getDisplayName() + "\n" + ChatColor.GRAY +
                 "" + ChatColor.ITALIC + ach.getDescription() + ChatColor.GREEN + "\n----------------------------------------");
         player.playSound(player.getLocation(), Sound.ENTITY_ARROW_HIT_PLAYER, 100f, 0.75f);
-        Bukkit.getScheduler().runTaskAsynchronously(Core.getInstance(), () -> Core.getSqlUtil().addAchievement(player, i));
+        Core.runTaskAsynchronously(() -> Core.getSqlUtil().addAchievement(player, i));
         Core.getEconomy().addTokens(player.getUniqueId(), 5, "Achievement ID " + i);
     }
 }

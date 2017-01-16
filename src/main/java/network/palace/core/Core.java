@@ -101,7 +101,7 @@ public class Core extends JavaPlugin {
         // Log
         logMessage("Core", ChatColor.DARK_GREEN + "Enabled");
         // Set starting to false after 5 to allow connecting
-        Bukkit.getScheduler().runTaskLater(this, () -> starting = false, 100L);
+        runTaskLater(() -> starting = false, 100L);
     }
 
     /**
@@ -309,7 +309,7 @@ public class Core extends JavaPlugin {
      * @return the world
      */
     public static World getWorld(String name) {
-        return Bukkit.getServer().getWorld(name);
+        return Bukkit.getWorld(name);
     }
 
     /**
@@ -318,7 +318,7 @@ public class Core extends JavaPlugin {
      * @return the default world
      */
     public static World getDefaultWorld() {
-        return Bukkit.getServer().getWorlds().get(0);
+        return Bukkit.getWorlds().get(0);
     }
 
     /**
@@ -327,14 +327,14 @@ public class Core extends JavaPlugin {
      * @return the worlds
      */
     public static List<World> getWorlds() {
-        return Bukkit.getServer().getWorlds();
+        return Bukkit.getWorlds();
     }
 
     /**
      * Shutdown.
      */
     public static void shutdown() {
-        Bukkit.getServer().shutdown();
+        Bukkit.shutdown();
     }
 
     /**
@@ -343,7 +343,7 @@ public class Core extends JavaPlugin {
      * @param listener the listener
      */
     public static void registerListener(Listener listener) {
-        Bukkit.getServer().getPluginManager().registerEvents(listener, getInstance());
+        Bukkit.getPluginManager().registerEvents(listener, getInstance());
     }
 
     /**
@@ -352,7 +352,17 @@ public class Core extends JavaPlugin {
      * @param taskId the task id
      */
     public static void cancelTask(int taskId) {
-        Bukkit.getServer().getScheduler().cancelTask(taskId);
+        Bukkit.getScheduler().cancelTask(taskId);
+    }
+
+    /**
+     * Run task asynchronously int.
+     *
+     * @param task  the task
+     * @return the task id
+     */
+    public static int runTaskAsynchronously(Runnable task) {
+        return Bukkit.getScheduler().runTaskAsynchronously(getInstance(), task).getTaskId();
     }
 
     /**
@@ -360,10 +370,22 @@ public class Core extends JavaPlugin {
      *
      * @param task  the task
      * @param delay the delay
-     * @return the int
+     * @return the task id
      */
     public static int runTaskLater(Runnable task, long delay) {
-        return Bukkit.getServer().getScheduler().runTaskLater(getInstance(), task, delay).getTaskId();
+        return Bukkit.getScheduler().runTaskLater(getInstance(), task, delay).getTaskId();
+    }
+
+    /**
+     * Run task timer asynchronously int.
+     *
+     * @param task   the task
+     * @param delay  the delay
+     * @param period the period
+     * @return the task id
+     */
+    public static int runTaskTimerAsynchronously(Runnable task, long delay, long period) {
+        return Bukkit.getScheduler().runTaskTimerAsynchronously(getInstance(), task, delay, period).getTaskId();
     }
 
     /**
@@ -372,10 +394,10 @@ public class Core extends JavaPlugin {
      * @param task   the task
      * @param delay  the delay
      * @param period the period
-     * @return the int
+     * @return the task id
      */
     public static int runTaskTimer(Runnable task, long delay, long period) {
-        return Bukkit.getServer().getScheduler().runTaskTimer(getInstance(), task, delay, period).getTaskId();
+        return Bukkit.getScheduler().runTaskTimer(getInstance(), task, delay, period).getTaskId();
     }
 
     /**
@@ -405,7 +427,7 @@ public class Core extends JavaPlugin {
      * @param message the message
      */
     public static void logInfo(String message) {
-        Bukkit.getServer().getConsoleSender().sendMessage(message);
+        Bukkit.getConsoleSender().sendMessage(message);
     }
 
     /**

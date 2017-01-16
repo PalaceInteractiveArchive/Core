@@ -24,8 +24,8 @@ public class AchievementManager {
     private HashMap<UUID, List<Integer>> earned = new HashMap<>();
 
     public AchievementManager() {
-        Bukkit.getScheduler().runTaskTimerAsynchronously(Core.getInstance(), this::reload, 0L, 6000L);
-        Bukkit.getScheduler().runTaskTimerAsynchronously(Core.getInstance(), () -> {
+        Core.runTaskTimerAsynchronously(this::reload, 0L, 6000L);
+        Core.runTaskTimerAsynchronously(() -> {
             try (Connection connection = Core.getSqlUtil().getConnection()) {
                 if (earned.isEmpty()) {
                     return;

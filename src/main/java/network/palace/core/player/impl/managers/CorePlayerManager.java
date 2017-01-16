@@ -10,13 +10,14 @@ import network.palace.core.player.impl.listeners.CorePlayerManagerListener;
 import org.bukkit.entity.Player;
 
 import java.util.*;
+import java.util.concurrent.ConcurrentHashMap;
 
 /**
  * The type Core player manager.
  */
 public class CorePlayerManager implements CPlayerManager {
 
-    private final HashMap<UUID, CPlayer> onlinePlayers = new HashMap<>();
+    private final ConcurrentHashMap<UUID, CPlayer> onlinePlayers = new ConcurrentHashMap<>();
 
     /**
      * Instantiates a new Core player manager.
@@ -28,9 +29,11 @@ public class CorePlayerManager implements CPlayerManager {
     @Override
     public void playerLoggedIn(UUID uuid, String name) {
         playerLoggedOut(uuid);
-        Rank rank = Core.getSqlUtil().getRank(uuid);
-        List<Integer> ids = Core.getSqlUtil().getAchievements(uuid);
-        onlinePlayers.put(uuid, new CorePlayer(uuid, name, rank, ids));
+        Core.runTaskAsynchronously(() -> {
+            Rank rank = Core.getSqlUtil().getRank(uuid);
+            List<Integer> ids = Core.getSqlUtil().getAchievements(uuid);
+            onlinePlayers.put(uuid, new CorePlayer(uuid, name, rank, ids));
+        });
     }
 
     @Override
@@ -39,7 +42,7 @@ public class CorePlayerManager implements CPlayerManager {
         if (player == null) return;
         player.setStatus(PlayerStatus.JOINED);
         player.setTextureHash(textureHash);
-        //Setup permissions for player
+        // Setup permissions for player
         Core.getPermissionManager().login(player);
     }
 

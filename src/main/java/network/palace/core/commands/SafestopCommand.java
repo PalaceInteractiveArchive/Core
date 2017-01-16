@@ -35,7 +35,7 @@ public class SafestopCommand extends CoreCommand {
         }
         PacketEmptyServer packet = new PacketEmptyServer(Core.getInstanceName());
         Core.getDashboardConnection().send(packet);
-        Bukkit.getScheduler().runTaskTimer(Core.getInstance(), () -> {
+        Core.runTaskTimer(() -> {
             if (Bukkit.getOnlinePlayers().size() <= 0) {
                 Core.getDashboardConnection().stop();
                 Bukkit.shutdown();

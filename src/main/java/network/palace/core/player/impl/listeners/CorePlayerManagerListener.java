@@ -19,7 +19,6 @@ import org.bukkit.event.player.*;
  */
 public class CorePlayerManagerListener implements Listener {
 
-    private Core instance = Core.getPlugin(Core.class);
     private CorePlayerDefaultScoreboard defaultScoreboard;
 
     /**
