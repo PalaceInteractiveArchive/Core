@@ -1,5 +1,6 @@
 package network.palace.core.player.impl.managers;
 
+import lombok.Synchronized;
 import network.palace.core.Core;
 import network.palace.core.player.CPlayer;
 import network.palace.core.player.CPlayerManager;
@@ -10,14 +11,13 @@ import network.palace.core.player.impl.listeners.CorePlayerManagerListener;
 import org.bukkit.entity.Player;
 
 import java.util.*;
-import java.util.concurrent.ConcurrentHashMap;
 
 /**
  * The type Core player manager.
  */
 public class CorePlayerManager implements CPlayerManager {
 
-    private final ConcurrentHashMap<UUID, CPlayer> onlinePlayers = new ConcurrentHashMap<>();
+    private final HashMap<UUID, CPlayer> onlinePlayers = new HashMap<>();
 
     /**
      * Instantiates a new Core player manager.
@@ -27,13 +27,12 @@ public class CorePlayerManager implements CPlayerManager {
     }
 
     @Override
+    @Synchronized
     public void playerLoggedIn(UUID uuid, String name) {
         playerLoggedOut(uuid);
-        Core.runTaskAsynchronously(() -> {
-            Rank rank = Core.getSqlUtil().getRank(uuid);
-            List<Integer> ids = Core.getSqlUtil().getAchievements(uuid);
-            onlinePlayers.put(uuid, new CorePlayer(uuid, name, rank, ids));
-        });
+        Rank rank = Core.getSqlUtil().getRank(uuid);
+        List<Integer> ids = Core.getSqlUtil().getAchievements(uuid);
+        onlinePlayers.put(uuid, new CorePlayer(uuid, name, rank, ids));
     }
 
     @Override
