@@ -1,6 +1,5 @@
 package network.palace.core.player.impl.managers;
 
-import lombok.Synchronized;
 import network.palace.core.Core;
 import network.palace.core.player.CPlayer;
 import network.palace.core.player.CPlayerManager;
@@ -27,7 +26,6 @@ public class CorePlayerManager implements CPlayerManager {
     }
 
     @Override
-    @Synchronized
     public void playerLoggedIn(UUID uuid, String name) {
         playerLoggedOut(uuid);
         Rank rank = Core.getSqlUtil().getRank(uuid);
