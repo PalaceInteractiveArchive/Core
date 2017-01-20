@@ -67,16 +67,12 @@ public class PluginsCommand extends CoreCommand {
         String pluginsSeparator = formatter.getFormat(sender, "command.plugins.plugins.separator");
         String pluginsEnabledColor = formatter.getFormat(sender, "command.plugins.plugins.enabledColor");
         String pluginsDisabledColor = formatter.getFormat(sender, "command.plugins.plugins.disabledColor");
-        for (PluginInfo info : pluginsList) {
-            pluginsSB.append(info.isEnabled() ? pluginsEnabledColor : pluginsDisabledColor).append(info.getName()).append(pluginsSeparator);
-        }
+        pluginsList.forEach(info -> pluginsSB.append(info.isEnabled() ? pluginsEnabledColor : pluginsDisabledColor).append(info.getName()).append(pluginsSeparator));
         // Third party plugins info and colors
         String thirdPartySeparator = formatter.getFormat(sender, "command.plugins.thirdParty.separator");
         String thirdPartyEnabledColor = formatter.getFormat(sender, "command.plugins.thirdParty.enabledColor");
         String thirdPartyDisabledColor = formatter.getFormat(sender, "command.plugins.thirdParty.disabledColor");
-        for (PluginInfo info : thirdPartyList) {
-            thirdPartySB.append(info.isEnabled() ? thirdPartyEnabledColor : thirdPartyDisabledColor).append(info.getName()).append(thirdPartySeparator);
-        }
+        thirdPartyList.forEach(info -> thirdPartySB.append(info.isEnabled() ? thirdPartyEnabledColor : thirdPartyDisabledColor).append(info.getName()).append(thirdPartySeparator));
         // Remove left over separators
         String plugins = pluginsSB.toString();
         plugins = plugins.substring(0, Math.max(0, plugins.length() - pluginsSeparator.length()));
@@ -155,9 +151,7 @@ public class PluginsCommand extends CoreCommand {
         versionMessage = msg;
         versionLock.lock();
         try {
-            for (CommandSender sender : versionWaiters) {
-                sender.sendMessage(versionMessage);
-            }
+            versionWaiters.forEach(sender -> sender.sendMessage(versionMessage));
             versionWaiters.clear();
         } finally {
             versionLock.unlock();

@@ -30,9 +30,7 @@ public class SafestopCommand extends CoreCommand {
     protected void handleCommandUnspecific(CommandSender sender, String[] args) throws CommandException {
         sender.sendMessage(ChatColor.RED + "Shutting the server down...");
         Core.setStarting(true);
-        for (World world : Bukkit.getWorlds()) {
-            world.save();
-        }
+        Bukkit.getWorlds().forEach(World::save);
         PacketEmptyServer packet = new PacketEmptyServer(Core.getInstanceName());
         Core.getDashboardConnection().send(packet);
         Core.runTaskTimer(() -> {

@@ -49,9 +49,7 @@ public final class CoreCommandMap {
         if (annotation != null) {
             tempList.addAll(Arrays.asList(annotation.aliases()));
         }
-        for (String oldCommand : tempList) {
-            removeKnownCommands(oldCommand);
-        }
+        tempList.forEach(this::removeKnownCommands);
         getCommandMap().register(plugin.getDescription().getName(), command1); // Register it with Bukkit
         String pluginName = "Unknown";
         if (plugin instanceof Core) {
