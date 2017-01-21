@@ -67,7 +67,7 @@ public class CorePlayerManager implements CPlayerManager {
     }
 
     @Override
-    public Collection<CPlayer> getOnlinePlayers() {
+    public List<CPlayer> getOnlinePlayers() {
         return new ArrayList<>(onlinePlayers.values());
     }
 }

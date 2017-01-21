@@ -3,6 +3,7 @@ package network.palace.core.player;
 import org.bukkit.entity.Player;
 
 import java.util.Collection;
+import java.util.List;
 import java.util.UUID;
 
 /**
@@ -61,5 +62,5 @@ public interface CPlayerManager {
      *
      * @return the online players
      */
-    Collection<CPlayer> getOnlinePlayers();
+    List<CPlayer> getOnlinePlayers();
 }
