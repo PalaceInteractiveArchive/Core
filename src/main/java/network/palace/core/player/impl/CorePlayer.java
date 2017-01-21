@@ -201,6 +201,7 @@ public class CorePlayer implements CPlayer {
         player.resetPlayerWeather();
         player.getActivePotionEffects().forEach(potionEffect -> player.removePotionEffect(potionEffect.getType()));
         player.updateInventory();
+        player.setGameMode(GameMode.SURVIVAL);
     }
 
     @Override
