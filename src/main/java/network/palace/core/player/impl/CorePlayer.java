@@ -11,7 +11,6 @@ import network.palace.core.player.*;
 import network.palace.core.player.impl.managers.*;
 import network.palace.core.plugin.Plugin;
 import org.bukkit.*;
-import org.bukkit.attribute.Attribute;
 import org.bukkit.entity.Player;
 import org.bukkit.inventory.Inventory;
 import org.bukkit.inventory.ItemStack;
@@ -98,7 +97,7 @@ public class CorePlayer implements CPlayer {
     public void setMaxHealth(double health) {
         if (getStatus() != PlayerStatus.JOINED) return;
         if (getBukkitPlayer() == null) return;
-        getBukkitPlayer().getAttribute(Attribute.GENERIC_MAX_HEALTH).setBaseValue(health);
+        getBukkitPlayer().setMaxHealth(health);
     }
 
     @Override
@@ -185,7 +184,7 @@ public class CorePlayer implements CPlayer {
         player.setHealth(20);
         player.setFallDistance(0);
         player.setFireTicks(0);
-        player.getAttribute(Attribute.GENERIC_MAX_HEALTH).setBaseValue(player.getAttribute(Attribute.GENERIC_MAX_HEALTH).getDefaultValue());
+        player.resetMaxHealth();
         player.setExp(0);
         player.setTotalExperience(0);
         player.setLevel(0);
