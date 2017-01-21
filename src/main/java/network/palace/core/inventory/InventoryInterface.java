@@ -16,6 +16,7 @@ public interface InventoryInterface {
     void addButton(InventoryButtonInterface button, int slot);
     void moveButton(InventoryButtonInterface button, int slot);
     void removeButton(InventoryButtonInterface button);
+    void replaceButton(InventoryButtonInterface button, int slot);
 
     int getSlotFor(InventoryButtonInterface button);
 

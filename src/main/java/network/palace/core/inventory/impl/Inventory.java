@@ -100,6 +100,12 @@ public class Inventory implements InventoryInterface, Listener {
     }
 
     @Override
+    public final void replaceButton(InventoryButtonInterface button, int slot) {
+        clearSlot(slot);
+        addButton(button, slot);
+    }
+
+    @Override
     public void clearSlot(int slot) {
         if (!inventoryButtons.containsKey(slot)) return;
         inventoryButtons.remove(slot);
