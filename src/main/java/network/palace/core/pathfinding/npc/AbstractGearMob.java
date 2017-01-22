@@ -6,7 +6,6 @@ import com.comphenix.protocol.events.PacketContainer;
 import network.palace.core.pathfinding.Point;
 import network.palace.core.player.CPlayer;
 import org.bukkit.World;
-import org.bukkit.entity.Player;
 import org.bukkit.inventory.ItemStack;
 
 import java.lang.reflect.InvocationTargetException;
@@ -77,9 +76,9 @@ public abstract class AbstractGearMob extends AbstractMob {
                 default:
                     packet.getItemModifier().write(2, armor[x-1]);
             }
-            for (Player player : getTargets()) {
+            for (CPlayer player : getTargets()) {
                 try {
-                    ProtocolLibrary.getProtocolManager().sendServerPacket(player, packet);
+                    ProtocolLibrary.getProtocolManager().sendServerPacket(player.getBukkitPlayer(), packet);
                 } catch (InvocationTargetException e) {
                     e.printStackTrace();
                 }

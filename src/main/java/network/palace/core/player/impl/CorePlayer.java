@@ -380,7 +380,7 @@ public class CorePlayer implements CPlayer {
         if (getStatus() != PlayerStatus.JOINED) return;
         if (getBukkitPlayer() == null) return;
         if (packet == null) return;
-        packet.sendPacket(getBukkitPlayer());
+        packet.sendPacket(Core.getPlayerManager().getPlayer(getBukkitPlayer()));
     }
 
     @Override

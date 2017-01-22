@@ -3,6 +3,7 @@ package network.palace.core.pathfinding.npc.packets;
 import com.comphenix.protocol.PacketType;
 import com.comphenix.protocol.events.PacketContainer;
 import com.google.common.primitives.Ints;
+import network.palace.core.packets.AbstractPacket;
 
 import java.util.List;
 
@@ -15,7 +16,7 @@ public class WrapperPlayServerEntityDestroy extends AbstractPacket {
 
     public WrapperPlayServerEntityDestroy() {
         super(new PacketContainer(TYPE), TYPE);
-        getContainer().getModifier().writeDefaults();
+        handle.getModifier().writeDefaults();
     }
 
     public WrapperPlayServerEntityDestroy(PacketContainer container) {
@@ -23,11 +24,11 @@ public class WrapperPlayServerEntityDestroy extends AbstractPacket {
     }
 
     public List<Integer> getEntities() {
-        return Ints.asList(getContainer().getIntegerArrays().read(0));
+        return Ints.asList(handle.getIntegerArrays().read(0));
     }
 
     public void setEntities(int[] entities) {
-        getContainer().getIntegerArrays().write(0, entities);
+        handle.getIntegerArrays().write(0, entities);
     }
 
     public void setEntities(List<Integer> entities) {

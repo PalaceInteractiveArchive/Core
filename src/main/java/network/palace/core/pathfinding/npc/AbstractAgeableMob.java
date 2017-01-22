@@ -21,6 +21,6 @@ public abstract class AbstractAgeableMob extends AbstractMob {
     @Override
     protected void onDataWatcherUpdate() {
         super.onDataWatcherUpdate();
-        getDataWatcher().setObject(12, (byte) (adult ? 1 : -1)); //Age (adult)
+        getDataWatcher().setObject(12, (byte) (adult ? 1 : -1));
     }
 }

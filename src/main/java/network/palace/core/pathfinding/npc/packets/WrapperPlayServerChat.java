@@ -3,6 +3,7 @@ package network.palace.core.pathfinding.npc.packets;
 import com.comphenix.protocol.PacketType;
 import com.comphenix.protocol.events.PacketContainer;
 import com.comphenix.protocol.wrappers.WrappedChatComponent;
+import network.palace.core.packets.AbstractPacket;
 
 /**
  * @author Innectic
@@ -13,7 +14,7 @@ public class WrapperPlayServerChat extends AbstractPacket {
 
     public WrapperPlayServerChat() {
         super(new PacketContainer(TYPE), TYPE);
-        getContainer().getModifier().writeDefaults();
+        handle.getModifier().writeDefaults();
     }
 
     public WrapperPlayServerChat(PacketContainer container) {
@@ -21,10 +22,10 @@ public class WrapperPlayServerChat extends AbstractPacket {
     }
 
     public WrappedChatComponent getMessage() {
-        return getContainer().getChatComponents().read(0);
+        return handle.getChatComponents().read(0);
     }
 
     public void setMessage(WrappedChatComponent chatComponent) {
-        getContainer().getChatComponents().write(0, chatComponent);
+        handle.getChatComponents().write(0, chatComponent);
     }
 }

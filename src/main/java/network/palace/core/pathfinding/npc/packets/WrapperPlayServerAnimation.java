@@ -3,6 +3,7 @@ package network.palace.core.pathfinding.npc.packets;
 import com.comphenix.protocol.PacketType;
 import com.comphenix.protocol.events.PacketContainer;
 import com.comphenix.protocol.events.PacketEvent;
+import network.palace.core.packets.AbstractPacket;
 import org.bukkit.World;
 import org.bukkit.entity.Entity;
 
@@ -15,7 +16,7 @@ public class WrapperPlayServerAnimation extends AbstractPacket {
 
     public WrapperPlayServerAnimation() {
         super(new PacketContainer(TYPE), TYPE);
-        getContainer().getModifier().writeDefaults();
+        handle.getModifier().writeDefaults();
     }
 
     public WrapperPlayServerAnimation(PacketContainer container) {
@@ -23,15 +24,15 @@ public class WrapperPlayServerAnimation extends AbstractPacket {
     }
 
     public int getEntityId() {
-        return getContainer().getIntegers().read(0);
+        return handle.getIntegers().read(0);
     }
 
     public void setEntityId(int id) {
-        getContainer().getIntegers().write(0, id);
+        handle.getIntegers().write(0, id);
     }
 
     public Entity getEntity(World world) {
-        return getContainer().getEntityModifier(world).read(0);
+        return handle.getEntityModifier(world).read(0);
     }
 
     public Entity getEntity(PacketEvent event) {
@@ -39,10 +40,10 @@ public class WrapperPlayServerAnimation extends AbstractPacket {
     }
 
     public int getAnimation() {
-        return getContainer().getIntegers().read(1);
+        return handle.getIntegers().read(1);
     }
 
     public void setAnimation(int animation) {
-        getContainer().getIntegers().write(1, animation);
+        handle.getIntegers().write(1, animation);
     }
 }

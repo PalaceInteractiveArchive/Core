@@ -3,6 +3,7 @@ package network.palace.core.pathfinding.npc.packets;
 import com.comphenix.protocol.PacketType;
 import com.comphenix.protocol.events.PacketContainer;
 import com.comphenix.protocol.events.PacketEvent;
+import network.palace.core.packets.AbstractPacket;
 import org.bukkit.World;
 import org.bukkit.entity.Entity;
 
@@ -22,15 +23,15 @@ public class WrapperPlayServerEntityVelocity extends AbstractPacket {
     }
 
     public int getEntityId() {
-        return getContainer().getIntegers().read(0);
+        return handle.getIntegers().read(0);
     }
 
     public Entity getEntity(World world) {
-        return getContainer().getEntityModifier(world).read(0);
+        return handle.getEntityModifier(world).read(0);
     }
 
     public void setEntityId(int id) {
-        getContainer().getIntegers().write(0, id);
+        handle.getIntegers().write(0, id);
     }
 
     public Entity getEntity(PacketEvent event) {
@@ -38,27 +39,27 @@ public class WrapperPlayServerEntityVelocity extends AbstractPacket {
     }
 
     public double getVelocityX() {
-        return getContainer().getIntegers().read(1) / 8000D;
+        return handle.getIntegers().read(1) / 8000D;
     }
 
     public void setVelocityX(double value) {
-        getContainer().getIntegers().write(1, (int) (value * 8000.0D));
+        handle.getIntegers().write(1, (int) (value * 8000.0D));
     }
 
     public double getVelocityY() {
-        return getContainer().getIntegers().read(2) / 8000D;
+        return handle.getIntegers().read(2) / 8000D;
     }
 
     public void setVelocityY(double value) {
-        getContainer().getIntegers().write(2, (int) (value * 8000.0D));
+        handle.getIntegers().write(2, (int) (value * 8000.0D));
     }
 
     public double getVelocityZ() {
-        return getContainer().getIntegers().read(3) / 8000D;
+        return handle.getIntegers().read(3) / 8000D;
     }
 
     public void setVelocityZ(double value) {
-        getContainer().getIntegers().write(3, (int) (value * 8000.0D));
+        handle.getIntegers().write(3, (int) (value * 8000.0D));
     }
 
 }

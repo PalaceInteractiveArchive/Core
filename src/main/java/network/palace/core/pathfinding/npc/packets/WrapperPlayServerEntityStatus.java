@@ -3,6 +3,7 @@ package network.palace.core.pathfinding.npc.packets;
 import com.comphenix.protocol.PacketType;
 import com.comphenix.protocol.events.PacketContainer;
 import com.comphenix.protocol.events.PacketEvent;
+import network.palace.core.packets.AbstractPacket;
 import org.bukkit.World;
 import org.bukkit.entity.Entity;
 
@@ -15,7 +16,7 @@ public class WrapperPlayServerEntityStatus extends AbstractPacket {
 
     public WrapperPlayServerEntityStatus() {
         super(new PacketContainer(TYPE), TYPE);
-        getContainer().getModifier().writeDefaults();
+        handle.getModifier().writeDefaults();
     }
 
     public WrapperPlayServerEntityStatus(PacketContainer container) {
@@ -23,15 +24,15 @@ public class WrapperPlayServerEntityStatus extends AbstractPacket {
     }
 
     public int getEntityId() {
-        return getContainer().getIntegers().read(0);
+        return handle.getIntegers().read(0);
     }
 
     public void setEntityId(int id) {
-        getContainer().getIntegers().write(0, id);
+        handle.getIntegers().write(0, id);
     }
 
     public Entity getEntity(World world) {
-        return getContainer().getEntityModifier(world).read(0);
+        return handle.getEntityModifier(world).read(0);
     }
 
     public Entity getEntity(PacketEvent event) {
@@ -39,10 +40,10 @@ public class WrapperPlayServerEntityStatus extends AbstractPacket {
     }
 
     public int getEntityStatus() {
-        return getContainer().getBytes().read(0).intValue();
+        return handle.getBytes().read(0).intValue();
     }
 
     public void setEntityStatus(int status) {
-        getContainer().getBytes().write(0, (byte) status);
+        handle.getBytes().write(0, (byte) status);
     }
 }

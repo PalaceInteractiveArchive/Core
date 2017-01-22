@@ -4,6 +4,7 @@ import com.comphenix.protocol.PacketType;
 import com.comphenix.protocol.events.PacketContainer;
 import com.comphenix.protocol.events.PacketEvent;
 import com.comphenix.protocol.wrappers.WrappedWatchableObject;
+import network.palace.core.packets.AbstractPacket;
 import org.bukkit.World;
 import org.bukkit.entity.Entity;
 
@@ -18,7 +19,7 @@ public class WrapperPlayServerEntityMetadata extends AbstractPacket {
 
     public WrapperPlayServerEntityMetadata() {
         super(new PacketContainer(TYPE), TYPE);
-        getContainer().getModifier().writeDefaults();
+        handle.getModifier().writeDefaults();
     }
 
     public WrapperPlayServerEntityMetadata(PacketContainer container) {
@@ -26,15 +27,15 @@ public class WrapperPlayServerEntityMetadata extends AbstractPacket {
     }
 
     public int getEntityId() {
-        return getContainer().getIntegers().read(0);
+        return handle.getIntegers().read(0);
     }
 
     public void setEntityId(int id) {
-        getContainer().getIntegers().write(0, id);
+        handle.getIntegers().write(0, id);
     }
 
     public Entity getEntity(World world) {
-        return getContainer().getEntityModifier(world).read(0);
+        return handle.getEntityModifier(world).read(0);
     }
 
     public Entity getEntity(PacketEvent event) {
@@ -42,10 +43,10 @@ public class WrapperPlayServerEntityMetadata extends AbstractPacket {
     }
 
     public List<WrappedWatchableObject> getEntityMetadata() {
-        return getContainer().getWatchableCollectionModifier().read(0);
+        return handle.getWatchableCollectionModifier().read(0);
     }
 
     public void setEntityMetadata(List<WrappedWatchableObject> metadata) {
-        getContainer().getWatchableCollectionModifier().write(0, metadata);
+        handle.getWatchableCollectionModifier().write(0, metadata);
     }
 }

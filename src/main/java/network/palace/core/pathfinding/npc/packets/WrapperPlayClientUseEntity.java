@@ -4,6 +4,7 @@ import com.comphenix.protocol.PacketType;
 import com.comphenix.protocol.events.PacketContainer;
 import com.comphenix.protocol.events.PacketEvent;
 import com.comphenix.protocol.wrappers.EnumWrappers;
+import network.palace.core.packets.AbstractPacket;
 import org.bukkit.World;
 import org.bukkit.entity.Entity;
 
@@ -16,7 +17,7 @@ public class WrapperPlayClientUseEntity extends AbstractPacket {
 
     public WrapperPlayClientUseEntity() {
         super(new PacketContainer(TYPE), TYPE);
-        getContainer().getModifier().writeDefaults();
+        handle.getModifier().writeDefaults();
     }
 
     public WrapperPlayClientUseEntity(PacketContainer container) {
@@ -24,15 +25,15 @@ public class WrapperPlayClientUseEntity extends AbstractPacket {
     }
 
     public int getTargetId() {
-        return getContainer().getIntegers().read(0);
+        return handle.getIntegers().read(0);
     }
 
     public void setTargetId(int id) {
-        getContainer().getIntegers().write(0, id);
+        handle.getIntegers().write(0, id);
     }
 
     public Entity getTarget(World world) {
-        return getContainer().getEntityModifier(world).read(0);
+        return handle.getEntityModifier(world).read(0);
     }
 
     public Entity getTarget(PacketEvent event) {
@@ -40,10 +41,10 @@ public class WrapperPlayClientUseEntity extends AbstractPacket {
     }
 
     public EnumWrappers.EntityUseAction getMouse() {
-        return getContainer().getEntityUseActions().read(0);
+        return handle.getEntityUseActions().read(0);
     }
 
     public void setMouse(EnumWrappers.EntityUseAction action) {
-        getContainer().getEntityUseActions().write(0, action);
+        handle.getEntityUseActions().write(0, action);
     }
 }

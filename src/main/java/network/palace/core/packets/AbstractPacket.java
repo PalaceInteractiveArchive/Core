@@ -18,15 +18,14 @@
  */
 package network.palace.core.packets;
 
-import java.lang.reflect.InvocationTargetException;
-
-import lombok.Getter;
-import org.bukkit.entity.Player;
-
 import com.comphenix.protocol.PacketType;
 import com.comphenix.protocol.ProtocolLibrary;
 import com.comphenix.protocol.events.PacketContainer;
 import com.google.common.base.Objects;
+import lombok.Getter;
+import network.palace.core.player.CPlayer;
+
+import java.lang.reflect.InvocationTargetException;
 
 /**
  * The type Abstract packet.
@@ -61,9 +60,9 @@ public abstract class AbstractPacket {
      * @param player - the player.
      * @throws RuntimeException If the packet cannot be sent.
      */
-    public void sendPacket(Player player) {
+    public void sendPacket(CPlayer player) {
         try {
-            ProtocolLibrary.getProtocolManager().sendServerPacket(player, getHandle());
+            ProtocolLibrary.getProtocolManager().sendServerPacket(player.getBukkitPlayer(), getHandle());
         } catch (InvocationTargetException e) {
             throw new RuntimeException("Cannot send packet.", e);
         }

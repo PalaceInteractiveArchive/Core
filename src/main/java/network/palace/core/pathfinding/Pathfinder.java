@@ -36,10 +36,8 @@ public class Pathfinder {
 
         PathfindingTile current = start;
 
-        while (!current.getPoint().equals(endPos)) { //current == start is to allow it to start with an empty open set at the start
-            //Gets all tiles adjacent to us that we can move to.
+        while (!current.getPoint().equals(endPos)) {
             List<PathfindingTile> tilesAdjacent = getTilesAdjacent(current);
-            //Removes all the tiles that are already in our closedSet
             tilesAdjacent.removeAll(closedSet);
             openSet.addAll(tilesAdjacent);
 
@@ -48,7 +46,6 @@ public class Pathfinder {
             PathfindingTile chosen = null;
             for (PathfindingTile pathTile : openSet) {
                 if (chosen == null) {
-                    //First time setup
                     chosen = pathTile;
                     continue;
                 }
