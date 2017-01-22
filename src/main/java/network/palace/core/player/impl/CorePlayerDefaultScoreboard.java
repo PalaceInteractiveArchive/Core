@@ -10,6 +10,8 @@ import org.bukkit.ChatColor;
 import org.bukkit.event.EventHandler;
 import org.bukkit.event.Listener;
 
+import java.util.concurrent.Callable;
+
 /**
  * The type Core player default scoreboard.
  */
@@ -37,12 +39,12 @@ public class CorePlayerDefaultScoreboard implements Listener {
         scoreboard.title(ChatColor.GOLD + "" + ChatColor.BOLD + "The " + ChatColor.DARK_PURPLE + ChatColor.BOLD + "Palace " + ChatColor.GOLD + "" + ChatColor.BOLD + "Network");
         // Blank space
         scoreboard.setBlank(8);
-        // Balance
-        setBalance(7, scoreboard, Core.getEconomy().getBalance(player.getUuid()));
+        // Balance temp
+        scoreboard.set(7, ChatColor.GREEN + "$ Loading...");
         // Blank space
         scoreboard.setBlank(6);
-        // Tokens
-        setTokens(5, scoreboard, Core.getEconomy().getTokens(player.getUuid()));
+        // Tokens temp
+        scoreboard.set(5, ChatColor.GREEN + "\u272a Loading...");
         // Blank space
         scoreboard.setBlank(4);
         // Rank
@@ -53,6 +55,10 @@ public class CorePlayerDefaultScoreboard implements Listener {
         scoreboard.set(1, ChatColor.GREEN + "Online Players: " + playerCount);
         // Server name
         scoreboard.set(0, ChatColor.GREEN + "Server: " + Core.getServerType());
+        // Load balance async
+        loadBalance(player, scoreboard, 7);
+        // Load tokens async
+        loadTokens(player, scoreboard, 5);
     }
 
     /**
@@ -86,6 +92,26 @@ public class CorePlayerDefaultScoreboard implements Listener {
         } else {
             setTokens(5, player.getScoreboard(), amount);
         }
+    }
+
+    public void loadTokens(CPlayer player, CPlayerScoreboardManager scoreboard, int position) {
+        Core.runTaskAsynchronously(() -> {
+            int tokens = Core.getEconomy().getTokens(player.getUuid());
+            Core.callSyncMethod((Callable<Object>) () -> {
+                setTokens(position, scoreboard, tokens);
+                return true;
+            });
+        });
+    }
+
+    public void loadBalance(CPlayer player, CPlayerScoreboardManager scoreboard, int position) {
+        Core.runTaskAsynchronously(() -> {
+            int balance = Core.getEconomy().getBalance(player.getUuid());
+            Core.callSyncMethod((Callable<Object>) () -> {
+                setBalance(position, scoreboard, balance);
+                return true;
+            });
+        });
     }
 
     private void setTokens(int position, CPlayerScoreboardManager scoreboard, int tokens) {

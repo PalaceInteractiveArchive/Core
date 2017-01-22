@@ -1,9 +1,6 @@
 package network.palace.core.player.impl.managers;
 
-import com.google.common.collect.BiMap;
-import com.google.common.collect.HashBiMap;
 import lombok.Getter;
-import network.palace.core.Core;
 import network.palace.core.player.CPlayer;
 import network.palace.core.player.CPlayerScoreboardManager;
 import network.palace.core.player.Rank;
@@ -15,7 +12,6 @@ import org.bukkit.scoreboard.Scoreboard;
 import org.bukkit.scoreboard.Team;
 
 import java.util.HashMap;
-import java.util.concurrent.ThreadLocalRandom;
 
 /**
  * The type Core player scoreboard manager.
@@ -26,7 +22,7 @@ public class CorePlayerScoreboardManager implements CPlayerScoreboardManager {
 
     private final CPlayer player;
 
-    private BiMap<Integer, String> lines;
+    private HashMap<Integer, String> lines;
     private Scoreboard scoreboard;
     private Objective scoreboardObjective;
     private String title;
@@ -53,9 +49,7 @@ public class CorePlayerScoreboardManager implements CPlayerScoreboardManager {
                 remove(id);
             }
         }
-        if (lines.containsValue(text)) {
-            lines.inverse().remove(text);
-        }
+        lines.values().removeIf(text::equals);
         lines.put(id, text);
         if (scoreboardObjective == null) return this;
         if (scoreboardObjective.getScore(text) == null) return this;
@@ -80,7 +74,6 @@ public class CorePlayerScoreboardManager implements CPlayerScoreboardManager {
     @Override
     public CPlayerScoreboardManager title(String title) {
         if (this.title != null && this.title.equals(title)) return this;
-
         this.title = title;
         scoreboardObjective.setDisplayName(title);
         player.getBukkitPlayer().setScoreboard(scoreboard);
@@ -88,15 +81,12 @@ public class CorePlayerScoreboardManager implements CPlayerScoreboardManager {
     }
 
     private void setup() {
-        lines = HashBiMap.create();
+        lines = new HashMap();
         scoreboard = Bukkit.getScoreboardManager().getNewScoreboard();
-
         if (scoreboard == null) return;
         if (player.getBukkitPlayer() == null) return;
-
         player.getBukkitPlayer().setScoreboard(scoreboard);
-
-        scoreboardObjective = scoreboard.registerNewObjective("obj" + ThreadLocalRandom.current().nextInt(1000000), "dummy");
+        scoreboardObjective = scoreboard.registerNewObjective("obj" + player.getName(), "dummy");
         scoreboardObjective.setDisplaySlot(DisplaySlot.SIDEBAR);
         isSetup = true;
     }
@@ -112,7 +102,7 @@ public class CorePlayerScoreboardManager implements CPlayerScoreboardManager {
 
     @Override
     public void setupPlayerTags() {
-        setup();
+        if (scoreboard == null) setup();
         for (Rank rank : Rank.values()) {
             Team team = scoreboard.registerNewTeam(rank.getName());
             team.setPrefix(rank.getScoreboardName());

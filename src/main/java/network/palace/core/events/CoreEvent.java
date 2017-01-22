@@ -1,6 +1,6 @@
 package network.palace.core.events;
 
-import org.bukkit.Bukkit;
+import network.palace.core.Core;
 import org.bukkit.event.Event;
 import org.bukkit.event.HandlerList;
 
@@ -29,6 +29,6 @@ public class CoreEvent extends Event {
      * Call the event.
      */
     public void call() {
-        Bukkit.getPluginManager().callEvent(this);
+        Core.callEvent(this);
     }
 }

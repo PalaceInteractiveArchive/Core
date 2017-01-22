@@ -27,18 +27,21 @@ import org.bukkit.ChatColor;
 import org.bukkit.World;
 import org.bukkit.configuration.file.FileConfiguration;
 import org.bukkit.entity.Player;
+import org.bukkit.event.Event;
 import org.bukkit.event.Listener;
 import org.bukkit.inventory.Inventory;
 import org.bukkit.plugin.java.JavaPlugin;
 
 import java.util.List;
+import java.util.concurrent.Callable;
+import java.util.concurrent.Future;
 
 /**
  * This will manage all Modules and also the Core Managers.
  * <p>
  * You can access instances of other modules by depending on Core in your pom.xml, and then executing Core.get
  */
-@PluginInfo(name = "Core", version = "1.5.3", depend = {"ProtocolLib"}, canReload = false)
+@PluginInfo(name = "Core", version = "1.6.0", depend = {"ProtocolLib"})
 public class Core extends JavaPlugin {
 
     private boolean starting = true;
@@ -347,12 +350,31 @@ public class Core extends JavaPlugin {
     }
 
     /**
+     * Call event.
+     *
+     * @param event the event
+     */
+    public static void callEvent(Event event) {
+        Bukkit.getPluginManager().callEvent(event);
+    }
+
+    /**
      * Cancel task.
      *
      * @param taskId the task id
      */
     public static void cancelTask(int taskId) {
         Bukkit.getScheduler().cancelTask(taskId);
+    }
+
+    /**
+     * Call sync method
+     *
+     * @param callable the callable
+     * @return future
+     */
+    public static <T> Future<T> callSyncMethod(Callable<T> callable) {
+        return Bukkit.getScheduler().callSyncMethod(getInstance(), callable);
     }
 
     /**
@@ -363,6 +385,17 @@ public class Core extends JavaPlugin {
      */
     public static int runTaskAsynchronously(Runnable task) {
         return Bukkit.getScheduler().runTaskAsynchronously(getInstance(), task).getTaskId();
+    }
+
+    /**
+     * Run task later async int.
+     *
+     * @param task  the task
+     * @param delay the delay
+     * @return the task id
+     */
+    public static int runTaskLaterAsynchronously(Runnable task, long delay) {
+        return Bukkit.getScheduler().runTaskLaterAsynchronously(getInstance(), task, delay).getTaskId();
     }
 
     /**

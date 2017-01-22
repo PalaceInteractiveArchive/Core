@@ -3,7 +3,6 @@ package network.palace.core.player.impl.listeners;
 import com.comphenix.protocol.wrappers.WrappedGameProfile;
 import network.palace.core.Core;
 import network.palace.core.dashboard.packets.dashboard.PacketGetPack;
-import network.palace.core.events.CorePlayerJoinDelayedEvent;
 import network.palace.core.player.CPlayer;
 import network.palace.core.player.impl.CorePlayerDefaultScoreboard;
 import org.bukkit.Achievement;
@@ -52,46 +51,26 @@ public class CorePlayerManagerListener implements Listener {
      *
      * @param event the event
      */
-    @EventHandler(ignoreCancelled = true, priority = EventPriority.LOW)
+    @EventHandler(ignoreCancelled = true, priority = EventPriority.LOWEST)
     public void onPlayerJoin(PlayerJoinEvent event) {
         event.setJoinMessage("");
-        String textureHash = "";
         final Player player = event.getPlayer();
-        try {
-            WrappedGameProfile wrappedGameProfile = WrappedGameProfile.fromPlayer(player);
-            textureHash = wrappedGameProfile.getProperties().get("textures").iterator().next().getValue();
-        } catch (Exception ignored) {
+        if (!player.hasAchievement(Achievement.OPEN_INVENTORY)) {
+            player.awardAchievement(Achievement.OPEN_INVENTORY);
         }
+        WrappedGameProfile wrappedGameProfile = WrappedGameProfile.fromPlayer(player);
+        String textureHash = wrappedGameProfile.getProperties().get("textures").iterator().next().getValue();
         Core.getPlayerManager().playerJoined(player.getUniqueId(), textureHash);
-        PacketGetPack packet = new PacketGetPack(player.getUniqueId(), "");
-        Core.getDashboardConnection().send(packet);
-        CorePlayerJoinDelayedEvent delayedEvent = new CorePlayerJoinDelayedEvent(Core.getPlayerManager().getPlayer(player));
-        Core.runTaskLater(delayedEvent::call, 10L);
-        if (!event.getPlayer().hasAchievement(Achievement.OPEN_INVENTORY))
-            event.getPlayer().awardAchievement(Achievement.OPEN_INVENTORY);
-    }
-
-    /**
-     * On player join delayed.
-     *
-     * @param event the event
-     */
-    @EventHandler(ignoreCancelled = true, priority = EventPriority.MONITOR)
-    public void onPlayerJoinDelayed(CorePlayerJoinDelayedEvent event) {
-        CPlayer player = event.getPlayer();
-        // Set op
-        if (player == null) return;
-        boolean op = player.getRank().isOp();
-        if (player.isOp() != op) {
-            player.setOp(op);
-        }
-        // Scoreboard
-        player.getScoreboard().setupPlayerTags();
-        for (CPlayer otherPlayer : Core.getPlayerManager().getOnlinePlayers()) {
-            player.getScoreboard().addPlayerTag(otherPlayer);
-            otherPlayer.getScoreboard().addPlayerTag(player);
-        }
-        defaultScoreboard.setup(player);
+        Core.getDashboardConnection().send(new PacketGetPack(player.getUniqueId(), ""));
+        Core.runTaskLater(() -> {
+            CPlayer cPlayer = Core.getPlayerManager().getPlayer(player);
+            cPlayer.getScoreboard().setupPlayerTags();
+            for (CPlayer otherPlayer : Core.getPlayerManager().getOnlinePlayers()) {
+                cPlayer.getScoreboard().addPlayerTag(otherPlayer);
+                otherPlayer.getScoreboard().addPlayerTag(cPlayer);
+            }
+            defaultScoreboard.setup(cPlayer);
+        }, 2 * 20);
     }
 
     /**
