@@ -41,7 +41,7 @@ import java.util.concurrent.Future;
  * <p>
  * You can access instances of other modules by depending on Core in your pom.xml, and then executing Core.get
  */
-@PluginInfo(name = "Core", version = "1.6.0", depend = {"ProtocolLib"})
+@PluginInfo(name = "Core", version = "1.6.1", depend = {"ProtocolLib"})
 public class Core extends JavaPlugin {
 
     private boolean starting = true;
@@ -380,7 +380,7 @@ public class Core extends JavaPlugin {
     /**
      * Run task asynchronously int.
      *
-     * @param task  the task
+     * @param task the task
      * @return the task id
      */
     public static int runTaskAsynchronously(Runnable task) {
