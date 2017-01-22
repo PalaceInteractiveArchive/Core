@@ -70,7 +70,7 @@ public class CorePlayerManagerListener implements Listener {
                 otherPlayer.getScoreboard().addPlayerTag(cPlayer);
             }
             defaultScoreboard.setup(cPlayer);
-        }, 2 * 20);
+        }, 5);
     }
 
     /**
