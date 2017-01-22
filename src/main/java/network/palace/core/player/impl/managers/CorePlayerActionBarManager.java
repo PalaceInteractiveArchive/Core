@@ -1,6 +1,6 @@
 package network.palace.core.player.impl.managers;
 
-import network.palace.core.packets.server.WrapperPlayServerChat;
+import network.palace.core.packets.server.chat.WrapperPlayServerChat;
 import network.palace.core.player.CPlayer;
 import network.palace.core.player.CPlayerActionBarManager;
 import com.comphenix.protocol.wrappers.WrappedChatComponent;

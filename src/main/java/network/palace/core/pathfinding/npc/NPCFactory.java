@@ -6,11 +6,8 @@ import network.palace.core.player.CPlayer;
 import java.lang.reflect.Constructor;
 import java.util.Set;
 
-/**
- * @author Innectic
- * @since 1/21/2017
- */
 public final class NPCFactory {
+
     public <T extends AbstractMob> T createNPC(Class<T> type, Point point, Set<CPlayer> viewers, String title) {
         try {
             Constructor<T> constructor = type.getDeclaredConstructor(Point.class, Set.class, String.class);

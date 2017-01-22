@@ -13,11 +13,8 @@ import java.util.Arrays;
 import java.util.HashSet;
 import java.util.Set;
 
-/**
- * @author Innectic
- * @since 1/21/2017
- */
 public abstract class AbstractGearMob extends AbstractMob {
+
     private ItemStack itemInHand;
     private ItemStack[] armor = new ItemStack[4];
     private final Set<Integer> gearToUpdate = new HashSet<>();

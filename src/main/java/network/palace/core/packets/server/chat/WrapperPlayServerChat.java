@@ -16,7 +16,7 @@
  * You should have received a copy of the GNU Lesser General Public License
  * along with PacketWrapper.  If not, see <http://www.gnu.org/licenses/>.
  */
-package network.palace.core.packets.server;
+package network.palace.core.packets.server.chat;
 
 import network.palace.core.packets.AbstractPacket;
 import com.comphenix.protocol.PacketType;

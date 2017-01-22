@@ -1,6 +1,6 @@
 package network.palace.core.player.impl.managers;
 
-import network.palace.core.packets.server.WrapperPlayServerTitle;
+import network.palace.core.packets.server.title.WrapperPlayServerTitle;
 import network.palace.core.player.CPlayer;
 import network.palace.core.player.CPlayerTitleManager;
 import com.comphenix.protocol.wrappers.EnumWrappers;

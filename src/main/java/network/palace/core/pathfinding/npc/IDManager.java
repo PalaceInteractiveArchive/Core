@@ -4,11 +4,8 @@ import network.palace.core.Core;
 import org.bukkit.World;
 import org.bukkit.entity.Entity;
 
-/**
- * @author Innectic
- * @since 1/22/2017
- */
-public class IdManager {
+public class IDManager {
+
     private int CURRENT = 2000;
 
     public int getNextId() {

@@ -2,11 +2,8 @@ package network.palace.core.pathfinding.npc;
 
 import com.comphenix.protocol.wrappers.EnumWrappers;
 
-/**
- * @author Innectic
- * @since 1/21/2017
- */
 public enum ClickAction {
+
     RIGHT_CLICK,
     LEFT_CLICK;
 

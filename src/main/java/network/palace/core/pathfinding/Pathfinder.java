@@ -6,10 +6,6 @@ import org.bukkit.block.Block;
 
 import java.util.*;
 
-/**
- * @author Innectic
- * @since 1/21/2017
- */
 public class Pathfinder {
 
     @Getter private final Map<Double, PathfindingTile> tiles = new HashMap<>();
@@ -25,6 +21,8 @@ public class Pathfinder {
         this.startPos = startPos;
         this.endPos = endPos;
         this.world = world;
+        this.start = tileFrom(startPos);
+        this.end = tileFrom(endPos);
     }
 
     public List<PathfindingTile> solvePath(int range) {

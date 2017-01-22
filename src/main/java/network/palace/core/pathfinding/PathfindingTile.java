@@ -4,16 +4,12 @@ import lombok.Getter;
 
 import lombok.Getter;
 
-/**
- * @author Innectic
- * @since 1/21/2017
- */
 public class PathfindingTile {
+
     private final int STRAIGHT_SCORE = 10;
     private final int DIAGONAL_SCORE = 14;
 
-    @Getter
-    private Point point;
+    @Getter private Point point;
     @Getter private PathfindingTile parent;
 
     @Getter private int fScore;

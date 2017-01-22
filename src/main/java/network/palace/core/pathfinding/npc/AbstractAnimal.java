@@ -6,11 +6,8 @@ import org.bukkit.World;
 
 import java.util.Set;
 
-/**
- * @author Innectic
- * @since 1/21/2017
- */
 public abstract class AbstractAnimal extends AbstractAgeableMob {
+
     public AbstractAnimal(Point location, World world, Set<CPlayer> observers, String title) {
         super(location, world, observers, title);
     }

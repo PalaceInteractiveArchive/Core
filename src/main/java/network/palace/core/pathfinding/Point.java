@@ -7,12 +7,9 @@ import org.bukkit.World;
 import org.bukkit.block.Block;
 import org.bukkit.entity.Entity;
 
-/**
- * @author Innectic
- * @since 1/21/2017
- */
 @AllArgsConstructor
 public class Point implements Cloneable {
+
     @Getter private double x;
     @Getter private double y;
     @Getter private double z;

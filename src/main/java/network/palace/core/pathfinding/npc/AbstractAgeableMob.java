@@ -7,11 +7,8 @@ import org.bukkit.World;
 
 import java.util.Set;
 
-/**
- * @author Innectic
- * @since 1/21/2017
- */
 public abstract class AbstractAgeableMob extends AbstractMob {
+
     @Setter private boolean adult = true;
 
     public AbstractAgeableMob(Point location, World world, Set<CPlayer> observers, String title) {

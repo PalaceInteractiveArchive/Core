@@ -11,8 +11,8 @@ import lombok.Getter;
 import lombok.Setter;
 import network.palace.core.Core;
 import network.palace.core.packets.AbstractPacket;
+import network.palace.core.packets.server.entity.*;
 import network.palace.core.pathfinding.Point;
-import network.palace.core.pathfinding.npc.packets.*;
 import network.palace.core.player.CPlayer;
 import org.bukkit.World;
 import org.bukkit.entity.EntityType;
@@ -20,11 +20,8 @@ import org.bukkit.util.Vector;
 
 import java.util.*;
 
-/**
- * @author Innectic
- * @since 1/21/2017
- */
 public abstract class AbstractMob implements Observable<NPCObserver> {
+
     @Getter private Point location;
     @Getter private Integer headYaw;
     @Getter private final World world;
@@ -40,7 +37,7 @@ public abstract class AbstractMob implements Observable<NPCObserver> {
     @Setter private float health = 0;
     @Getter @Setter private boolean onFire, crouched, sprinting, blocking, invisible, showingNametag = true;
 
-    private IdManager idManager;
+    private IDManager idManager;
 
     protected abstract EntityType getEntityType();
     public abstract float getMaximumHealth();
@@ -64,7 +61,7 @@ public abstract class AbstractMob implements Observable<NPCObserver> {
         this.spawned = false;
         this.customName = title;
 
-        this.idManager = new IdManager();
+        this.idManager = new IDManager();
 
         this.id = idManager.getNextId();
     }
@@ -137,7 +134,7 @@ public abstract class AbstractMob implements Observable<NPCObserver> {
 
     private WrapperPlayServerEntityDestroy getDespawnPacket() {
         WrapperPlayServerEntityDestroy packet = new WrapperPlayServerEntityDestroy();
-        packet.setEntities(new int[]{id});
+        packet.setEntityIds(new int[]{id});
         return packet;
     }
 
@@ -166,8 +163,8 @@ public abstract class AbstractMob implements Observable<NPCObserver> {
         packet.setX(location.getX());
         packet.setY(location.getY());
         packet.setZ(location.getZ());
-        packet.setHeadPitch(location.getPitch()); //TODO check over this and set a default, or get an enum of different directions the head can be.
-        packet.setHeadYaw(location.getYaw());
+        packet.setPitch(location.getPitch()); //TODO check over this and set a default, or get an enum of different directions the head can be.
+        packet.setHeadPitch(location.getYaw());
         updateDataWatcher();
         packet.setMetadata(dataWatcher);
         packet.setType(getEntityType());
@@ -176,7 +173,7 @@ public abstract class AbstractMob implements Observable<NPCObserver> {
 
     private WrapperPlayServerEntityStatus getStatusPacket(Integer status) {
         WrapperPlayServerEntityStatus packet = new WrapperPlayServerEntityStatus();
-        packet.setEntityId(id);
+        packet.setEntityID(id);
         packet.setEntityStatus(status);
         return packet;
     }
@@ -230,8 +227,8 @@ public abstract class AbstractMob implements Observable<NPCObserver> {
                     getClass().getSimpleName() + " ) =" + watchableObject.getValue() + " (" + watchableObject.getHandleType().getName() + ")");
         }
 
-        packet.setEntityMetadata(watchableObjects);
-        packet.setEntityId(id);
+        packet.setMetadata(watchableObjects);
+        packet.setEntityID(id);
 
         for (CPlayer player : getTargets()) {
             packet.sendPacket(player);
@@ -248,8 +245,8 @@ public abstract class AbstractMob implements Observable<NPCObserver> {
         AbstractPacket packet;
 
         if (location.distanceSquared(point) <= 16) {
-            WrapperPlayServerEntityMoveLook moveLookPacket = new WrapperPlayServerEntityMoveLook();
-            moveLookPacket.setEntityId(id);
+            WrapperPlayServerRelEntityMoveLook moveLookPacket = new WrapperPlayServerRelEntityMoveLook();
+            moveLookPacket.setEntityID(id);
             moveLookPacket.setDx(point.getX() - location.getX());
             moveLookPacket.setDy(point.getY() - location.getY());
             moveLookPacket.setDz(point.getZ() - location.getZ());
@@ -260,7 +257,7 @@ public abstract class AbstractMob implements Observable<NPCObserver> {
             packet = moveLookPacket;
         } else {
             WrapperPlayServerEntityTeleport packet1 = new WrapperPlayServerEntityTeleport();
-            packet1.setEntityId(id);
+            packet1.setEntityID(id);
             packet1.setX(point.getX());
             packet1.setY(point.getY());
             packet1.setZ(point.getZ());
@@ -275,7 +272,7 @@ public abstract class AbstractMob implements Observable<NPCObserver> {
 
     public final void addVelocity(Vector vector) {
         WrapperPlayServerEntityVelocity packet = new WrapperPlayServerEntityVelocity();
-        packet.setEntityId(id);
+        packet.setEntityID(id);
 
         packet.setVelocityX(vector.getX());
         packet.setVelocityY(vector.getY());
@@ -290,7 +287,7 @@ public abstract class AbstractMob implements Observable<NPCObserver> {
         if (!spawned) throw new IllegalStateException("You cannot modify the rotation of the head of a non-spawned entity!");
         headYaw = headYaw + parts;
         WrapperPlayServerEntityHeadRotation packet = new WrapperPlayServerEntityHeadRotation();
-        packet.setEntityId(id);
+        packet.setEntityID(id);
         packet.setHeadYaw(headYaw);
         for (CPlayer player : getTargets()) {
             packet.sendPacket(player);
@@ -331,9 +328,9 @@ public abstract class AbstractMob implements Observable<NPCObserver> {
         @Override
         public void onPacketReceiving(PacketEvent event) {
             WrapperPlayClientUseEntity packet = new WrapperPlayClientUseEntity(event.getPacket());
-            if (packet.getTargetId() != watchingFor.getId()) return;
+            if (packet.getTargetID() != watchingFor.getId()) return;
             CPlayer onlinePlayer = Core.getPlayerManager().getPlayer(event.getPlayer());
-            ClickAction clickAction = ClickAction.valueOf(packet.getMouse().name());
+            ClickAction clickAction = ClickAction.valueOf(packet.getType().name());
             for (NPCObserver npcObserver : watchingFor.getObservers()) {
                 try {
                     npcObserver.onPlayerInteract(onlinePlayer, watchingFor, clickAction);

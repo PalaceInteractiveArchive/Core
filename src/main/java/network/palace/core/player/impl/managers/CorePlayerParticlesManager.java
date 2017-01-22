@@ -2,7 +2,7 @@ package network.palace.core.player.impl.managers;
 
 import com.comphenix.protocol.wrappers.EnumWrappers;
 import lombok.AllArgsConstructor;
-import network.palace.core.packets.server.WrapperPlayServerWorldParticles;
+import network.palace.core.packets.server.particles.WrapperPlayServerWorldParticles;
 import network.palace.core.player.CPlayer;
 import network.palace.core.player.CPlayerParticlesManager;
 import org.bukkit.Location;
