@@ -13,6 +13,7 @@ import network.palace.core.Core;
 import network.palace.core.packets.AbstractPacket;
 import network.palace.core.packets.server.entity.*;
 import network.palace.core.pathfinding.Point;
+import network.palace.core.pathfinding.npc.status.Status;
 import network.palace.core.player.CPlayer;
 import org.bukkit.World;
 import org.bukkit.entity.EntityType;
@@ -23,7 +24,7 @@ import java.util.*;
 public abstract class AbstractMob implements Observable<NPCObserver> {
 
     @Getter private Point location;
-    @Getter private Integer headYaw;
+    @Getter private int headYaw;
     @Getter private final World world;
     private final Set<CPlayer> viewers;
     private final Set<NPCObserver> observers;
@@ -35,7 +36,7 @@ public abstract class AbstractMob implements Observable<NPCObserver> {
 
     @Getter @Setter private String customName;
     @Setter private float health = 0;
-    @Getter @Setter private boolean onFire, crouched, sprinting, blocking, invisible, showingNametag = true;
+    @Getter @Setter private boolean onFire, crouched, sprinting, invisible, showingNametag = true;
 
     private IDManager idManager;
 
@@ -53,16 +54,12 @@ public abstract class AbstractMob implements Observable<NPCObserver> {
         this.location = location.deepCopy();
         this.world = world;
         this.viewers = new HashSet<>();
-
         if (observers != null) this.viewers.addAll(observers);
-
         this.dataWatcher = new WrappedDataWatcher();
         this.observers = new HashSet<>();
         this.spawned = false;
         this.customName = title;
-
         this.idManager = new IDManager();
-
         this.id = idManager.getNextId();
     }
 
@@ -105,10 +102,8 @@ public abstract class AbstractMob implements Observable<NPCObserver> {
     }
 
     protected final CPlayer[] getTargets() {
-        CPlayer[] cPlayers = (this.viewers.size() == 0 ? Core.getPlayerManager().getOnlinePlayers() : this.viewers).
-                toArray(new CPlayer[this.viewers.size()]);
+        CPlayer[] cPlayers = (this.viewers.size() == 0 ? Core.getPlayerManager().getOnlinePlayers() : this.viewers).toArray(new CPlayer[this.viewers.size()]);
         CPlayer[] players = new CPlayer[cPlayers.length];
-
         int x = 0;
         for (int i = 0; i < cPlayers.length; i++) {
             CPlayer player = cPlayers[x];
@@ -171,22 +166,21 @@ public abstract class AbstractMob implements Observable<NPCObserver> {
         return packet;
     }
 
-    private WrapperPlayServerEntityStatus getStatusPacket(Integer status) {
+    private WrapperPlayServerEntityStatus getStatusPacket(int status) {
         WrapperPlayServerEntityStatus packet = new WrapperPlayServerEntityStatus();
         packet.setEntityID(id);
         packet.setEntityStatus(status);
         return packet;
     }
 
-    protected final void playStatus(Set<CPlayer> players, Integer status) {
+    protected final void playStatus(Set<CPlayer> players, int status) {
         WrapperPlayServerEntityStatus packet = getStatusPacket(status);
-        CPlayer[] targets = getTargets();
         for (CPlayer player : players) {
             packet.sendPacket(player);
         }
     }
 
-    protected final void playStatus(Integer status) {
+    protected final void playStatus(int status) {
         WrapperPlayServerEntityStatus packet = getStatusPacket(status);
         for (CPlayer player : getTargets()) {
             packet.sendPacket(player);
@@ -194,17 +188,17 @@ public abstract class AbstractMob implements Observable<NPCObserver> {
     }
 
     public final void playHurtAnimation() {
-        playStatus(2);
+        playStatus(Status.ENTITY_HURT);
     }
     public final void playDeadAnimation() {
-        playStatus(3);
+        playStatus(Status.ENTITY_DEAD);
     }
 
     public final void playHurtAnimation(Set<CPlayer> players) {
-        playStatus(players, 2);
+        playStatus(players, Status.ENTITY_HURT);
     }
     public final void playDeadAnimation(Set<CPlayer> players) {
-        playStatus(players, 3);
+        playStatus(players, Status.ENTITY_DEAD);
     }
 
     public final void update() {
@@ -212,28 +206,25 @@ public abstract class AbstractMob implements Observable<NPCObserver> {
         updateDataWatcher();
         WrapperPlayServerEntityMetadata packet = new WrapperPlayServerEntityMetadata();
         List<WrappedWatchableObject> watchableObjects = new ArrayList<>();
-
         if (lastDataWatcher == null) {
             watchableObjects.addAll(dataWatcher.getWatchableObjects());
         } else {
             for (WrappedWatchableObject watchableObject : dataWatcher.getWatchableObjects()) {
                 Object object = lastDataWatcher.getObject(watchableObject.getIndex());
-                if (object == null || !object.equals(watchableObject.getValue())) watchableObjects.add(watchableObject);
+                if (object == null || !object.equals(watchableObject.getValue())) {
+                    watchableObjects.add(watchableObject);
+                }
             }
         }
-
         for (WrappedWatchableObject watchableObject : watchableObjects) {
             Core.debugLog("Sending update on " + watchableObject.getIndex() + " for #" + id + " (" +
                     getClass().getSimpleName() + " ) =" + watchableObject.getValue() + " (" + watchableObject.getHandleType().getName() + ")");
         }
-
         packet.setMetadata(watchableObjects);
         packet.setEntityID(id);
-
         for (CPlayer player : getTargets()) {
             packet.sendPacket(player);
         }
-
         lastDataWatcher = dataWatcher.deepClone();
         onUpdate();
     }
@@ -243,17 +234,14 @@ public abstract class AbstractMob implements Observable<NPCObserver> {
         final Point location = this.location;
         this.location = point;
         AbstractPacket packet;
-
         if (location.distanceSquared(point) <= 16) {
             WrapperPlayServerRelEntityMoveLook moveLookPacket = new WrapperPlayServerRelEntityMoveLook();
             moveLookPacket.setEntityID(id);
             moveLookPacket.setDx(point.getX() - location.getX());
             moveLookPacket.setDy(point.getY() - location.getY());
             moveLookPacket.setDz(point.getZ() - location.getZ());
-
             moveLookPacket.setPitch(point.getPitch());
             moveLookPacket.setYaw(point.getYaw());
-
             packet = moveLookPacket;
         } else {
             WrapperPlayServerEntityTeleport packet1 = new WrapperPlayServerEntityTeleport();
@@ -295,21 +283,33 @@ public abstract class AbstractMob implements Observable<NPCObserver> {
     }
 
     protected final void updateDataWatcher() {
-        dataWatcher.setObject(6, getHealth());
-        if (showingNametag) dataWatcher.setObject(3, (byte)1);
-        else if (dataWatcher.getObject(3) != null) dataWatcher.removeObject(3);
-        if (customName != null) dataWatcher.setObject(10, customName.substring(0, Math.min(customName.length(), 64)));
-        else if (dataWatcher.getObject(10) != null) dataWatcher.removeObject(10);
-        if (customName != null) dataWatcher.setObject(2, customName.substring(0, Math.min(customName.length(), 64)));
-        else if (dataWatcher.getObject(10) != null) dataWatcher.removeObject(2);
+        WrappedDataWatcher.Serializer floatSerializer = WrappedDataWatcher.Registry.get(Float.class);
+        WrappedDataWatcher.Serializer booleanSerializer = WrappedDataWatcher.Registry.get(Boolean.class);
+        WrappedDataWatcher.Serializer stringSerializer = WrappedDataWatcher.Registry.get(String.class);
+        WrappedDataWatcher.Serializer byteSerializer = WrappedDataWatcher.Registry.get(Byte.class);
 
+        WrappedDataWatcher.WrappedDataWatcherObject healthW = new WrappedDataWatcher.WrappedDataWatcherObject(7, floatSerializer);
+        WrappedDataWatcher.WrappedDataWatcherObject showNametagW = new WrappedDataWatcher.WrappedDataWatcherObject(3, booleanSerializer);
+        WrappedDataWatcher.WrappedDataWatcherObject customNameW = new WrappedDataWatcher.WrappedDataWatcherObject(2, stringSerializer);
+        WrappedDataWatcher.WrappedDataWatcherObject metadata = new WrappedDataWatcher.WrappedDataWatcherObject(0, byteSerializer);
+
+        dataWatcher.setObject(healthW, getHealth());
+        if (showingNametag) {
+            dataWatcher.setObject(showNametagW, true);
+        } else if (dataWatcher.getObject(3) != null) {
+            dataWatcher.remove(3);
+        }
+        if (customName != null) {
+            dataWatcher.setObject(customNameW, customName.substring(0, Math.min(customName.length(), 64)));
+        } else if (dataWatcher.getObject(2) != null) {
+            dataWatcher.remove(2);
+        }
         byte zeroByte = 0;
         if (onFire) zeroByte |= 0x01;
         if (crouched) zeroByte |= 0x02;
         if (sprinting) zeroByte |= 0x08;
-        if (blocking) zeroByte |= 0x10;
         if (invisible) zeroByte |= 0x20;
-        dataWatcher.setObject(0, zeroByte);
+        dataWatcher.setObject(metadata, zeroByte);
         onDataWatcherUpdate();
     }
 
@@ -318,6 +318,7 @@ public abstract class AbstractMob implements Observable<NPCObserver> {
     }
 
     private static class InteractWatcher extends PacketAdapter {
+
         private final AbstractMob watchingFor;
 
         public InteractWatcher(AbstractMob watchingFor) {
@@ -330,12 +331,14 @@ public abstract class AbstractMob implements Observable<NPCObserver> {
             WrapperPlayClientUseEntity packet = new WrapperPlayClientUseEntity(event.getPacket());
             if (packet.getTargetID() != watchingFor.getId()) return;
             CPlayer onlinePlayer = Core.getPlayerManager().getPlayer(event.getPlayer());
-            ClickAction clickAction = ClickAction.valueOf(packet.getType().name());
-            for (NPCObserver npcObserver : watchingFor.getObservers()) {
-                try {
-                    npcObserver.onPlayerInteract(onlinePlayer, watchingFor, clickAction);
-                } catch (Exception e) {
-                    e.printStackTrace();
+            ClickAction clickAction = ClickAction.from(packet.getType().name());
+            if (clickAction != null) {
+                for (NPCObserver npcObserver : watchingFor.getObservers()) {
+                    try {
+                        npcObserver.onPlayerInteract(onlinePlayer, watchingFor, clickAction);
+                    } catch (Exception e) {
+                        e.printStackTrace();
+                    }
                 }
             }
             event.setCancelled(true);

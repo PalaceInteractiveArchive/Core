@@ -1,17 +1,15 @@
 package network.palace.core.pathfinding.npc;
 
-import com.comphenix.protocol.wrappers.EnumWrappers;
-
 public enum ClickAction {
 
     RIGHT_CLICK,
     LEFT_CLICK;
 
-    public static ClickAction valueOf(EnumWrappers.EntityUseAction action) {
+    public static ClickAction from(String action) {
         switch (action) {
-            case INTERACT:
+            case "INTERACT":
                 return RIGHT_CLICK;
-            case ATTACK:
+            case "ATTACK":
                 return LEFT_CLICK;
         }
         return null;

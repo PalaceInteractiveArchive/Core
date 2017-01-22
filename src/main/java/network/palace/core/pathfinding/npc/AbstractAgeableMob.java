@@ -1,5 +1,6 @@
 package network.palace.core.pathfinding.npc;
 
+import com.comphenix.protocol.wrappers.WrappedDataWatcher;
 import lombok.Setter;
 import network.palace.core.pathfinding.Point;
 import network.palace.core.player.CPlayer;
@@ -9,7 +10,7 @@ import java.util.Set;
 
 public abstract class AbstractAgeableMob extends AbstractMob {
 
-    @Setter private boolean adult = true;
+    @Setter private boolean baby = false;
 
     public AbstractAgeableMob(Point location, World world, Set<CPlayer> observers, String title) {
         super(location, world, observers, title);
@@ -18,6 +19,8 @@ public abstract class AbstractAgeableMob extends AbstractMob {
     @Override
     protected void onDataWatcherUpdate() {
         super.onDataWatcherUpdate();
-        getDataWatcher().setObject(12, (byte) (adult ? 1 : -1));
+        WrappedDataWatcher.Serializer booleanSerializer = WrappedDataWatcher.Registry.get(Boolean.class);
+        WrappedDataWatcher.WrappedDataWatcherObject adultW = new WrappedDataWatcher.WrappedDataWatcherObject(12, booleanSerializer);
+        getDataWatcher().setObject(adultW, baby);
     }
 }

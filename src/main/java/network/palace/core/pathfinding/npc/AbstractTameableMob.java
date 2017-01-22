@@ -1,5 +1,6 @@
 package network.palace.core.pathfinding.npc;
 
+import com.comphenix.protocol.wrappers.WrappedDataWatcher;
 import network.palace.core.pathfinding.Point;
 import network.palace.core.player.CPlayer;
 import org.bukkit.World;
@@ -19,12 +20,15 @@ public abstract class AbstractTameableMob extends AbstractAgeableMob {
     @Override
     protected void onDataWatcherUpdate() {
         super.onDataWatcherUpdate();
+        WrappedDataWatcher.Serializer byteSerializer = WrappedDataWatcher.Registry.get(Byte.class);
+        WrappedDataWatcher.WrappedDataWatcherObject metadata = new WrappedDataWatcher.WrappedDataWatcherObject(13, byteSerializer);
         byte value = 0;
         if (sitting) value |= 0x01;
         if (tame) value |= 0x04;
-        getDataWatcher().setObject(16, value);
-        if (ownerName == null) ownerName = "Notch";
-        getDataWatcher().setObject(17, ownerName);
+        getDataWatcher().setObject(metadata, value);
+        // TODO Fix
+        //if (ownerName == null) ownerName = "Notch";
+        //getDataWatcher().setObject(14, ownerName);
     }
 
     public void playHeartParticles() {
