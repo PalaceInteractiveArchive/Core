@@ -1,6 +1,6 @@
 package network.palace.core.player.impl.managers;
 
-import network.palace.core.packets.server.WrapperPlayServerResourcePackSend;
+import network.palace.core.packets.server.resourcepack.WrapperPlayServerResourcePackSend;
 import network.palace.core.player.CPlayer;
 import network.palace.core.player.CPlayerResourcePackManager;
 import lombok.AllArgsConstructor;

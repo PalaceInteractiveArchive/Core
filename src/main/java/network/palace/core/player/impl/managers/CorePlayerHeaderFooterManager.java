@@ -1,6 +1,6 @@
 package network.palace.core.player.impl.managers;
 
-import network.palace.core.packets.server.WrapperPlayServerPlayerListHeaderFooter;
+import network.palace.core.packets.server.playerlist.WrapperPlayServerPlayerListHeaderFooter;
 import network.palace.core.player.CPlayer;
 import network.palace.core.player.CPlayerHeaderFooterManager;
 import com.comphenix.protocol.wrappers.WrappedChatComponent;
