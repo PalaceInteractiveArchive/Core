@@ -17,9 +17,11 @@ import java.util.Set;
 
 public final class SoftNPCManager implements Listener {
 
+    @Getter private IDManager idManager;
     @Getter private final Set<WeakReference<AbstractMob>> mobRefs = new HashSet<>();
 
     public SoftNPCManager() {
+        idManager = new IDManager();
         Core.registerListener(this);
     }
 

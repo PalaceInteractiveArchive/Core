@@ -39,8 +39,6 @@ public abstract class AbstractMob implements Observable<NPCObserver> {
     @Setter private float health = 0;
     @Getter @Setter private boolean onFire, crouched, sprinting, invisible, showingNametag = true;
 
-    private IDManager idManager;
-
     protected abstract EntityType getEntityType();
     public abstract float getMaximumHealth();
     protected void onUpdate() {}
@@ -59,8 +57,7 @@ public abstract class AbstractMob implements Observable<NPCObserver> {
         this.observers = new HashSet<>();
         this.spawned = false;
         this.customName = title;
-        this.idManager = new IDManager();
-        this.id = idManager.getNextId();
+        this.id = Core.getSoftNPCManager().getIdManager().getNextId();
     }
 
     private InteractWatcher createNewInteractWatcher() {
@@ -262,11 +259,9 @@ public abstract class AbstractMob implements Observable<NPCObserver> {
     public final void addVelocity(Vector vector) {
         WrapperPlayServerEntityVelocity packet = new WrapperPlayServerEntityVelocity();
         packet.setEntityID(id);
-
         packet.setVelocityX(vector.getX());
         packet.setVelocityY(vector.getY());
         packet.setVelocityZ(vector.getZ());
-
         for (CPlayer player : getTargets()) {
             packet.sendPacket(player);
         }
