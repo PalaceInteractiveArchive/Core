@@ -29,4 +29,13 @@ public class MiscUtil {
     public static String capitalizeFirstLetter(String input) {
         return input.substring(0, 1).toUpperCase() + input.substring(1);
     }
+
+    public static <T> boolean contains(T[] ts, T t) {
+        if (t == null || ts == null) return false;
+        for (T t1 : ts) {
+            if (t1 == null) continue;
+            if (t1.equals(t)) return true;
+        }
+        return false;
+    }
 }

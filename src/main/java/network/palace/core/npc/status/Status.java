@@ -1,4 +1,4 @@
-package network.palace.core.pathfinding.npc.status;
+package network.palace.core.npc.status;
 
 public class Status {
     public static final int ENTITY_HURT = 2;

@@ -78,4 +78,15 @@ public class Point implements Cloneable {
     public Point subtract(Point point) {
         return subtract(point.getX(), point.getY(), point.getZ());
     }
+
+    @Override
+    public String toString() {
+        return "Point [" +
+                "x=" + x +
+                ", y=" + y +
+                ", z=" + z +
+                ", pitch=" + pitch +
+                ", yaw=" + yaw +
+                "]";
+    }
 }

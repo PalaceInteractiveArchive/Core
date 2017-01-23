@@ -13,6 +13,7 @@ import network.palace.core.config.YAMLConfigurationFile;
 import network.palace.core.dashboard.DashboardConnection;
 import network.palace.core.economy.EconomyManager;
 import network.palace.core.library.LibraryHandler;
+import network.palace.core.npc.SoftNPCManager;
 import network.palace.core.packets.adapters.SettingsAdapter;
 import network.palace.core.permissions.PermissionManager;
 import network.palace.core.player.CPlayerManager;
@@ -59,6 +60,7 @@ public class Core extends JavaPlugin {
     private EconomyManager economyManager;
     private ResourceManager resourceManager;
     private AchievementManager achievementManager;
+    private SoftNPCManager softNPCManager;
 
     private CoreCommandMap commandMap;
     private SqlUtil sqlUtil;
@@ -92,6 +94,7 @@ public class Core extends JavaPlugin {
         resourceManager = new ResourceManager();
         economyManager = new EconomyManager();
         achievementManager = new AchievementManager();
+        softNPCManager = new SoftNPCManager();
         // Core command map
         commandMap = new CoreCommandMap(this);
         // Dashboard
@@ -277,6 +280,15 @@ public class Core extends JavaPlugin {
     }
 
     /**
+     * Gets soft npc manager.
+     *
+     * @return the soft npc manager
+     */
+    public static SoftNPCManager getSoftNPCManager() {
+        return getInstance().softNPCManager;
+    }
+
+    /**
      * Gets sql util.
      *
      * @return the sql util
@@ -431,6 +443,16 @@ public class Core extends JavaPlugin {
      */
     public static int runTaskTimer(Runnable task, long delay, long period) {
         return Bukkit.getScheduler().runTaskTimer(getInstance(), task, delay, period).getTaskId();
+    }
+
+    /**
+     * Run task int.
+     *
+     * @param task the task
+     * @return the task id
+     */
+    public static int runTask(Runnable task) {
+        return Bukkit.getScheduler().runTask(getInstance(), task).getTaskId();
     }
 
     /**
