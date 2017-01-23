@@ -60,9 +60,9 @@ public class CorePlayerDefaultScoreboard implements Listener {
         // Store link #Sellout
         scoreboard.set(0, ChatColor.YELLOW + "store.palace.network");
         // Load balance async
-        loadBalance(player, scoreboard, 7);
+        loadBalance(player, scoreboard, 9);
         // Load tokens async
-        loadTokens(player, scoreboard, 5);
+        loadTokens(player, scoreboard, 7);
     }
 
     /**
@@ -76,7 +76,7 @@ public class CorePlayerDefaultScoreboard implements Listener {
         for (CPlayer player : Core.getPlayerManager().getOnlinePlayers()) {
             if (player.getStatus() != PlayerStatus.JOINED) return;
             if (!player.getScoreboard().isSetup()) return;
-            player.getScoreboard().set(1, ChatColor.GREEN + "Online Players: " + playerCount);
+            player.getScoreboard().set(3, ChatColor.GREEN + "Online Players: " + playerCount);
         }
     }
 
@@ -92,9 +92,9 @@ public class CorePlayerDefaultScoreboard implements Listener {
         CPlayer player = Core.getPlayerManager().getPlayer(event.getUuid());
         if (player == null) return;
         if (isBalance) {
-            setBalance(7, player.getScoreboard(), amount);
+            setBalance(9, player.getScoreboard(), amount);
         } else {
-            setTokens(5, player.getScoreboard(), amount);
+            setTokens(7, player.getScoreboard(), amount);
         }
     }
 
