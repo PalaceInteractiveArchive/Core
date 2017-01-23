@@ -38,23 +38,25 @@ public class CorePlayerDefaultScoreboard implements Listener {
         // Title
         scoreboard.title(ChatColor.GOLD + "" + ChatColor.BOLD + "The " + ChatColor.DARK_PURPLE + ChatColor.BOLD + "Palace " + ChatColor.GOLD + "" + ChatColor.BOLD + "Network");
         // Blank space
-        scoreboard.setBlank(9);
+        scoreboard.setBlank(10);
         // Balance temp
-        scoreboard.set(8, ChatColor.GREEN + "$ Loading...");
+        scoreboard.set(9, ChatColor.GREEN + "$ Loading...");
         // Blank space
-        scoreboard.setBlank(7);
+        scoreboard.setBlank(8);
         // Tokens temp
-        scoreboard.set(6, ChatColor.GREEN + "\u272a Loading...");
+        scoreboard.set(7, ChatColor.GREEN + "\u272a Loading...");
         // Blank space
-        scoreboard.setBlank(5);
+        scoreboard.setBlank(6);
         // Rank
-        scoreboard.set(4, ChatColor.GREEN + "Rank: " + player.getRank().getTagColor() + player.getRank().getName());
+        scoreboard.set(5, ChatColor.GREEN + "Rank: " + player.getRank().getTagColor() + player.getRank().getName());
         // Blank space
-        scoreboard.setBlank(3);
+        scoreboard.setBlank(4);
         // Players number
-        scoreboard.set(2, ChatColor.GREEN + "Online Players: " + playerCount);
+        scoreboard.set(3, ChatColor.GREEN + "Online Players: " + playerCount);
         // Server name
-        scoreboard.set(1, ChatColor.GREEN + "Server: " + Core.getServerType());
+        scoreboard.set(2, ChatColor.GREEN + "Server: " + Core.getServerType());
+        // Blank
+        scoreboard.setBlank(1);
         // Store link #Sellout
         scoreboard.set(0, ChatColor.YELLOW + "store.palace.network");
         // Load balance async
