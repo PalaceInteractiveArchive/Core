@@ -10,6 +10,7 @@ public class IDManager {
 
     public int getNextId() {
         do {
+            CURRENT++;
         } while (isDuplicate(CURRENT));
         return CURRENT;
     }

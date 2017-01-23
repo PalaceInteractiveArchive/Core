@@ -61,6 +61,8 @@ public abstract class AbstractPacket {
      * @throws RuntimeException If the packet cannot be sent.
      */
     public void sendPacket(CPlayer player) {
+        if (player == null) return;
+        if (player.getBukkitPlayer() == null) return;
         try {
             ProtocolLibrary.getProtocolManager().sendServerPacket(player.getBukkitPlayer(), getHandle());
         } catch (InvocationTargetException e) {

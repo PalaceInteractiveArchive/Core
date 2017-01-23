@@ -15,6 +15,7 @@ import network.palace.core.packets.server.entity.*;
 import network.palace.core.pathfinding.Point;
 import network.palace.core.npc.status.Status;
 import network.palace.core.player.CPlayer;
+import org.bukkit.Location;
 import org.bukkit.World;
 import org.bukkit.entity.EntityType;
 import org.bukkit.util.Vector;
@@ -58,6 +59,7 @@ public abstract class AbstractMob implements Observable<NPCObserver> {
         this.spawned = false;
         this.customName = title;
         this.id = Core.getSoftNPCManager().getIdManager().getNextId();
+        Core.logInfo(String.valueOf(id));
     }
 
     private InteractWatcher createNewInteractWatcher() {
@@ -267,9 +269,9 @@ public abstract class AbstractMob implements Observable<NPCObserver> {
         }
     }
 
-    public final void moveHead(byte parts) {
+    public final void setHeadYaw(Location location) {
         if (!spawned) throw new IllegalStateException("You cannot modify the rotation of the head of a non-spawned entity!");
-        headYaw = headYaw + parts;
+        headYaw = (int) location.getYaw();
         WrapperPlayServerEntityHeadRotation packet = new WrapperPlayServerEntityHeadRotation();
         packet.setEntityID(id);
         packet.setHeadYaw(headYaw);
