@@ -7,9 +7,7 @@ import network.palace.core.utils.MiscUtil;
 import org.bukkit.event.EventHandler;
 import org.bukkit.event.EventPriority;
 import org.bukkit.event.Listener;
-import org.bukkit.event.player.PlayerChangedWorldEvent;
-import org.bukkit.event.player.PlayerJoinEvent;
-import org.bukkit.event.player.PlayerRespawnEvent;
+import org.bukkit.event.player.*;
 
 import java.lang.ref.WeakReference;
 import java.util.HashSet;
@@ -37,18 +35,34 @@ public final class SoftNPCManager implements Listener {
             final AbstractMob npcMob = mobRef.get();
             if (npcMob == null) continue;
             if (npcMob.isSpawned() && npcMob.getViewers().size() == 0) {
-                npcMob.forceSpawn(player);
+                if (event.getPlayer().getWorld().equals(npcMob.getWorld())) {
+                    npcMob.forceSpawn(player);
+                }
             }
         }
     }
 
     @EventHandler
-    public void onPlayerDisconnect(CPlayer player) {
+    public void onPlayerQuit(PlayerQuitEvent event) {
         ensureAllValid();
+        CPlayer player = Core.getPlayerManager().getPlayer(event.getPlayer());
         for (WeakReference<AbstractMob> mobRef : mobRefs) {
             final AbstractMob npcMob = mobRef.get();
             if (npcMob == null) continue;
             if (npcMob.getViewers().contains(player)) npcMob.removeViewer(player);
+            npcMob.forceDespawn(player);
+        }
+    }
+
+    @EventHandler
+    public void onPlayerKick(PlayerKickEvent event) {
+        ensureAllValid();
+        CPlayer player = Core.getPlayerManager().getPlayer(event.getPlayer());
+        for (WeakReference<AbstractMob> mobRef : mobRefs) {
+            final AbstractMob npcMob = mobRef.get();
+            if (npcMob == null) continue;
+            if (npcMob.getViewers().contains(player)) npcMob.removeViewer(player);
+            npcMob.forceDespawn(player);
         }
     }
 
@@ -60,8 +74,11 @@ public final class SoftNPCManager implements Listener {
             final AbstractMob npcMob = mobRef.get();
             if (npcMob == null) continue;
             if (!npcMob.isSpawned()) continue;
-            if (!npcMob.getWorld().equals(event.getRespawnLocation().getWorld())) continue;
-            Core.runTask(() -> npcMob.forceSpawn(player));
+            if (npcMob.getWorld().equals(event.getRespawnLocation().getWorld())) {
+                npcMob.forceSpawn(player);
+            } else {
+                npcMob.forceDespawn(player);
+            }
         }
     }
 
@@ -72,7 +89,13 @@ public final class SoftNPCManager implements Listener {
         for (WeakReference<AbstractMob> mobRef : mobRefs) {
             AbstractMob mobNPC = mobRef.get();
             if (mobNPC == null || mobNPC.getViewers().size() != 0 && MiscUtil.contains(mobNPC.getTargets(), event.getPlayer())) continue;
-            if (mobNPC.getWorld() == null || event.getPlayer().getWorld().equals(mobNPC.getWorld())) mobNPC.forceSpawn(player);
+            if (mobNPC.getWorld() == null) {
+                if (event.getPlayer().getWorld().equals(mobNPC.getWorld())) {
+                    mobNPC.forceSpawn(player);
+                } else {
+                    mobNPC.forceDespawn(player);
+                }
+            }
         }
     }
 }

@@ -59,7 +59,6 @@ public abstract class AbstractMob implements Observable<NPCObserver> {
         this.spawned = false;
         this.customName = title;
         this.id = Core.getSoftNPCManager().getIdManager().getNextId();
-        Core.logInfo(String.valueOf(id));
     }
 
     private InteractWatcher createNewInteractWatcher() {
