@@ -1,7 +1,6 @@
 package network.palace.core.achievements;
 
 import network.palace.core.Core;
-import org.bukkit.Bukkit;
 import org.json.simple.JSONArray;
 import org.json.simple.JSONObject;
 import org.json.simple.parser.JSONParser;
@@ -26,7 +25,9 @@ public class AchievementManager {
     public AchievementManager() {
         Core.runTaskTimerAsynchronously(this::reload, 0L, 6000L);
         Core.runTaskTimerAsynchronously(() -> {
-            try (Connection connection = Core.getSqlUtil().getConnection()) {
+            Connection connection = Core.getSqlUtil().getConnection();
+            if (connection == null) return;
+            try {
                 if (earned.isEmpty()) {
                     return;
                 }

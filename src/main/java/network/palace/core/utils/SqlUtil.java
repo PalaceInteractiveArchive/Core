@@ -45,7 +45,9 @@ public class SqlUtil {
         try {
             return DriverManager.getConnection(url, user, password);
         } catch (SQLException e) {
-            Core.logMessage("Core", ChatColor.RED + "Could not connect to database!");
+            if (!Core.isDashboardAndSqlDisabled()) {
+                Core.logMessage("Core", ChatColor.RED + "Could not connect to database!");
+            }
             return null;
         }
     }
@@ -60,7 +62,7 @@ public class SqlUtil {
      */
     public Rank getRank(UUID uuid) {
         Connection connection = getConnection();
-        if (connection == null) return Rank.WIZARD;
+        if (connection == null) return Rank.SETTLER;
         try {
             PreparedStatement sql = connection.prepareStatement("SELECT rank FROM player_data WHERE uuid=?");
             sql.setString(1, uuid.toString());
@@ -87,7 +89,7 @@ public class SqlUtil {
      */
     public Rank getRank(String username) {
         Connection connection = getConnection();
-        if (connection == null) return Rank.WIZARD;
+        if (connection == null) return Rank.SETTLER;
         try {
             PreparedStatement sql = connection.prepareStatement("SELECT rank FROM player_data WHERE username=?");
             sql.setString(1, username);
@@ -305,7 +307,9 @@ public class SqlUtil {
      * @param id     achievement ID
      */
     public void addAchievement(CPlayer player, int id) {
-        try (Connection connection = getConnection()) {
+        Connection connection = getConnection();
+        if (connection == null) return;
+        try {
             PreparedStatement sql = connection.prepareStatement("INSERT INTO achievements (uuid, achid, time) VALUES (?,?,?)");
             sql.setString(1, player.getUniqueId().toString());
             sql.setInt(2, id);
@@ -319,14 +323,16 @@ public class SqlUtil {
 
     public List<Integer> getAchievements(UUID uuid) {
         List<Integer> list = new ArrayList<>();
-        try (Connection connection = getConnection()) {
+        Connection connection = getConnection();
+        if (connection == null) return list;
+        try {
             PreparedStatement ach = connection.prepareStatement("SELECT * FROM achievements WHERE uuid=?");
             ach.setString(1, uuid.toString());
-            ResultSet achresult = ach.executeQuery();
-            while (achresult.next()) {
-                list.add(achresult.getInt("achid"));
+            ResultSet achResult = ach.executeQuery();
+            while (achResult.next()) {
+                list.add(achResult.getInt("achid"));
             }
-            achresult.close();
+            achResult.close();
             ach.close();
         } catch (SQLException e) {
             e.printStackTrace();

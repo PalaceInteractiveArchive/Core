@@ -33,7 +33,7 @@ public class DashboardConnection {
 
     public DashboardConnection() {
         dashboardURL = Core.getCoreConfig().getString("dashboardURL");
-        start();
+        if (!Core.isDashboardAndSqlDisabled()) start();
     }
 
     private void start() {
@@ -126,7 +126,9 @@ public class DashboardConnection {
 
     public void send(String s) {
         if (!isConnected()) {
-            Bukkit.getLogger().severe("WebSocket disconnected, cannot send packet!");
+            if (!Core.isDashboardAndSqlDisabled()) {
+                Bukkit.getLogger().severe("WebSocket disconnected, cannot send packet!");
+            }
             return;
         }
         Core.debugLog("Outgoing: " + s);
@@ -138,6 +140,7 @@ public class DashboardConnection {
     }
 
     public void stop() {
+        if (client == null) return;
         client.close();
     }
 

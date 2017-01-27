@@ -3,7 +3,6 @@ package network.palace.core.economy;
 import network.palace.core.Core;
 import network.palace.core.events.EconomyUpdateEvent;
 import network.palace.core.player.CPlayer;
-import org.bukkit.Bukkit;
 import org.bukkit.ChatColor;
 import org.bukkit.command.CommandSender;
 
@@ -71,7 +70,9 @@ public class EconomyManager {
     }
 
     private void changeBalance(UUID uuid, int amount, String source) {
-        try (Connection connection = Core.getSqlUtil().getConnection()) {
+        Connection connection = Core.getSqlUtil().getConnection();
+        if (connection == null) return;
+        try {
             PreparedStatement sql = connection.prepareStatement("UPDATE player_data SET balance=(balance+?) WHERE uuid=?;");
             sql.setInt(1, amount);
             sql.setString(2, uuid.toString());
@@ -85,7 +86,9 @@ public class EconomyManager {
     }
 
     private void changeTokens(UUID uuid, int amount, String source) {
-        try (Connection connection = Core.getSqlUtil().getConnection()) {
+        Connection connection = Core.getSqlUtil().getConnection();
+        if (connection == null) return;
+        try {
             PreparedStatement sql = connection.prepareStatement("UPDATE player_data SET tokens=(tokens+?) WHERE uuid=?;");
             sql.setInt(1, amount);
             sql.setString(2, uuid.toString());
@@ -107,7 +110,9 @@ public class EconomyManager {
      * @param set    the set
      */
     public void setBalance(UUID uuid, int amount, String source, boolean set) {
-        try (Connection connection = Core.getSqlUtil().getConnection()) {
+        Connection connection = Core.getSqlUtil().getConnection();
+        if (connection == null) return;
+        try {
             PreparedStatement sql = connection.prepareStatement("UPDATE player_data SET balance=? WHERE uuid=?;");
             sql.setInt(1, amount);
             sql.setString(2, uuid.toString());
@@ -131,7 +136,9 @@ public class EconomyManager {
      * @param set    the set
      */
     public void setTokens(UUID uuid, int amount, String source, boolean set) {
-        try (Connection connection = Core.getSqlUtil().getConnection()) {
+        Connection connection = Core.getSqlUtil().getConnection();
+        if (connection == null) return;
+        try {
             PreparedStatement sql = connection.prepareStatement("UPDATE player_data SET tokens=? WHERE uuid=?;");
             sql.setInt(1, amount);
             sql.setString(2, uuid.toString());
@@ -170,7 +177,9 @@ public class EconomyManager {
      * @return the balance
      */
     public int getBalance(CommandSender requester, String name) {
-        try (Connection connection = Core.getSqlUtil().getConnection()) {
+        Connection connection = Core.getSqlUtil().getConnection();
+        if (connection == null) return 0;
+        try {
             PreparedStatement sql = connection.prepareStatement("SELECT balance FROM player_data WHERE username=?");
             sql.setString(1, name);
             ResultSet result = sql.executeQuery();
@@ -200,7 +209,9 @@ public class EconomyManager {
      * @return the balance
      */
     public int getBalance(UUID uuid) {
-        try (Connection connection = Core.getSqlUtil().getConnection()) {
+        Connection connection = Core.getSqlUtil().getConnection();
+        if (connection == null) return 0;
+        try {
             PreparedStatement sql = connection.prepareStatement("SELECT balance FROM player_data WHERE uuid=?");
             sql.setString(1, uuid.toString());
             ResultSet result = sql.executeQuery();
@@ -227,7 +238,9 @@ public class EconomyManager {
      * @return the tokens
      */
     public int getTokens(CommandSender requester, String name) {
-        try (Connection connection = Core.getSqlUtil().getConnection()) {
+        Connection connection = Core.getSqlUtil().getConnection();
+        if (connection == null) return 0;
+        try {
             PreparedStatement sql = connection.prepareStatement("SELECT tokens FROM player_data WHERE username=?");
             sql.setString(1, name);
             ResultSet result = sql.executeQuery();
@@ -257,7 +270,9 @@ public class EconomyManager {
      * @return the tokens
      */
     public int getTokens(UUID uuid) {
-        try (Connection connection = Core.getSqlUtil().getConnection()) {
+        Connection connection = Core.getSqlUtil().getConnection();
+        if (connection == null) return 0;
+        try {
             PreparedStatement sql = connection.prepareStatement("SELECT tokens FROM player_data WHERE uuid=?");
             sql.setString(1, uuid.toString());
             ResultSet result = sql.executeQuery();
@@ -344,7 +359,9 @@ public class EconomyManager {
         if (type.length() > 15) {
             return;
         }
-        try (Connection connection = Core.getSqlUtil().getConnection()) {
+        Connection connection = Core.getSqlUtil().getConnection();
+        if (connection == null) return;
+        try {
             PreparedStatement sql = connection.prepareStatement("INSERT INTO economy_logs (uuid, amount, type, source, server, timestamp)" +
                     " VALUES ('" + uuid.toString() + "', '" + amount + "', '" + type + "', '" + source + "', '" +
                     Core.getInstanceName() + "', '" + System.currentTimeMillis() / 1000 + "')");

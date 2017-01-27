@@ -34,10 +34,12 @@ public class CorePlayerManagerListener implements Listener {
      */
     @EventHandler(ignoreCancelled = true, priority = EventPriority.LOW)
     public void onPlayerLogin(AsyncPlayerPreLoginEvent event) {
-        if (Core.getDashboardConnection() == null || !Core.getDashboardConnection().isConnected() || Core.getSqlUtil() == null || Core.getSqlUtil().getConnection() == null || Core.isStarting()) {
-            event.setKickMessage(ChatColor.AQUA + "Players can not join right now. Try again in a few seconds!");
-            event.setLoginResult(AsyncPlayerPreLoginEvent.Result.KICK_OTHER);
-            return;
+        if (!Core.isDashboardAndSqlDisabled()) {
+            if (Core.getDashboardConnection() == null || !Core.getDashboardConnection().isConnected() || Core.getSqlUtil() == null || Core.getSqlUtil().getConnection() == null || Core.isStarting()) {
+                event.setKickMessage(ChatColor.AQUA + "Players can not join right now. Try again in a few seconds!");
+                event.setLoginResult(AsyncPlayerPreLoginEvent.Result.KICK_OTHER);
+                return;
+            }
         }
         if (event.getLoginResult() == AsyncPlayerPreLoginEvent.Result.ALLOWED) {
             Core.getPlayerManager().playerLoggedIn(event.getUniqueId(), event.getName());

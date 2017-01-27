@@ -52,6 +52,7 @@ public class Core extends JavaPlugin {
     private String serverType = "Hub";
     private String instanceName = "";
     private boolean debug = false;
+    private boolean dashboardAndSqlDisabled = false;
 
     private DashboardConnection dashboardConnection;
 
@@ -80,6 +81,7 @@ public class Core extends JavaPlugin {
         serverType = getCoreConfig().getString("server-type", "Unknown");
         instanceName = getCoreConfig().getString("instance-name", "ServerName");
         debug = getCoreConfig().getBoolean("debug", false);
+        dashboardAndSqlDisabled = getCoreConfig().getBoolean("dashboardAndSqlDisabled", false);
         // Language Manager
         languageManager = new LanguageManager(this);
         // Settings adapter for player locales
@@ -180,6 +182,15 @@ public class Core extends JavaPlugin {
      */
     public static boolean isDebug() {
         return getInstance().debug;
+    }
+
+    /**
+     * Is dashboard and sql disabled.
+     *
+     * @return the boolean
+     */
+    public static boolean isDashboardAndSqlDisabled() {
+        return getInstance().dashboardAndSqlDisabled;
     }
 
     /**

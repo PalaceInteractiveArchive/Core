@@ -6,3 +6,5 @@ server-type: Unknown
 instance-name: ServerName
 dashboardURL: ws://socket.dashboard.playground.palace.network:7892
 isDefaultSidebarEnabled: true
+debug: false
+dashboardAndSqlDisabled: false

@@ -1,7 +1,6 @@
 package network.palace.core.resource;
 
 import com.comphenix.protocol.PacketType;
-import com.comphenix.protocol.ProtocolLibrary;
 import network.palace.core.Core;
 import network.palace.core.dashboard.packets.dashboard.PacketSetPack;
 import network.palace.core.player.CPlayer;
@@ -43,8 +42,8 @@ public class ResourceManager {
      */
     public void initialize() throws SQLException {
         packs.clear();
-        if (Core.getSqlUtil().getConnection() == null) return;
         Connection connection = Core.getSqlUtil().getConnection();
+        if (connection == null) return;
         PreparedStatement sql = connection.prepareStatement("SELECT * FROM resource_packs");
         ResultSet result = sql.executeQuery();
         while (result.next()) {
