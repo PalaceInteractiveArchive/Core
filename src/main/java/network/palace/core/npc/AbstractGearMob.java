@@ -1,86 +1,77 @@
 package network.palace.core.npc;
 
-import com.comphenix.protocol.PacketType;
-import com.comphenix.protocol.ProtocolLibrary;
-import com.comphenix.protocol.events.PacketContainer;
+import com.comphenix.protocol.wrappers.EnumWrappers.ItemSlot;
+import network.palace.core.packets.server.entity.WrapperPlayServerEntityEquipment;
 import network.palace.core.pathfinding.Point;
 import network.palace.core.player.CPlayer;
 import org.bukkit.World;
 import org.bukkit.inventory.ItemStack;
 
-import java.lang.reflect.InvocationTargetException;
-import java.util.Arrays;
-import java.util.HashSet;
 import java.util.Set;
 
 public abstract class AbstractGearMob extends AbstractMob {
 
-    private ItemStack itemInHand;
-    private ItemStack[] armor = new ItemStack[4];
-    private final Set<Integer> gearToUpdate = new HashSet<>();
+    private ItemStack mainHand;
+    private ItemStack offHand;
+    private ItemStack helmet;
+    private ItemStack chestplate;
+    private ItemStack leggings;
+    private ItemStack boots;
 
     public AbstractGearMob(Point location, World world, Set<CPlayer> observers, String title) {
         super(location, world, observers, title);
     }
 
+    public void setMainHand(ItemStack stack) {
+        mainHand = stack;
+        updateSlot(ItemSlot.MAINHAND, mainHand);
+    }
+
+    public void setOffHand(ItemStack stack) {
+        offHand = stack;
+        updateSlot(ItemSlot.OFFHAND, offHand);
+    }
+
     public void setHelmet(ItemStack stack) {
-        armor[3] = stack;
-        gearToUpdate.add(4);
+        helmet = stack;
+        updateSlot(ItemSlot.HEAD, helmet);
     }
 
     public void setChestplate(ItemStack stack) {
-        armor[2] = stack;
-        gearToUpdate.add(3);
+        chestplate = stack;
+        updateSlot(ItemSlot.CHEST, chestplate);
     }
 
     public void setLeggings(ItemStack stack) {
-        armor[1] = stack;
-        gearToUpdate.add(2);
+        leggings = stack;
+        updateSlot(ItemSlot.LEGS, leggings);
+
     }
 
     public void setBoots(ItemStack stack) {
-        armor[0] = stack;
-        gearToUpdate.add(1);
-    }
-
-    public void setArmor(ItemStack[] stacks) {
-        if (stacks.length != 4) throw new IllegalArgumentException("You must pass four items as armor!");
-        armor = stacks;
-        gearToUpdate.addAll(Arrays.asList(1,2,3,4));
-    }
-
-    public void setItemInHand(ItemStack stack) {
-        itemInHand = stack;
-        gearToUpdate.add(0);
+        boots = stack;
+        updateSlot(ItemSlot.FEET, boots);
     }
 
     @Override
     protected void onUpdate() {
         super.onUpdate();
-        updateEquipment();
+        updateSlot(ItemSlot.MAINHAND, mainHand);
+        updateSlot(ItemSlot.OFFHAND, offHand);
+        updateSlot(ItemSlot.HEAD, helmet);
+        updateSlot(ItemSlot.CHEST, chestplate);
+        updateSlot(ItemSlot.LEGS, leggings);
+        updateSlot(ItemSlot.FEET, boots);
     }
 
-    private void updateEquipment() {
-        for (int x = 0; x <= 4; x++) {
-            if (!gearToUpdate.contains(x)) continue;
-            PacketContainer packet = ProtocolLibrary.getProtocolManager().createPacket(PacketType.Play.Server.ENTITY_EQUIPMENT);
-            packet.getIntegers().write(0, id);
-            packet.getShorts().write(1, (short) x);
-            switch (x) {
-                case 0:
-                    packet.getItemModifier().write(2, itemInHand);
-                    break;
-                default:
-                    packet.getItemModifier().write(2, armor[x-1]);
-            }
-            for (CPlayer player : getTargets()) {
-                try {
-                    ProtocolLibrary.getProtocolManager().sendServerPacket(player.getBukkitPlayer(), packet);
-                } catch (InvocationTargetException e) {
-                    e.printStackTrace();
-                }
-            }
+    public void updateSlot(ItemSlot slot, ItemStack itemStack) {
+        if (itemStack == null) return;
+        WrapperPlayServerEntityEquipment wrapper = new WrapperPlayServerEntityEquipment();
+        wrapper.setEntityID(getId());
+        wrapper.setSlot(slot);
+        wrapper.setItem(itemStack);
+        for (CPlayer player : getTargets()) {
+            wrapper.sendPacket(player);
         }
-        gearToUpdate.clear();
     }
 }

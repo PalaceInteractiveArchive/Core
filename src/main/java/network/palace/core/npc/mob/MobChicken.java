@@ -8,9 +8,9 @@ import org.bukkit.entity.EntityType;
 
 import java.util.Set;
 
-public class MobNPCChicken extends AbstractAnimal {
+public class MobChicken extends AbstractAnimal {
 
-    public MobNPCChicken(Point location, World world, Set<CPlayer> observers, String title) {
+    public MobChicken(Point location, World world, Set<CPlayer> observers, String title) {
         super(location, world, observers, title);
     }
 

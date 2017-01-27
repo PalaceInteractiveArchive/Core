@@ -10,10 +10,10 @@ import com.google.common.collect.ImmutableSet;
 import lombok.Getter;
 import lombok.Setter;
 import network.palace.core.Core;
+import network.palace.core.npc.status.Status;
 import network.palace.core.packets.AbstractPacket;
 import network.palace.core.packets.server.entity.*;
 import network.palace.core.pathfinding.Point;
-import network.palace.core.npc.status.Status;
 import network.palace.core.player.CPlayer;
 import org.bukkit.Location;
 import org.bukkit.World;
@@ -58,7 +58,7 @@ public abstract class AbstractMob implements Observable<NPCObserver> {
         this.observers = new HashSet<>();
         this.spawned = false;
         this.customName = title;
-        this.id = Core.getSoftNPCManager().getIdManager().getNextId();
+        this.id = Core.getSoftNPCManager().getIDManager().getNextID();
     }
 
     private InteractWatcher createNewInteractWatcher() {
@@ -280,24 +280,18 @@ public abstract class AbstractMob implements Observable<NPCObserver> {
     }
 
     protected final void updateDataWatcher() {
-        WrappedDataWatcher.Serializer floatSerializer = WrappedDataWatcher.Registry.get(Float.class);
-        WrappedDataWatcher.Serializer booleanSerializer = WrappedDataWatcher.Registry.get(Boolean.class);
-        WrappedDataWatcher.Serializer stringSerializer = WrappedDataWatcher.Registry.get(String.class);
-        WrappedDataWatcher.Serializer byteSerializer = WrappedDataWatcher.Registry.get(Byte.class);
-
-        WrappedDataWatcher.WrappedDataWatcherObject healthW = new WrappedDataWatcher.WrappedDataWatcherObject(7, floatSerializer);
-        WrappedDataWatcher.WrappedDataWatcherObject showNametagW = new WrappedDataWatcher.WrappedDataWatcherObject(3, booleanSerializer);
-        WrappedDataWatcher.WrappedDataWatcherObject customNameW = new WrappedDataWatcher.WrappedDataWatcherObject(2, stringSerializer);
-        WrappedDataWatcher.WrappedDataWatcherObject metadata = new WrappedDataWatcher.WrappedDataWatcherObject(0, byteSerializer);
-
-        dataWatcher.setObject(healthW, getHealth());
+        int healthIndex = 7;
+        int showNameTagIndex = 3;
+        int customNameIndex = 2;
+        int metadataIndex = 0;
+        dataWatcher.setObject(ProtocolLibSerializers.getFloat(healthIndex), getHealth());
         if (showingNametag) {
-            dataWatcher.setObject(showNametagW, true);
+            dataWatcher.setObject(ProtocolLibSerializers.getBoolean(showNameTagIndex), true);
         } else if (dataWatcher.getObject(3) != null) {
             dataWatcher.remove(3);
         }
         if (customName != null) {
-            dataWatcher.setObject(customNameW, customName.substring(0, Math.min(customName.length(), 64)));
+            dataWatcher.setObject(ProtocolLibSerializers.getString(customNameIndex), customName.substring(0, Math.min(customName.length(), 64)));
         } else if (dataWatcher.getObject(2) != null) {
             dataWatcher.remove(2);
         }
@@ -306,7 +300,7 @@ public abstract class AbstractMob implements Observable<NPCObserver> {
         if (crouched) zeroByte |= 0x02;
         if (sprinting) zeroByte |= 0x08;
         if (invisible) zeroByte |= 0x20;
-        dataWatcher.setObject(metadata, zeroByte);
+        dataWatcher.setObject(ProtocolLibSerializers.getByte(metadataIndex), zeroByte);
         onDataWatcherUpdate();
     }
 

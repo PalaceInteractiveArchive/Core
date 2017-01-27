@@ -8,7 +8,7 @@ public class IDManager {
 
     private int CURRENT = 2000;
 
-    public int getNextId() {
+    public int getNextID() {
         do {
             CURRENT++;
         } while (isDuplicate(CURRENT));
@@ -17,7 +17,6 @@ public class IDManager {
 
     private boolean isDuplicate(int id) {
         for (World world : Core.getWorlds()) {
-            // TODO: Make this a filter
             for (Entity entity : world.getEntities()) {
                 if (entity.getEntityId() == id) return true;
             }
