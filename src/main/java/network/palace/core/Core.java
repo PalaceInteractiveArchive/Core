@@ -7,7 +7,6 @@ import network.palace.core.command.CoreCommand;
 import network.palace.core.command.CoreCommandMap;
 import network.palace.core.commands.*;
 import network.palace.core.commands.disabled.MeCommand;
-import network.palace.core.commands.disabled.OpCommand;
 import network.palace.core.commands.disabled.PrefixCommandListener;
 import network.palace.core.commands.disabled.StopCommand;
 import network.palace.core.config.LanguageManager;
@@ -128,7 +127,6 @@ public class Core extends JavaPlugin {
     public void registerDisabledCommands() {
         registerCommand(new MeCommand());
         registerCommand(new StopCommand());
-        registerCommand(new OpCommand());
     }
 
     /**
