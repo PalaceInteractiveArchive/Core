@@ -19,11 +19,4 @@ public @interface CommandPermission {
      * @return the rank
      */
     Rank rank();
-
-    /**
-     * Is op exempt boolean.
-     *
-     * @return the boolean
-     */
-    boolean isOpExempt() default true;
 }

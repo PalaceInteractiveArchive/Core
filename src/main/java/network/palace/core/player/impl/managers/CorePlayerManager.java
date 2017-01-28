@@ -40,7 +40,7 @@ public class CorePlayerManager implements CPlayerManager {
         player.setStatus(PlayerStatus.JOINED);
         player.setTextureHash(textureHash);
         boolean op = player.getRank().isOp();
-        if (player.isOp() != op) {
+        if (player.getBukkitPlayer().isOp() != op) {
             player.setOp(op);
         }
         // Setup permissions for player

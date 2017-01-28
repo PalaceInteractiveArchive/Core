@@ -14,9 +14,7 @@ public class PrefixCommandListener implements Listener {
     public void onPlayerCommandPreprocess(PlayerCommandPreprocessEvent event) {
         if (event.getMessage().startsWith("/minecraft:") || event.getMessage().startsWith("/bukkit:")) {
             CPlayer player = Core.getPlayerManager().getPlayer(event.getPlayer());
-
             if (player != null && player.getRank().getRankId() >= Rank.CHARACTER.getRankId()) return;
-
             event.getPlayer().sendMessage(ChatColor.RED + "Disabled");
             event.setCancelled(true);
         }
