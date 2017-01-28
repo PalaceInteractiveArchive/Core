@@ -26,7 +26,3 @@ command.plugins.thirdParty.info: "&cThird Party Plugins (<count>): <thirdParty-p
 command.plugins.thirdParty.separator: "&6, "
 command.plugins.thirdParty.enabledColor: "&a"
 command.plugins.thirdParty.disabledColor: "&c"
-
-# Gamemode Command #
-
-command.gamemode.invalidGamemode: "&4Invalid gamemode. Available: &9Survival, Creative, Adventure, Spectator"
