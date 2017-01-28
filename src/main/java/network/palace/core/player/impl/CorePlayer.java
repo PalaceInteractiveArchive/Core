@@ -83,7 +83,7 @@ public class CorePlayer implements CPlayer {
     public boolean isOp() {
         if (getStatus() != PlayerStatus.JOINED) return false;
         if (getBukkitPlayer() == null) return false;
-        return false;
+        return getBukkitPlayer().isOp();
     }
 
     @Override
