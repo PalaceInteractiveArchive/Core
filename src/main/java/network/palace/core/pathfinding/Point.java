@@ -2,6 +2,7 @@ package network.palace.core.pathfinding;
 
 import lombok.AllArgsConstructor;
 import lombok.Getter;
+import network.palace.core.player.CPlayer;
 import org.bukkit.Location;
 import org.bukkit.World;
 import org.bukkit.block.Block;
@@ -16,9 +17,10 @@ public class Point implements Cloneable {
 
     @Getter private float pitch;
     @Getter private float yaw;
+    @Getter private World world;
 
     public boolean isBlock() {
-        return (pitch == 0.0f && yaw == 0.0f && y % 1 == 0 && z % 1 == 0 && x % 1 == 0);
+        return (pitch == 0.0F && yaw == 0.0F && y % 1 == 0 && z % 1 == 0 && x % 1 == 0);
     }
 
     public Location getLocation(World world) {
@@ -29,16 +31,20 @@ public class Point implements Cloneable {
         return getLocation(world);
     }
 
+    public static Point of(CPlayer player) {
+        return of(player.getLocation());
+    }
+
     public static Point of(Entity entity) {
         return of(entity.getLocation());
     }
 
-    public static Point of(Double x, Double y, Double z) {
-        return new Point(x, y, z, 0f, 0f);
+    public static Point of(Double x, Double y, Double z, World world) {
+        return new Point(x, y, z, 0F, 0F, world);
     }
 
     public static Point of(Location location) {
-        return new Point(location.getX(), location.getY(), location.getZ(), location.getPitch(), location.getYaw());
+        return new Point(location.getX(), location.getY(), location.getZ(), location.getPitch(), location.getYaw(), location.getWorld());
     }
 
     public static Point of(Block block) {
@@ -57,7 +63,7 @@ public class Point implements Cloneable {
     }
 
     public Point deepCopy() {
-        return new Point(x, y, z, pitch, yaw);
+        return new Point(x, y, z, pitch, yaw, world);
     }
 
     public Point add(Double x, Double y, Double z) {

@@ -4,7 +4,6 @@ import com.comphenix.protocol.wrappers.EnumWrappers.ItemSlot;
 import network.palace.core.packets.server.entity.WrapperPlayServerEntityEquipment;
 import network.palace.core.pathfinding.Point;
 import network.palace.core.player.CPlayer;
-import org.bukkit.World;
 import org.bukkit.inventory.ItemStack;
 
 import java.util.Set;
@@ -18,8 +17,8 @@ public abstract class AbstractGearMob extends AbstractMob {
     private ItemStack leggings;
     private ItemStack boots;
 
-    public AbstractGearMob(Point location, World world, Set<CPlayer> observers, String title) {
-        super(location, world, observers, title);
+    public AbstractGearMob(Point location, Set<CPlayer> observers, String title) {
+        super(location, observers, title);
     }
 
     public void setMainHand(ItemStack stack) {

@@ -16,7 +16,6 @@ import network.palace.core.packets.server.entity.*;
 import network.palace.core.pathfinding.Point;
 import network.palace.core.player.CPlayer;
 import org.bukkit.Location;
-import org.bukkit.World;
 import org.bukkit.entity.EntityType;
 import org.bukkit.util.Vector;
 
@@ -27,7 +26,6 @@ public abstract class AbstractMob implements Observable<NPCObserver> {
 
     @Getter private Point location;
     @Getter private int headYaw;
-    @Getter private final World world;
     private final Set<CPlayer> viewers;
     private final Set<NPCObserver> observers;
     @Getter private final WrappedDataWatcher dataWatcher;
@@ -49,9 +47,8 @@ public abstract class AbstractMob implements Observable<NPCObserver> {
         Core.getSoftNPCManager().getMobRefs().add(new WeakReference<>(this));
     }
 
-    public AbstractMob(Point location, World world, Set<CPlayer> observers, String title) {
+    public AbstractMob(Point location, Set<CPlayer> observers, String title) {
         this.location = location.deepCopy();
-        this.world = world;
         this.viewers = new HashSet<>();
         if (observers != null) this.viewers.addAll(observers);
         this.dataWatcher = new WrappedDataWatcher();
@@ -106,9 +103,9 @@ public abstract class AbstractMob implements Observable<NPCObserver> {
         for (int i = 0; i < cPlayers.length; i++) {
             CPlayer player = cPlayers[x];
             UUID uid = player.getLocation().getWorld().getUID();
-            UUID uid1 = this.world != null ? world.getUID() : null;
+            UUID uid1 = this.location.getWorld() != null ? location.getWorld().getUID() : null;
 
-            if (this.world != null && !uid.equals(uid1)) continue;
+            if (this.location.getWorld() != null && !uid.equals(uid1)) continue;
             players[x] = player;
             x++;
         }

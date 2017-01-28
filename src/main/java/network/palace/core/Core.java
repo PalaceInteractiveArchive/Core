@@ -43,7 +43,7 @@ import java.util.concurrent.Future;
  * <p>
  * You can access instances of other modules by depending on Core in your pom.xml, and then executing Core.get
  */
-@PluginInfo(name = "Core", version = "1.6.3", depend = {"ProtocolLib"})
+@PluginInfo(name = "Core", version = "1.6.4", depend = {"ProtocolLib"})
 public class Core extends JavaPlugin {
 
     private boolean starting = true;
@@ -211,7 +211,7 @@ public class Core extends JavaPlugin {
         if (!isStarting) {
             logMessage("Core", ChatColor.DARK_GREEN + "Server Joinable!");
         } else {
-            logMessage("Core", ChatColor.DARK_GREEN + "Server Not Joinable!");
+            logMessage("Core", ChatColor.DARK_RED + "Server Not Joinable!");
         }
         getInstance().starting = isStarting;
     }

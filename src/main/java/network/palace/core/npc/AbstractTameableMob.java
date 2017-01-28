@@ -2,7 +2,6 @@ package network.palace.core.npc;
 
 import network.palace.core.pathfinding.Point;
 import network.palace.core.player.CPlayer;
-import org.bukkit.World;
 
 import java.util.Set;
 
@@ -12,8 +11,8 @@ public abstract class AbstractTameableMob extends AbstractAgeableMob {
     private boolean sitting = false;
     private String ownerName = "Notch";
 
-    public AbstractTameableMob(Point location, World world, Set<CPlayer> observers, String title) {
-        super(location, world, observers, title);
+    public AbstractTameableMob(Point location, Set<CPlayer> observers, String title) {
+        super(location, observers, title);
     }
 
     @Override

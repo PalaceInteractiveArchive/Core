@@ -7,7 +7,6 @@ import network.palace.core.npc.AbstractGearMob;
 import network.palace.core.npc.ProtocolLibSerializers;
 import network.palace.core.pathfinding.Point;
 import network.palace.core.player.CPlayer;
-import org.bukkit.World;
 import org.bukkit.entity.EntityType;
 
 import java.util.Set;
@@ -20,8 +19,8 @@ public class MobArmorStand extends AbstractGearMob {
     @Getter @Setter private boolean isMarker = false;
     @Getter @Setter private Vector3F headPose, bodyPost, leftArmPose, rightArmPose, leftLegPose, rightLegPose;
 
-    public MobArmorStand(Point location, World world, Set<CPlayer> observers, String title) {
-        super(location, world, observers, title);
+    public MobArmorStand(Point location, Set<CPlayer> observers, String title) {
+        super(location, observers, title);
     }
 
     @Override

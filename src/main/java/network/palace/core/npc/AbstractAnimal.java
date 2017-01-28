@@ -2,14 +2,13 @@ package network.palace.core.npc;
 
 import network.palace.core.pathfinding.Point;
 import network.palace.core.player.CPlayer;
-import org.bukkit.World;
 
 import java.util.Set;
 
 public abstract class AbstractAnimal extends AbstractAgeableMob {
 
-    public AbstractAnimal(Point location, World world, Set<CPlayer> observers, String title) {
-        super(location, world, observers, title);
+    public AbstractAnimal(Point location, Set<CPlayer> observers, String title) {
+        super(location, observers, title);
     }
 
     public void playMateAnimation() {
