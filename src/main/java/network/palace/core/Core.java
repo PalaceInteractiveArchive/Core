@@ -110,7 +110,7 @@ public class Core extends JavaPlugin {
         // Log
         logMessage("Core", ChatColor.DARK_GREEN + "Enabled");
         // Set starting to false after 5 to allow connecting
-        runTaskLater(() -> starting = false, 100L);
+        runTaskLater(() -> setStarting(false), 100L);
     }
 
     /**
@@ -208,6 +208,11 @@ public class Core extends JavaPlugin {
      * @param isStarting the is starting
      */
     public static void setStarting(boolean isStarting) {
+        if (!isStarting) {
+            logMessage("Core", ChatColor.DARK_GREEN + "Server Joinable!");
+        } else {
+            logMessage("Core", ChatColor.DARK_GREEN + "Server Not Joinable!");
+        }
         getInstance().starting = isStarting;
     }
 

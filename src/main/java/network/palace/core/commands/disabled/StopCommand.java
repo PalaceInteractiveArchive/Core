@@ -15,6 +15,8 @@ import org.bukkit.command.ConsoleCommandSender;
 @CommandMeta(description = "Disable stop command for players and command blocks")
 public class StopCommand extends CoreCommand {
 
+    private int timesTried = 0;
+
     public StopCommand() {
         super("stop");
     }
@@ -26,9 +28,14 @@ public class StopCommand extends CoreCommand {
         PacketEmptyServer packet = new PacketEmptyServer(Core.getInstanceName());
         Core.getDashboardConnection().send(packet);
         Core.runTaskTimer(() -> {
+            if (timesTried >= 5) {
+                Bukkit.getOnlinePlayers().forEach(player -> player.kickPlayer(ChatColor.RED + "Server is stopping. Please rejoin in a few!"));
+            }
             if (Bukkit.getOnlinePlayers().size() <= 0) {
                 Core.getDashboardConnection().stop();
                 Bukkit.shutdown();
+            } else {
+                timesTried++;
             }
         }, 0L, 40L);
     }
