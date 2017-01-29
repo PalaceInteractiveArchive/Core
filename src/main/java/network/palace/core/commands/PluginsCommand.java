@@ -1,19 +1,20 @@
 package network.palace.core.commands;
 
+import com.comphenix.protocol.utility.MinecraftVersion;
 import com.google.common.base.Charsets;
 import com.google.common.io.Resources;
-import lombok.AllArgsConstructor;
 import lombok.Getter;
 import network.palace.core.Core;
 import network.palace.core.command.CommandException;
 import network.palace.core.command.CommandMeta;
 import network.palace.core.command.CommandPermission;
 import network.palace.core.command.CoreCommand;
-import network.palace.core.config.LanguageManager;
+import network.palace.core.message.FormattedMessage;
 import network.palace.core.player.Rank;
 import org.bukkit.Bukkit;
 import org.bukkit.ChatColor;
 import org.bukkit.command.CommandSender;
+import org.bukkit.entity.Player;
 import org.bukkit.plugin.Plugin;
 import org.json.simple.JSONObject;
 import org.json.simple.parser.JSONParser;
@@ -21,10 +22,12 @@ import org.json.simple.parser.ParseException;
 
 import java.io.BufferedReader;
 import java.io.IOException;
+import java.lang.annotation.IncompleteAnnotationException;
 import java.net.URL;
 import java.net.URLEncoder;
-import java.util.*;
-import java.util.concurrent.locks.ReentrantLock;
+import java.util.ArrayList;
+import java.util.Comparator;
+import java.util.List;
 
 /**
  * The type Plugins command.
@@ -32,6 +35,8 @@ import java.util.concurrent.locks.ReentrantLock;
 @CommandMeta(aliases = {"about", "pl", "ver", "version", "help", "?"}, description = "Lists the plugins for the server.")
 @CommandPermission(rank = Rank.WIZARD)
 public class PluginsCommand extends CoreCommand {
+
+    private String versionsBehind = "Loading version...";
 
     /**
      * Instantiates a new Plugins command.
@@ -43,75 +48,94 @@ public class PluginsCommand extends CoreCommand {
 
     @Override
     protected void handleCommandUnspecific(CommandSender sender, String[] args) throws CommandException {
-        // Formatter
-        LanguageManager formatter = Core.getLanguageFormatter();
         // Lists
         List<PluginInfo> pluginsList = new ArrayList<>();
         List<PluginInfo> thirdPartyList = new ArrayList<>();
         // String builds
-        StringBuilder pluginsSB = new StringBuilder();
-        StringBuilder thirdPartySB = new StringBuilder();
+        FormattedMessage pluginsFM = new FormattedMessage("");
+        FormattedMessage thirdPartyFM = new FormattedMessage("");
         // Loop through plugins and add
         for (Plugin plugin : Bukkit.getPluginManager().getPlugins()) {
             if (plugin instanceof network.palace.core.plugin.Plugin) {
                 network.palace.core.plugin.Plugin corePlugin = (network.palace.core.plugin.Plugin) plugin;
-                pluginsList.add(new PluginInfo(corePlugin.getInfo().name(), corePlugin.isEnabled()));
+                String version;
+                try {
+                    version = corePlugin.getInfo().version();
+                } catch (IncompleteAnnotationException ignored) {
+                    version = corePlugin.getDescription().getVersion();
+                }
+                pluginsList.add(new PluginInfo(corePlugin.getInfo().name(), version, corePlugin.isEnabled()));
             } else if (!(plugin instanceof Core)) {
-                thirdPartyList.add(new PluginInfo(plugin.getName(), plugin.isEnabled()));
+                thirdPartyList.add(new PluginInfo(plugin.getName(), plugin.getDescription().getVersion(), plugin.isEnabled()));
             }
         }
         // Sort
         pluginsList.sort(Comparator.comparing(PluginInfo::getName));
         thirdPartyList.sort(Comparator.comparing(PluginInfo::getName));
         // Plugins info and colors
-        String pluginsSeparator = formatter.getFormat(sender, "command.plugins.plugins.separator");
-        String pluginsEnabledColor = formatter.getFormat(sender, "command.plugins.plugins.enabledColor");
-        String pluginsDisabledColor = formatter.getFormat(sender, "command.plugins.plugins.disabledColor");
-        pluginsList.forEach(info -> pluginsSB.append(info.isEnabled() ? pluginsEnabledColor : pluginsDisabledColor).append(info.getName()).append(pluginsSeparator));
+        for (int i = 0; i < pluginsList.size(); i++) {
+            PluginInfo info = pluginsList.get(i);
+            pluginsFM.then(info.getName()).color(info.isEnabled() ? ChatColor.GREEN : ChatColor.RED).tooltip(ChatColor.GOLD + "Version: " + ChatColor.GREEN + info.getVersion());
+            if (i != pluginsList.size() - 1) {
+                pluginsFM.then(", ").color(ChatColor.GOLD);
+            }
+        }
         // Third party plugins info and colors
-        String thirdPartySeparator = formatter.getFormat(sender, "command.plugins.thirdParty.separator");
-        String thirdPartyEnabledColor = formatter.getFormat(sender, "command.plugins.thirdParty.enabledColor");
-        String thirdPartyDisabledColor = formatter.getFormat(sender, "command.plugins.thirdParty.disabledColor");
-        thirdPartyList.forEach(info -> thirdPartySB.append(info.isEnabled() ? thirdPartyEnabledColor : thirdPartyDisabledColor).append(info.getName()).append(thirdPartySeparator));
-        // Remove left over separators
-        String plugins = pluginsSB.toString();
-        plugins = plugins.substring(0, Math.max(0, plugins.length() - pluginsSeparator.length()));
-        String thirdParty = thirdPartySB.toString();
-        thirdParty = thirdParty.substring(0, Math.max(0, thirdParty.length() - thirdPartySeparator.length()));
-        // Formats
-        String boilerPlateFormat = formatter.getFormat(sender, "command.plugins.boilerPlate");
-        String coreRunningFormat = formatter.getFormat(sender, "command.plugins.running").replaceAll("<version>",
-                Core.getVersion()).replaceAll("<name>", "Core");
-        String bukkitRunningFormat = formatter.getFormat(sender, "command.plugins.running").replaceAll("<version>",
-                Bukkit.getVersion() + " (API version " + Bukkit.getBukkitVersion() + ") " + ChatColor.YELLOW + "(" +
-                        versionMessage + ")").replaceAll("<name>", "Spigot");
-        String pluginsFormat = formatter.getFormat(sender, "command.plugins.plugins.info").replaceAll("<core-plugins>", plugins).replaceAll("<count>", Integer.toString(pluginsList.size()));
-        String thirdPartyFormat = formatter.getFormat(sender, "command.plugins.thirdParty.info").replaceAll("<thirdParty-plugins>", thirdParty).replaceAll("<count>", Integer.toString(thirdPartyList.size()));
-        // Send Messages
-        String boilerPlate = BoilerplateUtil.getBoilerplateText(boilerPlateFormat);
+        for (int i = 0; i < thirdPartyList.size(); i++) {
+            PluginInfo info = thirdPartyList.get(i);
+            thirdPartyFM.then(info.getName()).color(info.isEnabled() ? ChatColor.GREEN : ChatColor.RED).tooltip(ChatColor.GOLD + "Version: " + ChatColor.GREEN + info.getVersion());
+            if (i != thirdPartyList.size() - 1) {
+                thirdPartyFM.then(", ").color(ChatColor.GOLD);
+            }
+        }
+        // Check if sender is a player
+        boolean isPlayer = sender instanceof Player;
+        // Boilerplate text
+        String boilerPlate = BoilerplateUtil.getBoilerplateText(ChatColor.GOLD.toString() + ChatColor.STRIKETHROUGH.toString());
+        // Send messages
         sender.sendMessage(boilerPlate);
-        sender.sendMessage(coreRunningFormat);
+        sender.sendMessage(ChatColor.GOLD + "Running " + ChatColor.GREEN + "Core " + ChatColor.GOLD + "version " + ChatColor.DARK_GREEN + Core.getVersion());
         sender.sendMessage("");
-        sender.sendMessage(bukkitRunningFormat);
+        if (isPlayer) {
+            MinecraftVersion current = new MinecraftVersion(Bukkit.getServer());
+            String currentVersion = ChatColor.DARK_GREEN + current.getVersion();
+            String spigotVersion = ChatColor.GOLD + "Spigot version: " + ChatColor.GREEN + Bukkit.getVersion();
+            String apiVersion = ChatColor.GOLD + "API Version: " + ChatColor.GREEN + Bukkit.getBukkitVersion();
+            String versionInfo = ChatColor.GOLD + "Version Info: " + ChatColor.GREEN + versionsBehind;
+            FormattedMessage spigot = new FormattedMessage("Running ").color(ChatColor.GOLD).then("Spigot ").color(ChatColor.GREEN).then("version ").color(ChatColor.GOLD).then(currentVersion).multilineTooltip(currentVersion, spigotVersion, apiVersion, versionInfo);
+            spigot.send((Player) sender);
+        } else {
+            sender.sendMessage(ChatColor.GOLD + "Running " + ChatColor.GREEN + "Spigot " + ChatColor.GOLD + "version " + ChatColor.DARK_GREEN + Bukkit.getVersion() + " (API version " + Bukkit.getBukkitVersion() + ") " + ChatColor.YELLOW + "(" + versionsBehind + ")");
+        }
         sender.sendMessage("");
-        sender.sendMessage(pluginsFormat);
+        if (isPlayer) {
+            pluginsFM.send((Player) sender);
+        } else {
+            sender.sendMessage(pluginsFM.toFriendlyString());
+        }
         sender.sendMessage("");
-        sender.sendMessage(thirdPartyFormat);
+        if (isPlayer) {
+            thirdPartyFM.send((Player) sender);
+        } else {
+            sender.sendMessage(thirdPartyFM.toFriendlyString());
+        }
         sender.sendMessage(boilerPlate);
     }
 
     /**
      * The type Plugin info.
      */
-    @AllArgsConstructor
     public class PluginInfo {
         @Getter private final String name;
+        @Getter private final String version;
         @Getter private final boolean enabled;
-    }
 
-    private final ReentrantLock versionLock = new ReentrantLock();
-    private String versionMessage = "Loading version...";
-    private final Set<CommandSender> versionWaiters = new HashSet<>();
+        public PluginInfo(String name, String version, boolean enabled) {
+            this.name = name;
+            this.version = ((version == null || version.trim().isEmpty()) ? "Unknown" : version);
+            this.enabled = enabled;
+        }
+    }
 
     private void obtainVersion() {
         String version = Bukkit.getVersion();
@@ -121,47 +145,35 @@ public class PluginsCommand extends CoreCommand {
             int cbVersions = getDistance("craftbukkit", parts[1].substring(0, parts[1].indexOf(' ')));
             int spigotVersions = getDistance("spigot", parts[0]);
             if (cbVersions == -1 || spigotVersions == -1) {
-                setVersionMessage("Error obtaining version information");
+                versionsBehind = "Error obtaining version information";
             } else {
                 if (cbVersions == 0 && spigotVersions == 0) {
-                    setVersionMessage("Latest");
+                    versionsBehind = "Latest";
                 } else {
-                    setVersionMessage((cbVersions + spigotVersions) + " behind");
+                    versionsBehind = (cbVersions + spigotVersions) + " behind";
                 }
             }
-
         } else if (version.startsWith("git-Bukkit-")) {
             version = version.substring("git-Bukkit-".length());
             int cbVersions = getDistance("craftbukkit", version.substring(0, version.indexOf(' ')));
             if (cbVersions == -1) {
-                setVersionMessage("Error obtaining version information");
+                versionsBehind = "Error obtaining version information";
             } else {
                 if (cbVersions == 0) {
-                    setVersionMessage("Latest");
+                    versionsBehind = "Latest";
                 } else {
-                    setVersionMessage(cbVersions + " behind");
+                    versionsBehind = cbVersions + " behind";
                 }
             }
         } else {
-            setVersionMessage("Unknown version, custom build?");
-        }
-    }
-
-    private void setVersionMessage(String msg) {
-        versionMessage = msg;
-        versionLock.lock();
-        try {
-            versionWaiters.forEach(sender -> sender.sendMessage(versionMessage));
-            versionWaiters.clear();
-        } finally {
-            versionLock.unlock();
+            versionsBehind = "Unknown";
         }
     }
 
     private static int getDistance(String repo, String hash) {
         try {
-            try (BufferedReader reader = Resources.asCharSource(new URL("https://hub.spigotmc.org/stash/rest/api/1.0/projects/SPIGOT/repos/" + repo + "/commits?since=" + URLEncoder.encode(hash, "UTF-8") + "&withCounts=true"),
-                    Charsets.UTF_8
+            try (BufferedReader reader = Resources.asCharSource(new URL("https://hub.spigotmc.org/stash/rest/api/1.0/projects/SPIGOT/repos/"
+                            + repo + "/commits?since=" + URLEncoder.encode(hash, "UTF-8") + "&withCounts=true"), Charsets.UTF_8
             ).openBufferedStream()) {
                 JSONObject obj = (JSONObject) new JSONParser().parse(reader);
                 return ((Number) obj.get("totalCount")).intValue();

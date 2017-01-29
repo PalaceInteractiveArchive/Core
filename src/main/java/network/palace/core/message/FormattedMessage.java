@@ -5,13 +5,17 @@ import com.comphenix.protocol.ProtocolLibrary;
 import com.comphenix.protocol.events.PacketContainer;
 import com.comphenix.protocol.wrappers.WrappedChatComponent;
 import network.palace.core.player.CPlayer;
+import network.palace.core.utils.ItemUtil;
 import org.bukkit.ChatColor;
+import org.bukkit.Material;
 import org.bukkit.entity.Player;
+import org.bukkit.inventory.ItemStack;
 import org.json.simple.JSONArray;
 import org.json.simple.JSONObject;
 
 import java.lang.reflect.InvocationTargetException;
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.List;
 
 public class FormattedMessage {
@@ -71,19 +75,40 @@ public class FormattedMessage {
         return this;
     }
 
-    public FormattedMessage tooltip(final String text) {
-        final String[] lines = text.split("\\n");
-        if (lines.length <= 1) {
-            onHover("show_text", text);
-        } else {
-            itemTooltip(makeMultilineTooltip(lines));
+    public FormattedMessage multilineTooltip(final String name, final String... lines) {
+        ItemStack stack = ItemUtil.create(Material.BOOK, 1, name, Arrays.asList(lines));
+        return itemTooltip(stack);
+    }
+
+    public FormattedMessage itemTooltip(final ItemStack itemStack) {
+        try {
+            return itemTooltip(ItemUtil.getFriendlyNBT(itemStack));
+        } catch (Exception e) {
+            e.printStackTrace();
+            return this;
         }
+    }
+
+    public FormattedMessage tooltip(final String line) {
+        onHover("show_text", line);
         return this;
     }
 
     public FormattedMessage then(final Object obj) {
         messageSections.add(new MessageSection(obj.toString()));
         return this;
+    }
+
+    public String toFriendlyString() {
+        StringBuilder builder = new StringBuilder();
+        if (messageSections.size() != 1) {
+            for (final MessageSection part : messageSections) {
+                builder.append(part.getFriendlyString());
+            }
+        } else {
+            builder.append(latest().getFriendlyString());
+        }
+        return builder.toString();
     }
 
     public String toJSONString() {
@@ -120,20 +145,6 @@ public class FormattedMessage {
 
     private MessageSection latest() {
         return messageSections.get(messageSections.size() - 1);
-    }
-
-    private String makeMultilineTooltip(final String[] lines) {
-        final JSONObject json = new JSONObject();
-        JSONObject display = new JSONObject();
-        display.put("Name", "\\u00A7f" + lines[0].replace("\"", "\\\""));
-        JSONArray lore = new JSONArray();
-        for (int i = 1; i < lines.length; i++) {
-            final String line = lines[i];
-            lore.add(line.isEmpty() ? " " : line.replace("\"", "\\\""));
-        }
-        display.put("Lore", lore);
-        json.put("display", display);
-        return json.toString();
     }
 
     private void onClick(final String name, final String data) {

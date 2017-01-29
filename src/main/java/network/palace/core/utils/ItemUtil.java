@@ -1,5 +1,6 @@
 package network.palace.core.utils;
 
+import com.comphenix.protocol.reflect.MethodUtils;
 import com.comphenix.protocol.utility.MinecraftReflection;
 import com.comphenix.protocol.wrappers.nbt.NbtCompound;
 import com.comphenix.protocol.wrappers.nbt.NbtFactory;
@@ -13,6 +14,7 @@ import org.bukkit.inventory.ItemStack;
 import org.bukkit.inventory.meta.ItemMeta;
 import org.bukkit.inventory.meta.SkullMeta;
 
+import java.lang.reflect.InvocationTargetException;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -94,6 +96,24 @@ public class ItemUtil implements Listener {
         nbt.put(tag, 1);
         NbtFactory.setItemTag(craftStack, nbt);
         return craftStack;
+    }
+
+    /**
+     * Get friendly nbt for itemstack.
+     *
+     * @param stack the stack
+     * @return the nbt for itemstack
+     */
+    public static String getFriendlyNBT(ItemStack stack) {
+        Object minecraftItemstack = MinecraftReflection.getMinecraftItemStack(stack);
+        Class nbtCompoundClass = MinecraftReflection.getNBTCompoundClass();
+        String nbt = "";
+        try {
+            nbt = MethodUtils.invokeMethod(minecraftItemstack, "save", nbtCompoundClass.newInstance()).toString();
+        } catch (NoSuchMethodException | IllegalAccessException | InvocationTargetException | InstantiationException e) {
+            e.printStackTrace();
+        }
+        return nbt;
     }
 
     /**

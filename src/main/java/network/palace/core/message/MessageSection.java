@@ -3,6 +3,8 @@ package network.palace.core.message;
 import org.bukkit.ChatColor;
 import org.json.simple.JSONObject;
 
+import java.util.Arrays;
+
 public class MessageSection {
 
     public final String text;
@@ -15,6 +17,18 @@ public class MessageSection {
 
     public MessageSection(final String text) {
         this.text = text;
+    }
+
+    public StringBuilder getFriendlyString() {
+        StringBuilder builder = new StringBuilder();
+        if (color != null) {
+            builder.append(color);
+        }
+        if (styles != null) {
+            Arrays.asList(styles).forEach(builder::append);
+        }
+        builder.append(text);
+        return builder;
     }
 
     public JSONObject getJsonObject() {
