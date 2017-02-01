@@ -1,11 +1,11 @@
 package network.palace.core.player.impl.managers;
 
-import com.comphenix.protocol.wrappers.EnumWrappers;
 import lombok.AllArgsConstructor;
-import network.palace.core.packets.server.particles.WrapperPlayServerWorldParticles;
 import network.palace.core.player.CPlayer;
 import network.palace.core.player.CPlayerParticlesManager;
+import network.palace.core.player.PlayerStatus;
 import org.bukkit.Location;
+import org.bukkit.Particle;
 
 /**
  * The type Core player particles manager.
@@ -16,36 +16,29 @@ public class CorePlayerParticlesManager implements CPlayerParticlesManager {
     private final CPlayer player;
 
     @Override
-    public void send(EnumWrappers.Particle particle) {
+    public void send(Particle particle) {
         send(particle, 1);
     }
 
     @Override
-    public void send(EnumWrappers.Particle particle, int numberOfParticles) {
-        send(player.getLocation(), particle, numberOfParticles);
+    public void send(Particle particle, int count) {
+        send(player.getLocation(), particle, count);
     }
 
     @Override
-    public void send(Location location, EnumWrappers.Particle particle) {
+    public void send(Location location, Particle particle) {
         send(location, particle, 1);
     }
 
     @Override
-    public void send(Location location, EnumWrappers.Particle particle, int numberOfParticles) {
-        send(location, particle, numberOfParticles, 0, 0, 0, 0);
+    public void send(Location location, Particle particle, int count) {
+        send(location, particle, count, 0, 0, 0, 0);
     }
 
     @Override
-    public void send(Location location, EnumWrappers.Particle particle, int numberOfParticles, float offsetX, float offsetY, float offsetZ, float speed) {
-        WrapperPlayServerWorldParticles packet = new WrapperPlayServerWorldParticles();
-        packet.setParticleType(particle);
-        packet.setLongDistance(true);
-        packet.setLocation(location);
-        packet.setNumberOfParticles(numberOfParticles);
-        packet.setOffsetX(offsetX);
-        packet.setOffsetY(offsetY);
-        packet.setOffsetZ(offsetZ);
-        packet.setParticleData(speed);
-        player.sendPacket(packet);
+    public void send(Location location, Particle particle, int count, float offsetX, float offsetY, float offsetZ, float extra) {
+        if (player.getStatus() != PlayerStatus.JOINED) return;
+        if (player.getBukkitPlayer() == null) return;
+        player.getBukkitPlayer().spawnParticle(particle, location, count, offsetX, offsetY, offsetZ, extra);
     }
 }

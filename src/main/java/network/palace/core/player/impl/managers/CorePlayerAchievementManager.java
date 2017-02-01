@@ -5,15 +5,11 @@ import network.palace.core.Core;
 import network.palace.core.achievements.CoreAchievement;
 import network.palace.core.player.CPlayer;
 import network.palace.core.player.CPlayerAchievementManager;
-import org.bukkit.Bukkit;
 import org.bukkit.ChatColor;
 import org.bukkit.Sound;
 
 import java.util.List;
 
-/**
- * Created by Marc on 1/14/17.
- */
 @AllArgsConstructor
 public class CorePlayerAchievementManager implements CPlayerAchievementManager {
 
