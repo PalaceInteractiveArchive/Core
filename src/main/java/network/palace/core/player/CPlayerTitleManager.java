@@ -4,8 +4,16 @@ package network.palace.core.player;
  * The interface C player title manager.
  */
 public interface CPlayerTitleManager {
+
     /**
-     * Show title
+     * Show title.
+     *
+     * @param title    the title
+     */
+    void show(String title);
+
+    /**
+     * Show title and subtitle.
      *
      * @param title    the title
      * @param subtitle the subtitle
@@ -13,7 +21,7 @@ public interface CPlayerTitleManager {
     void show(String title, String subtitle);
 
     /**
-     * Show title
+     * Show title and subtitle with certain timings in seconds.
      *
      * @param title    the title
      * @param subtitle the subtitle
@@ -24,7 +32,7 @@ public interface CPlayerTitleManager {
     void show(String title, String subtitle, int fadeIn, int stay, int fadeOut);
 
     /**
-     * Hide title
+     * Hide title.
      */
     void hide();
 }
