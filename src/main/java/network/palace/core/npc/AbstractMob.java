@@ -153,7 +153,7 @@ public abstract class AbstractMob implements Observable<NPCObserver> {
         packet.setX(location.getX());
         packet.setY(location.getY());
         packet.setZ(location.getZ());
-        packet.setPitch(location.getPitch()); //TODO check over this and set a default, or get an enum of different directions the head can be.
+        packet.setPitch(location.getPitch());
         packet.setHeadPitch(location.getYaw());
         updateDataWatcher();
         packet.setMetadata(dataWatcher);
