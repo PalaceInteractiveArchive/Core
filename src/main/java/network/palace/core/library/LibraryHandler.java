@@ -76,7 +76,7 @@ public final class LibraryHandler {
         }
         for (File jar : jars) {
             try {
-                addFile(jar);
+                addFile(plugin, jar);
             } catch (IOException e) {
                 Core.logMessage(plugin.getName(), ChatColor.RED + "Could not load jar file " + jar.getName());
                 continue;
@@ -107,18 +107,18 @@ public final class LibraryHandler {
         return new File(path, getFileName(library));
     }
 
-    private static void addFile(File file) throws IOException {
-        addURL(file.toURI().toURL());
+    private static void addFile(JavaPlugin plugin, File file) throws IOException {
+        addURL(plugin, file.toURI().toURL());
     }
 
-    private static void addURL(URL url) throws IOException {
+    private static void addURL(JavaPlugin plugin, URL url) throws IOException {
         // Check if this is already loaded
-        URLClassLoader sysLoader = (URLClassLoader)ClassLoader.getSystemClassLoader();
-        Class<URLClassLoader> sysClass = URLClassLoader.class;
+        URLClassLoader pluginLoader = (URLClassLoader) plugin.getClass().getClassLoader();
+        Class<URLClassLoader> pluginClass = URLClassLoader.class;
         try {
-            Method method = sysClass.getDeclaredMethod("addURL", URL.class);
+            Method method = pluginClass.getDeclaredMethod("addURL", URL.class);
             method.setAccessible(true);
-            method.invoke(sysLoader, url);
+            method.invoke(pluginLoader, url);
         } catch (Throwable t) {
             t.printStackTrace();
             throw new IOException("Error, could not add URL to system classloader");

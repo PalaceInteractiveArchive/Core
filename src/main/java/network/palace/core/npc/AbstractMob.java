@@ -44,7 +44,7 @@ public abstract class AbstractMob implements Observable<NPCObserver> {
     protected void onDataWatcherUpdate() {}
 
     {
-        Core.getSoftNPCManager().getMobRefs().add(new WeakReference<>(this));
+        Core.getEntityIDManager().getMobRefs().add(new WeakReference<>(this));
     }
 
     public AbstractMob(Point location, Set<CPlayer> observers, String title) {
@@ -55,7 +55,7 @@ public abstract class AbstractMob implements Observable<NPCObserver> {
         this.observers = new HashSet<>();
         this.spawned = false;
         this.customName = title;
-        this.id = Core.getSoftNPCManager().getIDManager().getNextID();
+        this.id = Core.getEntityIDManager().getNextID();
     }
 
     private InteractWatcher createNewInteractWatcher() {

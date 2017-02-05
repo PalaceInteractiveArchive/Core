@@ -5,6 +5,7 @@ import network.palace.core.Core;
 import network.palace.core.inventory.InventoryButtonInterface;
 import network.palace.core.inventory.InventoryInterface;
 import network.palace.core.inventory.ClickAction;
+import network.palace.core.listener.ManualListener;
 import network.palace.core.player.CPlayer;
 import org.bukkit.entity.Player;
 import org.bukkit.event.EventHandler;
@@ -17,6 +18,7 @@ import org.bukkit.event.player.PlayerQuitEvent;
 
 import java.util.*;
 
+@ManualListener
 public class Inventory implements InventoryInterface, Listener {
 
     protected final List<CPlayer> observers = new LinkedList<>();
@@ -29,7 +31,7 @@ public class Inventory implements InventoryInterface, Listener {
             throw new IllegalArgumentException("The size of an inventory must be divisible by 9");
         }
         this.inventory = Core.createInventory(size, title);
-        Core.registerListener(this);
+        Core.registerListener(this, Core.getInstance());
     }
 
     public void onOpen(CPlayer player) {

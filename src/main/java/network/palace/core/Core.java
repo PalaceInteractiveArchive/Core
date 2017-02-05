@@ -3,18 +3,14 @@ package network.palace.core;
 import com.comphenix.protocol.ProtocolLibrary;
 import com.comphenix.protocol.events.PacketListener;
 import network.palace.core.achievements.AchievementManager;
-import network.palace.core.command.CoreCommand;
-import network.palace.core.command.CoreCommandMap;
-import network.palace.core.commands.*;
-import network.palace.core.commands.disabled.MeCommand;
-import network.palace.core.commands.disabled.PrefixCommandListener;
-import network.palace.core.commands.disabled.StopCommand;
+import network.palace.core.command.CommandRegister;
 import network.palace.core.config.LanguageManager;
 import network.palace.core.config.YAMLConfigurationFile;
 import network.palace.core.dashboard.DashboardConnection;
 import network.palace.core.economy.EconomyManager;
+import network.palace.core.listener.ListenerRegister;
 import network.palace.core.library.LibraryHandler;
-import network.palace.core.npc.SoftNPCManager;
+import network.palace.core.npc.EntityIDManager;
 import network.palace.core.packets.adapters.SettingsAdapter;
 import network.palace.core.permissions.PermissionManager;
 import network.palace.core.player.CPlayerManager;
@@ -22,7 +18,6 @@ import network.palace.core.player.impl.CorePlayerWorldDownloadProtect;
 import network.palace.core.player.impl.managers.CorePlayerManager;
 import network.palace.core.plugin.PluginInfo;
 import network.palace.core.resource.ResourceManager;
-import network.palace.core.utils.ItemUtil;
 import network.palace.core.utils.SqlUtil;
 import org.bukkit.Bukkit;
 import org.bukkit.ChatColor;
@@ -62,9 +57,8 @@ public class Core extends JavaPlugin {
     private EconomyManager economyManager;
     private ResourceManager resourceManager;
     private AchievementManager achievementManager;
-    private SoftNPCManager softNPCManager;
+    private EntityIDManager entityIDManger;
 
-    private CoreCommandMap commandMap;
     private SqlUtil sqlUtil;
 
     @Override
@@ -97,59 +91,17 @@ public class Core extends JavaPlugin {
         resourceManager = new ResourceManager();
         economyManager = new EconomyManager();
         achievementManager = new AchievementManager();
-        softNPCManager = new SoftNPCManager();
-        // Core command map
-        commandMap = new CoreCommandMap(this);
+        entityIDManger = new EntityIDManager();
         // Dashboard
         dashboardConnection = new DashboardConnection();
         // Register Listeners
-        registerListeners();
+        new ListenerRegister(this);
         // Register Commands
-        registerCommands();
-        registerDisabledCommands();
+        new CommandRegister(this);
         // Log
         logMessage("Core", ChatColor.DARK_GREEN + "Enabled");
         // Set starting to false after 5 to allow connecting
         runTaskLater(() -> setStarting(false), 100L);
-    }
-
-    /**
-     * Register listeners.
-     */
-    public void registerListeners() {
-        registerListener(new ItemUtil());
-        registerListener(new PrefixCommandListener());
-    }
-
-    /**
-     * Register disabled commands.
-     */
-    public void registerDisabledCommands() {
-        registerCommand(new MeCommand());
-        registerCommand(new StopCommand());
-    }
-
-    /**
-     * Register commands.
-     */
-    public void registerCommands() {
-        registerCommand(new BalanceCommand());
-        registerCommand(new HelpopCommand());
-        registerCommand(new ListCommand());
-        registerCommand(new PermCommand());
-        registerCommand(new PluginsCommand());
-        registerCommand(new ReloadCommand());
-        registerCommand(new SafestopCommand());
-        registerCommand(new TokenCommand());
-    }
-
-    /**
-     * Register a core command.
-     *
-     * @param command the command
-     */
-    public final void registerCommand(CoreCommand command) {
-        commandMap.registerCommand(command);
     }
 
     @Override
@@ -298,12 +250,12 @@ public class Core extends JavaPlugin {
     }
 
     /**
-     * Gets soft npc manager.
+     * Gets entity id manager.
      *
-     * @return the soft npc manager
+     * @return the entity id manager
      */
-    public static SoftNPCManager getSoftNPCManager() {
-        return getInstance().softNPCManager;
+    public static EntityIDManager getEntityIDManager() {
+        return getInstance().entityIDManger;
     }
 
     /**
@@ -374,9 +326,10 @@ public class Core extends JavaPlugin {
      * Register listener.
      *
      * @param listener the listener
+     * @param plugin the plugin
      */
-    public static void registerListener(Listener listener) {
-        Bukkit.getPluginManager().registerEvents(listener, getInstance());
+    public static void registerListener(Listener listener, JavaPlugin plugin) {
+        Bukkit.getPluginManager().registerEvents(listener, plugin);
     }
 
     /**

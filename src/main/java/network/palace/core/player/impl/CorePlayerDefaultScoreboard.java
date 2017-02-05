@@ -17,22 +17,14 @@ import java.util.concurrent.Callable;
  */
 public class CorePlayerDefaultScoreboard implements Listener {
 
-    private int playerCount = 0;
-
-    /**
-     * Instantiates a new Core player default scoreboard.
-     */
-    public CorePlayerDefaultScoreboard() {
-        if (!isDefaultSidebarEnabled()) return;
-        Core.registerListener(this);
-    }
+    private static int playerCount = 0;
 
     /**
      * Setups the scoreboard for the player.
      *
      * @param player the player
      */
-    public void setup(CPlayer player) {
+    public static void setup(CPlayer player) {
         if (!isDefaultSidebarEnabled()) return;
         CPlayerScoreboardManager scoreboard = player.getScoreboard();
         // Title
@@ -72,6 +64,7 @@ public class CorePlayerDefaultScoreboard implements Listener {
      */
     @EventHandler
     public void onOnlineCountUpdate(CoreOnlineCountUpdate event) {
+        if (!isDefaultSidebarEnabled()) return;
         playerCount = event.getCount();
         for (CPlayer player : Core.getPlayerManager().getOnlinePlayers()) {
             if (player.getStatus() != PlayerStatus.JOINED) return;
@@ -87,6 +80,7 @@ public class CorePlayerDefaultScoreboard implements Listener {
      */
     @EventHandler
     public void onEconomyUpdate(EconomyUpdateEvent event) {
+        if (!isDefaultSidebarEnabled()) return;
         int amount = event.getAmount();
         boolean isBalance = event.isBalance();
         CPlayer player = Core.getPlayerManager().getPlayer(event.getUuid());
@@ -98,7 +92,8 @@ public class CorePlayerDefaultScoreboard implements Listener {
         }
     }
 
-    public void loadTokens(CPlayer player, CPlayerScoreboardManager scoreboard, int position) {
+    public static void loadTokens(CPlayer player, CPlayerScoreboardManager scoreboard, int position) {
+        if (!isDefaultSidebarEnabled()) return;
         Core.runTaskAsynchronously(() -> {
             int tokens = Core.getEconomy().getTokens(player.getUuid());
             Core.callSyncMethod((Callable<Object>) () -> {
@@ -108,7 +103,8 @@ public class CorePlayerDefaultScoreboard implements Listener {
         });
     }
 
-    public void loadBalance(CPlayer player, CPlayerScoreboardManager scoreboard, int position) {
+    public static void loadBalance(CPlayer player, CPlayerScoreboardManager scoreboard, int position) {
+        if (!isDefaultSidebarEnabled()) return;
         Core.runTaskAsynchronously(() -> {
             int balance = Core.getEconomy().getBalance(player.getUuid());
             Core.callSyncMethod((Callable<Object>) () -> {
@@ -118,7 +114,8 @@ public class CorePlayerDefaultScoreboard implements Listener {
         });
     }
 
-    private void setTokens(int position, CPlayerScoreboardManager scoreboard, int tokens) {
+    private static void setTokens(int position, CPlayerScoreboardManager scoreboard, int tokens) {
+        if (!isDefaultSidebarEnabled()) return;
         if (tokens > 2147483646) {
             scoreboard.set(position, ChatColor.GREEN + "\u272a " + 2147483646 + "+");
         } else {
@@ -126,7 +123,8 @@ public class CorePlayerDefaultScoreboard implements Listener {
         }
     }
 
-    private void setBalance(int position, CPlayerScoreboardManager scoreboard, int balance) {
+    private static void setBalance(int position, CPlayerScoreboardManager scoreboard, int balance) {
+        if (!isDefaultSidebarEnabled()) return;
         if (balance > 2147483646) {
             scoreboard.set(position, ChatColor.GREEN + "$ " + 2147483646 + "+");
         } else {
@@ -134,7 +132,7 @@ public class CorePlayerDefaultScoreboard implements Listener {
         }
     }
 
-    private boolean isDefaultSidebarEnabled() {
+    private static boolean isDefaultSidebarEnabled() {
         return Core.getCoreConfig().getBoolean("isDefaultSidebarEnabled", true);
     }
 }

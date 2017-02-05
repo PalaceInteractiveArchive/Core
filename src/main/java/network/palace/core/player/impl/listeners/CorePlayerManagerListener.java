@@ -18,15 +18,6 @@ import org.bukkit.event.player.*;
  */
 public class CorePlayerManagerListener implements Listener {
 
-    private CorePlayerDefaultScoreboard defaultScoreboard;
-
-    /**
-     * Instantiates a new Core player manager listener.
-     */
-    public CorePlayerManagerListener() {
-        defaultScoreboard = new CorePlayerDefaultScoreboard();
-    }
-
     /**
      * On player login.
      *
@@ -71,7 +62,7 @@ public class CorePlayerManagerListener implements Listener {
                 cPlayer.getScoreboard().addPlayerTag(otherPlayer);
                 otherPlayer.getScoreboard().addPlayerTag(cPlayer);
             }
-            defaultScoreboard.setup(cPlayer);
+            CorePlayerDefaultScoreboard.setup(cPlayer);
         }, 5);
     }
 

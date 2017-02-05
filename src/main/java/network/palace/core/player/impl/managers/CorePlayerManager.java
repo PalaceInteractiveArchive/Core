@@ -6,10 +6,12 @@ import network.palace.core.player.CPlayerManager;
 import network.palace.core.player.PlayerStatus;
 import network.palace.core.player.Rank;
 import network.palace.core.player.impl.CorePlayer;
-import network.palace.core.player.impl.listeners.CorePlayerManagerListener;
 import org.bukkit.entity.Player;
 
-import java.util.*;
+import java.util.ArrayList;
+import java.util.HashMap;
+import java.util.List;
+import java.util.UUID;
 
 /**
  * The type Core player manager.
@@ -17,13 +19,6 @@ import java.util.*;
 public class CorePlayerManager implements CPlayerManager {
 
     private final HashMap<UUID, CPlayer> onlinePlayers = new HashMap<>();
-
-    /**
-     * Instantiates a new Core player manager.
-     */
-    public CorePlayerManager() {
-        Core.registerListener(new CorePlayerManagerListener());
-    }
 
     @Override
     public void playerLoggedIn(UUID uuid, String name) {

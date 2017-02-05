@@ -1,6 +1,5 @@
 package network.palace.core.command;
 
-import com.comphenix.protocol.utility.MinecraftReflection;
 import network.palace.core.Core;
 import network.palace.core.plugin.Plugin;
 import lombok.Getter;
@@ -129,18 +128,9 @@ public final class CoreCommandMap {
      *
      * @param commandName The command name to unregister.
      */
-    public void removeKnownCommands(String commandName) {
+    private void removeKnownCommands(String commandName) {
         removeKnownCommand("minecraft:" + commandName);
         removeKnownCommand("bukkit:" + commandName);
         removeKnownCommand(commandName);
-    }
-
-    /**
-     * Gets a current command by the name you specify.
-     * @param name The name you are looking for.
-     * @return The command by that name or null if it cannot find the command.
-     */
-    public CoreCommand getCommandByName(String name) {
-        return topLevelCommands.get(name);
     }
 }

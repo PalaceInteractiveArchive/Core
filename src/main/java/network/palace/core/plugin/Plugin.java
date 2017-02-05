@@ -1,14 +1,13 @@
 package network.palace.core.plugin;
 
+import lombok.Getter;
 import network.palace.core.Core;
-import network.palace.core.command.CoreCommand;
-import network.palace.core.command.CoreCommandMap;
+import network.palace.core.command.CommandRegister;
 import network.palace.core.config.LanguageManager;
 import network.palace.core.library.LibraryHandler;
-import lombok.Getter;
+import network.palace.core.listener.ListenerRegister;
 import org.bukkit.Bukkit;
 import org.bukkit.ChatColor;
-import org.bukkit.event.Listener;
 import org.bukkit.plugin.java.JavaPlugin;
 import org.bukkit.scheduler.BukkitRunnable;
 
@@ -19,7 +18,6 @@ public class Plugin extends JavaPlugin {
 
     @Getter private PluginInfo info;
     @Getter private LanguageManager languageManager;
-    @Getter private CoreCommandMap commandMap;
 
     @Override
     public final void onEnable() {
@@ -35,10 +33,12 @@ public class Plugin extends JavaPlugin {
             }
             // Load languages
             languageManager = new LanguageManager(this);
-            // Start command map
-            commandMap = new CoreCommandMap(this);
             // Plugin enabled finally
             onPluginEnable();
+            // Register commands
+            new CommandRegister(this);
+            // Register listeners
+            new ListenerRegister(this);
             // Log enabled
             Core.logMessage(getInfo().name(), ChatColor.DARK_GREEN + "Plugin Enabled");
         } catch (Exception e) {
@@ -70,24 +70,6 @@ public class Plugin extends JavaPlugin {
      * @throws Exception the exception
      */
     protected void onPluginDisable() throws Exception {}
-
-    /**
-     * Register command.
-     *
-     * @param command the command
-     */
-    public void registerCommand(CoreCommand command) {
-        getCommandMap().registerCommand(command);
-    }
-
-    /**
-     * Register listener.
-     *
-     * @param listener the listener
-     */
-    public void registerListener(Listener listener) {
-        getServer().getPluginManager().registerEvents(listener, this);
-    }
 
     /**
      * Run task timer int.
