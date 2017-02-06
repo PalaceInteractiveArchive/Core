@@ -13,6 +13,8 @@ import org.bukkit.event.EventPriority;
 import org.bukkit.event.Listener;
 import org.bukkit.event.player.*;
 
+import java.util.NoSuchElementException;
+
 /**
  * The type Core player manager listener.
  */
@@ -61,7 +63,13 @@ public class CorePlayerManagerListener implements Listener {
             player.awardAchievement(Achievement.OPEN_INVENTORY);
         }
         WrappedGameProfile wrappedGameProfile = WrappedGameProfile.fromPlayer(player);
-        String textureHash = wrappedGameProfile.getProperties().get("textures").iterator().next().getValue();
+        String textureHash = "";
+
+        try {
+            textureHash = wrappedGameProfile.getProperties().get("textures").iterator().next().getValue();
+        } catch (NoSuchElementException ignored) {
+        }
+
         Core.getPlayerManager().playerJoined(player.getUniqueId(), textureHash);
         Core.getDashboardConnection().send(new PacketGetPack(player.getUniqueId(), ""));
         Core.runTaskLater(() -> {
