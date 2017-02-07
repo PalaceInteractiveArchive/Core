@@ -129,4 +129,9 @@ public class CorePlayerScoreboardManager implements CPlayerScoreboardManager {
         if (!scoreboard.getTeam(otherPlayer.getRank().getName()).hasEntry(otherPlayer.getName())) return;
         scoreboard.getTeam(otherPlayer.getRank().getName()).removeEntry(otherPlayer.getName());
     }
+
+    @Override
+    public void clear() {
+        player.getBukkitPlayer().setScoreboard(Bukkit.getScoreboardManager().getNewScoreboard());
+    }
 }

@@ -62,4 +62,9 @@ public interface CPlayerScoreboardManager {
      * @return the boolean
      */
     boolean isSetup();
+
+    /**
+     * Clear the scoreboard
+     */
+    void clear();
 }

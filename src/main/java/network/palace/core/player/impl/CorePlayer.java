@@ -209,6 +209,7 @@ public class CorePlayer implements CPlayer {
         getBossBar().remove();
         getHeaderFooter().hide();
         getTitle().hide();
+        getScoreboard().clear();
     }
 
     @Override
