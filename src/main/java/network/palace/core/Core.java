@@ -2,6 +2,7 @@ package network.palace.core;
 
 import com.comphenix.protocol.ProtocolLibrary;
 import com.comphenix.protocol.events.PacketListener;
+import lombok.Getter;
 import network.palace.core.achievements.AchievementManager;
 import network.palace.core.command.CoreCommand;
 import network.palace.core.command.CoreCommandMap;
@@ -47,7 +48,7 @@ import java.util.concurrent.Future;
 public class Core extends JavaPlugin {
 
     private boolean starting = true;
-
+    @Getter private final long startTime = System.currentTimeMillis();
     private YAMLConfigurationFile configFile;
     private String serverType = "Hub";
     private String instanceName = "";
@@ -136,6 +137,7 @@ public class Core extends JavaPlugin {
         registerCommand(new BalanceCommand());
         registerCommand(new HelpopCommand());
         registerCommand(new ListCommand());
+        registerCommand(new OnlineCommand());
         registerCommand(new PermCommand());
         registerCommand(new PluginsCommand());
         registerCommand(new ReloadCommand());

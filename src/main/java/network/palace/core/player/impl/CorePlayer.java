@@ -421,6 +421,6 @@ public class CorePlayer implements CPlayer {
     @Override
     public Block getTargetBlock(int range) {
         if (getBukkitPlayer() == null) return null;
-        return getBukkitPlayer().getTargetBlock((Set) null, range);
+        return getBukkitPlayer().getTargetBlock((Set<Material>) null, range);
     }
 }
