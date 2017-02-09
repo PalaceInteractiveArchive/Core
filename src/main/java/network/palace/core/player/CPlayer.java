@@ -475,4 +475,11 @@ public interface CPlayer {
      * @return the selected block
      */
     Block getTargetBlock(int range);
+
+    /**
+     * Get the player's ping to the server
+     *
+     * @return player's ping
+     */
+    int getPing();
 }

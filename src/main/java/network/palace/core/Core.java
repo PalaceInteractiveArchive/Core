@@ -54,6 +54,7 @@ public class Core extends JavaPlugin {
     private String instanceName = "";
     private boolean debug = false;
     private boolean dashboardAndSqlDisabled = false;
+    @Getter private String mcVersion = Bukkit.getBukkitVersion();
 
     private DashboardConnection dashboardConnection;
 
@@ -108,6 +109,7 @@ public class Core extends JavaPlugin {
         // Register Commands
         registerCommands();
         registerDisabledCommands();
+        mcVersion = mcVersion.replace("-SNAPSHOT", "").replace("R0.", "R").replace(".", "_").replaceAll("_[0-9]-R", "_R").replace("-", "_");
         // Log
         logMessage("Core", ChatColor.DARK_GREEN + "Enabled");
         // Set starting to false after 5 to allow connecting
@@ -139,6 +141,7 @@ public class Core extends JavaPlugin {
         registerCommand(new ListCommand());
         registerCommand(new OnlineCommand());
         registerCommand(new PermCommand());
+        registerCommand(new PingCommand());
         registerCommand(new PluginsCommand());
         registerCommand(new ReloadCommand());
         registerCommand(new SafestopCommand());
