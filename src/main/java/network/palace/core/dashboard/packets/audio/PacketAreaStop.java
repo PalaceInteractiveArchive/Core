@@ -28,7 +28,7 @@ public class PacketAreaStop extends BasePacket {
      */
     public PacketAreaStop(int audioid, int fadetime) {
         super(PacketID.AREA_STOP.getID());
-        this.audioID = audioID;
+        this.audioID = audioid;
         this.fadetime = fadetime;
     }
 
