@@ -4,7 +4,6 @@ import network.palace.core.Core;
 import network.palace.core.command.CommandException;
 import network.palace.core.command.CommandMeta;
 import network.palace.core.command.CoreCommand;
-import network.palace.core.dashboard.packets.dashboard.PacketEmptyServer;
 import network.palace.core.player.CPlayer;
 import org.bukkit.Bukkit;
 import org.bukkit.ChatColor;
@@ -25,14 +24,14 @@ public class StopCommand extends CoreCommand {
         commandSender.sendMessage(ChatColor.RED + "Shutting the server down...");
         Core.setStarting(true);
         Bukkit.getWorlds().forEach(World::save);
-        PacketEmptyServer packet = new PacketEmptyServer(Core.getInstanceName());
-        Core.getDashboardConnection().send(packet);
+//        PacketEmptyServer packet = new PacketEmptyServer(Core.getInstanceName());
+//        Core.getDashboardConnection().send(packet);
         Core.runTaskTimer(() -> {
             if (timesTried >= 5) {
                 Bukkit.getOnlinePlayers().forEach(player -> player.kickPlayer(ChatColor.RED + "Server is stopping. Please rejoin in a few!"));
             }
             if (Bukkit.getOnlinePlayers().size() <= 0) {
-                Core.getDashboardConnection().stop();
+//                Core.getDashboardConnection().stop();
                 Bukkit.shutdown();
             } else {
                 timesTried++;

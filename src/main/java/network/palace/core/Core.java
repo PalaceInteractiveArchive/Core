@@ -6,10 +6,9 @@ import network.palace.core.achievements.AchievementManager;
 import network.palace.core.command.CommandRegister;
 import network.palace.core.config.LanguageManager;
 import network.palace.core.config.YAMLConfigurationFile;
-import network.palace.core.dashboard.DashboardConnection;
 import network.palace.core.economy.EconomyManager;
-import network.palace.core.listener.ListenerRegister;
 import network.palace.core.library.LibraryHandler;
+import network.palace.core.listener.ListenerRegister;
 import network.palace.core.npc.EntityIDManager;
 import network.palace.core.packets.adapters.SettingsAdapter;
 import network.palace.core.permissions.PermissionManager;
@@ -48,8 +47,6 @@ public class Core extends JavaPlugin {
     private String instanceName = "";
     private boolean debug = false;
     private boolean dashboardAndSqlDisabled = false;
-
-    private DashboardConnection dashboardConnection;
 
     private LanguageManager languageManager;
     private CPlayerManager playerManager;
@@ -92,8 +89,6 @@ public class Core extends JavaPlugin {
         economyManager = new EconomyManager();
         achievementManager = new AchievementManager();
         entityIDManger = new EntityIDManager();
-        // Dashboard
-        dashboardConnection = new DashboardConnection();
         // Register Listeners
         new ListenerRegister(this);
         // Register Commands
@@ -116,15 +111,6 @@ public class Core extends JavaPlugin {
      */
     public static Core getInstance() {
         return Core.getPlugin(Core.class);
-    }
-
-    /**
-     * Gets dashboard connection.
-     *
-     * @return the dashboard connection
-     */
-    public static DashboardConnection getDashboardConnection() {
-        return getInstance().dashboardConnection;
     }
 
     /**

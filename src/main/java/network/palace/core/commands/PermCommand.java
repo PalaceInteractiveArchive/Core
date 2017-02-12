@@ -5,7 +5,6 @@ import network.palace.core.command.CommandException;
 import network.palace.core.command.CommandMeta;
 import network.palace.core.command.CommandPermission;
 import network.palace.core.command.CoreCommand;
-import network.palace.core.dashboard.packets.dashboard.PacketRankChange;
 import network.palace.core.player.CPlayer;
 import network.palace.core.player.Rank;
 import org.bukkit.Bukkit;
@@ -127,8 +126,8 @@ public class PermCommand extends CoreCommand {
                         }
                         Core.getSqlUtil().setRank(uuid, rank);
                         String source = sender instanceof Player ? sender.getName() : "Console on " + Core.getInstanceName();
-                        PacketRankChange packet = new PacketRankChange(uuid, rank, source);
-                        Core.getDashboardConnection().send(packet);
+//                        PacketRankChange packet = new PacketRankChange(uuid, rank, source);
+//                        Core.getDashboardConnection().send(packet);
                         sender.sendMessage(ChatColor.YELLOW + arg2 + "'s rank has been changed to " + rank.getNameWithBrackets());
                         return;
                     case "get":

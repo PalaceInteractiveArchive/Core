@@ -2,11 +2,9 @@ package network.palace.core.player.impl.listeners;
 
 import com.comphenix.protocol.wrappers.WrappedGameProfile;
 import network.palace.core.Core;
-import network.palace.core.dashboard.packets.dashboard.PacketGetPack;
 import network.palace.core.player.CPlayer;
 import network.palace.core.player.impl.CorePlayerDefaultScoreboard;
 import org.bukkit.Achievement;
-import org.bukkit.ChatColor;
 import org.bukkit.entity.Player;
 import org.bukkit.event.EventHandler;
 import org.bukkit.event.EventPriority;
@@ -27,13 +25,6 @@ public class CorePlayerManagerListener implements Listener {
      */
     @EventHandler(ignoreCancelled = true, priority = EventPriority.LOW)
     public void onPlayerLogin(AsyncPlayerPreLoginEvent event) {
-        if (!Core.isDashboardAndSqlDisabled()) {
-            if (Core.getDashboardConnection() == null || !Core.getDashboardConnection().isConnected() || Core.getSqlUtil() == null || Core.getSqlUtil().getConnection() == null || Core.isStarting()) {
-                event.setKickMessage(ChatColor.AQUA + "Players can not join right now. Try again in a few seconds!");
-                event.setLoginResult(AsyncPlayerPreLoginEvent.Result.KICK_OTHER);
-                return;
-            }
-        }
         if (event.getLoginResult() == AsyncPlayerPreLoginEvent.Result.ALLOWED) {
             Core.getPlayerManager().playerLoggedIn(event.getUniqueId(), event.getName());
         } else {
@@ -60,7 +51,7 @@ public class CorePlayerManagerListener implements Listener {
         } catch (NoSuchElementException ignored) {
         }
         Core.getPlayerManager().playerJoined(player.getUniqueId(), textureHash);
-        Core.getDashboardConnection().send(new PacketGetPack(player.getUniqueId(), ""));
+//        Core.getDashboardConnection().send(new PacketGetPack(player.getUniqueId(), ""));
         Core.runTaskLater(() -> {
             CPlayer cPlayer = Core.getPlayerManager().getPlayer(player);
             cPlayer.getScoreboard().setupPlayerTags();

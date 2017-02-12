@@ -5,7 +5,6 @@ import network.palace.core.command.CommandException;
 import network.palace.core.command.CommandMeta;
 import network.palace.core.command.CommandPermission;
 import network.palace.core.command.CoreCommand;
-import network.palace.core.dashboard.packets.dashboard.PacketEmptyServer;
 import network.palace.core.player.Rank;
 import org.bukkit.Bukkit;
 import org.bukkit.ChatColor;
@@ -31,13 +30,13 @@ public class SafestopCommand extends CoreCommand {
         sender.sendMessage(ChatColor.RED + "Shutting the server down...");
         Core.setStarting(true);
         Bukkit.getWorlds().forEach(World::save);
-        PacketEmptyServer packet = new PacketEmptyServer(Core.getInstanceName());
-        Core.getDashboardConnection().send(packet);
-        Core.runTaskTimer(() -> {
-            if (Bukkit.getOnlinePlayers().size() <= 0) {
-                Core.getDashboardConnection().stop();
-                Bukkit.shutdown();
-            }
-        }, 0L, 40L);
+//        PacketEmptyServer packet = new PacketEmptyServer(Core.getInstanceName());
+//        Core.getDashboardConnection().send(packet);
+//        Core.runTaskTimer(() -> {
+//            if (Bukkit.getOnlinePlayers().size() <= 0) {
+//                Core.getDashboardConnection().stop();
+//                Bukkit.shutdown();
+//            }
+//        }, 0L, 40L);
     }
 }

@@ -2,7 +2,6 @@ package network.palace.core.resource;
 
 import com.comphenix.protocol.PacketType;
 import network.palace.core.Core;
-import network.palace.core.dashboard.packets.dashboard.PacketSetPack;
 import network.palace.core.player.CPlayer;
 import org.bukkit.ChatColor;
 
@@ -129,8 +128,8 @@ public class ResourceManager {
     public void setCurrentPack(CPlayer player, String pack) {
         if (player == null) return;
         player.setPack(pack);
-        PacketSetPack packet = new PacketSetPack(player.getUniqueId(), pack);
-        Core.getDashboardConnection().send(packet);
+//        PacketSetPack packet = new PacketSetPack(player.getUniqueId(), pack);
+//        Core.getDashboardConnection().send(packet);
     }
 
     /**
