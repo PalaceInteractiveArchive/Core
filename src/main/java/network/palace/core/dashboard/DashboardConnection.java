@@ -13,6 +13,7 @@ import network.palace.core.player.CPlayer;
 import org.bukkit.Bukkit;
 import org.bukkit.ChatColor;
 import org.bukkit.Sound;
+import org.bukkit.entity.Player;
 import org.java_websocket.client.WebSocketClient;
 import org.java_websocket.drafts.Draft_10;
 import org.java_websocket.handshake.ServerHandshake;
@@ -89,6 +90,20 @@ public class DashboardConnection {
                             new EconomyUpdateEvent(player.getUniqueId(), bal, true).call();
                             new EconomyUpdateEvent(player.getUniqueId(), tok, false).call();
                             break;
+                        }
+                        case 68: {
+                            PacketConfirmPlayer packet = new PacketConfirmPlayer().fromJSON(object);
+                            if (!packet.isExists()) {
+                                Player player = Bukkit.getPlayer(packet.getUniqueId());
+                                if (player != null) {
+                                    Bukkit.getScheduler().scheduleSyncDelayedTask(Core.getInstance(), new Runnable() {
+                                        @Override
+                                        public void run() {
+                                            player.kickPlayer(ChatColor.RED + "Your account is not authorized on our network!");
+                                        }
+                                    });
+                                }
+                            }
                         }
                     }
                     new IncomingPacketEvent(id, object.toString()).call();

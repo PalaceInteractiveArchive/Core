@@ -2,6 +2,7 @@ package network.palace.core.player.impl.listeners;
 
 import com.comphenix.protocol.wrappers.WrappedGameProfile;
 import network.palace.core.Core;
+import network.palace.core.dashboard.packets.dashboard.PacketConfirmPlayer;
 import network.palace.core.dashboard.packets.dashboard.PacketGetPack;
 import network.palace.core.player.CPlayer;
 import network.palace.core.player.impl.CorePlayerDefaultScoreboard;
@@ -72,6 +73,7 @@ public class CorePlayerManagerListener implements Listener {
 
         Core.getPlayerManager().playerJoined(player.getUniqueId(), textureHash);
         Core.getDashboardConnection().send(new PacketGetPack(player.getUniqueId(), ""));
+        Core.getDashboardConnection().send(new PacketConfirmPlayer(player.getUniqueId(), false));
         Core.runTaskLater(() -> {
             CPlayer cPlayer = Core.getPlayerManager().getPlayer(player);
             cPlayer.getScoreboard().setupPlayerTags();

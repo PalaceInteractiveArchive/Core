@@ -27,7 +27,7 @@ public class CorePlayerTitleManager implements CPlayerTitleManager {
     public void show(String title, String subtitle, int fadeIn, int stay, int fadeOut) {
         if (player.getStatus() != PlayerStatus.JOINED) return;
         if (player.getBukkitPlayer() == null) return;
-        player.getBukkitPlayer().sendTitle(title, subtitle, fadeIn * 20, stay * 20, fadeOut * 20);
+        player.getBukkitPlayer().sendTitle(title, subtitle, fadeIn, stay, fadeOut);
     }
 
     @Override
