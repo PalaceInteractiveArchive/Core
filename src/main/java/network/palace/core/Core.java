@@ -3,6 +3,7 @@ package network.palace.core;
 import com.comphenix.protocol.ProtocolLibrary;
 import com.comphenix.protocol.events.PacketListener;
 import network.palace.core.achievements.AchievementManager;
+import network.palace.core.citadel.Citadel;
 import network.palace.core.command.CommandRegister;
 import network.palace.core.config.LanguageManager;
 import network.palace.core.config.YAMLConfigurationFile;
@@ -58,6 +59,8 @@ public class Core extends JavaPlugin {
 
     private SqlUtil sqlUtil;
 
+    private Citadel citadel;
+
     @Override
     public final void onEnable() {
         // Kick all players on reload
@@ -89,6 +92,11 @@ public class Core extends JavaPlugin {
         economyManager = new EconomyManager();
         achievementManager = new AchievementManager();
         entityIDManger = new EntityIDManager();
+
+        // Citadel
+        citadel = new Citadel(getCoreConfig().getString("citadelURL", ""));
+        citadel.connect();
+
         // Register Listeners
         new ListenerRegister(this);
         // Register Commands
