@@ -47,7 +47,7 @@ public class Core extends JavaPlugin {
     private String serverType = "Hub";
     private String instanceName = "";
     private boolean debug = false;
-    private boolean dashboardAndSqlDisabled = false;
+    private boolean citadelAndSqlDisabled = false;
 
     private LanguageManager languageManager;
     private CPlayerManager playerManager;
@@ -75,7 +75,7 @@ public class Core extends JavaPlugin {
         serverType = getCoreConfig().getString("server-type", "Unknown");
         instanceName = getCoreConfig().getString("instance-name", "ServerName");
         debug = getCoreConfig().getBoolean("debug", false);
-        dashboardAndSqlDisabled = getCoreConfig().getBoolean("dashboardAndSqlDisabled", false);
+        citadelAndSqlDisabled = getCoreConfig().getBoolean("citadelAndSqlDisabled", false);
         // Language Manager
         languageManager = new LanguageManager(this);
         // Settings adapter for player locales
@@ -135,8 +135,8 @@ public class Core extends JavaPlugin {
      *
      * @return the boolean
      */
-    public static boolean isDashboardAndSqlDisabled() {
-        return getInstance().dashboardAndSqlDisabled;
+    public static boolean isCitadelAndSqlDisabled() {
+        return getInstance().citadelAndSqlDisabled;
     }
 
     /**
@@ -438,6 +438,17 @@ public class Core extends JavaPlugin {
     public static void debugLog(String s) {
         if (isDebug()) {
             logMessage("CORE-DEBUG", s);
+        }
+    }
+
+    /**
+     * Debug log.
+     *
+     * @param s the s
+     */
+    public static void debugCitadelLog(String s) {
+        if (isDebug()) {
+            logMessage("Citadel", s);
         }
     }
 

@@ -2,8 +2,9 @@ package network.palace.core.citadel;
 
 import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.ObjectMapper;
+import lombok.Getter;
 import network.palace.core.Core;
-import network.palace.core.citadel.packets.PacketBase;
+import network.palace.core.citadel.packets.outgoing.PacketOutgoingBase;
 import org.bukkit.ChatColor;
 
 /**
@@ -12,9 +13,9 @@ import org.bukkit.ChatColor;
  */
 public class PacketUtil {
 
-    private static ObjectMapper mapper = new ObjectMapper();
+    @Getter private static ObjectMapper mapper = new ObjectMapper();
 
-    public String toJson(PacketBase packet) {
+    public String toJson(PacketOutgoingBase packet) {
         try {
             return mapper.writeValueAsString(packet);
         } catch (JsonProcessingException e) {

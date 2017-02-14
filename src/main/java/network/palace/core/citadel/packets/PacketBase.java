@@ -10,7 +10,6 @@ import lombok.Getter;
 @AllArgsConstructor
 public abstract class PacketBase {
 
-    @Getter private String type;
-    @Getter private String server;
+    @Getter private String type = "";
 
 }

@@ -4,7 +4,7 @@ sql:
   password: password
 server-type: Unknown
 instance-name: ServerName
-dashboardURL: ws://socket.dashboard.playground.palace.network:7892
+citadelURL: ws://localhost:3000
 isDefaultSidebarEnabled: true
 debug: false
-dashboardAndSqlDisabled: false
+citadelAndSqlDisabled: false

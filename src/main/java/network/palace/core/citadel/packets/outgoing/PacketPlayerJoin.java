@@ -1,10 +1,13 @@
-package network.palace.core.citadel.packets;
+package network.palace.core.citadel.packets.outgoing;
+
+import network.palace.core.citadel.packets.PacketType;
 
 /**
  * @author Innectic
  * @since 2/12/2017
  */
-public class PacketPlayerJoin extends PacketBase {
+@PacketType("playerJoin")
+public class PacketPlayerJoin extends PacketOutgoingBase {
 
     private String playerName;
     private String playerUUID;
