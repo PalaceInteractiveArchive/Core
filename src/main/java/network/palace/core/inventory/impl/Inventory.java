@@ -1,11 +1,14 @@
 package network.palace.core.inventory.impl;
 
 import com.google.common.collect.ImmutableList;
+import lombok.Getter;
+import lombok.Setter;
 import network.palace.core.Core;
 import network.palace.core.inventory.InventoryButtonInterface;
 import network.palace.core.inventory.InventoryInterface;
 import network.palace.core.inventory.ClickAction;
 import network.palace.core.player.CPlayer;
+import org.bukkit.Sound;
 import org.bukkit.entity.Player;
 import org.bukkit.event.EventHandler;
 import org.bukkit.event.EventPriority;
@@ -23,6 +26,7 @@ public class Inventory implements InventoryInterface, Listener {
     protected org.bukkit.inventory.Inventory inventory;
     protected final Map<Integer, InventoryButtonInterface> inventoryButtons = new HashMap<>();
     protected Set<Integer> updatedSlots = new HashSet<>();
+    @Getter @Setter private boolean playInventorySound = false;
 
     public Inventory(int size, String title) {
         if (size % 9 != 0) {
@@ -39,17 +43,19 @@ public class Inventory implements InventoryInterface, Listener {
     }
 
     @Override
-    public final void open(CPlayer player) {
+    public void open(CPlayer player) {
         if (observers.contains(player)) return;
         observers.add(player);
+        if (playInventorySound) player.playSound(player.getLocation(), Sound.BLOCK_CHEST_OPEN, 1.0F, 1.0F);
         player.getBukkitPlayer().openInventory(inventory);
         onOpen(player);
     }
 
     @Override
-    public final void close(CPlayer player) {
+    public void close(CPlayer player) {
         if (!observers.contains(player)) return;
         observers.remove(player);
+        if (playInventorySound) player.playSound(player.getLocation(), Sound.BLOCK_CHEST_CLOSE, 1.0F, 1.0F);
         player.getBukkitPlayer().closeInventory();
         onClose(player);
     }
@@ -135,6 +141,7 @@ public class Inventory implements InventoryInterface, Listener {
         Player player = (Player) event.getPlayer();
         CPlayer onlinePlayer = Core.getPlayerManager().getPlayer(player);
         observers.remove(onlinePlayer);
+        if (playInventorySound) player.playSound(player.getLocation(), Sound.BLOCK_CHEST_CLOSE, 1.0F, 1.0F);
         onClose(onlinePlayer);
     }
 

@@ -94,7 +94,7 @@ public class FormattedMessage {
         return this;
     }
 
-    public FormattedMessage then(final Object obj) {
+    public FormattedMessage then(final String obj) {
         messageSections.add(new MessageSection(obj.toString()));
         return this;
     }
@@ -111,6 +111,7 @@ public class FormattedMessage {
         return builder.toString();
     }
 
+    @SuppressWarnings("unchecked")
     public String toJSONString() {
         JSONObject json = new JSONObject();
         if (messageSections.size() != 1) {

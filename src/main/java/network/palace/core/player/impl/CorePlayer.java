@@ -173,6 +173,7 @@ public class CorePlayer implements CPlayer {
     }
 
     @Override
+    @SuppressWarnings("deprecation")
     public void resetPlayer() {
         if (getStatus() != PlayerStatus.JOINED) return;
         if (getBukkitPlayer() == null) return;
