@@ -4,7 +4,6 @@ import com.comphenix.protocol.PacketType;
 import network.palace.core.Core;
 import network.palace.core.dashboard.packets.dashboard.PacketSetPack;
 import network.palace.core.player.CPlayer;
-import org.bukkit.Bukkit;
 import org.bukkit.ChatColor;
 
 import java.sql.Connection;
@@ -43,10 +42,8 @@ public class ResourceManager {
             PreparedStatement sql = connection.prepareStatement("SELECT * FROM resource_packs");
             ResultSet result = sql.executeQuery();
             while (result.next()) {
-                ResourcePack p = new ResourcePack(result.getString("name"), result.getString("url"),
-                        result.getString("hash"));
-                packs.put(result.getString("name"), p);
-                Bukkit.broadcastMessage(p.getName() + " " + p.getUrl() + " " + p.getHash());
+                packs.put(result.getString("name"), new ResourcePack(result.getString("name"),
+                        result.getString("url"), result.getString("hash")));
             }
             result.close();
             sql.close();
@@ -116,8 +113,8 @@ public class ResourceManager {
      */
     public void sendPack(CPlayer player, ResourcePack pack) {
         player.sendMessage(ChatColor.GREEN + "Attempting to send you the " + ChatColor.YELLOW + pack.getName() +
-                ChatColor.GREEN + " Resource Pack! " + pack.getUrl());
-        player.getResourcePack().send(pack.getUrl(), pack.getHash().equals("") ? "null" : pack.getHash());
+                ChatColor.GREEN + " Resource Pack!");
+        player.getResourcePack().send(pack.getUrl(), pack.getHash().trim().equals("") ? "null" : pack.getHash());
         downloading.put(player.getUniqueId(), pack.getName());
 
     }
