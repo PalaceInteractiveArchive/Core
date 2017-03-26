@@ -1,5 +1,6 @@
 package network.palace.core.commands;
 
+import network.palace.core.Core;
 import network.palace.core.command.CommandException;
 import network.palace.core.command.CommandMeta;
 import network.palace.core.command.CommandPermission;
@@ -41,6 +42,11 @@ public class ReloadCommand extends CoreCommand {
             return;
         }
         String p = args[0];
+        if (p.equalsIgnoreCase("core")) {
+            Core.getResourceManager().reload();
+            sender.sendMessage(ChatColor.GREEN + "Core reloaded!");
+            return;
+        }
         JavaPlugin plugin = (JavaPlugin) Bukkit.getPluginManager().getPlugin(p);
         if (plugin == null) {
             sender.sendMessage(ChatColor.RED + "That plugin doesn't exist!");

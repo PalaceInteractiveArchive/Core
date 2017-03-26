@@ -5,12 +5,12 @@
 
     <groupId>network.palace</groupId>
     <artifactId>Core</artifactId>
-    <version>1.6.8</version>
+    <version>1.6.9</version>
 
     <repositories>
         <repository>
             <id>palace</id>
-            <url>http://198.24.160.106:81/nexus/content/repositories/releases/</url>
+            <url>https://repo.palace.network/nexus/content/repositories/releases/</url>
         </repository>
         <repository>
             <id>spigot-repo</id>

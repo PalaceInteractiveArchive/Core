@@ -10,4 +10,5 @@ import lombok.Getter;
 public class ResourcePack {
     @Getter private String name;
     @Getter private String url;
+    @Getter private String hash;
 }
