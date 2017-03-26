@@ -67,6 +67,7 @@ public class ReloadCommand extends CoreCommand {
         } else {
             name = plugin.getName();
         }
+        Bukkit.getScheduler().cancelTasks(plugin);
         JavaPluginLoader jpl = (JavaPluginLoader) plugin.getPluginLoader();
         jpl.disablePlugin(plugin);
         SimplePluginManager spm = (SimplePluginManager) Bukkit.getPluginManager();

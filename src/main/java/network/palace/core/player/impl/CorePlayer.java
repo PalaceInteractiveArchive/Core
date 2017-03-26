@@ -445,4 +445,32 @@ public class CorePlayer implements CPlayer {
             return 0;
         }
     }
+
+    @Override
+    public boolean getAllowFlight() {
+        if (getStatus() != PlayerStatus.JOINED) return false;
+        if (getBukkitPlayer() == null) return false;
+        return getBukkitPlayer().getAllowFlight();
+    }
+
+    @Override
+    public void setAllowFlight(boolean fly) {
+        if (getStatus() != PlayerStatus.JOINED) return;
+        if (getBukkitPlayer() == null) return;
+        getBukkitPlayer().setAllowFlight(fly);
+    }
+
+    @Override
+    public boolean isFlying() {
+        if (getStatus() != PlayerStatus.JOINED) return false;
+        if (getBukkitPlayer() == null) return false;
+        return getBukkitPlayer().isFlying();
+    }
+
+    @Override
+    public void setFlying(boolean fly) {
+        if (getStatus() != PlayerStatus.JOINED) return;
+        if (getBukkitPlayer() == null) return;
+        getBukkitPlayer().setFlying(fly);
+    }
 }

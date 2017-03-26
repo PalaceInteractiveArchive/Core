@@ -482,4 +482,32 @@ public interface CPlayer {
      * @return player's ping
      */
     int getPing();
+
+    /**
+     * Get whether a player can fly
+     *
+     * @return flight value
+     */
+    boolean getAllowFlight();
+
+    /**
+     * Set whether a player can fly
+     *
+     * @param fly flight value
+     */
+    void setAllowFlight(boolean fly);
+
+    /**
+     * Get whether a player is flying
+     *
+     * @return flying value
+     */
+    boolean isFlying();
+
+    /**
+     * Set whether a player is flying
+     *
+     * @param fly flying value
+     */
+    void setFlying(boolean fly);
 }
