@@ -23,6 +23,10 @@ public class Point implements Cloneable {
         return (pitch == 0.0F && yaw == 0.0F && y % 1 == 0 && z % 1 == 0 && x % 1 == 0);
     }
 
+    public Location getLocation() {
+        return new Location(world, x, y, z, yaw, pitch);
+    }
+
     public Location getLocation(World world) {
         return new Location(world, x, y, z, yaw, pitch);
     }

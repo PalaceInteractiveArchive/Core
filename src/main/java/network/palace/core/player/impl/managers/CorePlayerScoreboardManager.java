@@ -83,7 +83,7 @@ public class CorePlayerScoreboardManager implements CPlayerScoreboardManager {
     }
 
     private void setup() {
-        lines = new HashMap();
+        lines = new HashMap<>();
         scoreboard = Bukkit.getScoreboardManager().getNewScoreboard();
         if (scoreboard == null) return;
         if (player.getBukkitPlayer() == null) return;
@@ -132,6 +132,6 @@ public class CorePlayerScoreboardManager implements CPlayerScoreboardManager {
 
     @Override
     public void clear() {
-        player.getBukkitPlayer().setScoreboard(Bukkit.getScoreboardManager().getNewScoreboard());
+        setup();
     }
 }

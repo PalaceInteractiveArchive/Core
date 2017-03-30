@@ -28,11 +28,7 @@ public class ResourceManager {
      * Instantiates a new Resource manager.
      */
     public ResourceManager() {
-        try {
-            initialize();
-        } catch (SQLException e) {
-            e.printStackTrace();
-        }
+        initialize();
     }
 
     /**
@@ -40,20 +36,23 @@ public class ResourceManager {
      *
      * @throws SQLException the sql exception
      */
-    public void initialize() throws SQLException {
+    public void initialize() {
         packs.clear();
-        Connection connection = Core.getSqlUtil().getConnection();
-        if (connection == null) return;
-        PreparedStatement sql = connection.prepareStatement("SELECT * FROM resource_packs");
-        ResultSet result = sql.executeQuery();
-        while (result.next()) {
-            packs.put(result.getString("name"), new ResourcePack(result.getString("name"), result.getString("url")));
-        }
-        result.close();
-        sql.close();
-        if (first) {
-            Core.addPacketListener(new ResourceListener(Core.getInstance(), PacketType.Play.Client.RESOURCE_PACK_STATUS));
-            first = false;
+        try (Connection connection = Core.getSqlUtil().getConnection()) {
+            PreparedStatement sql = connection.prepareStatement("SELECT * FROM resource_packs");
+            ResultSet result = sql.executeQuery();
+            while (result.next()) {
+                packs.put(result.getString("name"), new ResourcePack(result.getString("name"),
+                        result.getString("url"), result.getString("hash")));
+            }
+            result.close();
+            sql.close();
+            if (first) {
+                Core.addPacketListener(new ResourceListener(Core.getInstance(), PacketType.Play.Client.RESOURCE_PACK_STATUS));
+                first = false;
+            }
+        } catch (SQLException e) {
+            e.printStackTrace();
         }
     }
 
@@ -115,7 +114,7 @@ public class ResourceManager {
     public void sendPack(CPlayer player, ResourcePack pack) {
         player.sendMessage(ChatColor.GREEN + "Attempting to send you the " + ChatColor.YELLOW + pack.getName() +
                 ChatColor.GREEN + " Resource Pack!");
-        player.getResourcePack().send(pack.getUrl(), "null");
+        player.getResourcePack().send(pack.getUrl(), pack.getHash().trim().equals("") ? "null" : pack.getHash());
         downloading.put(player.getUniqueId(), pack.getName());
 
     }
@@ -154,10 +153,6 @@ public class ResourceManager {
      */
     public void reload() {
         packs.clear();
-        try {
-            initialize();
-        } catch (SQLException e) {
-            e.printStackTrace();
-        }
+        initialize();
     }
 }
