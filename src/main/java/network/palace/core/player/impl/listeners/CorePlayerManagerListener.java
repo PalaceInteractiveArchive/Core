@@ -80,10 +80,11 @@ public class CorePlayerManagerListener implements Listener {
         Core.getDashboardConnection().send(new PacketConfirmPlayer(player.getUniqueId(), false));
         Core.runTaskLater(() -> {
             CPlayer cPlayer = Core.getPlayerManager().getPlayer(player);
-            cPlayer.getScoreboard().setupPlayerTags();
+            if (cPlayer == null) return;
+            if (cPlayer.getScoreboard() != null) cPlayer.getScoreboard().setupPlayerTags();
             for (CPlayer otherPlayer : Core.getPlayerManager().getOnlinePlayers()) {
-                cPlayer.getScoreboard().addPlayerTag(otherPlayer);
-                otherPlayer.getScoreboard().addPlayerTag(cPlayer);
+                if (cPlayer.getScoreboard() != null) cPlayer.getScoreboard().addPlayerTag(otherPlayer);
+                if (otherPlayer.getScoreboard() != null) otherPlayer.getScoreboard().addPlayerTag(cPlayer);
             }
             defaultScoreboard.setup(cPlayer);
         }, 5);
