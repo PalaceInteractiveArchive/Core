@@ -387,7 +387,7 @@ public class SqlUtil {
         MobPlayerTexture texture = new MobPlayerTexture("", "");
 
         try {
-            PreparedStatement statement = connection.prepareStatement("SELECT * skins skinHashes WHERE uuid=?");
+            PreparedStatement statement = connection.prepareStatement("SELECT * FROM skins WHERE uuid=?");
             statement.setString(1, uuid.toString());
             ResultSet result = statement.executeQuery();
             while (result.next()) {
