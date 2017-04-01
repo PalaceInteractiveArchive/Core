@@ -2,7 +2,6 @@ package network.palace.core.player;
 
 import org.bukkit.entity.Player;
 
-import java.util.Collection;
 import java.util.List;
 import java.util.UUID;
 
@@ -22,10 +21,11 @@ public interface CPlayerManager {
     /**
      * Player joined.
      *
-     * @param uuid        the uuid
-     * @param textureHash the texture hash
+     * @param uuid             the uuid
+     * @param textureValue     the texture value
+     * @param textureSignature the texture signature
      */
-    void playerJoined(UUID uuid, String textureHash);
+    void playerJoined(UUID uuid, String textureValue, String textureSignature);
 
     /**
      * Player logged out.

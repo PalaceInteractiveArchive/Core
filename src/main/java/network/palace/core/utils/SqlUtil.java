@@ -1,6 +1,7 @@
 package network.palace.core.utils;
 
 import network.palace.core.Core;
+import network.palace.core.npc.mob.MobPlayerTexture;
 import network.palace.core.player.CPlayer;
 import network.palace.core.player.Rank;
 import org.bukkit.ChatColor;
@@ -316,11 +317,18 @@ public class SqlUtil {
             sql.setInt(3, (int) (System.currentTimeMillis() / 1000));
             sql.execute();
             sql.close();
+            connection.close();
         } catch (SQLException e) {
             e.printStackTrace();
         }
     }
 
+    /**
+     * Get all achievements for a player
+     *
+     * @param uuid The players uuid
+     * @return list of the players achievements
+     */
     public List<Integer> getAchievements(UUID uuid) {
         List<Integer> list = new ArrayList<>();
         Connection connection = getConnection();
@@ -334,9 +342,63 @@ public class SqlUtil {
             }
             achResult.close();
             ach.close();
+            connection.close();
         } catch (SQLException e) {
             e.printStackTrace();
         }
         return list;
+    }
+
+    /**
+     * Cache a skin for later use
+     * @param uuid UUID of the player
+     * @param value Value of the skin
+     * @param signature Signature of the skin
+     */
+    public void cacheSkin(UUID uuid, String value, String signature) {
+        Connection connection = getConnection();
+        if (connection == null) return;
+
+        try {
+            PreparedStatement statement = connection.prepareStatement("INSERT INTO skins (uuid, value, signature) VALUES (?,?,?)");
+
+            statement.setString(1, uuid.toString());
+            statement.setString(2, value);
+            statement.setString(3, signature);
+
+            statement.execute();
+            statement.close();
+
+            connection.close();
+        } catch (SQLException e) {
+            e.printStackTrace();
+        }
+    }
+
+    /**
+     * Get the cached skin for a player's uuid
+     * @param uuid The uuid to find
+     * @return The texture
+     */
+    public MobPlayerTexture getPlayerTextureHash(UUID uuid) {
+        Connection connection = getConnection();
+        if (connection == null) return new MobPlayerTexture("", "");
+
+        MobPlayerTexture texture = new MobPlayerTexture("", "");
+
+        try {
+            PreparedStatement statement = connection.prepareStatement("SELECT * skins skinHashes WHERE uuid=?");
+            statement.setString(1, uuid.toString());
+            ResultSet result = statement.executeQuery();
+            while (result.next()) {
+                texture = new MobPlayerTexture(result.getString("value"), result.getString("signature"));
+            }
+            result.close();
+            result.close();
+            connection.close();
+        } catch (SQLException e) {
+            e.printStackTrace();
+        }
+        return texture;
     }
 }

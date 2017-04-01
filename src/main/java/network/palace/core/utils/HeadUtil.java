@@ -24,7 +24,7 @@ public class HeadUtil {
      * @return ItemStack player head
      */
     public static ItemStack getPlayerHead(CPlayer player) {
-        return getPlayerHead(player.getTextureHash());
+        return getPlayerHead(player.getTextureValue());
     }
 
     /**

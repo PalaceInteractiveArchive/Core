@@ -34,11 +34,17 @@ public class CorePlayerManager implements CPlayerManager {
     }
 
     @Override
-    public void playerJoined(UUID uuid, String textureHash) {
+    public void playerJoined(UUID uuid, String textureValue, String textureSignature) {
         CPlayer player = getPlayer(uuid);
         if (player == null) return;
         player.setStatus(PlayerStatus.JOINED);
-        player.setTextureHash(textureHash);
+        player.setTextureValue(textureValue);
+        player.setTextureSignature(textureSignature);
+        if (player.getRank().getRankId() >= Rank.CHARACTER.getRankId()) {
+            Core.runTaskAsynchronously(() ->
+                Core.getSqlUtil().cacheSkin(player.getUuid(), player.getTextureValue(), player.getTextureSignature())
+            );
+        }
         boolean op = player.getRank().isOp();
         if (player.isOp() != op) {
             player.setOp(op);
@@ -46,7 +52,6 @@ public class CorePlayerManager implements CPlayerManager {
         // Setup permissions for player
         Core.getPermissionManager().login(player);
     }
-
     @Override
     public void playerLoggedOut(UUID uuid) {
         if (getPlayer(uuid) == null) return;

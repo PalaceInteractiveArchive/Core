@@ -1,6 +1,7 @@
 package network.palace.core.player.impl.listeners;
 
 import com.comphenix.protocol.wrappers.WrappedGameProfile;
+import com.comphenix.protocol.wrappers.WrappedSignedProperty;
 import network.palace.core.Core;
 import network.palace.core.dashboard.packets.dashboard.PacketConfirmPlayer;
 import network.palace.core.dashboard.packets.dashboard.PacketGetPack;
@@ -14,7 +15,7 @@ import org.bukkit.event.EventPriority;
 import org.bukkit.event.Listener;
 import org.bukkit.event.player.*;
 
-import java.util.NoSuchElementException;
+import java.util.Optional;
 
 /**
  * The type Core player manager listener.
@@ -64,14 +65,17 @@ public class CorePlayerManagerListener implements Listener {
             player.awardAchievement(Achievement.OPEN_INVENTORY);
         }
         WrappedGameProfile wrappedGameProfile = WrappedGameProfile.fromPlayer(player);
-        String textureHash = "";
+        String textureValue = "";
+        String textureSignature = "";
 
-        try {
-            textureHash = wrappedGameProfile.getProperties().get("textures").iterator().next().getValue();
-        } catch (NoSuchElementException ignored) {
+        Optional<WrappedSignedProperty> propertyOptional = wrappedGameProfile.getProperties().get("textures").stream().findFirst();
+        if (propertyOptional.isPresent()) {
+            WrappedSignedProperty property = propertyOptional.get();
+            textureValue = property.getValue();
+            textureSignature = property.getSignature();
         }
 
-        Core.getPlayerManager().playerJoined(player.getUniqueId(), textureHash);
+        Core.getPlayerManager().playerJoined(player.getUniqueId(), textureValue, textureSignature);
         Core.getDashboardConnection().send(new PacketGetPack(player.getUniqueId(), ""));
         Core.getDashboardConnection().send(new PacketConfirmPlayer(player.getUniqueId(), false));
         Core.runTaskLater(() -> {

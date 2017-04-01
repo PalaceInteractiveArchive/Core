@@ -45,7 +45,8 @@ public class CorePlayer implements CPlayer {
     @Getter private CPlayerTitleManager title = new CorePlayerTitleManager(this);
     @Getter private CPlayerParticlesManager particles = new CorePlayerParticlesManager(this);
     @Getter private CPlayerResourcePackManager resourcePack = new CorePlayerResourcePackManager(this);
-    @Getter @Setter private String textureHash = "";
+    @Getter @Setter private String textureValue = "";
+    @Getter @Setter private String textureSignature = "";
     @Getter @Setter private String pack = "none";
 
     /**

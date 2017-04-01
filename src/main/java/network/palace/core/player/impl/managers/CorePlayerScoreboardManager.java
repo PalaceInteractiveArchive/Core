@@ -75,6 +75,7 @@ public class CorePlayerScoreboardManager implements CPlayerScoreboardManager {
     public CPlayerScoreboardManager title(String title) {
         if (this.title != null && this.title.equals(title)) return this;
         if (scoreboard == null || scoreboardObjective == null) setup();
+        if (title == null) return this;
 
         this.title = title;
         scoreboardObjective.setDisplayName(title);

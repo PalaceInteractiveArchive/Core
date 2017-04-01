@@ -426,18 +426,32 @@ public interface CPlayer {
     void setRank(Rank rank);
 
     /**
-     * Sets texture hash.
+     * Sets texture value.
      *
-     * @param textureHash the texture hash
+     * @param textureValue the texture value
      */
-    void setTextureHash(String textureHash);
+    void setTextureValue(String textureValue);
 
     /**
-     * Gets texture hash.
+     * Gets texture value.
      *
-     * @return the texture hash
+     * @return the texture value
      */
-    String getTextureHash();
+    String getTextureValue();
+
+    /**
+     * Sets texture signature.
+     *
+     * @param textureSignature the texture signature
+     */
+    void setTextureSignature(String textureSignature);
+
+    /**
+     * Gets texture signature.
+     *
+     * @return the texture signature
+     */
+    String getTextureSignature();
 
     /**
      * Sets pack.
