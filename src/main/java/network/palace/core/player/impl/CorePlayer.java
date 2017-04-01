@@ -474,4 +474,10 @@ public class CorePlayer implements CPlayer {
         if (getBukkitPlayer() == null) return;
         getBukkitPlayer().setFlying(fly);
     }
+
+    @Override
+    public void kick(String reason) {
+        if (getBukkitPlayer() == null) return;
+        getBukkitPlayer().kickPlayer(reason);
+    }
 }

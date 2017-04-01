@@ -38,6 +38,12 @@ public class CorePlayerScoreboardManager implements CPlayerScoreboardManager {
         this.player = player;
     }
 
+    /**
+     * Set a sidebar scoreboard value
+     * @param id   the id of the location in the sidebar
+     * @param text the text to show
+     * @return scoreboard manager
+     */
     @Override
     public CPlayerScoreboardManager set(int id, String text) {
         text = text.substring(0, Math.min(text.length(), MAX_STRING_LENGTH));
@@ -57,11 +63,21 @@ public class CorePlayerScoreboardManager implements CPlayerScoreboardManager {
         return this;
     }
 
+    /**
+     * Create a blank entry at an id
+     * @param id the id to create as blank
+     * @return scoreboard manager
+     */
     @Override
     public CPlayerScoreboardManager setBlank(int id) {
         return set(id, nextNull());
     }
 
+    /**
+     * Remove an id from the sidebar
+     * @param id the id to remove
+     * @return scoreboard manager
+     */
     @Override
     public CPlayerScoreboardManager remove(int id) {
         if (lines.containsKey(id)) {
@@ -71,6 +87,11 @@ public class CorePlayerScoreboardManager implements CPlayerScoreboardManager {
         return this;
     }
 
+    /**
+     * Set the title of a sidebar scoreboard
+     * @param title the title to use
+     * @return scoreboard manager
+     */
     @Override
     public CPlayerScoreboardManager title(String title) {
         if (this.title != null && this.title.equals(title)) return this;
@@ -83,10 +104,14 @@ public class CorePlayerScoreboardManager implements CPlayerScoreboardManager {
             if (scoreboardObjective != null) scoreboardObjective.setDisplayName(title);
         } catch (IllegalStateException | IllegalArgumentException ignored) {
         }
-        if (scoreboard != null) player.getBukkitPlayer().setScoreboard(scoreboard);
+        if (scoreboard != null && player != null && player.getBukkitPlayer() != null)
+            player.getBukkitPlayer().setScoreboard(scoreboard);
         return this;
     }
 
+    /**
+     * Setup the sidebar for a player
+     */
     private void setup() {
         lines = new HashMap<>();
         scoreboard = Bukkit.getScoreboardManager().getNewScoreboard();
@@ -107,6 +132,9 @@ public class CorePlayerScoreboardManager implements CPlayerScoreboardManager {
         return s;
     }
 
+    /**
+     * Setup the player tags to prevent collision.
+     */
     @Override
     public void setupPlayerTags() {
         if (scoreboard == null) setup();
@@ -117,6 +145,10 @@ public class CorePlayerScoreboardManager implements CPlayerScoreboardManager {
         }
     }
 
+    /**
+     * Add a tag to a player
+     * @param otherPlayer the other player
+     */
     @Override
     public void addPlayerTag(CPlayer otherPlayer) {
         if (scoreboard == null) setup();
@@ -126,6 +158,10 @@ public class CorePlayerScoreboardManager implements CPlayerScoreboardManager {
         scoreboard.getTeam(otherPlayer.getRank().getName()).addEntry(otherPlayer.getName());
     }
 
+    /**
+     * Remove a tag from a player
+     * @param otherPlayer the other player
+     */
     @Override
     public void removePlayerTag(CPlayer otherPlayer) {
         if (scoreboard == null) setup();
@@ -135,6 +171,9 @@ public class CorePlayerScoreboardManager implements CPlayerScoreboardManager {
         scoreboard.getTeam(otherPlayer.getRank().getName()).removeEntry(otherPlayer.getName());
     }
 
+    /**
+     * Clear the player's scoreboard
+     */
     @Override
     public void clear() {
         setup();

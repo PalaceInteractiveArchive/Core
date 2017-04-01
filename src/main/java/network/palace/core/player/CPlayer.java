@@ -524,4 +524,11 @@ public interface CPlayer {
      * @param fly flying value
      */
     void setFlying(boolean fly);
+
+    /**
+     * Kick a player from the server
+     *
+     * @param reason kick reason
+     */
+    void kick(String reason);
 }

@@ -6,6 +6,7 @@ import network.palace.core.command.CommandMeta;
 import network.palace.core.command.CommandPermission;
 import network.palace.core.command.CoreCommand;
 import network.palace.core.player.Rank;
+import network.palace.core.utils.MiscUtil;
 import org.bukkit.Bukkit;
 import org.bukkit.ChatColor;
 import org.bukkit.Location;
@@ -53,7 +54,7 @@ public class BalanceCommand extends CoreCommand {
             } else {
                 String action = args[0];
                 Player tp = (Player) sender;
-                if (!isInt(args[1])) {
+                if (!MiscUtil.checkIfInt(args[1])) {
                     helpMenu(sender);
                     return;
                 }
@@ -80,7 +81,7 @@ public class BalanceCommand extends CoreCommand {
                 sender.sendMessage(ChatColor.GREEN + args[2] + ChatColor.RED + " is not online!");
                 return;
             }
-            if (!isInt(args[1])) {
+            if (!MiscUtil.checkIfInt(args[1])) {
                 helpMenu(sender);
                 return;
             }
@@ -107,15 +108,6 @@ public class BalanceCommand extends CoreCommand {
             return;
         }
         helpMenu(sender);
-    }
-
-    private boolean isInt(String s) {
-        try {
-            Integer.parseInt(s);
-            return true;
-        } catch (NumberFormatException ignored) {
-            return false;
-        }
     }
 
     private void helpMenu(CommandSender sender) {

@@ -1,6 +1,7 @@
 package network.palace.core.achievements;
 
 import network.palace.core.Core;
+import network.palace.core.utils.MiscUtil;
 import org.json.simple.JSONArray;
 import org.json.simple.JSONObject;
 import org.json.simple.parser.JSONParser;
@@ -56,7 +57,7 @@ public class AchievementManager {
                 }
                 PreparedStatement sql = connection.prepareStatement(statement + ";");
                 for (Map.Entry<Integer, String> entry : new HashSet<>(lastList.entrySet())) {
-                    if (isInt(entry.getValue())) {
+                    if (MiscUtil.checkIfInt(entry.getValue())) {
                         sql.setInt(entry.getKey(), Integer.parseInt(entry.getValue()));
                     } else {
                         sql.setString(entry.getKey(), entry.getValue());
@@ -68,15 +69,6 @@ public class AchievementManager {
                 e.printStackTrace();
             }
         }, 0L, 100L);
-    }
-
-    private boolean isInt(String s) {
-        try {
-            Integer.parseInt(s);
-            return true;
-        } catch (NumberFormatException ignored) {
-            return false;
-        }
     }
 
     public void reload() {
