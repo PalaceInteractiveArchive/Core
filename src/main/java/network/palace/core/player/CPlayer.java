@@ -73,12 +73,14 @@ public interface CPlayer {
 
     /**
      * Get the player's health
+     *
      * @return the current health
      */
     double getHealth();
 
     /**
      * Get the player's max health
+     *
      * @return the current max health
      */
     double getMaxHealth();
@@ -543,4 +545,11 @@ public interface CPlayer {
      * @param reason kick reason
      */
     void kick(String reason);
+
+    /**
+     * Force player to perform a command
+     *
+     * @param cmd Command
+     */
+    void performCommand(String cmd);
 }

@@ -85,9 +85,7 @@ public class CorePlayer implements CPlayer {
 
     @Override
     public boolean isOp() {
-        if (getStatus() != PlayerStatus.JOINED) return false;
-        if (getBukkitPlayer() == null) return false;
-        return getBukkitPlayer().isOp();
+        return getStatus() == PlayerStatus.JOINED && getBukkitPlayer() != null && getBukkitPlayer().isOp();
     }
 
     @Override
@@ -128,6 +126,7 @@ public class CorePlayer implements CPlayer {
 
         return getBukkitPlayer().getMaxHealth();
     }
+
     @Override
     public GameMode getGamemode() {
         if (getStatus() != PlayerStatus.JOINED) return GameMode.SURVIVAL;
@@ -464,9 +463,7 @@ public class CorePlayer implements CPlayer {
 
     @Override
     public boolean getAllowFlight() {
-        if (getStatus() != PlayerStatus.JOINED) return false;
-        if (getBukkitPlayer() == null) return false;
-        return getBukkitPlayer().getAllowFlight();
+        return getStatus() == PlayerStatus.JOINED && getBukkitPlayer() != null && getBukkitPlayer().getAllowFlight();
     }
 
     @Override
@@ -478,9 +475,7 @@ public class CorePlayer implements CPlayer {
 
     @Override
     public boolean isFlying() {
-        if (getStatus() != PlayerStatus.JOINED) return false;
-        if (getBukkitPlayer() == null) return false;
-        return getBukkitPlayer().isFlying();
+        return getStatus() == PlayerStatus.JOINED && getBukkitPlayer() != null && getBukkitPlayer().isFlying();
     }
 
     @Override
@@ -494,5 +489,12 @@ public class CorePlayer implements CPlayer {
     public void kick(String reason) {
         if (getBukkitPlayer() == null) return;
         getBukkitPlayer().kickPlayer(reason);
+    }
+
+    @Override
+    public void performCommand(String cmd) {
+        if (getStatus() != PlayerStatus.JOINED) return;
+        if (getBukkitPlayer() == null) return;
+        getBukkitPlayer().performCommand(cmd);
     }
 }
