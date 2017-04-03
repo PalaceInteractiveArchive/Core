@@ -1,6 +1,5 @@
 package network.palace.core.inventory.impl;
 
-import lombok.AllArgsConstructor;
 import lombok.Getter;
 import network.palace.core.inventory.ButtonCriteria;
 import network.palace.core.inventory.InventoryButtonInterface;
@@ -9,7 +8,6 @@ import network.palace.core.player.CPlayer;
 import org.bukkit.Material;
 import org.bukkit.inventory.ItemStack;
 
-@AllArgsConstructor
 public class InventoryButton implements InventoryButtonInterface {
 
     @Getter private ItemStack stack;
@@ -22,6 +20,16 @@ public class InventoryButton implements InventoryButtonInterface {
 
     public InventoryButton(Material material, InventoryClick click, ButtonCriteria criteria) {
         this.stack = new ItemStack(material, 1);
+        this.click = click;
+        this.criteria = criteria;
+    }
+
+    public InventoryButton(ItemStack stack, InventoryClick click) {
+        this(stack, click, new DefaultButtonCriteria());
+    }
+
+    public InventoryButton(ItemStack stack, InventoryClick click, ButtonCriteria criteria) {
+        this.stack = stack;
         this.click = click;
         this.criteria = criteria;
     }
