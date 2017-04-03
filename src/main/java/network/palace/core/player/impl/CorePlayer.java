@@ -114,6 +114,21 @@ public class CorePlayer implements CPlayer {
     }
 
     @Override
+    public double getHealth() {
+        if (getStatus() != PlayerStatus.JOINED) return 20;
+        if (getBukkitPlayer() == null) return 20;
+
+        return getBukkitPlayer().getHealth();
+    }
+
+    @Override
+    public double getMaxHealth() {
+        if (getStatus() != PlayerStatus.JOINED) return 20;
+        if (getBukkitPlayer() == null) return 20;
+
+        return getBukkitPlayer().getMaxHealth();
+    }
+    @Override
     public GameMode getGamemode() {
         if (getStatus() != PlayerStatus.JOINED) return GameMode.SURVIVAL;
         if (getBukkitPlayer() == null) return GameMode.SURVIVAL;

@@ -72,6 +72,18 @@ public interface CPlayer {
     void setHealth(double health);
 
     /**
+     * Get the player's health
+     * @return the current health
+     */
+    double getHealth();
+
+    /**
+     * Get the player's max health
+     * @return the current max health
+     */
+    double getMaxHealth();
+
+    /**
      * Gets gamemode.
      *
      * @return the gamemode
