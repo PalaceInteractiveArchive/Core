@@ -41,6 +41,11 @@ public class DynamicInventory implements InventoryInterface, Listener {
     public void open(CPlayer player) {
         if (observers.contains(player)) return;
         observers.add(player);
+        org.bukkit.inventory.Inventory inv = getInventory(player);
+        player.openInventory(inv);
+    }
+
+    public org.bukkit.inventory.Inventory getInventory(CPlayer player) {
         String title = String.format(this.title, player.getName());
         org.bukkit.inventory.Inventory inv = Core.createInventory(size, title);
         for (Map.Entry<Integer, InventoryButtonInterface> entry : inventoryButtons.entrySet()) {
@@ -49,7 +54,7 @@ public class DynamicInventory implements InventoryInterface, Listener {
             }
             inv.setItem(entry.getKey(), entry.getValue().getStack());
         }
-        player.openInventory(inv);
+        return inv;
     }
 
     @Override
