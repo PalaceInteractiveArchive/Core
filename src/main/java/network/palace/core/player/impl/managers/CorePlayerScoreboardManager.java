@@ -18,6 +18,7 @@ import java.util.HashMap;
  */
 public class CorePlayerScoreboardManager implements CPlayerScoreboardManager {
 
+    private static final int MAX_TITLE_LENGTH = 32;
     private static final int MAX_STRING_LENGTH = 64;
 
     private final CPlayer player;
@@ -94,18 +95,18 @@ public class CorePlayerScoreboardManager implements CPlayerScoreboardManager {
      */
     @Override
     public CPlayerScoreboardManager title(String title) {
-        if (this.title != null && this.title.equals(title)) return this;
-        if (scoreboard == null) setup();
         if (title == null) return this;
+        if (scoreboard == null) setup();
 
-        this.title = title;
+        this.title = title.substring(0, Math.min(title.length(), MAX_TITLE_LENGTH));
         if (scoreboardObjective == null) setup();
         try {
             if (scoreboardObjective != null) scoreboardObjective.setDisplayName(title);
         } catch (IllegalStateException | IllegalArgumentException ignored) {
         }
-        if (scoreboard != null && player != null && player.getBukkitPlayer() != null)
+        if (scoreboard != null && player != null && player.getBukkitPlayer() != null) {
             player.getBukkitPlayer().setScoreboard(scoreboard);
+        }
         return this;
     }
 
