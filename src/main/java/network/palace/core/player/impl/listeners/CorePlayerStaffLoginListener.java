@@ -14,6 +14,22 @@ import org.bukkit.event.player.*;
 public class CorePlayerStaffLoginListener implements Listener {
 
     @EventHandler(priority = EventPriority.LOWEST)
+    public void onPlayerQuit(PlayerQuitEvent event) {
+        removePlayer(event.getPlayer());
+    }
+
+    @EventHandler(priority = EventPriority.LOWEST)
+    public void onPlayerKick(PlayerKickEvent event) {
+        removePlayer(event.getPlayer());
+    }
+
+    private void removePlayer(Player player) {
+        if (Core.getInstance().getDisabledPlayers().contains(player.getUniqueId())) {
+            Core.getInstance().getDisabledPlayers().remove(player.getUniqueId());
+        }
+    }
+
+    @EventHandler(priority = EventPriority.LOWEST)
     public void onPlayerBedEnter(PlayerBedEnterEvent event) {
         onPlayerEvent(event.getPlayer(), event);
     }
