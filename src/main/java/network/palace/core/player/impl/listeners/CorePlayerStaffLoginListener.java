@@ -6,6 +6,9 @@ import org.bukkit.event.Cancellable;
 import org.bukkit.event.EventHandler;
 import org.bukkit.event.EventPriority;
 import org.bukkit.event.Listener;
+import org.bukkit.event.inventory.InventoryClickEvent;
+import org.bukkit.event.inventory.InventoryCreativeEvent;
+import org.bukkit.event.inventory.InventoryOpenEvent;
 import org.bukkit.event.player.*;
 
 public class CorePlayerStaffLoginListener implements Listener {
@@ -98,6 +101,21 @@ public class CorePlayerStaffLoginListener implements Listener {
     @EventHandler(priority = EventPriority.LOWEST)
     public void onPlayerVelocity(PlayerVelocityEvent event) {
         onPlayerEvent(event.getPlayer(), event);
+    }
+
+    @EventHandler(priority = EventPriority.LOWEST)
+    public void onInventoryClick(InventoryClickEvent event) {
+        onPlayerEvent((Player) event.getWhoClicked(), event);
+    }
+
+    @EventHandler(priority = EventPriority.LOWEST)
+    public void onInventoryOpen(InventoryOpenEvent event) {
+        onPlayerEvent((Player) event.getPlayer(), event);
+    }
+
+    @EventHandler(priority = EventPriority.LOWEST)
+    public void onInventoryCreative(InventoryCreativeEvent event) {
+        onPlayerEvent((Player) event.getWhoClicked(), event);
     }
 
     private void onPlayerEvent(Player player, Cancellable cancellable) {
