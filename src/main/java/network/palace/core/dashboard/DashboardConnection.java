@@ -104,6 +104,20 @@ public class DashboardConnection {
                                     });
                                 }
                             }
+                            break;
+                        }
+                        case 69: {
+                            PacketDisablePlayer packet = new PacketDisablePlayer().fromJSON(object);
+                            if (packet.isDisabled()) {
+                                if (!Core.getInstance().getDisabledPlayers().contains(packet.getUuid())) {
+                                    Core.getInstance().getDisabledPlayers().add(packet.getUuid());
+                                }
+                            } else {
+                                if (Core.getInstance().getDisabledPlayers().contains(packet.getUuid())) {
+                                    Core.getInstance().getDisabledPlayers().remove(packet.getUuid());
+                                }
+                            }
+                            break;
                         }
                     }
                     new IncomingPacketEvent(id, object.toString()).call();

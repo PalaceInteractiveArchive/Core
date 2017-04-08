@@ -7,9 +7,13 @@ import network.palace.core.player.PlayerStatus;
 import network.palace.core.player.Rank;
 import network.palace.core.player.impl.CorePlayer;
 import network.palace.core.player.impl.listeners.CorePlayerManagerListener;
+import network.palace.core.player.impl.listeners.CorePlayerStaffLoginListener;
 import org.bukkit.entity.Player;
 
-import java.util.*;
+import java.util.ArrayList;
+import java.util.HashMap;
+import java.util.List;
+import java.util.UUID;
 
 /**
  * The type Core player manager.
@@ -23,6 +27,7 @@ public class CorePlayerManager implements CPlayerManager {
      */
     public CorePlayerManager() {
         Core.registerListener(new CorePlayerManagerListener());
+        Core.registerListener(new CorePlayerStaffLoginListener());
     }
 
     @Override
