@@ -154,6 +154,7 @@ public class CorePlayer implements CPlayer {
         if (getStatus() != PlayerStatus.JOINED) return;
         if (getBukkitPlayer() == null) return;
         if (location == null) return;
+        if (location.getWorld() == null) return;
         getBukkitPlayer().teleport(location);
     }
 
