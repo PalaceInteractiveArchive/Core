@@ -38,6 +38,7 @@ public class ResourceManager {
      */
     public void initialize() {
         packs.clear();
+        if (Core.isDashboardAndSqlDisabled()) return;
         try (Connection connection = Core.getSqlUtil().getConnection()) {
             PreparedStatement sql = connection.prepareStatement("SELECT * FROM resource_packs");
             ResultSet result = sql.executeQuery();

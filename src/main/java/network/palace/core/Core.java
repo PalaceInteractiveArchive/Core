@@ -35,7 +35,9 @@ import org.bukkit.event.Listener;
 import org.bukkit.inventory.Inventory;
 import org.bukkit.plugin.java.JavaPlugin;
 
+import java.util.ArrayList;
 import java.util.List;
+import java.util.UUID;
 import java.util.concurrent.Callable;
 import java.util.concurrent.Future;
 
@@ -44,7 +46,7 @@ import java.util.concurrent.Future;
  * <p>
  * You can access instances of other modules by depending on Core in your pom.xml, and then executing Core.get
  */
-@PluginInfo(name = "Core", version = "1.6.9", depend = {"ProtocolLib"})
+@PluginInfo(name = "Core", version = "1.7.0", depend = {"ProtocolLib"})
 public class Core extends JavaPlugin {
 
     private boolean starting = true;
@@ -68,6 +70,7 @@ public class Core extends JavaPlugin {
 
     private CoreCommandMap commandMap;
     private SqlUtil sqlUtil;
+    @Getter private ArrayList<UUID> disabledPlayers = new ArrayList<>();
 
     @Override
     public final void onEnable() {
