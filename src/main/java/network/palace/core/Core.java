@@ -115,8 +115,8 @@ public class Core extends JavaPlugin {
         mcVersion = mcVersion.replace("-SNAPSHOT", "").replace("R0.", "R").replace(".", "_").replaceAll("_[0-9]-R", "_R").replace("-", "_");
         // Log
         logMessage("Core", ChatColor.DARK_GREEN + "Enabled");
-        // Set starting to false after 5 to allow connecting
-        runTaskLater(() -> setStarting(false), 100L);
+        // Set starting to false after 7 to allow connecting
+        runTaskLater(() -> setStarting(false), 20 * 7);
     }
 
     /**
@@ -149,6 +149,7 @@ public class Core extends JavaPlugin {
         registerCommand(new ReloadCommand());
         registerCommand(new SafestopCommand());
         registerCommand(new TokenCommand());
+        registerCommand(new FlyCommand());
     }
 
     /**

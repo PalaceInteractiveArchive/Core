@@ -2,6 +2,7 @@ package network.palace.core.npc;
 
 import lombok.Getter;
 import network.palace.core.Core;
+import network.palace.core.events.CorePlayerJoinedEvent;
 import network.palace.core.player.CPlayer;
 import network.palace.core.utils.MiscUtil;
 import org.bukkit.event.EventHandler;
@@ -28,14 +29,14 @@ public final class SoftNPCManager implements Listener {
     }
 
     @EventHandler
-    public void onPlayerJoin(PlayerJoinEvent event) {
+    public void onPlayerJoin(CorePlayerJoinedEvent event) {
         ensureAllValid();
-        CPlayer player = Core.getPlayerManager().getPlayer(event.getPlayer());
+        CPlayer player = event.getPlayer();
         for (WeakReference<AbstractMob> mobRef : mobRefs) {
             final AbstractMob npcMob = mobRef.get();
             if (npcMob == null) continue;
             if (npcMob.isSpawned() && npcMob.getViewers().size() == 0) {
-                if (event.getPlayer().getWorld().equals(npcMob.getLocation().getWorld())) {
+                if (event.getPlayer().getLocation().getWorld().equals(npcMob.getLocation().getWorld())) {
                     npcMob.forceSpawn(player);
                 }
             }

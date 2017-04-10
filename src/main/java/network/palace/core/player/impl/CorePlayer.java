@@ -417,7 +417,7 @@ public class CorePlayer implements CPlayer {
     @Override
     public Player getBukkitPlayer() {
         if (getStatus() != PlayerStatus.JOINED) return null;
-        return Bukkit.getPlayer(getUuid());
+        return Bukkit.getPlayer(getUniqueId());
     }
 
     @Override

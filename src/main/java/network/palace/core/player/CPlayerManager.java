@@ -21,18 +21,16 @@ public interface CPlayerManager {
     /**
      * Player joined.
      *
-     * @param uuid             the uuid
-     * @param textureValue     the texture value
-     * @param textureSignature the texture signature
+     * @param player the player
      */
-    void playerJoined(UUID uuid, String textureValue, String textureSignature);
+    void playerJoined(Player player);
 
     /**
      * Player logged out.
      *
-     * @param uuid the uuid
+     * @param player the player
      */
-    void playerLoggedOut(UUID uuid);
+    void playerLoggedOut(Player player);
 
     /**
      * Broadcast message to all players.
