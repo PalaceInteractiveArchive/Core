@@ -1,10 +1,7 @@
 package network.palace.core.player;
 
 import network.palace.core.packets.AbstractPacket;
-import org.bukkit.GameMode;
-import org.bukkit.Location;
-import org.bukkit.Material;
-import org.bukkit.Sound;
+import org.bukkit.*;
 import org.bukkit.block.Block;
 import org.bukkit.entity.Player;
 import org.bukkit.inventory.Inventory;
@@ -105,6 +102,13 @@ public interface CPlayer {
      * @return the location
      */
     Location getLocation();
+
+    /**
+     * Gets world.
+     *
+     * @return the world
+     */
+    World getWorld();
 
     /**
      * Teleport.

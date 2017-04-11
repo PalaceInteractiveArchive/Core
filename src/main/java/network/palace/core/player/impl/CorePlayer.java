@@ -150,6 +150,13 @@ public class CorePlayer implements CPlayer {
     }
 
     @Override
+    public World getWorld() {
+        if (getStatus() != PlayerStatus.JOINED) return Bukkit.getWorlds().get(0);
+        if (getBukkitPlayer() == null) return Bukkit.getWorlds().get(0);
+        return getBukkitPlayer().getWorld();
+    }
+
+    @Override
     public void teleport(Location location) {
         if (getStatus() != PlayerStatus.JOINED) return;
         if (getBukkitPlayer() == null) return;
