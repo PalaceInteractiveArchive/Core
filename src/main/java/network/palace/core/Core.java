@@ -16,6 +16,7 @@ import network.palace.core.dashboard.DashboardConnection;
 import network.palace.core.economy.EconomyManager;
 import network.palace.core.library.LibraryHandler;
 import network.palace.core.npc.SoftNPCManager;
+import network.palace.core.packets.adapters.EnchantmentAdapter;
 import network.palace.core.packets.adapters.SettingsAdapter;
 import network.palace.core.permissions.PermissionManager;
 import network.palace.core.player.CPlayerManager;
@@ -91,6 +92,8 @@ public class Core extends JavaPlugin {
         languageManager = new LanguageManager(this);
         // Settings adapter for player locales
         addPacketListener(new SettingsAdapter());
+        // Enchantment adapter for adding enchants without name
+        addPacketListener(new EnchantmentAdapter());
         // Register plugin channel
         getServer().getMessenger().registerOutgoingPluginChannel(this, "BungeeCord");
         getServer().getMessenger().registerIncomingPluginChannel(this, "WDL|INIT", new CorePlayerWorldDownloadProtect());

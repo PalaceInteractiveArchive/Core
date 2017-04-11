@@ -5,6 +5,7 @@ import com.comphenix.protocol.utility.MinecraftReflection;
 import com.comphenix.protocol.wrappers.nbt.NbtCompound;
 import com.comphenix.protocol.wrappers.nbt.NbtFactory;
 import org.bukkit.Material;
+import org.bukkit.enchantments.Enchantment;
 import org.bukkit.event.EventHandler;
 import org.bukkit.event.EventPriority;
 import org.bukkit.event.Listener;
@@ -44,6 +45,18 @@ public class ItemUtil implements Listener {
      */
     public static ItemStack makeUnableToDrop(ItemStack stack) {
         return setNBTForItemstack(stack, UNABLE_TO_DROP);
+    }
+
+    /**
+     * Make enchanted item stack without enchantment name.
+     *
+     * @param stack the stack
+     * @return the item stack
+     */
+    public static ItemStack makeEnchanted(ItemStack stack) {
+        stack = MinecraftReflection.getBukkitItemStack(stack);
+        stack.addUnsafeEnchantment(Enchantment.SILK_TOUCH, 69);
+        return stack;
     }
 
     @EventHandler(priority = EventPriority.LOWEST)
