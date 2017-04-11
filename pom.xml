@@ -4,7 +4,7 @@
 
     <groupId>network.palace</groupId>
     <artifactId>Core</artifactId>
-    <version>1.7.2</version>
+    <version>1.7.3</version>
 
     <repositories>
         <repository>

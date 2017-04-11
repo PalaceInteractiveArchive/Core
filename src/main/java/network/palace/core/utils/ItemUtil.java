@@ -11,6 +11,7 @@ import org.bukkit.event.EventPriority;
 import org.bukkit.event.Listener;
 import org.bukkit.event.inventory.InventoryClickEvent;
 import org.bukkit.event.player.PlayerDropItemEvent;
+import org.bukkit.inventory.ItemFlag;
 import org.bukkit.inventory.ItemStack;
 import org.bukkit.inventory.meta.ItemMeta;
 import org.bukkit.inventory.meta.SkullMeta;
@@ -48,14 +49,29 @@ public class ItemUtil implements Listener {
     }
 
     /**
-     * Make enchanted item stack without enchantment name.
+     * Hide the damage attributes on the item stack.
      *
      * @param stack the stack
      * @return the item stack
      */
-    public static ItemStack makeEnchanted(ItemStack stack) {
-        stack = MinecraftReflection.getBukkitItemStack(stack);
-        stack.addUnsafeEnchantment(Enchantment.SILK_TOUCH, 69);
+    public static ItemStack hideAttributes(ItemStack stack) {
+        ItemMeta meta = stack.getItemMeta();
+        meta.addItemFlags(ItemFlag.HIDE_ATTRIBUTES);
+        stack.setItemMeta(meta);
+        return stack;
+    }
+
+    /**
+     * Enchanted the item stack and hide the enchantments.
+     *
+     * @param stack the stack
+     * @return the item stack
+     */
+    public static ItemStack addGlow(ItemStack stack) {
+        stack.addUnsafeEnchantment(Enchantment.ARROW_DAMAGE, 1);
+        ItemMeta meta = stack.getItemMeta();
+        meta.addItemFlags(ItemFlag.HIDE_ENCHANTS);
+        stack.setItemMeta(meta);
         return stack;
     }
 
@@ -89,7 +105,7 @@ public class ItemUtil implements Listener {
         if (!MinecraftReflection.isCraftItemStack(stack)) {
             craftStack = MinecraftReflection.getBukkitItemStack(stack);
         }
-        NbtCompound nbt = (NbtCompound) NbtFactory.fromItemTag(craftStack);
+        NbtCompound nbt = NbtFactory.asCompound(NbtFactory.fromItemTag(craftStack));
         return nbt.containsKey(tag) && nbt.getInteger(tag) == 1;
     }
 
@@ -105,7 +121,7 @@ public class ItemUtil implements Listener {
         if (!MinecraftReflection.isCraftItemStack(stack)) {
             craftStack = MinecraftReflection.getBukkitItemStack(stack);
         }
-        NbtCompound nbt = (NbtCompound) NbtFactory.fromItemTag(craftStack);
+        NbtCompound nbt = NbtFactory.asCompound(NbtFactory.fromItemTag(craftStack));
         nbt.put(tag, 1);
         NbtFactory.setItemTag(craftStack, nbt);
         return craftStack;

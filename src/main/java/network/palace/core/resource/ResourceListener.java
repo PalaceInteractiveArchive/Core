@@ -27,6 +27,7 @@ public class ResourceListener extends PacketAdapter {
 
     @Override
     public void onPacketReceiving(PacketEvent event) {
+        if (event.getPlayer() == null) return;
         CPlayer tp = Core.getPlayerManager().getPlayer(event.getPlayer());
         try {
             PacketContainer packet = event.getPacket();
