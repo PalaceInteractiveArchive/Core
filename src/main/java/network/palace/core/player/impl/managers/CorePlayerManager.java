@@ -14,6 +14,7 @@ import network.palace.core.player.impl.CorePlayer;
 import network.palace.core.player.impl.CorePlayerDefaultScoreboard;
 import network.palace.core.player.impl.listeners.CorePlayerManagerListener;
 import network.palace.core.player.impl.listeners.CorePlayerStaffLoginListener;
+import org.bukkit.Bukkit;
 import org.bukkit.entity.Player;
 
 import java.util.*;
@@ -87,6 +88,7 @@ public class CorePlayerManager implements CPlayerManager {
         // Called joined event
         new CorePlayerJoinedEvent(cPlayer).call();
     }
+
     @Override
     public void playerLoggedOut(Player player) {
         if (getPlayer(player) == null) return;
@@ -113,6 +115,11 @@ public class CorePlayerManager implements CPlayerManager {
     @Override
     public CorePlayer getPlayer(Player player) {
         return getPlayer(player.getUniqueId());
+    }
+
+    @Override
+    public CPlayer getPlayer(String name) {
+        return getPlayer(Bukkit.getPlayer(name));
     }
 
     @Override

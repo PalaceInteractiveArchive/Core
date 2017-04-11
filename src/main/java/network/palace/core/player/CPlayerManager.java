@@ -56,6 +56,14 @@ public interface CPlayerManager {
     CPlayer getPlayer(Player player);
 
     /**
+     * Gets player.
+     *
+     * @param name the player name
+     * @return the player
+     */
+    CPlayer getPlayer(String name);
+
+    /**
      * Gets online players.
      *
      * @return the online players
