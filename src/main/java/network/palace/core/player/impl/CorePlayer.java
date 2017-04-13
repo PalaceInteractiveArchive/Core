@@ -352,6 +352,41 @@ public class CorePlayer implements CPlayer {
     }
 
     @Override
+    public ItemStack getItem(int slot) {
+        if (getStatus() != PlayerStatus.JOINED) return null;
+        if (getBukkitPlayer() == null) return null;
+        return getBukkitPlayer().getInventory().getItem(slot);
+    }
+
+    @Override
+    public ItemStack getItemInMainHand() {
+        if (getStatus() != PlayerStatus.JOINED) return null;
+        if (getBukkitPlayer() == null) return null;
+        return getBukkitPlayer().getInventory().getItemInMainHand();
+    }
+
+    @Override
+    public ItemStack getItemInOffHand() {
+        if (getStatus() != PlayerStatus.JOINED) return null;
+        if (getBukkitPlayer() == null) return null;
+        return getBukkitPlayer().getInventory().getItemInOffHand();
+    }
+
+    @Override
+    public int getHeldItemSlot() {
+        if (getStatus() != PlayerStatus.JOINED) return 0;
+        if (getBukkitPlayer() == null) return 0;
+        return getBukkitPlayer().getInventory().getHeldItemSlot();
+    }
+
+    @Override
+    public void setHeldItemSlot(int slot) {
+        if (getStatus() != PlayerStatus.JOINED) return;
+        if (getBukkitPlayer() == null) return;
+        getBukkitPlayer().getInventory().setHeldItemSlot(slot);
+    }
+
+    @Override
     public void openInventory(Inventory inventory) {
         if (getStatus() != PlayerStatus.JOINED) return;
         if (getBukkitPlayer() == null) return;

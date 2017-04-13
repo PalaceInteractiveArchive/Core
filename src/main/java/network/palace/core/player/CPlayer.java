@@ -157,6 +157,41 @@ public interface CPlayer {
     PlayerInventory getInventory();
 
     /**
+     * Gets item in slot
+     *
+     * @param slot the slot
+     * @return the item
+     */
+    ItemStack getItem(int slot);
+
+    /**
+     * Gets item in main hand.
+     *
+     * @return the item
+     */
+    ItemStack getItemInMainHand();
+
+    /**
+     * Gets item in off hand.
+     * @return the item
+     */
+    ItemStack getItemInOffHand();
+
+    /**
+     * Gets selected item slot
+     *
+     * @return the slot
+     */
+    int getHeldItemSlot();
+
+    /**
+     * Set selected item slot
+     *
+     * @param slot the slot
+     */
+    void setHeldItemSlot(int slot);
+
+    /**
      * Open inventory.
      *
      * @param inventory the inventory
