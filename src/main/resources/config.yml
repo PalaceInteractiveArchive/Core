@@ -8,3 +8,4 @@ dashboardURL: ws://socket.dashboard.playground.palace.network:7892
 isDefaultSidebarEnabled: true
 debug: false
 dashboardAndSqlDisabled: false
+isGameMode: false

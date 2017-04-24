@@ -57,6 +57,7 @@ public class Core extends JavaPlugin {
     private boolean debug = false;
     private boolean dashboardAndSqlDisabled = false;
     @Getter private String mcVersion = Bukkit.getBukkitVersion();
+    private boolean gameMode = false;
 
     private DashboardConnection dashboardConnection;
 
@@ -78,7 +79,7 @@ public class Core extends JavaPlugin {
         for (Player player : Bukkit.getOnlinePlayers()) {
             player.kickPlayer(ChatColor.RED + "Server is reloading!");
         }
-        // Load need libraries for Core
+        // Load needed libraries for Core
         LibraryHandler.loadLibraries(this);
         // Configurations
         configFile = new YAMLConfigurationFile(this, "config.yml");
@@ -87,6 +88,7 @@ public class Core extends JavaPlugin {
         instanceName = getCoreConfig().getString("instance-name", "ServerName");
         debug = getCoreConfig().getBoolean("debug", false);
         dashboardAndSqlDisabled = getCoreConfig().getBoolean("dashboardAndSqlDisabled", false);
+        gameMode = getCoreConfig().getBoolean("isGameMode", false);
         // Language Manager
         languageManager = new LanguageManager(this);
         // Settings adapter for player locales
@@ -115,14 +117,20 @@ public class Core extends JavaPlugin {
         mcVersion = mcVersion.replace("-SNAPSHOT", "").replace("R0.", "R").replace(".", "_").replaceAll("_[0-9]-R", "_R").replace("-", "_");
         // Log
         logMessage("Core", ChatColor.DARK_GREEN + "Enabled");
-        // Set starting to false after 7 to allow connecting
-        runTaskLater(() -> setStarting(false), 20 * 7);
+
+        // If we're running in game-mode, set starting to false immediately.
+        // Otherwise, we'll wait the 7 seconds.
+        if (isGameMode()) {
+            logMessage("Core", ChatColor.BLUE + "" + ChatColor.BOLD + "Running in game mode, skipping startup phase!");
+            setStarting(false);
+        }
+        else runTaskLater(() -> setStarting(false), 20 * 7);
     }
 
     /**
      * Register listeners.
      */
-    public void registerListeners() {
+    private void registerListeners() {
         registerListener(new ItemUtil());
         registerListener(new PrefixCommandListener());
     }
@@ -130,7 +138,7 @@ public class Core extends JavaPlugin {
     /**
      * Register disabled commands.
      */
-    public void registerDisabledCommands() {
+    private void registerDisabledCommands() {
         registerCommand(new MeCommand());
         registerCommand(new StopCommand());
     }
@@ -138,7 +146,7 @@ public class Core extends JavaPlugin {
     /**
      * Register commands.
      */
-    public void registerCommands() {
+    private void registerCommands() {
         registerCommand(new BalanceCommand());
         registerCommand(new HelpopCommand());
         registerCommand(new ListCommand());
@@ -241,6 +249,17 @@ public class Core extends JavaPlugin {
      */
     public static String getInstanceName() {
         return getInstance().instanceName;
+    }
+
+    /**
+     * Is this instance running in game-mode?
+     *
+     * GameMode allows the server to skip the startup phase so it can start faster
+     *
+     * @return the game-mode status
+     */
+    public static boolean isGameMode() {
+        return getInstance().gameMode;
     }
 
     /**
