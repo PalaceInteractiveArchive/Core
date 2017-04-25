@@ -5,6 +5,19 @@
     <groupId>network.palace</groupId>
     <artifactId>Core</artifactId>
     <version>1.7.5</version>
+	
+    <distributionManagement>
+        <repository>
+            <id>palace</id>
+            <name>Palace Repository</name>
+            <url>https://repo.palace.network/nexus/content/repositories/releases/</url>
+        </repository>
+        <snapshotRepository>
+            <id>palace-snapshot</id>
+            <name>Palace Snapshot Repository</name>
+            <url>https://repo.palace.network/nexus/content/repositories/snapshots/</url>
+        </snapshotRepository>
+    </distributionManagement>
 
     <repositories>
         <repository>
