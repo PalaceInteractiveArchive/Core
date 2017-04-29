@@ -5,10 +5,13 @@ import network.palace.core.Core;
 import network.palace.core.events.CorePlayerJoinedEvent;
 import network.palace.core.player.CPlayer;
 import network.palace.core.utils.MiscUtil;
+import org.bukkit.entity.Entity;
+import org.bukkit.entity.Player;
 import org.bukkit.event.EventHandler;
 import org.bukkit.event.EventPriority;
 import org.bukkit.event.Listener;
 import org.bukkit.event.player.*;
+import org.bukkit.event.world.ChunkLoadEvent;
 
 import java.lang.ref.WeakReference;
 import java.util.HashSet;
@@ -26,6 +29,26 @@ public final class SoftNPCManager implements Listener {
 
     private void ensureAllValid() {
         mobRefs.removeIf(mob -> mob.get() == null);
+    }
+
+    @EventHandler
+    public void onChunkLoad(ChunkLoadEvent event) {
+        ensureAllValid();
+        for (Entity entity : event.getChunk().getEntities()) {
+            if (entity instanceof Player) {
+                CPlayer player = Core.getPlayerManager().getPlayer((Player) entity);
+                if (player == null) return;
+                for (WeakReference<AbstractMob> mobRef : mobRefs) {
+                    final AbstractMob npcMob = mobRef.get();
+                    if (npcMob == null) continue;
+                    if (npcMob.isSpawned() && npcMob.getViewers().size() == 0) {
+                        if (player.getLocation().getChunk().equals(npcMob.getLocation().getLocation().getChunk())) {
+                            npcMob.forceSpawn(player);
+                        }
+                    }
+                }
+            }
+        }
     }
 
     @EventHandler

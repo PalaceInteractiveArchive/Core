@@ -22,11 +22,11 @@ public class CorePlayerScoreboardManager implements CPlayerScoreboardManager {
 
     private final CPlayer player;
 
-    private HashMap<Integer, String> lines;
+    private HashMap<Integer, String> lines = new HashMap<>();
     private Scoreboard scoreboard;
     private Objective scoreboardObjective;
-    private String title;
-    private int nullIndex = 0;
+    private String title = "";
+    private int nullIndex = 1;
     @Getter private boolean isSetup = false;
 
     /**
@@ -124,12 +124,12 @@ public class CorePlayerScoreboardManager implements CPlayerScoreboardManager {
     }
 
     private String nextNull() {
-        String s;
-        do {
-            nullIndex = (nullIndex + 1) % ChatColor.values().length;
-            s = ChatColor.values()[nullIndex].toString();
-        } while (lines.containsValue(s));
-        return s;
+        StringBuilder s = new StringBuilder();
+        for (int i = 0; i < nullIndex; i++) {
+            s.append(ChatColor.WHITE.toString());
+        }
+        nullIndex++;
+        return s.toString();
     }
 
     /**
