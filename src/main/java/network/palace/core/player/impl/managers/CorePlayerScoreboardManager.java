@@ -11,6 +11,7 @@ import org.bukkit.scoreboard.Objective;
 import org.bukkit.scoreboard.Scoreboard;
 import org.bukkit.scoreboard.Team;
 
+import java.util.Arrays;
 import java.util.HashMap;
 
 /**
@@ -123,11 +124,9 @@ public class CorePlayerScoreboardManager implements CPlayerScoreboardManager {
     }
 
     private String getBlanks(int id) {
-        StringBuilder s = new StringBuilder();
-        for (int i = 0; i < id + 1; i++) {
-            s.append(ChatColor.WHITE.toString());
-        }
-        return s.toString();
+        String[] blank = new String[id + 1];
+        Arrays.fill(blank, ChatColor.WHITE.toString());
+        return String.join("", blank);
     }
 
     /**
