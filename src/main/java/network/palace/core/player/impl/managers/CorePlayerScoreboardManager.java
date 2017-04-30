@@ -26,7 +26,6 @@ public class CorePlayerScoreboardManager implements CPlayerScoreboardManager {
     private Scoreboard scoreboard;
     private Objective scoreboardObjective;
     private String title = "";
-    private int nullIndex = 1;
     @Getter private boolean isSetup = false;
 
     /**
@@ -70,7 +69,7 @@ public class CorePlayerScoreboardManager implements CPlayerScoreboardManager {
      */
     @Override
     public CPlayerScoreboardManager setBlank(int id) {
-        return set(id, nextNull());
+        return set(id, getBlanks(id));
     }
 
     /**
@@ -123,12 +122,11 @@ public class CorePlayerScoreboardManager implements CPlayerScoreboardManager {
         isSetup = true;
     }
 
-    private String nextNull() {
+    private String getBlanks(int id) {
         StringBuilder s = new StringBuilder();
-        for (int i = 0; i < nullIndex; i++) {
+        for (int i = 0; i < id + 1; i++) {
             s.append(ChatColor.WHITE.toString());
         }
-        nullIndex++;
         return s.toString();
     }
 
