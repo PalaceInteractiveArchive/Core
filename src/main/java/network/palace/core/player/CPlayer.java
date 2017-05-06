@@ -45,6 +45,13 @@ public interface CPlayer {
     boolean isOp();
 
     /**
+     * Get entity id
+     *
+     * @return entity id
+     */
+    int getEntityId();
+
+    /**
      * Play sound.
      *
      * @param location the location

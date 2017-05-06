@@ -89,6 +89,13 @@ public class CorePlayer implements CPlayer {
     }
 
     @Override
+    public int getEntityId() {
+        if (getStatus() != PlayerStatus.JOINED) return 0;
+        if (getBukkitPlayer() == null) return 0;
+        return getBukkitPlayer().getEntityId();
+    }
+
+    @Override
     public void playSound(Location location, Sound sound, float volume, float pitch) {
         if (getStatus() != PlayerStatus.JOINED) return;
         if (getBukkitPlayer() == null) return;
