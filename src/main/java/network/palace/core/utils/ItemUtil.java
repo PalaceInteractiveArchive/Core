@@ -4,6 +4,11 @@ import com.comphenix.protocol.reflect.MethodUtils;
 import com.comphenix.protocol.utility.MinecraftReflection;
 import com.comphenix.protocol.wrappers.nbt.NbtCompound;
 import com.comphenix.protocol.wrappers.nbt.NbtFactory;
+import com.comphenix.protocol.wrappers.nbt.io.NbtTextSerializer;
+import com.google.gson.JsonArray;
+import com.google.gson.JsonElement;
+import com.google.gson.JsonObject;
+import com.google.gson.JsonParser;
 import org.bukkit.Material;
 import org.bukkit.enchantments.Enchantment;
 import org.bukkit.event.EventHandler;
@@ -11,11 +16,14 @@ import org.bukkit.event.EventPriority;
 import org.bukkit.event.Listener;
 import org.bukkit.event.inventory.InventoryClickEvent;
 import org.bukkit.event.player.PlayerDropItemEvent;
+import org.bukkit.inventory.Inventory;
 import org.bukkit.inventory.ItemFlag;
 import org.bukkit.inventory.ItemStack;
 import org.bukkit.inventory.meta.ItemMeta;
 import org.bukkit.inventory.meta.SkullMeta;
+import org.bukkit.material.MaterialData;
 
+import java.io.IOException;
 import java.lang.reflect.InvocationTargetException;
 import java.util.ArrayList;
 import java.util.List;
@@ -270,5 +278,68 @@ public class ItemUtil implements Listener {
         sm.setLore(lore);
         item.setItemMeta(sm);
         return item;
+    }
+
+    public static JsonObject getJsonFromItem(ItemStack i) {
+        JsonObject o = new JsonObject();
+        if (i == null) {
+            return o;
+        }
+        o.addProperty("t", i.getTypeId());
+        o.addProperty("a", i.getAmount());
+        o.addProperty("da", i.getData().getData());
+        o.addProperty("du", i.getDurability());
+        String t = new NbtTextSerializer().serialize(NbtFactory.fromItemTag(i));
+        if (!t.equals("")) {
+            o.addProperty("ta", t);
+        }
+        return o;
+    }
+
+    public static ItemStack getItemFromJson(String json) {
+        JsonObject o = new JsonParser().parse(json).getAsJsonObject();
+        if (!o.has("t")) {
+            return new ItemStack(Material.AIR);
+        }
+        ItemStack i = MinecraftReflection.getBukkitItemStack(new ItemStack(o.get("t").getAsInt()));
+        i.setData(new MaterialData(o.get("t").getAsInt(), (byte) o.get("da").getAsInt()));
+        i.setAmount(o.get("a").getAsInt());
+        i.setDurability(o.get("du").getAsShort());
+        if (o.has("ta")) {
+            try {
+                NbtFactory.setItemTag(i, new NbtTextSerializer().deserializeCompound(o.get("ta").getAsString()));
+            } catch (IOException ex) {
+                ex.printStackTrace();
+            }
+        }
+        return i;
+    }
+
+    public static JsonArray getJsonFromInventory(Inventory inv) {
+        return getJsonFromArray(inv.getContents());
+    }
+
+    public static JsonArray getJsonFromArray(ItemStack[] arr) {
+        JsonArray a = new JsonArray();
+        for (ItemStack i : arr) {
+            a.add(getJsonFromItem(i));
+        }
+        return a;
+    }
+
+    public static ItemStack[] getInventoryFromJson(String json) {
+        JsonElement e = new JsonParser().parse(json);
+        if (!e.isJsonArray()) {
+            return new ItemStack[0];
+        }
+        JsonArray ja = e.getAsJsonArray();
+        ItemStack[] a = new ItemStack[ja.size()];
+        int i = 0;
+        for (JsonElement e2 : ja) {
+            JsonObject o = e2.getAsJsonObject();
+            a[i] = getItemFromJson(o.toString());
+            i++;
+        }
+        return a;
     }
 }
