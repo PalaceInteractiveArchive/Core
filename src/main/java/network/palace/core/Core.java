@@ -3,6 +3,7 @@ package network.palace.core;
 import com.comphenix.protocol.ProtocolLibrary;
 import com.comphenix.protocol.events.PacketListener;
 import lombok.Getter;
+import lombok.Setter;
 import network.palace.core.achievements.AchievementManager;
 import network.palace.core.command.CoreCommand;
 import network.palace.core.command.CoreCommandMap;
@@ -58,6 +59,8 @@ public class Core extends JavaPlugin {
     private boolean dashboardAndSqlDisabled = false;
     @Getter private String mcVersion = Bukkit.getBukkitVersion();
     private boolean gameMode = false;
+    @Getter @Setter private String tabHeader = ChatColor.GOLD + "Palace Network - A Family of Servers";
+    @Getter @Setter private String tabFooter = ChatColor.LIGHT_PURPLE + "You're on the " + ChatColor.GREEN + "Hub " + ChatColor.LIGHT_PURPLE + "server";
 
     private DashboardConnection dashboardConnection;
 
@@ -89,6 +92,10 @@ public class Core extends JavaPlugin {
         debug = getCoreConfig().getBoolean("debug", false);
         dashboardAndSqlDisabled = getCoreConfig().getBoolean("dashboardAndSqlDisabled", false);
         gameMode = getCoreConfig().getBoolean("isGameMode", false);
+        if (getCoreConfig().getConfigurationSection("tab") != null) {
+            setTabHeader(ChatColor.translateAlternateColorCodes('&', getCoreConfig().getString("tab.header")));
+            setTabFooter(ChatColor.translateAlternateColorCodes('&', getCoreConfig().getString("tab.footer")));
+        }
         // Language Manager
         languageManager = new LanguageManager(this);
         // Settings adapter for player locales
@@ -123,8 +130,7 @@ public class Core extends JavaPlugin {
         if (isGameMode()) {
             logMessage("Core", ChatColor.BLUE + "" + ChatColor.BOLD + "Running in game mode, skipping startup phase!");
             setStarting(false);
-        }
-        else runTaskLater(() -> setStarting(false), 20 * 7);
+        } else runTaskLater(() -> setStarting(false), 20 * 7);
     }
 
     /**
@@ -253,7 +259,7 @@ public class Core extends JavaPlugin {
 
     /**
      * Is this instance running in game-mode?
-     *
+     * <p>
      * GameMode allows the server to skip the startup phase so it can start faster
      *
      * @return the game-mode status

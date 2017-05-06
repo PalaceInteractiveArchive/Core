@@ -1,9 +1,9 @@
 package network.palace.core.player.impl.managers;
 
+import com.comphenix.protocol.wrappers.WrappedChatComponent;
 import network.palace.core.packets.server.playerlist.WrapperPlayServerPlayerListHeaderFooter;
 import network.palace.core.player.CPlayer;
 import network.palace.core.player.CPlayerHeaderFooterManager;
-import com.comphenix.protocol.wrappers.WrappedChatComponent;
 
 /**
  * The type Core player header footer manager.
@@ -40,6 +40,21 @@ public class CorePlayerHeaderFooterManager implements CPlayerHeaderFooterManager
             return;
         }
         this.header = header;
+        update();
+    }
+
+    @Override
+    public void setHeaderFooter(String header, String footer) {
+        if (header == null || header.isEmpty()) {
+            this.header = " ";
+        } else {
+            this.header = header;
+        }
+        if (footer == null || footer.isEmpty()) {
+            this.footer = " ";
+        } else {
+            this.footer = footer;
+        }
         update();
     }
 

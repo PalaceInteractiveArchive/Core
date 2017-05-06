@@ -19,6 +19,14 @@ public interface CPlayerHeaderFooterManager {
     void setHeader(String header);
 
     /**
+     * Sets header and footer in one method
+     *
+     * @param header the header
+     * @param footer the footer
+     */
+    void setHeaderFooter(String header, String footer);
+
+    /**
      * Hide header and footer.
      */
     void hide();

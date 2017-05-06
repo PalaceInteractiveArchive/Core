@@ -85,6 +85,8 @@ public class CorePlayerManager implements CPlayerManager {
             if (otherPlayer.getScoreboard() != null) otherPlayer.getScoreboard().addPlayerTag(cPlayer);
         }
         defaultScoreboard.setup(cPlayer);
+        // Tab header and footer
+        cPlayer.getHeaderFooter().setHeaderFooter(Core.getInstance().getTabHeader(), Core.getInstance().getTabFooter());
         // Called joined event
         new CorePlayerJoinedEvent(cPlayer).call();
     }
