@@ -79,8 +79,9 @@ public enum Rank {
         return name.toLowerCase().replaceAll(" ", "");
     }
 
+    @Deprecated
     public String getNameWithBrackets() {
-        return ChatColor.WHITE + "[" + getTagColor() + getName() + ChatColor.WHITE + "]";
+        return getFormattedName();
     }
 
     /**
@@ -89,8 +90,8 @@ public enum Rank {
      * @return the rank name with any additional formatting that should exist
      */
     public String getFormattedName() {
-        String bold = getRankId() >= 8 ? "" + ChatColor.BOLD : "";
-        return bold + getTagColor() + getName();
+        String bold = getRankId() >= Rank.SQUIRE.getRankId() ? "" + ChatColor.BOLD : "";
+        return getTagColor() + bold + getName() + " ";
     }
 
     /**

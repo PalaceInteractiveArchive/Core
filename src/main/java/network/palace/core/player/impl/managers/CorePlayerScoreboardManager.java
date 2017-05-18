@@ -139,6 +139,7 @@ public class CorePlayerScoreboardManager implements CPlayerScoreboardManager {
             Team team = scoreboard.registerNewTeam(rank.getName());
             team.setPrefix(rank.getFormattedName());
             team.setOption(Team.Option.COLLISION_RULE, Team.OptionStatus.NEVER);
+            team.setSuffix("");
         }
     }
 
