@@ -70,7 +70,7 @@ public class Core extends JavaPlugin {
 
 
     @Getter @Setter private String tabHeader = ChatColor.GOLD + "Palace Network - A Family of Servers";
-    @Getter @Setter private String tabFooter = ChatColor.LIGHT_PURPLE + "You're on the " + ChatColor.GREEN + "Hub " + ChatColor.LIGHT_PURPLE + "server";
+    @Getter @Setter private String tabFooter = ChatColor.LIGHT_PURPLE + "You're on the " + ChatColor.GREEN + "<SERVER> " + ChatColor.LIGHT_PURPLE + "server";
 
     private DashboardConnection dashboardConnection;
 
@@ -99,6 +99,8 @@ public class Core extends JavaPlugin {
         // Get info from config
         serverType = getCoreConfig().getString("server-type", "Unknown");
         instanceName = getCoreConfig().getString("instance-name", "ServerName");
+        // Set the name of the server in the tablist
+        tabFooter = tabFooter.replaceAll("<SERVER>", serverType);
         debug = getCoreConfig().getBoolean("debug", false);
         dashboardAndSqlDisabled = getCoreConfig().getBoolean("dashboardAndSqlDisabled", false);
         gameMode = getCoreConfig().getBoolean("isGameMode", false);
