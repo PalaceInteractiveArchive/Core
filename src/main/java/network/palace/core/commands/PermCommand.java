@@ -76,7 +76,7 @@ public class PermCommand extends CoreCommand {
                 }
                 if (arg3.equalsIgnoreCase("getgroup")) {
                     Rank rank = Core.getSqlUtil().getRank(Core.getSqlUtil().getUniqueIdFromName(arg2));
-                    sender.sendMessage(ChatColor.BLUE + arg2 + ChatColor.YELLOW + " is in the " + rank.getNameWithBrackets() + ChatColor.YELLOW + " group.");
+                    sender.sendMessage(ChatColor.BLUE + arg2 + ChatColor.YELLOW + " is in the " + rank.getFormattedName() + ChatColor.YELLOW + " group.");
                     return;
                 }
                 helpMenu(sender, "player");
@@ -89,7 +89,7 @@ public class PermCommand extends CoreCommand {
                     return;
                 }
                 if (arg3.equalsIgnoreCase("perms")) {
-                    sender.sendMessage(ChatColor.GREEN + "Permissions of the " + rank.getNameWithBrackets() + ChatColor.GREEN + "Rank:");
+                    sender.sendMessage(ChatColor.GREEN + "Permissions of the " + rank.getFormattedName() + ChatColor.GREEN + "Rank:");
                     HashMap<String, Boolean> perms = rank.getPermissions();
                     for (Map.Entry<String, Boolean> perm : perms.entrySet()) {
                         if (perm.getValue()) {
@@ -129,19 +129,19 @@ public class PermCommand extends CoreCommand {
                         String source = sender instanceof Player ? sender.getName() : "Console on " + Core.getInstanceName();
                         PacketRankChange packet = new PacketRankChange(uuid, rank, source);
                         Core.getDashboardConnection().send(packet);
-                        sender.sendMessage(ChatColor.YELLOW + arg2 + "'s rank has been changed to " + rank.getNameWithBrackets());
+                        sender.sendMessage(ChatColor.YELLOW + arg2 + "'s rank has been changed to " + rank.getFormattedName());
                         return;
                     case "get":
                         final Rank currentRank2 = Core.getSqlUtil().getRank(Core.getSqlUtil().getUniqueIdFromName(arg2));
                         HashMap<String, Boolean> permissions2 = currentRank2.getPermissions();
                         if (!permissions2.containsKey(arg4)) {
-                            sender.sendMessage(currentRank2.getNameWithBrackets() + ChatColor.YELLOW + " does not set " + ChatColor.RED + arg4);
+                            sender.sendMessage(currentRank2.getFormattedName() + ChatColor.YELLOW + " does not set " + ChatColor.RED + arg4);
                             return;
                         }
                         if (permissions2.get(arg4)) {
-                            sender.sendMessage(currentRank2.getNameWithBrackets() + ChatColor.YELLOW + " sets " + ChatColor.YELLOW + arg4 + ChatColor.YELLOW + " to " + ChatColor.GREEN + "true");
+                            sender.sendMessage(currentRank2.getFormattedName() + ChatColor.YELLOW + " sets " + ChatColor.YELLOW + arg4 + ChatColor.YELLOW + " to " + ChatColor.GREEN + "true");
                         } else {
-                            sender.sendMessage(currentRank2.getNameWithBrackets() + ChatColor.YELLOW + " sets " + ChatColor.YELLOW + arg4 + ChatColor.YELLOW + " to " + ChatColor.RED + "false");
+                            sender.sendMessage(currentRank2.getFormattedName() + ChatColor.YELLOW + " sets " + ChatColor.YELLOW + arg4 + ChatColor.YELLOW + " to " + ChatColor.RED + "false");
                         }
                         return;
                     default:
@@ -155,13 +155,13 @@ public class PermCommand extends CoreCommand {
                 switch (arg3) {
                     case "get":
                         if (!permissions.containsKey(arg4)) {
-                            sender.sendMessage(rank.getNameWithBrackets() + ChatColor.YELLOW + " does not set " + ChatColor.RED + arg4);
+                            sender.sendMessage(rank.getFormattedName() + ChatColor.YELLOW + " does not set " + ChatColor.RED + arg4);
                             return;
                         }
                         if (permissions.get(arg4)) {
-                            sender.sendMessage(rank.getNameWithBrackets() + ChatColor.YELLOW + " sets " + ChatColor.YELLOW + arg4 + ChatColor.YELLOW + " to " + ChatColor.GREEN + ChatColor.BOLD + "true");
+                            sender.sendMessage(rank.getFormattedName() + ChatColor.YELLOW + " sets " + ChatColor.YELLOW + arg4 + ChatColor.YELLOW + " to " + ChatColor.GREEN + ChatColor.BOLD + "true");
                         } else {
-                            sender.sendMessage(rank.getNameWithBrackets() + ChatColor.YELLOW + " sets " + ChatColor.YELLOW + arg4 + ChatColor.YELLOW + " to " + ChatColor.RED + ChatColor.BOLD + "false");
+                            sender.sendMessage(rank.getFormattedName() + ChatColor.YELLOW + " sets " + ChatColor.YELLOW + arg4 + ChatColor.YELLOW + " to " + ChatColor.RED + ChatColor.BOLD + "false");
                         }
                         return;
                     case "set":
@@ -171,7 +171,7 @@ public class PermCommand extends CoreCommand {
                                 Core.getPermissionManager().attachments.get(tp.getUniqueId()).setPermission(arg4, true);
                             }
                         }
-                        sender.sendMessage(rank.getNameWithBrackets() + ChatColor.YELLOW + " now sets " + ChatColor.AQUA + arg4 + ChatColor.YELLOW + " to " + ChatColor.GREEN + "" + ChatColor.BOLD + "true");
+                        sender.sendMessage(rank.getFormattedName() + ChatColor.YELLOW + " now sets " + ChatColor.AQUA + arg4 + ChatColor.YELLOW + " to " + ChatColor.GREEN + "" + ChatColor.BOLD + "true");
                         return;
                     case "unset":
                         Core.getSqlUtil().unsetPermission(arg4, rank);
@@ -180,7 +180,7 @@ public class PermCommand extends CoreCommand {
                                 Core.getPermissionManager().attachments.get(tp.getUniqueId()).unsetPermission(arg4);
                             }
                         }
-                        sender.sendMessage(rank.getNameWithBrackets() + ChatColor.YELLOW + " does not set " + ChatColor.AQUA + arg4 + ChatColor.YELLOW + " anymore");
+                        sender.sendMessage(rank.getFormattedName() + ChatColor.YELLOW + " does not set " + ChatColor.AQUA + arg4 + ChatColor.YELLOW + " anymore");
                         return;
                     default:
                         helpMenu(sender, "group");
@@ -205,10 +205,10 @@ public class PermCommand extends CoreCommand {
                         }
                     }
                     if (value) {
-                        sender.sendMessage(rank.getNameWithBrackets() + ChatColor.YELLOW + " now sets " + ChatColor.AQUA + arg4 + ChatColor.YELLOW + " to " + ChatColor.GREEN + "" + ChatColor.BOLD + "true");
+                        sender.sendMessage(rank.getFormattedName() + ChatColor.YELLOW + " now sets " + ChatColor.AQUA + arg4 + ChatColor.YELLOW + " to " + ChatColor.GREEN + "" + ChatColor.BOLD + "true");
                         return;
                     }
-                    sender.sendMessage(rank.getNameWithBrackets() + ChatColor.YELLOW + " now sets " + ChatColor.AQUA + arg4 + ChatColor.YELLOW + " to " + ChatColor.RED + "" + ChatColor.BOLD + "false");
+                    sender.sendMessage(rank.getFormattedName() + ChatColor.YELLOW + " now sets " + ChatColor.AQUA + arg4 + ChatColor.YELLOW + " to " + ChatColor.RED + "" + ChatColor.BOLD + "false");
                     return;
                 }
                 helpMenu(sender, "group");

@@ -16,7 +16,6 @@ import java.util.concurrent.Callable;
  * The type Core player default scoreboard.
  */
 public class CorePlayerDefaultScoreboard implements Listener {
-
     private int playerCount = 0;
 
     /**
