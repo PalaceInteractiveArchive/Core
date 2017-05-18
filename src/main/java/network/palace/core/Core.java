@@ -59,6 +59,16 @@ public class Core extends JavaPlugin {
     private boolean dashboardAndSqlDisabled = false;
     @Getter private String mcVersion = Bukkit.getBukkitVersion();
     private boolean gameMode = false;
+
+    @Getter private boolean showTitleOnLogin = false;
+    @Getter private String loginTitle = "";
+    @Getter private String loginSubTitle = "";
+
+    @Getter private int loginTitleFadeIn = 10;
+    @Getter private int loginTitleStay = 10;
+    @Getter private int loginTitleFadeOut = 10;
+
+
     @Getter @Setter private String tabHeader = ChatColor.GOLD + "Palace Network - A Family of Servers";
     @Getter @Setter private String tabFooter = ChatColor.LIGHT_PURPLE + "You're on the " + ChatColor.GREEN + "Hub " + ChatColor.LIGHT_PURPLE + "server";
 
@@ -95,6 +105,15 @@ public class Core extends JavaPlugin {
         if (getCoreConfig().getConfigurationSection("tab") != null) {
             setTabHeader(ChatColor.translateAlternateColorCodes('&', getCoreConfig().getString("tab.header")));
             setTabFooter(ChatColor.translateAlternateColorCodes('&', getCoreConfig().getString("tab.footer")));
+        }
+        showTitleOnLogin = getCoreConfig().getBoolean("showTitle", false);
+        if (showTitleOnLogin) {
+            loginTitle = getCoreConfig().getString("loginTitle", "");
+            loginSubTitle = getCoreConfig().getString("loginSubTitle", "");
+
+            loginTitleFadeIn = getCoreConfig().getInt("logFadeIn", 20);
+            loginTitleStay = getCoreConfig().getInt("loginStay", 100);
+            loginTitleFadeOut = getCoreConfig().getInt("loginFadeOut", 20);
         }
         // Language Manager
         languageManager = new LanguageManager(this);

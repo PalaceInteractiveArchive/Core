@@ -87,6 +87,11 @@ public class CorePlayerManager implements CPlayerManager {
         defaultScoreboard.setup(cPlayer);
         // Tab header and footer
         cPlayer.getHeaderFooter().setHeaderFooter(Core.getInstance().getTabHeader(), Core.getInstance().getTabFooter());
+        // Show the title if we're supposed to
+        if (Core.getInstance().isShowTitleOnLogin()) {
+            player.sendTitle(Core.getInstance().getLoginTitle(), Core.getInstance().getLoginSubTitle(),
+                    Core.getInstance().getLoginTitleFadeIn(), Core.getInstance().getLoginTitleStay(), Core.getInstance().getLoginTitleFadeOut());
+        }
         // Called joined event
         new CorePlayerJoinedEvent(cPlayer).call();
     }

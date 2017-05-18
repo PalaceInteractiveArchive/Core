@@ -9,3 +9,9 @@ isDefaultSidebarEnabled: true
 debug: false
 dashboardAndSqlDisabled: false
 isGameMode: false
+showTitle: false
+loginTitle: ""
+loginSubtitle: ""
+loginFadeIn: 20
+loginStay: 100
+loginFadeOut: 20
