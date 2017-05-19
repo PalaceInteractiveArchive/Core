@@ -11,4 +11,4 @@ command.error.arguments.specify: "&cYou must specify a sub-command for this comm
 command.error.arguments.invalid: "&cThe sub-command you have specified is invalid!"
 
 # List Command #
-command.list.playersOnline: "&6Players online: &a<players-online>"
+command.list.playersOnline: "&6Players online(<player-amount>): &a<players-online>"

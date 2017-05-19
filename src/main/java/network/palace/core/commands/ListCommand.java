@@ -34,7 +34,8 @@ public class ListCommand extends CoreCommand {
         Collections.sort(playerNames);
         String playerList = Joiner.on(" ").skipNulls().join(playerNames);
         // Formatter
-        String playersOnlineFormat = Core.getLanguageFormatter().getFormat(sender, "command.list.playersOnline").replaceAll("<players-online>", playerList);
+        String playersOnlineFormat = Core.getLanguageFormatter().getFormat(sender, "command.list.playersOnline")
+                .replaceAll("<players-online>", playerList).replaceAll("<player-amount>", String.valueOf(playerNames.size()));
         sender.sendMessage(playersOnlineFormat);
     }
 }
