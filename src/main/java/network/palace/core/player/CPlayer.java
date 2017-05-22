@@ -1,6 +1,8 @@
 package network.palace.core.player;
 
 import network.palace.core.packets.AbstractPacket;
+import network.palace.core.tracking.GameType;
+import network.palace.core.tracking.StatisticType;
 import org.bukkit.*;
 import org.bukkit.block.Block;
 import org.bukkit.entity.Player;
@@ -12,7 +14,7 @@ import org.bukkit.plugin.java.JavaPlugin;
 import java.util.UUID;
 
 /**
- * The interface C player.
+ * The interface CPlayer.
  */
 public interface CPlayer {
 
@@ -654,4 +656,22 @@ public interface CPlayer {
      * @param amount the amount to remove
      */
     void removeBalance(int amount);
+
+    /**
+     * Add a game statistic to a player
+     *
+     * @param gameType the game type that the statistic was earned in
+     * @param statisticType the statistic that was earned
+     * @param amount the amount that was earned
+     */
+    void addStatistic(GameType gameType, StatisticType statisticType, int amount);
+
+    /**
+     * Get a statistic of a player
+     *
+     * @param gameType the game
+     * @param statisticType the type of statistic
+     * @return the amount
+     */
+    int getStatistic(GameType gameType, StatisticType statisticType);
 }

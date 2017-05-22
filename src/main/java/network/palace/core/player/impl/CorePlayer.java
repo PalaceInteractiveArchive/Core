@@ -6,10 +6,13 @@ import lombok.Getter;
 import lombok.Setter;
 import network.palace.core.Core;
 import network.palace.core.config.LanguageManager;
+import network.palace.core.events.GameStatisticChangeEvent;
 import network.palace.core.packets.AbstractPacket;
 import network.palace.core.player.*;
 import network.palace.core.player.impl.managers.*;
 import network.palace.core.plugin.Plugin;
+import network.palace.core.tracking.GameType;
+import network.palace.core.tracking.StatisticType;
 import org.bukkit.*;
 import org.bukkit.block.Block;
 import org.bukkit.entity.Player;
@@ -588,5 +591,16 @@ public class CorePlayer implements CPlayer {
     public void removeBalance(int amount) {
         int current = Core.getEconomy().getBalance(getUuid());
         Core.getEconomy().setBalance(getUuid(), current - amount, "Core", false);
+    }
+
+    @Override
+    public void addStatistic(GameType gameType, StatisticType statisticType, int amount) {
+        Core.getSqlUtil().addGameStat(gameType, statisticType, amount, this);
+        new GameStatisticChangeEvent(this, gameType, statisticType, amount).call();
+    }
+
+    @Override
+    public int getStatistic(GameType gameType, StatisticType statisticType) {
+        return Core.getSqlUtil().getGameStat(gameType, statisticType, this);
     }
 }

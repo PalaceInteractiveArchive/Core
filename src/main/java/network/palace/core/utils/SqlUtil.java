@@ -4,6 +4,8 @@ import network.palace.core.Core;
 import network.palace.core.npc.mob.MobPlayerTexture;
 import network.palace.core.player.CPlayer;
 import network.palace.core.player.Rank;
+import network.palace.core.tracking.GameType;
+import network.palace.core.tracking.StatisticType;
 import org.bukkit.ChatColor;
 
 import java.sql.*;
@@ -466,5 +468,95 @@ public class SqlUtil {
             e.printStackTrace();
         }
         return hasCosmetic;
+    }
+
+    /**
+     * Get a players statistic in a game
+     *
+     * @param game the game to get the statistic from
+     * @param type the type of statistic to get
+     * @param player the player to get the statistic from
+     * @return the amount of the statistic they have
+     */
+    public int getGameStat(GameType game, StatisticType type, CPlayer player) {
+        Connection connection = getConnection();
+        if (connection == null) {
+            Core.logInfo("Core > Unable to get game stats - Cannot connect to MySql!");
+            return 0;
+        }
+
+        int amount = 0;
+        try {
+            PreparedStatement statement = connection.prepareStatement("SELECT status FROM gameStatistics WHERE uuid=?,type=?,game=?");
+            statement.setString(1, player.getUuid().toString());
+            statement.setString(2, type.getType());
+            statement.setInt(3, game.getId());
+            ResultSet results = statement.executeQuery();
+
+            // If there's no results, set the amount to -1
+            if (!results.next()) {
+                amount = -1;
+            } else {
+                while (results.next()) {
+                    amount = results.getInt("amount");
+                }
+            }
+
+            statement.close();
+            results.close();
+            connection.close();
+        } catch (SQLException e) {
+            e.printStackTrace();
+        }
+        return amount;
+    }
+
+    /**
+     * Add a game statistic to a player
+     *
+     * @param game the game that this happened in
+     * @param statistic the statistic to add
+     * @param player the player who earned this stat
+     * @param amount the amount to give the player
+     */
+    public void addGameStat(GameType game, StatisticType statistic, int amount, CPlayer player) {
+        Connection connection = getConnection();
+        if (connection == null) {
+            Core.logInfo("Core > Unable to add game stats - Cannot connect to MySql!");
+            return;
+        }
+
+        try {
+            int current = getGameStat(game, statistic, player);
+            PreparedStatement statement = connection.prepareStatement(
+                    "IF EXISTS (SELECT * FROM gameStatistics WHERE uuid=?,type=?,game=?) UPDATE gameStatistics " +
+                            "SET amount=? WHERE uuid=?,type=?,game=? ELSE INSERT INTO gameStatistics (uuid=?,type=?,game=?,amount=?) VALUES (?,?,?,?)");
+
+            // Set the params and execute
+
+            // IF EXISTS
+            statement.setString(1, player.getUuid().toString());
+            statement.setString(2, statistic.getType());
+            statement.setInt(3, game.getId());
+
+            // UPDATE
+            statement.setInt(4, current == -1 ? amount : current + amount);
+            statement.setString(5, player.getUuid().toString());
+            statement.setString(6, statistic.getType());
+            statement.setInt(7, game.getId());
+
+            // INSERT
+            statement.setString(8, player.getUuid().toString());
+            statement.setString(9, statistic.getType());
+            statement.setInt(10, game.getId());
+            statement.setInt(11, current == -1 ? amount : current + amount);
+            statement.execute();
+
+            // Finish up
+            statement.close();
+            connection.close();
+        } catch (SQLException e) {
+            e.printStackTrace();
+        }
     }
 }
