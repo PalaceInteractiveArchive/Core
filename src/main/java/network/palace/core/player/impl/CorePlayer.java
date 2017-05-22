@@ -547,4 +547,46 @@ public class CorePlayer implements CPlayer {
         if (getBukkitPlayer() == null) return;
         getBukkitPlayer().performCommand(cmd);
     }
+
+    @Override
+    public int getTokens() {
+        return Core.getEconomy().getTokens(getUuid());
+    }
+
+    @Override
+    public int getBalance() {
+        return Core.getEconomy().getBalance(getUuid());
+    }
+
+    @Override
+    public void addTokens(int amount) {
+        Core.getEconomy().addTokens(getUuid(), amount);
+    }
+
+    @Override
+    public void addBalance(int amount) {
+        Core.getEconomy().addBalance(getUuid(), amount);
+    }
+
+    @Override
+    public void setTokens(int amount) {
+        Core.getEconomy().setTokens(getUuid(), amount, "Core", true);
+    }
+
+    @Override
+    public void setBalance(int amount) {
+        Core.getEconomy().setBalance(getUuid(), amount, "Core", true);
+    }
+
+    @Override
+    public void removeTokens(int amount) {
+        int current = Core.getEconomy().getTokens(getUuid());
+        Core.getEconomy().setTokens(getUuid(), current - amount, "Core", false);
+    }
+
+    @Override
+    public void removeBalance(int amount) {
+        int current = Core.getEconomy().getBalance(getUuid());
+        Core.getEconomy().setBalance(getUuid(), current - amount, "Core", false);
+    }
 }

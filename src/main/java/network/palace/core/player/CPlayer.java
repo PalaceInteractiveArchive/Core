@@ -598,4 +598,60 @@ public interface CPlayer {
      * @param cmd Command
      */
     void performCommand(String cmd);
+
+    /**
+     * Get the tokens the player currently has
+     *
+     * @return the tokens the player has
+     */
+    int getTokens();
+
+    /**
+     * Get the balance the player currently has
+     *
+     * @return the balance the player has
+     */
+    int getBalance();
+
+    /**
+     * Add tokens to the player
+     *
+     * @param amount the amount to give to the player
+     */
+    void addTokens(int amount);
+
+    /**
+     * Add balance to the player
+     *
+     * @param amount the amount to add
+     */
+    void addBalance(int amount);
+
+    /**
+     * Set the players tokens
+     *
+     * @param amount the amount to set it to
+     */
+    void setTokens(int amount);
+
+    /**
+     * Set the balance of the player
+     *
+     * @param amount the amount to set it to
+     */
+    void setBalance(int amount);
+
+    /**
+     * Remove tokens from a player
+     *
+     * @param amount the amount to remove
+     */
+    void removeTokens(int amount);
+
+    /**
+     * Remove balance from a player
+     *
+     * @param amount the amount to remove
+     */
+    void removeBalance(int amount);
 }
