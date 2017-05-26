@@ -183,6 +183,7 @@ public class Core extends JavaPlugin {
         registerCommand(new SafestopCommand());
         registerCommand(new TokenCommand());
         registerCommand(new FlyCommand());
+        registerCommand(new SpawnCommand());
     }
 
     /**
