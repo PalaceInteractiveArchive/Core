@@ -21,41 +21,42 @@ public class StatisticType {
     /**
      * Statistics about Outpost
      */
-    public class Outpost {
-        public final StatisticType ELIMINATIONS = new StatisticType("eliminations");
-        public final StatisticType DEATHS = new StatisticType("deaths");
-        public final StatisticType CONQUERED_TOWERS = new StatisticType("conquered_towers");
-        public final StatisticType SECONDS_ON_TOWER = new StatisticType("seconds_on_tower");
+    public static class Outpost {
+        public static final StatisticType ELIMINATIONS = new StatisticType("eliminations");
+        public static final StatisticType DEATHS = new StatisticType("deaths");
+        public static final StatisticType CONQUERED_TOWERS = new StatisticType("conquered_towers");
+        public static final StatisticType SECONDS_ON_TOWER = new StatisticType("seconds_on_tower");
     }
 
     /**
      * Statistics about Spleef
      */
-    public class Spleef {
-        public final StatisticType DEATHS = new StatisticType("deaths");
+    public static class Spleef {
+        public static final StatisticType DEATHS = new StatisticType("deaths");
     }
 
     /**
      * Statistics about CowTipping
      */
-    public class CowTipping {
-        public final StatisticType COWS_TIPPED = new StatisticType("cows_tipped");
-        public final StatisticType COWS_STOLEN = new StatisticType("cows_stolen");
+    public static class CowTipping {
+        public static final StatisticType COWS_TIPPED = new StatisticType("cows_tipped");
+        public static final StatisticType COWS_STOLEN = new StatisticType("cows_stolen");
+        public static final StatisticType TOTAL_POINTS = new StatisticType("cowtipping_total_points");
     }
 
     /**
      * Statistics about OneShot
      */
-    public class OneShot {
-        public final StatisticType ELIMINATIONS = new StatisticType("eliminations");
-        public final StatisticType SHOTS_MISSED = new StatisticType("shots_missed");
+    public static class OneShot {
+        public static final StatisticType ELIMINATIONS = new StatisticType("eliminations");
+        public static final StatisticType SHOTS_MISSED = new StatisticType("shots_missed");
     }
 
     /**
      * Statistics about FreezeTag
      */
-    public class FreezeTag {
-        public final StatisticType FROZEN_PLAYERS = new StatisticType("frozen_players");
-        public final StatisticType UNFROZEN_PLAYERS = new StatisticType("unfrozen_players");
+    public static class FreezeTag {
+        public static final StatisticType FROZEN_PLAYERS = new StatisticType("frozen_players");
+        public static final StatisticType UNFROZEN_PLAYERS = new StatisticType("unfrozen_players");
     }
 }

@@ -1,5 +1,6 @@
 package network.palace.core.achievements;
 
+import com.google.common.collect.ImmutableList;
 import network.palace.core.Core;
 import network.palace.core.utils.MiscUtil;
 import org.json.simple.JSONArray;
@@ -34,9 +35,7 @@ public class AchievementManager {
                 }
                 int amount = 0;
                 for (Map.Entry<UUID, List<Integer>> entry : new HashSet<>(earned.entrySet())) {
-                    for (Integer i : entry.getValue()) {
-                        amount++;
-                    }
+                    amount += entry.getValue().size();
                 }
                 String statement = "INSERT INTO achievements (uuid, achid, time) VALUES ";
                 int i = 0;
@@ -84,6 +83,9 @@ public class AchievementManager {
             JSONObject content = (JSONObject) ob.get("content");
             JSONObject id = (JSONObject) ob.get("title");
             String column = (String) id.get("$t");
+            if (!MiscUtil.checkIfInt(column)) {
+                continue;
+            }
             Integer row = Integer.parseInt(column.substring(1, 2));
             switch (column.substring(0, 1).toLowerCase()) {
                 case "a":
@@ -104,8 +106,8 @@ public class AchievementManager {
         return achievements.get(id);
     }
 
-    public List<CoreAchievement> getAchievements() {
-        return new ArrayList<>(achievements.values());
+    public ImmutableList<CoreAchievement> getAchievements() {
+        return ImmutableList.copyOf(achievements.values());
     }
 
     private static JSONObject readJsonFromUrl(String url) {

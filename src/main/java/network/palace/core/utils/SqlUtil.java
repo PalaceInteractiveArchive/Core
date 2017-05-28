@@ -487,14 +487,14 @@ public class SqlUtil {
 
         int amount = 0;
         try {
-            PreparedStatement statement = connection.prepareStatement("SELECT status FROM gameStatistics WHERE uuid=?,type=?,game=?");
+            PreparedStatement statement = connection.prepareStatement("SELECT amount FROM gameStatistics WHERE uuid=? AND type=? AND game=?");
             statement.setString(1, player.getUuid().toString());
             statement.setString(2, type.getType());
             statement.setInt(3, game.getId());
             ResultSet results = statement.executeQuery();
 
             // If there's no results, set the amount to -1
-            if (!results.next()) {
+            if (results == null || !results.next()) {
                 amount = -1;
             } else {
                 while (results.next()) {
@@ -527,29 +527,16 @@ public class SqlUtil {
         }
 
         try {
-            int current = getGameStat(game, statistic, player);
-            PreparedStatement statement = connection.prepareStatement(
-                    "IF EXISTS (SELECT * FROM gameStatistics WHERE uuid=?,type=?,game=?) UPDATE gameStatistics " +
-                            "SET amount=? WHERE uuid=?,type=?,game=? ELSE INSERT INTO gameStatistics (uuid=?,type=?,game=?,amount=?) VALUES (?,?,?,?)");
+            int finalAmount = getGameStat(game, statistic, player) + amount;
+            PreparedStatement statement = connection.prepareStatement("INSERT INTO gameStatistics (uuid,type,game,amount) VALUES (?,?,?,?) ON DUPLICATE uuid UPDATE amount=?");
 
-            // Set the params and execute
-
-            // IF EXISTS
+            // Inject
             statement.setString(1, player.getUuid().toString());
             statement.setString(2, statistic.getType());
             statement.setInt(3, game.getId());
+            statement.setInt(4, finalAmount);
+            statement.setInt(5, finalAmount);
 
-            // UPDATE
-            statement.setInt(4, current == -1 ? amount : current + amount);
-            statement.setString(5, player.getUuid().toString());
-            statement.setString(6, statistic.getType());
-            statement.setInt(7, game.getId());
-
-            // INSERT
-            statement.setString(8, player.getUuid().toString());
-            statement.setString(9, statistic.getType());
-            statement.setInt(10, game.getId());
-            statement.setInt(11, current == -1 ? amount : current + amount);
             statement.execute();
 
             // Finish up
