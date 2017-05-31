@@ -13,34 +13,34 @@ public interface CPlayerManager {
     /**
      * Player logged in.
      *
-     * @param uuid the uuid
-     * @param name the name
+     * @param uuid the uuid of the player
+     * @param name the name of the player
      */
     void playerLoggedIn(UUID uuid, String name);
 
     /**
      * Player joined.
      *
-     * @param player the player
+     * @param player the player who joined
      */
     void playerJoined(Player player);
 
     /**
      * Player logged out.
      *
-     * @param player the player
+     * @param player the player who logged out
      */
     void playerLoggedOut(Player player);
 
     /**
      * Broadcast message to all players.
      *
-     * @param message the message
+     * @param message the message to broadcast
      */
     void broadcastMessage(String message);
 
     /**
-     * Gets player.
+     * Get a player by UUID
      *
      * @param playerUUID the player uuid
      * @return the player
@@ -48,15 +48,15 @@ public interface CPlayerManager {
     CPlayer getPlayer(UUID playerUUID);
 
     /**
-     * Gets player.
+     * Get a CorePlayer from a bukkit player
      *
-     * @param player the player
-     * @return the player
+     * @param player the bukkit player
+     * @return the core player
      */
     CPlayer getPlayer(Player player);
 
     /**
-     * Gets player.
+     * Get a player by name
      *
      * @param name the player name
      * @return the player

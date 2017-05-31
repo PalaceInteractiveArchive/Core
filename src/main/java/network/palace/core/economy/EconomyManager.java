@@ -20,27 +20,24 @@ import java.util.UUID;
  */
 public class EconomyManager {
 
-    private HashMap<UUID, Payment> balance = new HashMap<>();
-    private HashMap<UUID, Payment> tokens = new HashMap<>();
+    private Map<UUID, Payment> balance = new HashMap<>();
+    private Map<UUID, Payment> tokens = new HashMap<>();
 
     /**
      * Instantiates a new Economy manager.
      */
     public EconomyManager() {
         Core.runTaskTimerAsynchronously(() -> {
-            HashMap<UUID, Payment> localMap = new HashMap<>(balance);
             balance.clear();
-            for (Map.Entry<UUID, Payment> entry : new HashSet<>(localMap.entrySet())) {
+            for (Map.Entry<UUID, Payment> entry : new HashSet<>(balance.entrySet())) {
                 Payment payment = new Payment(entry.getKey(), entry.getValue().getAmount(), entry.getValue().getSource());
                 balance.remove(entry.getKey());
-                if (payment.getAmount() == 0) {
-                    continue;
-                }
+                if (payment.getAmount() == 0) continue;
                 changeBalance(entry.getKey(), payment.getAmount(), payment.getSource());
             }
         }, 0L, 20L);
         Core.runTaskTimerAsynchronously(() -> {
-            HashMap<UUID, Payment> localMap = new HashMap<>(tokens);
+            Map<UUID, Payment> localMap = new HashMap<>(tokens);
             tokens.clear();
             for (Map.Entry<UUID, Payment> entry : new HashSet<>(localMap.entrySet())) {
                 Payment payment = new Payment(entry.getKey(), entry.getValue().getAmount(), entry.getValue().getSource());
@@ -53,11 +50,9 @@ public class EconomyManager {
         }, 0L, 20L);
     }
 
-    private HashMap<UUID, Payment> getPartOfMap(HashMap<UUID, Payment> map, int amount) {
-        if (map.size() <= amount) {
-            return new HashMap<>(map);
-        }
-        HashMap<UUID, Payment> temp = new HashMap<>();
+    private Map<UUID, Payment> getPartOfMap(Map<UUID, Payment> map, int amount) {
+        if (map.size() <= amount) return new HashMap<>(map);
+        Map<UUID, Payment> temp = new HashMap<>();
         int i = 0;
         for (Map.Entry<UUID, Payment> entry : map.entrySet()) {
             if (i >= amount) {

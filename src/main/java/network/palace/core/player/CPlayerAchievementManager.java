@@ -8,24 +8,24 @@ import java.util.List;
 public interface CPlayerAchievementManager {
 
     /**
-     * Get a list of the player's CoreAchievement
+     * Get a list of the player's achievements
      *
-     * @return Integer list of CoreAchievement IDs
+     * @return the player's achievement IDs
      */
     List<Integer> getAchievements();
 
     /**
      * Check if player already has a CoreAchievement
-     * @param i ID of CoreAchievement to check
+     * @param id ID of achievement to check
      * @return if player has achievement
      */
-    boolean hasAchievement(int i);
+    boolean hasAchievement(int id);
 
     /**
      * Give player a CoreAchievement
      * Method checks if player has achievement already
      *
-     * @param i ID of CoreAchievement to give to player
+     * @param id ID of achievement to give to player
      */
-    void giveAchievement(int i);
+    void giveAchievement(int id);
 }

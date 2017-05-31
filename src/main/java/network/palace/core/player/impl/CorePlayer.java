@@ -22,9 +22,6 @@ import org.bukkit.inventory.PlayerInventory;
 import org.bukkit.plugin.java.JavaPlugin;
 import org.bukkit.util.Vector;
 
-import java.lang.reflect.Field;
-import java.lang.reflect.InvocationTargetException;
-import java.lang.reflect.Method;
 import java.util.List;
 import java.util.Set;
 import java.util.UUID;
@@ -51,6 +48,8 @@ public class CorePlayer implements CPlayer {
     @Getter @Setter private String textureValue = "";
     @Getter @Setter private String textureSignature = "";
     @Getter @Setter private String pack = "none";
+
+    @Getter @Setter private int ping;
 
     /**
      * Instantiates a new Core player.
@@ -493,25 +492,6 @@ public class CorePlayer implements CPlayer {
     public Block getTargetBlock(int range) {
         if (getBukkitPlayer() == null) return null;
         return getBukkitPlayer().getTargetBlock((Set<Material>) null, range);
-    }
-
-    @Override
-    public int getPing() {
-        if (getStatus() != PlayerStatus.JOINED) return 0;
-        if (getBukkitPlayer() == null) return 0;
-        try {
-            Object craftPlayer = Class.forName("org.bukkit.craftbukkit.v" + Core.getInstance().getMcVersion() +
-                    ".entity.CraftPlayer").cast(getBukkitPlayer());
-            Method m = craftPlayer.getClass().getDeclaredMethod("getHandle");
-            Object entityPlayer = m.invoke(craftPlayer);
-            Field ping = entityPlayer.getClass().getDeclaredField("ping");
-            ping.setAccessible(true);
-            return (int) ping.get(entityPlayer);
-        } catch (ClassNotFoundException | NoSuchMethodException | IllegalAccessException | InvocationTargetException |
-                NoSuchFieldException e) {
-            e.printStackTrace();
-            return 0;
-        }
     }
 
     @Override

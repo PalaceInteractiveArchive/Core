@@ -2,7 +2,6 @@ package network.palace.core.dashboard.packets.audio;
 
 import com.google.gson.JsonObject;
 import lombok.Getter;
-import lombok.Setter;
 import network.palace.core.dashboard.packets.BasePacket;
 import network.palace.core.dashboard.packets.PacketID;
 
@@ -11,21 +10,21 @@ import network.palace.core.dashboard.packets.PacketID;
  */
 public class PacketClientAccept extends BasePacket {
 
-    @Getter private String servername = "";
+    @Getter private String serverName = "";
 
     /**
      * Instantiates a new Packet client accept.
      *
-     * @param servername the servername
+     * @param serverName the name of the server
      */
-    public PacketClientAccept(String servername) {
+    public PacketClientAccept(String serverName) {
         super(PacketID.CLIENT_ACCEPTED.getID());
-        this.servername = servername;
+        this.serverName = serverName;
     }
 
     public PacketClientAccept fromJSON(JsonObject obj) {
         try {
-            this.servername = obj.get("servername").getAsString();
+            this.serverName = obj.get("serverName").getAsString();
         } catch (Exception e) {
             return null;
         }
@@ -36,7 +35,7 @@ public class PacketClientAccept extends BasePacket {
         JsonObject obj = new JsonObject();
         try {
             obj.addProperty("id", this.id);
-            obj.addProperty("servername", this.servername);
+            obj.addProperty("serverName", this.serverName);
         } catch (Exception e) {
             return null;
         }

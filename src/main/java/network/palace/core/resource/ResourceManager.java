@@ -10,19 +10,16 @@ import java.sql.Connection;
 import java.sql.PreparedStatement;
 import java.sql.ResultSet;
 import java.sql.SQLException;
-import java.util.ArrayList;
-import java.util.HashMap;
-import java.util.List;
-import java.util.UUID;
+import java.util.*;
 
 /**
  * The type Resource manager.
  */
 public class ResourceManager {
 
-    private HashMap<String, ResourcePack> packs = new HashMap<>();
+    private Map<String, ResourcePack> packs = new HashMap<>();
     private boolean first = true;
-    private HashMap<UUID, String> downloading = new HashMap<>();
+    private Map<UUID, String> downloading = new HashMap<>();
 
     /**
      * Instantiates a new Resource manager.
@@ -32,11 +29,9 @@ public class ResourceManager {
     }
 
     /**
-     * Initialize.
-     *
-     * @throws SQLException the sql exception
+     * Initialize SQL connections
      */
-    public void initialize() {
+    private void initialize() {
         packs.clear();
         if (Core.isDashboardAndSqlDisabled()) return;
         try (Connection connection = Core.getSqlUtil().getConnection()) {

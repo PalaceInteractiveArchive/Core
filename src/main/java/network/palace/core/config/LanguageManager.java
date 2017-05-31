@@ -12,6 +12,7 @@ import java.io.BufferedReader;
 import java.io.IOException;
 import java.io.InputStreamReader;
 import java.util.HashMap;
+import java.util.Map;
 
 /**
  * The type Language manager.
@@ -23,7 +24,7 @@ public class LanguageManager {
     private final String LANG_FILE_NAME = "languages.txt";
     private final String YML_EXTENSION = ".yml";
 
-    private final HashMap<String, YAMLConfigurationFile> languages = new HashMap<>();
+    private final Map<String, YAMLConfigurationFile> languages = new HashMap<>();
 
     /**
      * Instantiates a new Language manager.

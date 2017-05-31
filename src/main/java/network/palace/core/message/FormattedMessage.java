@@ -94,8 +94,8 @@ public class FormattedMessage {
         return this;
     }
 
-    public FormattedMessage then(final String obj) {
-        messageSections.add(new MessageSection(obj.toString()));
+    public FormattedMessage then(final String message) {
+        messageSections.add(new MessageSection(message));
         return this;
     }
 

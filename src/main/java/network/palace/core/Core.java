@@ -17,6 +17,7 @@ import network.palace.core.dashboard.DashboardConnection;
 import network.palace.core.economy.EconomyManager;
 import network.palace.core.library.LibraryHandler;
 import network.palace.core.npc.SoftNPCManager;
+import network.palace.core.packets.adapters.PlayerInfoAdapter;
 import network.palace.core.packets.adapters.SettingsAdapter;
 import network.palace.core.permissions.PermissionManager;
 import network.palace.core.player.CPlayerManager;
@@ -68,23 +69,21 @@ public class Core extends JavaPlugin {
     @Getter private int loginTitleStay = 10;
     @Getter private int loginTitleFadeOut = 10;
 
-
     @Getter @Setter private String tabHeader = ChatColor.GOLD + "Palace Network - A Family of Servers";
     @Getter @Setter private String tabFooter = ChatColor.LIGHT_PURPLE + "You're on the " + ChatColor.GREEN + "Hub " + ChatColor.LIGHT_PURPLE + "server";
 
-    private DashboardConnection dashboardConnection;
-
+    private SqlUtil sqlUtil;
     private LanguageManager languageManager;
-    private CPlayerManager playerManager;
     private PermissionManager permissionManager;
     private EconomyManager economyManager;
     private ResourceManager resourceManager;
     private AchievementManager achievementManager;
     private SoftNPCManager softNPCManager;
-
+    private CPlayerManager playerManager;
     private CoreCommandMap commandMap;
-    private SqlUtil sqlUtil;
-    @Getter private ArrayList<UUID> disabledPlayers = new ArrayList<>();
+    private DashboardConnection dashboardConnection;
+
+    @Getter private List<UUID> disabledPlayers = new ArrayList<>();
 
     @Override
     public final void onEnable() {
@@ -119,6 +118,8 @@ public class Core extends JavaPlugin {
         languageManager = new LanguageManager(this);
         // Settings adapter for player locales
         addPacketListener(new SettingsAdapter());
+        // Player info adapter for player ping
+        addPacketListener(new PlayerInfoAdapter());
         // Register plugin channel
         getServer().getMessenger().registerOutgoingPluginChannel(this, "BungeeCord");
         getServer().getMessenger().registerIncomingPluginChannel(this, "WDL|INIT", new CorePlayerWorldDownloadProtect());
@@ -372,27 +373,27 @@ public class Core extends JavaPlugin {
     /**
      * Gets core config.
      *
-     * @return the core config
+     * @return the config core is using
      */
     public static FileConfiguration getCoreConfig() {
         return getInstance().configFile.getConfig();
     }
 
     /**
-     * Bukkit Utils
+     * Create a new inventory
      *
-     * @param size  inventory size
-     * @param title inventory title
-     * @return the inventory
+     * @param size  the size of the inventory
+     * @param title the name of the inventory
+     * @return the new inventory
      */
     public static Inventory createInventory(int size, String title) {
         return Bukkit.createInventory(null, size, title);
     }
 
     /**
-     * Gets bukkit world from name.
+     * Gets Bukkit world from name.
      *
-     * @param name the name
+     * @param name the name of the world
      * @return the world
      */
     public static World getWorld(String name) {
@@ -400,7 +401,7 @@ public class Core extends JavaPlugin {
     }
 
     /**
-     * Gets the first/default bukkit world.
+     * The main world
      *
      * @return the default world
      */
@@ -411,14 +412,14 @@ public class Core extends JavaPlugin {
     /**
      * Gets all worlds on the server.
      *
-     * @return the worlds
+     * @return the current registered worlds
      */
     public static List<World> getWorlds() {
         return Bukkit.getWorlds();
     }
 
     /**
-     * Shutdown.
+     * Shutdown the server.
      */
     public static void shutdown() {
         Bukkit.shutdown();
@@ -427,7 +428,7 @@ public class Core extends JavaPlugin {
     /**
      * Register listener.
      *
-     * @param listener the listener
+     * @param listener the listener to be registered
      */
     public static void registerListener(Listener listener) {
         Bukkit.getPluginManager().registerEvents(listener, getInstance());

@@ -21,8 +21,8 @@ public class PermissionManager {
     /**
      * The Attachments.
      */
-    public HashMap<UUID, PermissionAttachment> attachments = new HashMap<>();
-    private HashMap<Rank, HashMap<String, Boolean>> permissions = new HashMap<>();
+    public Map<UUID, PermissionAttachment> attachments = new HashMap<>();
+    private Map<Rank, Map<String, Boolean>> permissions = new HashMap<>();
 
     /**
      * Instantiates a new Permission manager.
@@ -34,7 +34,7 @@ public class PermissionManager {
     /**
      * Initialize.
      */
-    public void initialize() {
+    private void initialize() {
         permissions.clear();
         Rank[] ranks = Rank.values();
         Collection<CPlayer> players = Core.getPlayerManager().getOnlinePlayers();
@@ -42,7 +42,7 @@ public class PermissionManager {
         Rank previous = null;
         for (int i = ranks.length - 1; i >= 0; i--) {
             Rank r = ranks[i];
-            HashMap<String, Boolean> perms = Core.getSqlUtil().getPermissions(r);
+            Map<String, Boolean> perms = Core.getSqlUtil().getPermissions(r);
             if (previous != null) {
                 for (Map.Entry<String, Boolean> perm : getPermissions(previous).entrySet()) {
                     if (perms.containsKey(perm.getKey())) {
@@ -74,7 +74,7 @@ public class PermissionManager {
         setPermissions(player.getBukkitPlayer(), getPermissions(player.getRank()));
     }
 
-    private void setPermissions(Player player, HashMap<String, Boolean> perms) {
+    private void setPermissions(Player player, Map<String, Boolean> perms) {
         PermissionAttachment attachment;
         if (attachments.containsKey(player.getUniqueId())) {
             attachment = attachments.get(player.getUniqueId());
@@ -96,8 +96,8 @@ public class PermissionManager {
      * @param rank the rank
      * @return the permissions
      */
-    public HashMap<String, Boolean> getPermissions(Rank rank) {
-        HashMap<String, Boolean> map = permissions.get(rank);
+    public Map<String, Boolean> getPermissions(Rank rank) {
+        Map<String, Boolean> map = permissions.get(rank);
         return map == null ? new HashMap<>() : map;
     }
 
@@ -122,9 +122,9 @@ public class PermissionManager {
      * @param value the value
      */
     public void setPermission(Rank rank, String node, boolean value) {
-        HashMap<String, Boolean> map = new HashMap<>(permissions.get(rank));
-        map.put(node, value);
-        permissions.put(rank, map);
+        Map<String, Boolean> currentPermissions = new HashMap<>(permissions.get(rank));
+        currentPermissions.put(node, value);
+        permissions.put(rank, currentPermissions);
     }
 
     /**
@@ -134,8 +134,8 @@ public class PermissionManager {
      * @param node the node
      */
     public void unsetPermission(Rank rank, String node) {
-        HashMap<String, Boolean> map = new HashMap<>(permissions.get(rank));
-        map.remove(node);
-        permissions.put(rank, map);
+        Map<String, Boolean> currentPermissions = new HashMap<>(this.permissions.get(rank));
+        currentPermissions.remove(node);
+        permissions.put(rank, currentPermissions);
     }
 }

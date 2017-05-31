@@ -28,32 +28,32 @@ public class ResourceListener extends PacketAdapter {
     @Override
     public void onPacketReceiving(PacketEvent event) {
         if (event.getPlayer() == null) return;
-        CPlayer tp = Core.getPlayerManager().getPlayer(event.getPlayer());
+        CPlayer player = Core.getPlayerManager().getPlayer(event.getPlayer());
         try {
             PacketContainer packet = event.getPacket();
             EnumWrappers.ResourcePackStatus status = packet.getResourcePackStatus().read(0);
             switch (status) {
                 case SUCCESSFULLY_LOADED:
-                    new ResourceStatusEvent(PackStatus.LOADED, tp).call();
-                    Core.getResourceManager().downloadingResult(tp.getUniqueId(), PackStatus.LOADED);
+                    new ResourceStatusEvent(PackStatus.LOADED, player).call();
+                    Core.getResourceManager().downloadingResult(player.getUniqueId(), PackStatus.LOADED);
                     return;
                 case DECLINED:
-                    new ResourceStatusEvent(PackStatus.DECLINED, tp).call();
-                    Core.getResourceManager().downloadingResult(tp.getUniqueId(), PackStatus.DECLINED);
+                    new ResourceStatusEvent(PackStatus.DECLINED, player).call();
+                    Core.getResourceManager().downloadingResult(player.getUniqueId(), PackStatus.DECLINED);
                     return;
                 case FAILED_DOWNLOAD:
-                    new ResourceStatusEvent(PackStatus.FAILED, tp).call();
-                    Core.getResourceManager().downloadingResult(tp.getUniqueId(), PackStatus.FAILED);
+                    new ResourceStatusEvent(PackStatus.FAILED, player).call();
+                    Core.getResourceManager().downloadingResult(player.getUniqueId(), PackStatus.FAILED);
                     return;
                 case ACCEPTED:
-                    new ResourceStatusEvent(PackStatus.ACCEPTED, tp).call();
+                    new ResourceStatusEvent(PackStatus.ACCEPTED, player).call();
                     return;
                 default:
-                    Core.getResourceManager().downloadingResult(tp.getUniqueId(), null);
-                    tp.sendMessage(ChatColor.RED + "There seems to be an error, please report this to a Staff Member! (Error Code 100)");
+                    Core.getResourceManager().downloadingResult(player.getUniqueId(), null);
+                    player.sendMessage(ChatColor.RED + "There seems to be an error, please report this to a Staff Member! (Error Code 100)");
             }
         } catch (Exception e) {
-            tp.sendMessage(ChatColor.RED + "There seems to be an error, please report this to a Staff Member! (Error Code 100)");
+            player.sendMessage(ChatColor.RED + "There seems to be an error, please report this to a Staff Member! (Error Code 100)");
             e.printStackTrace();
         }
     }

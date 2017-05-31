@@ -21,8 +21,8 @@ import java.util.*;
  */
 public class AchievementManager {
     public String url = "https://spreadsheets.google.com/feeds/cells/14OHnSeMJVmtFnE7xIdCzMaE0GPOR3Sh4SyE-ZR3hQ7o/od6/public/basic?alt=json";
-    private HashMap<Integer, CoreAchievement> achievements = new HashMap<>();
-    private HashMap<UUID, List<Integer>> earned = new HashMap<>();
+    private Map<Integer, CoreAchievement> achievements = new HashMap<>();
+    private Map<UUID, List<Integer>> earned = new HashMap<>();
 
     public AchievementManager() {
         Core.runTaskTimerAsynchronously(this::reload, 0L, 6000L);
@@ -37,17 +37,17 @@ public class AchievementManager {
                 for (Map.Entry<UUID, List<Integer>> entry : new HashSet<>(earned.entrySet())) {
                     amount += entry.getValue().size();
                 }
-                String statement = "INSERT INTO achievements (uuid, achid, time) VALUES ";
+                StringBuilder statement = new StringBuilder("INSERT INTO achievements (uuid, achid, time) VALUES ");
                 int i = 0;
-                HashMap<Integer, String> lastList = new HashMap<>();
+                Map<Integer, String> lastList = new HashMap<>();
                 for (Map.Entry<UUID, List<Integer>> entry : new HashSet<>(earned.entrySet())) {
                     if (entry == null || entry.getKey() == null || entry.getValue() == null) {
                         continue;
                     }
                     for (Integer in : new ArrayList<>(earned.remove(entry.getKey()))) {
-                        statement += "(?, ?, ?)";
+                        statement.append("(?, ?, ?)");
                         if (((i / 3) + 1) < amount) {
-                            statement += ", ";
+                            statement.append(", ");
                         }
                         lastList.put(i += 1, entry.getKey().toString());
                         lastList.put(i += 1, in + "");
@@ -70,27 +70,22 @@ public class AchievementManager {
         }, 0L, 100L);
     }
 
-    public void reload() {
+    private void reload() {
         JSONObject obj = readJsonFromUrl(url);
         if (obj == null) {
             return;
         }
         JSONArray array = (JSONArray) ((JSONObject) obj.get("feed")).get("entry");
         achievements.clear();
-        CoreAchievement lastAch = null;
         for (Object anArray : array) {
             JSONObject ob = (JSONObject) anArray;
             JSONObject content = (JSONObject) ob.get("content");
             JSONObject id = (JSONObject) ob.get("title");
             String column = (String) id.get("$t");
-            if (!MiscUtil.checkIfInt(column)) {
-                continue;
-            }
+            if (!MiscUtil.checkIfInt(column)) continue;
             Integer row = Integer.parseInt(column.substring(1, 2));
+            CoreAchievement lastAch = new CoreAchievement(Integer.parseInt((String) content.get("$t")), null, null);
             switch (column.substring(0, 1).toLowerCase()) {
-                case "a":
-                    lastAch = new CoreAchievement(Integer.parseInt((String) content.get("$t")), null, null);
-                    break;
                 case "b":
                     lastAch.setDisplayName((String) content.get("$t"));
                     break;

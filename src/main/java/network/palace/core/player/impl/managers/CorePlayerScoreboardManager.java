@@ -13,6 +13,7 @@ import org.bukkit.scoreboard.Team;
 
 import java.util.Arrays;
 import java.util.HashMap;
+import java.util.Map;
 
 /**
  * The type Core player scoreboard manager.
@@ -23,7 +24,7 @@ public class CorePlayerScoreboardManager implements CPlayerScoreboardManager {
 
     private final CPlayer player;
 
-    private HashMap<Integer, String> lines = new HashMap<>();
+    private Map<Integer, String> lines = new HashMap<>();
     private Scoreboard scoreboard;
     private Objective scoreboardObjective;
     private String title = "";

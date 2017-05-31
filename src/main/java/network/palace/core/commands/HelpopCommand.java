@@ -33,11 +33,11 @@ public class HelpopCommand extends CoreCommand {
             sender.sendMessage(ChatColor.RED + "/ac [Message]");
             return;
         }
-        String msg = "";
+        StringBuilder msg = new StringBuilder();
         for (String s : args) {
-            msg += s + " ";
+            msg.append(s).append(" ");
         }
-        message("Console", msg);
+        message("Console", msg.toString());
     }
 
     @Override
@@ -46,12 +46,12 @@ public class HelpopCommand extends CoreCommand {
             sender.sendMessage(ChatColor.RED + "/ac [Message]");
             return;
         }
-        String msg = "";
+        StringBuilder msg = new StringBuilder();
         for (String s : args) {
-            msg += s + " ";
+            msg.append(s).append(" ");
         }
         Location loc = sender.getBlock().getLocation();
-        message("CB (x:" + loc.getBlockX() + " y:" + loc.getBlockY() + " z:" + loc.getBlockZ() + ")", msg);
+        message("CB (x:" + loc.getBlockX() + " y:" + loc.getBlockY() + " z:" + loc.getBlockZ() + ")", msg.toString());
     }
 
     @Override
@@ -60,11 +60,11 @@ public class HelpopCommand extends CoreCommand {
             player.sendMessage(ChatColor.RED + "/ac [Message]");
             return;
         }
-        String msg = "";
+        StringBuilder msg = new StringBuilder();
         for (String s : args) {
-            msg += s + " ";
+            msg.append(s).append(" ");
         }
-        message(player.getName(), msg);
+        message(player.getName(), msg.toString());
     }
 
     private void message(String sender, String message) {

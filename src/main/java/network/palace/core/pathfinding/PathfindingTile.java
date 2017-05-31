@@ -2,8 +2,6 @@ package network.palace.core.pathfinding;
 
 import lombok.Getter;
 
-import lombok.Getter;
-
 public class PathfindingTile {
 
     private final int STRAIGHT_SCORE = 10;

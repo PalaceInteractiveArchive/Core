@@ -547,7 +547,7 @@ public interface CPlayer {
     /**
      * Get the selected block within a range
      *
-     * @param range
+     * @param range the max distance
      * @return the selected block
      */
     Block getTargetBlock(int range);
@@ -558,6 +558,13 @@ public interface CPlayer {
      * @return player's ping
      */
     int getPing();
+
+    /**
+     * Set the player's ping to the server
+     *
+     * @param ping the current ping
+     */
+    void setPing(int ping);
 
     /**
      * Get whether a player can fly

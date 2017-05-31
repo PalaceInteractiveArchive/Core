@@ -101,8 +101,8 @@ public abstract class AbstractMob implements Observable<NPCObserver> {
         CPlayer[] cPlayers = (this.viewers.size() == 0 ? Core.getPlayerManager().getOnlinePlayers() : this.viewers).toArray(new CPlayer[this.viewers.size()]);
         CPlayer[] players = new CPlayer[cPlayers.length];
         int x = 0;
-        for (int i = 0; i < cPlayers.length; i++) {
-            CPlayer player = cPlayers[x];
+
+        for (CPlayer player : cPlayers) {
             UUID uid = player.getLocation().getWorld().getUID();
             UUID uid1 = this.location.getWorld() != null ? location.getWorld().getUID() : null;
 

@@ -7,7 +7,7 @@ public interface CPlayerActionBarManager {
     /**
      * Show action bar.
      *
-     * @param message the message
+     * @param message the message to be shown
      */
     void show(String message);
 }

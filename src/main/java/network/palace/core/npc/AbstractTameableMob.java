@@ -11,8 +11,12 @@ public abstract class AbstractTameableMob extends AbstractAgeableMob {
     private boolean sitting = false;
     private String ownerName = "Notch";
 
-    public AbstractTameableMob(Point location, Set<CPlayer> observers, String title) {
+    public AbstractTameableMob(Point location, Set<CPlayer> observers, String title, boolean tame, boolean sitting, String ownerName) {
         super(location, observers, title);
+
+        this.tame = tame;
+        this.sitting = sitting;
+        this.ownerName = ownerName;
     }
 
     @Override
@@ -22,9 +26,8 @@ public abstract class AbstractTameableMob extends AbstractAgeableMob {
         if (sitting) value |= 0x01;
         if (tame) value |= 0x04;
         getDataWatcher().setObject(ProtocolLibSerializers.getByte(metadataIndex), value);
-        // TODO Fix
-        //if (ownerName == null) ownerName = "Notch";
-        //getDataWatcher().setObject(14, ownerName);
+        if (ownerName == null) ownerName = "Notch";
+        getDataWatcher().setObject(14, ownerName);
         super.onDataWatcherUpdate();
     }
 

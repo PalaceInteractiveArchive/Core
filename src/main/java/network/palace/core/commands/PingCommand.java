@@ -3,6 +3,7 @@ package network.palace.core.commands;
 import network.palace.core.command.CommandException;
 import network.palace.core.command.CommandMeta;
 import network.palace.core.command.CoreCommand;
+import network.palace.core.commands.ping.Help;
 import network.palace.core.player.CPlayer;
 import org.bukkit.ChatColor;
 
@@ -14,6 +15,8 @@ public class PingCommand extends CoreCommand {
 
     public PingCommand() {
         super("ping");
+
+        registerSubCommand(new Help());
     }
 
     @Override
@@ -31,7 +34,7 @@ public class PingCommand extends CoreCommand {
     private ChatColor getColor(int ping) {
         if (ping < 100) {
             return ChatColor.GREEN;
-        } else if (ping < 500) {
+        } else if (ping < 350) {
             return ChatColor.YELLOW;
         } else {
             return ChatColor.RED;

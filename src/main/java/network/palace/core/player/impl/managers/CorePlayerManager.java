@@ -25,7 +25,7 @@ import java.util.*;
 public class CorePlayerManager implements CPlayerManager {
 
     private CorePlayerDefaultScoreboard defaultScoreboard;
-    private final HashMap<UUID, CPlayer> onlinePlayers = new HashMap<>();
+    private final Map<UUID, CPlayer> onlinePlayers = new HashMap<>();
 
     /**
      * Instantiates a new Core player manager.
@@ -56,44 +56,44 @@ public class CorePlayerManager implements CPlayerManager {
             textureSignature = property.getSignature();
         }
         // Get core player
-        CPlayer cPlayer = getPlayer(player);
-        if (cPlayer == null) return;
+        CPlayer corePlayer = getPlayer(player);
+        if (corePlayer == null) return;
         // Joined
-        cPlayer.setStatus(PlayerStatus.JOINED);
+        corePlayer.setStatus(PlayerStatus.JOINED);
         // Set skin info
-        cPlayer.setTextureValue(textureValue);
-        cPlayer.setTextureSignature(textureSignature);
-        if (cPlayer.getRank().getRankId() >= Rank.CHARACTER.getRankId()) {
+        corePlayer.setTextureValue(textureValue);
+        corePlayer.setTextureSignature(textureSignature);
+        if (corePlayer.getRank().getRankId() >= Rank.CHARACTER.getRankId()) {
             Core.runTaskAsynchronously(() ->
-                    Core.getSqlUtil().cacheSkin(cPlayer.getUuid(), cPlayer.getTextureValue(), cPlayer.getTextureSignature())
+                    Core.getSqlUtil().cacheSkin(corePlayer.getUuid(), corePlayer.getTextureValue(), corePlayer.getTextureSignature())
             );
         }
         // Set op if they can be
-        boolean op = cPlayer.getRank().isOp();
-        if (cPlayer.isOp() != op) {
-            cPlayer.setOp(op);
+        boolean op = corePlayer.getRank().isOp();
+        if (corePlayer.isOp() != op) {
+            corePlayer.setOp(op);
         }
         // Setup permissions for player
-        Core.getPermissionManager().login(cPlayer);
+        Core.getPermissionManager().login(corePlayer);
         // Packets
-        Core.getDashboardConnection().send(new PacketGetPack(cPlayer.getUniqueId(), ""));
-        Core.getDashboardConnection().send(new PacketConfirmPlayer(cPlayer.getUniqueId(), false));
+        Core.getDashboardConnection().send(new PacketGetPack(corePlayer.getUniqueId(), ""));
+        Core.getDashboardConnection().send(new PacketConfirmPlayer(corePlayer.getUniqueId(), false));
         // Scoreboard
-        if (cPlayer.getScoreboard() != null) cPlayer.getScoreboard().setupPlayerTags();
+        if (corePlayer.getScoreboard() != null) corePlayer.getScoreboard().setupPlayerTags();
         for (CPlayer otherPlayer : Core.getPlayerManager().getOnlinePlayers()) {
-            if (cPlayer.getScoreboard() != null) cPlayer.getScoreboard().addPlayerTag(otherPlayer);
-            if (otherPlayer.getScoreboard() != null) otherPlayer.getScoreboard().addPlayerTag(cPlayer);
+            if (corePlayer.getScoreboard() != null) corePlayer.getScoreboard().addPlayerTag(otherPlayer);
+            if (otherPlayer.getScoreboard() != null) otherPlayer.getScoreboard().addPlayerTag(corePlayer);
         }
-        defaultScoreboard.setup(cPlayer);
+        defaultScoreboard.setup(corePlayer);
         // Tab header and footer
-        cPlayer.getHeaderFooter().setHeaderFooter(Core.getInstance().getTabHeader(), Core.getInstance().getTabFooter());
+        corePlayer.getHeaderFooter().setHeaderFooter(Core.getInstance().getTabHeader(), Core.getInstance().getTabFooter());
         // Show the title if we're supposed to
         if (Core.getInstance().isShowTitleOnLogin()) {
             player.sendTitle(Core.getInstance().getLoginTitle(), Core.getInstance().getLoginSubTitle(),
                     Core.getInstance().getLoginTitleFadeIn(), Core.getInstance().getLoginTitleStay(), Core.getInstance().getLoginTitleFadeOut());
         }
         // Called joined event
-        new CorePlayerJoinedEvent(cPlayer).call();
+        new CorePlayerJoinedEvent(corePlayer).call();
     }
 
     @Override
@@ -115,12 +115,12 @@ public class CorePlayerManager implements CPlayerManager {
     }
 
     @Override
-    public CorePlayer getPlayer(UUID playerUUID) {
-        return (CorePlayer) onlinePlayers.get(playerUUID);
+    public CPlayer getPlayer(UUID playerUUID) {
+        return onlinePlayers.get(playerUUID);
     }
 
     @Override
-    public CorePlayer getPlayer(Player player) {
+    public CPlayer getPlayer(Player player) {
         return getPlayer(player.getUniqueId());
     }
 

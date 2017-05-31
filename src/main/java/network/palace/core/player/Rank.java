@@ -5,7 +5,7 @@ import lombok.Getter;
 import network.palace.core.Core;
 import org.bukkit.ChatColor;
 
-import java.util.HashMap;
+import java.util.Map;
 
 @AllArgsConstructor
 public enum Rank {
@@ -35,44 +35,13 @@ public enum Rank {
     @Getter private boolean isOp;
     @Getter private int rankId;
 
-    public static Rank fromString(String string) {
-        String rankName = string.toLowerCase();
-        switch (rankName) {
-            case "empress":
-                return EMPRESS;
-            case "emperor":
-                return EMPEROR;
-            case "wizard":
-                return WIZARD;
-            case "paladin":
-                return PALADIN;
-            case "architect":
-                return ARCHITECT;
-            case "knight":
-                return KNIGHT;
-            case "squire":
-                return SQUIRE;
-            case "character":
-                return CHARACTER;
-            case "specialguest":
-                return SPECIALGUEST;
-            case "mcprohosting":
-                return MCPROHOSTING;
-            case "honorable":
-                return HONORABLE;
-            case "majestic":
-                return MAJESTIC;
-            case "noble":
-                return NOBLE;
-            case "dweller":
-                return DWELLER;
-            case "shareholder":
-                return SHAREHOLDER;
-            case "dvc":
-                return DVCMEMBER;
-            default:
-                return SETTLER;
+    public static Rank fromString(String name) {
+        String rankName = name.toLowerCase();
+
+        for (Rank rank : Rank.values()) {
+            if (rank.getName().toLowerCase().equals(rankName)) return rank;
         }
+        return SETTLER;
     }
 
     public String getSqlName() {
@@ -99,7 +68,7 @@ public enum Rank {
      *
      * @return the permissions, and the status of the permission
      */
-    public HashMap<String, Boolean> getPermissions() {
+    public Map<String, Boolean> getPermissions() {
         return Core.getPermissionManager().getPermissions(this);
     }
 }

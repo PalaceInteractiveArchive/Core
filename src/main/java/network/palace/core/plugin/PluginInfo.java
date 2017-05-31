@@ -43,7 +43,7 @@ public @interface PluginInfo {
     /**
      * Define if the plugin can be reloaded by Core.
      *
-     * @return
+     * @return can this plugin be reloaded?
      */
     boolean canReload() default false;
 }

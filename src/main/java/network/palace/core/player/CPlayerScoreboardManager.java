@@ -4,41 +4,42 @@ package network.palace.core.player;
  * The interface C player scoreboard manager.
  */
 public interface CPlayerScoreboardManager {
+
     /**
      * Set scoreboard text for a id
      *
-     * @param id   the id
-     * @param text the text
-     * @return the c player scoreboard manager
+     * @param id   the id to set
+     * @param text the text that should be displayed
+     * @return the manager instance
      */
     CPlayerScoreboardManager set(int id, String text);
 
     /**
      * Set scoreboard text to blank for a id
      *
-     * @param id the id
-     * @return the blank
+     * @param id the id to set blank
+     * @return the manager instance
      */
     CPlayerScoreboardManager setBlank(int id);
 
     /**
      * Remove scoreboard text to blank for a id
      *
-     * @param id the id
+     * @param id the id to remove
      * @return the c player scoreboard manager
      */
     CPlayerScoreboardManager remove(int id);
 
     /**
-     * Set scoreboard title
+     * Set the title of the scoreboard
      *
-     * @param title the title
-     * @return the c player scoreboard manager
+     * @param title the new title of the scoreboard
+     * @return the manager instance
      */
     CPlayerScoreboardManager title(String title);
 
     /**
-     * Sets player tags.
+     * Set the rank tags
      */
     void setupPlayerTags();
 

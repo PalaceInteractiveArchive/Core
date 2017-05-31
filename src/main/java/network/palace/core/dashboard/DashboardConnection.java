@@ -96,12 +96,8 @@ public class DashboardConnection {
                             if (!packet.isExists()) {
                                 Player player = Bukkit.getPlayer(packet.getUniqueId());
                                 if (player != null) {
-                                    Bukkit.getScheduler().scheduleSyncDelayedTask(Core.getInstance(), new Runnable() {
-                                        @Override
-                                        public void run() {
-                                            player.kickPlayer(ChatColor.RED + "Your account is not authorized on our network!");
-                                        }
-                                    });
+                                    Bukkit.getScheduler().scheduleSyncDelayedTask(Core.getInstance(), () ->
+                                            player.kickPlayer(ChatColor.RED + "Your account is not authorized on our network!"));
                                 }
                             }
                             break;

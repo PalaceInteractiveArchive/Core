@@ -1,6 +1,7 @@
 package network.palace.core.holograms;
 
 import java.util.ArrayList;
+import java.util.List;
 
 /**
  * @author Clutch
@@ -8,5 +9,5 @@ import java.util.ArrayList;
  */
 public class HologramManager {
 
-    private ArrayList<Hologram> holograms = new ArrayList<>();
+    private List<Hologram> holograms = new ArrayList<>();
 }

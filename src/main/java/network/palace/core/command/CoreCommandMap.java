@@ -1,9 +1,8 @@
 package network.palace.core.command;
 
-import com.comphenix.protocol.utility.MinecraftReflection;
+import lombok.Getter;
 import network.palace.core.Core;
 import network.palace.core.plugin.Plugin;
-import lombok.Getter;
 import org.bukkit.Bukkit;
 import org.bukkit.Server;
 import org.bukkit.command.Command;
@@ -102,12 +101,12 @@ public final class CoreCommandMap {
      * @return A hashmap of the known commands from the command map
      */
     @SuppressWarnings("unchecked")
-    private HashMap<String, Command> getKnownCommands(CommandMap commandMap) {
-        HashMap<String, Command> knownCommands = new HashMap<>();
+    private Map<String, Command> getKnownCommands(CommandMap commandMap) {
+        Map<String, Command> knownCommands = new HashMap<>();
         try {
             Field knownCommandsField = ((SimpleCommandMap) commandMap).getClass().getDeclaredField("knownCommands");
             knownCommandsField.setAccessible(true);
-            knownCommands = (HashMap<String, Command>) knownCommandsField.get(commandMap);
+            knownCommands = (Map<String, Command>) knownCommandsField.get(commandMap);
         } catch (Exception ex) {
             ex.printStackTrace();
         }
@@ -120,7 +119,7 @@ public final class CoreCommandMap {
      * @param commandName The command name to unregister.
      */
     private void removeKnownCommand(String commandName) {
-        HashMap<String, Command> knownCommands = getKnownCommands(getCommandMap());
+        Map<String, Command> knownCommands = getKnownCommands(getCommandMap());
         knownCommands.remove(commandName);
     }
 

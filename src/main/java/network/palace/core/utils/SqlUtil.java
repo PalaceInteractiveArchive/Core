@@ -9,10 +9,7 @@ import network.palace.core.tracking.StatisticType;
 import org.bukkit.ChatColor;
 
 import java.sql.*;
-import java.util.ArrayList;
-import java.util.HashMap;
-import java.util.List;
-import java.util.UUID;
+import java.util.*;
 
 /**
  * The type Sql util.
@@ -172,14 +169,14 @@ public class SqlUtil {
      * @param rank the rank
      * @return the permissions
      */
-    public HashMap<String, Boolean> getPermissions(Rank rank) {
+    public Map<String, Boolean> getPermissions(Rank rank) {
         Connection connection = getConnection();
         if (connection == null) return new HashMap<>();
         try {
             PreparedStatement sql = connection.prepareStatement("SELECT * FROM permissions WHERE rank=?");
             sql.setString(1, rank.getSqlName());
             ResultSet result = sql.executeQuery();
-            HashMap<String, Boolean> permissions = new HashMap<>();
+            Map<String, Boolean> permissions = new HashMap<>();
             while (result.next()) {
                 permissions.put(result.getString("node"), result.getInt("value") == 1);
             }
@@ -199,7 +196,7 @@ public class SqlUtil {
      * @param player the player
      * @return the permissions
      */
-    public HashMap<String, Boolean> getPermissions(CPlayer player) {
+    public Map<String, Boolean> getPermissions(CPlayer player) {
         return getPermissions(player.getRank());
     }
 

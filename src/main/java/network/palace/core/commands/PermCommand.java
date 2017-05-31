@@ -13,7 +13,6 @@ import org.bukkit.ChatColor;
 import org.bukkit.command.CommandSender;
 import org.bukkit.entity.Player;
 
-import java.util.HashMap;
 import java.util.Map;
 import java.util.UUID;
 
@@ -90,8 +89,7 @@ public class PermCommand extends CoreCommand {
                 }
                 if (arg3.equalsIgnoreCase("perms")) {
                     sender.sendMessage(ChatColor.GREEN + "Permissions of the " + rank.getFormattedName() + ChatColor.GREEN + "Rank:");
-                    HashMap<String, Boolean> perms = rank.getPermissions();
-                    for (Map.Entry<String, Boolean> perm : perms.entrySet()) {
+                    for (Map.Entry<String, Boolean> perm : rank.getPermissions().entrySet()) {
                         if (perm.getValue()) {
                             sender.sendMessage(ChatColor.DARK_GREEN + "- " + ChatColor.YELLOW + perm.getKey() + " " + ChatColor.GREEN + "True");
                         } else {
@@ -105,43 +103,43 @@ public class PermCommand extends CoreCommand {
             return;
         }
         if (args.length == 4) {
-            String arg1 = args[0];
-            String arg2 = args[1];
-            String arg3 = args[2];
-            String arg4 = args[3];
-            if (arg1.equalsIgnoreCase("player")) {
-                if (!Core.getSqlUtil().playerExists(arg2)) {
+            String type = args[0];
+            String playerName = args[1];
+            String action = args[2];
+            String rankName = args[3];
+            if (type.equalsIgnoreCase("player")) {
+                if (!Core.getSqlUtil().playerExists(playerName)) {
                     sender.sendMessage(ChatColor.RED + "Player not found!");
                     return;
                 }
-                switch (arg3) {
+                switch (action) {
                     case "setgroup":
-                        Rank rank = Rank.fromString(arg4);
-                        Player tp = Bukkit.getPlayer(arg2);
+                        Rank rank = Rank.fromString(rankName);
+                        Player tp = Bukkit.getPlayer(playerName);
                         UUID uuid;
                         if (tp != null) {
                             uuid = tp.getUniqueId();
                             Core.getPlayerManager().getPlayer(tp).setRank(rank);
                         } else {
-                            uuid = Core.getSqlUtil().getUniqueIdFromName(arg2);
+                            uuid = Core.getSqlUtil().getUniqueIdFromName(playerName);
                         }
                         Core.getSqlUtil().setRank(uuid, rank);
                         String source = sender instanceof Player ? sender.getName() : "Console on " + Core.getInstanceName();
                         PacketRankChange packet = new PacketRankChange(uuid, rank, source);
                         Core.getDashboardConnection().send(packet);
-                        sender.sendMessage(ChatColor.YELLOW + arg2 + "'s rank has been changed to " + rank.getFormattedName());
+                        sender.sendMessage(ChatColor.YELLOW + playerName + "'s rank has been changed to " + rank.getFormattedName());
                         return;
                     case "get":
-                        final Rank currentRank2 = Core.getSqlUtil().getRank(Core.getSqlUtil().getUniqueIdFromName(arg2));
-                        HashMap<String, Boolean> permissions2 = currentRank2.getPermissions();
-                        if (!permissions2.containsKey(arg4)) {
-                            sender.sendMessage(currentRank2.getFormattedName() + ChatColor.YELLOW + " does not set " + ChatColor.RED + arg4);
+                        final Rank currentRank2 = Core.getSqlUtil().getRank(Core.getSqlUtil().getUniqueIdFromName(playerName));
+                        Map<String, Boolean> permissions2 = currentRank2.getPermissions();
+                        if (!permissions2.containsKey(rankName)) {
+                            sender.sendMessage(currentRank2.getFormattedName() + ChatColor.YELLOW + " does not set " + ChatColor.RED + rankName);
                             return;
                         }
-                        if (permissions2.get(arg4)) {
-                            sender.sendMessage(currentRank2.getFormattedName() + ChatColor.YELLOW + " sets " + ChatColor.YELLOW + arg4 + ChatColor.YELLOW + " to " + ChatColor.GREEN + "true");
+                        if (permissions2.get(rankName)) {
+                            sender.sendMessage(currentRank2.getFormattedName() + ChatColor.YELLOW + " sets " + ChatColor.YELLOW + rankName + ChatColor.YELLOW + " to " + ChatColor.GREEN + "true");
                         } else {
-                            sender.sendMessage(currentRank2.getFormattedName() + ChatColor.YELLOW + " sets " + ChatColor.YELLOW + arg4 + ChatColor.YELLOW + " to " + ChatColor.RED + "false");
+                            sender.sendMessage(currentRank2.getFormattedName() + ChatColor.YELLOW + " sets " + ChatColor.YELLOW + rankName + ChatColor.YELLOW + " to " + ChatColor.RED + "false");
                         }
                         return;
                     default:
@@ -149,38 +147,38 @@ public class PermCommand extends CoreCommand {
                         return;
                 }
             }
-            if (arg1.equalsIgnoreCase("group")) {
-                Rank rank = Rank.fromString(arg2);
-                HashMap<String, Boolean> permissions = rank.getPermissions();
-                switch (arg3) {
+            if (type.equalsIgnoreCase("group")) {
+                Rank rank = Rank.fromString(playerName);
+                Map<String, Boolean> permissions = rank.getPermissions();
+                switch (action) {
                     case "get":
-                        if (!permissions.containsKey(arg4)) {
-                            sender.sendMessage(rank.getFormattedName() + ChatColor.YELLOW + " does not set " + ChatColor.RED + arg4);
+                        if (!permissions.containsKey(rankName)) {
+                            sender.sendMessage(rank.getFormattedName() + ChatColor.YELLOW + " does not set " + ChatColor.RED + rankName);
                             return;
                         }
-                        if (permissions.get(arg4)) {
-                            sender.sendMessage(rank.getFormattedName() + ChatColor.YELLOW + " sets " + ChatColor.YELLOW + arg4 + ChatColor.YELLOW + " to " + ChatColor.GREEN + ChatColor.BOLD + "true");
+                        if (permissions.get(rankName)) {
+                            sender.sendMessage(rank.getFormattedName() + ChatColor.YELLOW + " sets " + ChatColor.YELLOW + rankName + ChatColor.YELLOW + " to " + ChatColor.GREEN + ChatColor.BOLD + "true");
                         } else {
-                            sender.sendMessage(rank.getFormattedName() + ChatColor.YELLOW + " sets " + ChatColor.YELLOW + arg4 + ChatColor.YELLOW + " to " + ChatColor.RED + ChatColor.BOLD + "false");
+                            sender.sendMessage(rank.getFormattedName() + ChatColor.YELLOW + " sets " + ChatColor.YELLOW + rankName + ChatColor.YELLOW + " to " + ChatColor.RED + ChatColor.BOLD + "false");
                         }
                         return;
                     case "set":
-                        Core.getSqlUtil().setPermission(arg4, rank, true);
+                        Core.getSqlUtil().setPermission(rankName, rank, true);
                         for (CPlayer tp : Core.getPlayerManager().getOnlinePlayers()) {
                             if (tp.getRank().equals(rank)) {
-                                Core.getPermissionManager().attachments.get(tp.getUniqueId()).setPermission(arg4, true);
+                                Core.getPermissionManager().attachments.get(tp.getUniqueId()).setPermission(rankName, true);
                             }
                         }
-                        sender.sendMessage(rank.getFormattedName() + ChatColor.YELLOW + " now sets " + ChatColor.AQUA + arg4 + ChatColor.YELLOW + " to " + ChatColor.GREEN + "" + ChatColor.BOLD + "true");
+                        sender.sendMessage(rank.getFormattedName() + ChatColor.YELLOW + " now sets " + ChatColor.AQUA + rankName + ChatColor.YELLOW + " to " + ChatColor.GREEN + "" + ChatColor.BOLD + "true");
                         return;
                     case "unset":
-                        Core.getSqlUtil().unsetPermission(arg4, rank);
+                        Core.getSqlUtil().unsetPermission(rankName, rank);
                         for (CPlayer tp : Core.getPlayerManager().getOnlinePlayers()) {
                             if (tp.getRank().equals(rank)) {
-                                Core.getPermissionManager().attachments.get(tp.getUniqueId()).unsetPermission(arg4);
+                                Core.getPermissionManager().attachments.get(tp.getUniqueId()).unsetPermission(rankName);
                             }
                         }
-                        sender.sendMessage(rank.getFormattedName() + ChatColor.YELLOW + " does not set " + ChatColor.AQUA + arg4 + ChatColor.YELLOW + " anymore");
+                        sender.sendMessage(rank.getFormattedName() + ChatColor.YELLOW + " does not set " + ChatColor.AQUA + rankName + ChatColor.YELLOW + " anymore");
                         return;
                     default:
                         helpMenu(sender, "group");
