@@ -583,4 +583,24 @@ public class CorePlayer implements CPlayer {
     public int getStatistic(GameType gameType, StatisticType statisticType) {
         return Core.getSqlUtil().getGameStat(gameType, statisticType, this);
     }
+
+    @Override
+    public int getHonor() {
+        return 0;
+    }
+
+    @Override
+    public void giveHonor(int amount) {
+
+    }
+
+    @Override
+    public void removeHonor(int amount) {
+
+    }
+
+    @Override
+    public void setHonor(int amount) {
+
+    }
 }
