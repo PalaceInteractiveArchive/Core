@@ -12,10 +12,9 @@ import java.sql.*;
 import java.util.*;
 
 /**
- * The type Sql util.
+ * Utility functions for interacting with MySQL.
  */
 public class SqlUtil {
-
     private String url = "";
     private String user = "";
     private String password = "";
@@ -30,7 +29,7 @@ public class SqlUtil {
     /**
      * Load login.
      */
-    public void loadLogin() {
+    private void loadLogin() {
         url = Core.getCoreConfig().getString("sql.url");
         user = Core.getCoreConfig().getString("sql.user");
         password = Core.getCoreConfig().getString("sql.password");
@@ -47,6 +46,7 @@ public class SqlUtil {
         } catch (SQLException e) {
             if (!Core.isDashboardAndSqlDisabled()) {
                 Core.logMessage("Core", ChatColor.RED + "Could not connect to database!");
+                ErrorUtil.displayError(e);
             }
             return null;
         }
@@ -58,11 +58,15 @@ public class SqlUtil {
      * Get rank.
      *
      * @param uuid the uuid
-     * @return the rank
+     * @return     the rank
      */
     public Rank getRank(UUID uuid) {
         Connection connection = getConnection();
-        if (connection == null) return Rank.SETTLER;
+        if (connection == null) {
+            ErrorUtil.displayError(new Exception("Unable to connect to MySQL!"));
+            Core.logInfo("Core > Could not get rank! - Cannot connect to MySQL!");
+            return Rank.SETTLER;
+        }
         try {
             PreparedStatement sql = connection.prepareStatement("SELECT rank FROM player_data WHERE uuid=?");
             sql.setString(1, uuid.toString());
@@ -77,6 +81,7 @@ public class SqlUtil {
             return rank;
         } catch (SQLException e) {
             e.printStackTrace();
+            ErrorUtil.displayError(e);
             return Rank.SETTLER;
         }
     }
@@ -85,11 +90,15 @@ public class SqlUtil {
      * Gets rank.
      *
      * @param username the username
-     * @return the rank
+     * @return         the player's rank
      */
     public Rank getRank(String username) {
         Connection connection = getConnection();
-        if (connection == null) return Rank.SETTLER;
+        if (connection == null) {
+            ErrorUtil.displayError(new Exception("Unable to connect to MySQL!"));
+            Core.logInfo("Core > Could not get rank! - Cannot connect to MySQL!");
+            return Rank.SETTLER;
+        }
         try {
             PreparedStatement sql = connection.prepareStatement("SELECT rank FROM player_data WHERE username=?");
             sql.setString(1, username);
@@ -104,6 +113,7 @@ public class SqlUtil {
             return rank;
         } catch (SQLException e) {
             e.printStackTrace();
+            ErrorUtil.displayError(e);
             return Rank.SETTLER;
         }
     }
@@ -112,11 +122,15 @@ public class SqlUtil {
      * Player exists boolean.
      *
      * @param username the username
-     * @return the boolean
+     * @return         if the player exists or not
      */
     public boolean playerExists(String username) {
         Connection connection = getConnection();
-        if (connection == null) return false;
+        if (connection == null) {
+            ErrorUtil.displayError(new Exception("Unable to connect to MySQL!"));
+            Core.logInfo("Core > Could not check if player exists! - Cannot connect to MySQL!");
+            return false;
+        }
         try {
             PreparedStatement sql = connection.prepareStatement("SELECT id FROM player_data WHERE username=?");
             sql.setString(1, username);
@@ -128,6 +142,7 @@ public class SqlUtil {
             return contains;
         } catch (SQLException e) {
             e.printStackTrace();
+            ErrorUtil.displayError(e);
             return false;
         }
     }
@@ -136,11 +151,15 @@ public class SqlUtil {
      * Gets unique id from name.
      *
      * @param username the username
-     * @return the unique id from name
+     * @return         the unique id from name
      */
     public UUID getUniqueIdFromName(String username) {
         Connection connection = getConnection();
-        if (connection == null) return UUID.randomUUID();
+        if (connection == null) {
+            ErrorUtil.displayError(new Exception("Unable to connect to MySQL!"));
+            Core.logInfo("Core > Could not get UUID from name! - Cannot connect to MySQL!");
+            return UUID.randomUUID();
+        }
         try {
             PreparedStatement sql = connection.prepareStatement("SELECT uuid FROM player_data WHERE username=?");
             sql.setString(1, username);
@@ -157,6 +176,7 @@ public class SqlUtil {
             return UUID.fromString(uuid);
         } catch (SQLException e) {
             e.printStackTrace();
+            ErrorUtil.displayError(e);
             return null;
         }
     }
@@ -167,11 +187,15 @@ public class SqlUtil {
      * Gets permissions.
      *
      * @param rank the rank
-     * @return the permissions
+     * @return     the permissions
      */
     public Map<String, Boolean> getPermissions(Rank rank) {
         Connection connection = getConnection();
-        if (connection == null) return new HashMap<>();
+        if (connection == null) {
+            ErrorUtil.displayError(new Exception("Unable to connect to MySQL!"));
+            Core.logInfo("Core > Could not get permissions! - Cannot connect to MySQL!");
+            return new HashMap<>();
+        }
         try {
             PreparedStatement sql = connection.prepareStatement("SELECT * FROM permissions WHERE rank=?");
             sql.setString(1, rank.getSqlName());
@@ -186,6 +210,7 @@ public class SqlUtil {
             return permissions;
         } catch (SQLException e) {
             e.printStackTrace();
+            ErrorUtil.displayError(e);
             return new HashMap<>();
         }
     }
@@ -194,7 +219,7 @@ public class SqlUtil {
      * Gets permissions.
      *
      * @param player the player
-     * @return the permissions
+     * @return       the permissions
      */
     public Map<String, Boolean> getPermissions(CPlayer player) {
         return getPermissions(player.getRank());
@@ -204,11 +229,15 @@ public class SqlUtil {
      * Gets members.
      *
      * @param rank the rank
-     * @return the members
+     * @return     the members
      */
     public List<String> getMembers(Rank rank) {
         Connection connection = getConnection();
-        if (connection == null) return new ArrayList<>();
+        if (connection == null) {
+            ErrorUtil.displayError(new Exception("Unable to connect to MySQL!"));
+            Core.logInfo("Core > Could not get members! - Cannot connect to MySQL!");
+            return new ArrayList<>();
+        }
         try {
             PreparedStatement sql = connection.prepareStatement("SELECT username FROM player_data WHERE rank=?");
             sql.setString(1, rank.getSqlName());
@@ -223,6 +252,7 @@ public class SqlUtil {
             return members;
         } catch (SQLException e) {
             e.printStackTrace();
+            ErrorUtil.displayError(e);
             return new ArrayList<>();
         }
     }
@@ -235,7 +265,11 @@ public class SqlUtil {
      */
     public void setRank(UUID uuid, Rank rank) {
         Connection connection = getConnection();
-        if (connection == null) return;
+        if (connection == null) {
+            ErrorUtil.displayError(new Exception("Unable to connect to MySQL!"));
+            Core.logInfo("Core > Could not set player rank! - Cannot connect to MySQL!");
+            return;
+        }
         try {
             PreparedStatement sql = connection.prepareStatement("UPDATE player_data SET rank=? WHERE uuid=?");
             sql.setString(1, rank.getSqlName());
@@ -245,6 +279,7 @@ public class SqlUtil {
             connection.close();
         } catch (SQLException e) {
             e.printStackTrace();
+            ErrorUtil.displayError(e);
         }
     }
 
@@ -257,7 +292,11 @@ public class SqlUtil {
      */
     public void setPermission(String node, Rank rank, boolean value) {
         Connection connection = getConnection();
-        if (connection == null) return;
+        if (connection == null) {
+            Core.logInfo("Core > Could not set permission! - Cannot connect to MySQL!");
+            ErrorUtil.displayError(new Exception("Unable to connect to MySQL!"));
+            return;
+        }
         try {
             String s = "IF EXISTS (SELECT * FROM permissions WHERE rank=? AND node=?) UPDATE permissions SET value=? WHERE node=? AND rank=? ELSE INSERT INTO Table1 VALUES (0,?,?,?)";
             PreparedStatement sql = connection.prepareStatement(s);
@@ -274,6 +313,7 @@ public class SqlUtil {
             connection.close();
         } catch (SQLException e) {
             e.printStackTrace();
+            ErrorUtil.displayError(e);
         }
         Core.getPermissionManager().setPermission(rank, node, value);
     }
@@ -286,7 +326,11 @@ public class SqlUtil {
      */
     public void unsetPermission(String node, Rank rank) {
         Connection connection = getConnection();
-        if (connection == null) return;
+        if (connection == null) {
+            Core.logInfo("Core > Could not add permission! - Cannot connect to MySQL!");
+            ErrorUtil.displayError(new Exception("Unable to connect to MySQL!"));
+            return;
+        }
         try {
             PreparedStatement sql = connection.prepareStatement("DELETE FROM permissions WHERE rank=? AND node=?");
             sql.setString(1, rank.getSqlName());
@@ -296,6 +340,7 @@ public class SqlUtil {
             connection.close();
         } catch (SQLException e) {
             e.printStackTrace();
+            ErrorUtil.displayError(e);
         }
         Core.getPermissionManager().unsetPermission(rank, node);
     }
@@ -308,7 +353,11 @@ public class SqlUtil {
      */
     public void addAchievement(CPlayer player, int id) {
         Connection connection = getConnection();
-        if (connection == null) return;
+        if (connection == null) {
+            Core.logInfo("Core > Could not add achievement! - Cannot connect to MySQL!");
+            ErrorUtil.displayError(new Exception("Unable to connect to MySQL!"));
+            return;
+        }
         try {
             PreparedStatement sql = connection.prepareStatement("INSERT INTO achievements (uuid, achid, time) VALUES (?,?,?)");
             sql.setString(1, player.getUniqueId().toString());
@@ -319,6 +368,7 @@ public class SqlUtil {
             connection.close();
         } catch (SQLException e) {
             e.printStackTrace();
+            ErrorUtil.displayError(e);
         }
     }
 
@@ -326,12 +376,16 @@ public class SqlUtil {
      * Get all achievements for a player
      *
      * @param uuid The players uuid
-     * @return list of the players achievements
+     * @return     list of the players achievements
      */
     public List<Integer> getAchievements(UUID uuid) {
         List<Integer> list = new ArrayList<>();
         Connection connection = getConnection();
-        if (connection == null) return list;
+        if (connection == null) {
+            Core.logInfo("Core > Could not get achievements! - Cannot connect to MySQL!");
+            ErrorUtil.displayError(new Exception("Unable to connect to MySQL!"));
+            return list;
+        }
         try {
             PreparedStatement ach = connection.prepareStatement("SELECT * FROM achievements WHERE uuid=?");
             ach.setString(1, uuid.toString());
@@ -344,26 +398,37 @@ public class SqlUtil {
             connection.close();
         } catch (SQLException e) {
             e.printStackTrace();
+            ErrorUtil.displayError(e);
         }
         return list;
     }
 
     /**
      * Cache a skin for later use
-     * @param uuid UUID of the player
-     * @param value Value of the skin
+     *
+     * @param uuid      UUID of the player
+     * @param value     Value of the skin
      * @param signature Signature of the skin
      */
     public void cacheSkin(UUID uuid, String value, String signature) {
         Connection connection = getConnection();
-        if (connection == null) return;
+        if (connection == null) {
+            Core.logInfo("Core > Could not cache player hash! - Cannot connect to MySQL!");
+            ErrorUtil.displayError(new Exception("Unable to connect to MySQL!"));
+            return;
+        }
 
         try {
-            PreparedStatement statement = connection.prepareStatement("INSERT INTO skins (uuid, value, signature) VALUES (?,?,?)");
+            String statementText = "INSERT INTO SKINS (uuid, value, signature) VALUES ?,?,? ON DUPLICATE uuid UPDATE skins SET value=?,signature=? WHERE uuid=?";
+            PreparedStatement statement = connection.prepareStatement(statementText);
 
             statement.setString(1, uuid.toString());
             statement.setString(2, value);
             statement.setString(3, signature);
+
+            statement.setString(4, value);
+            statement.setString(5, signature);
+            statement.setString(6, uuid.toString());
 
             statement.execute();
             statement.close();
@@ -371,19 +436,25 @@ public class SqlUtil {
             connection.close();
         } catch (SQLException e) {
             e.printStackTrace();
+            ErrorUtil.displayError(e);
         }
     }
 
     /**
      * Get the cached skin for a player's uuid
+     *
      * @param uuid The uuid to find
-     * @return The texture
+     * @return     The texture
      */
     public MobPlayerTexture getPlayerTextureHash(UUID uuid) {
         Connection connection = getConnection();
         MobPlayerTexture texture = new MobPlayerTexture("", "");
 
-        if (connection == null) return texture;
+        if (connection == null) {
+            Core.logInfo("Core > Could not get player hash! - Cannot connect to MySQL!");
+            ErrorUtil.displayError(new Exception("Unable to connect to MySQL!"));
+            return texture;
+        }
 
         try {
             PreparedStatement statement = connection.prepareStatement("SELECT * FROM skins WHERE uuid=?");
@@ -397,6 +468,7 @@ public class SqlUtil {
             connection.close();
         } catch (SQLException e) {
             e.printStackTrace();
+            ErrorUtil.displayError(e);
         }
         return texture;
     }
@@ -405,12 +477,13 @@ public class SqlUtil {
      * Earn a cosmetic for a player
      *
      * @param player the player that earned it
-     * @param id the id of the cosmetic that they earned
+     * @param id     the id of the cosmetic that they earned
      */
     public void earnCosmetic(CPlayer player, int id) {
         Connection connection = getConnection();
         if (connection == null) {
             Core.logInfo("Core > Unable to give player cosmetic item - Cannot connect to MySql!");
+            ErrorUtil.displayError(new Exception("Unable to connect to MySQL!"));
             return;
         }
 
@@ -429,6 +502,7 @@ public class SqlUtil {
             connection.close();
         } catch (SQLException e) {
             e.printStackTrace();
+            ErrorUtil.displayError(e);
         }
     }
 
@@ -436,13 +510,14 @@ public class SqlUtil {
      * Does a player have a cosmetic item?
      *
      * @param player the player to check
-     * @param id the id to check
-     * @return if the player has the cosmetic
+     * @param id     the id to check
+     * @return        if the player has the cosmetic
      */
     public boolean hasCosmetic(CPlayer player, int id) {
         Connection connection = getConnection();
         if (connection == null) {
             Core.logInfo("Core > Unable to check cosmetic status - Cannot connect to MySql!");
+            ErrorUtil.displayError(new Exception("Unable to connect to MySQL!"));
             return false;
         }
 
@@ -463,6 +538,7 @@ public class SqlUtil {
             connection.close();
         } catch (SQLException e) {
             e.printStackTrace();
+            ErrorUtil.displayError(e);
         }
         return hasCosmetic;
     }
@@ -470,15 +546,16 @@ public class SqlUtil {
     /**
      * Get a players statistic in a game
      *
-     * @param game the game to get the statistic from
-     * @param type the type of statistic to get
+     * @param game   the game to get the statistic from
+     * @param type   the type of statistic to get
      * @param player the player to get the statistic from
-     * @return the amount of the statistic they have
+     * @return       the amount of the statistic they have
      */
     public int getGameStat(GameType game, StatisticType type, CPlayer player) {
         Connection connection = getConnection();
         if (connection == null) {
             Core.logInfo("Core > Unable to get game stats - Cannot connect to MySql!");
+            ErrorUtil.displayError(new Exception("Unable to connect to MySQL!"));
             return 0;
         }
 
@@ -504,6 +581,7 @@ public class SqlUtil {
             connection.close();
         } catch (SQLException e) {
             e.printStackTrace();
+            ErrorUtil.displayError(e);
         }
         return amount;
     }
@@ -511,16 +589,16 @@ public class SqlUtil {
     /**
      * Add a game statistic to a player
      *
-     * @param game the game that this happened in
+     * @param game      the game that this happened in
      * @param statistic the statistic to add
-     * @param player the player who earned this stat
-     * @param amount the amount to give the player
+     * @param player    the player who earned this stat
+     * @param amount    the amount to give the player
      */
     public void addGameStat(GameType game, StatisticType statistic, int amount, CPlayer player) {
         Connection connection = getConnection();
         if (connection == null) {
             Core.logInfo("Core > Unable to add game stats - Cannot connect to MySql!");
-            return;
+            ErrorUtil.displayError(new Exception("Unable to connect to MySQL!"));
         }
 
         try {
@@ -541,6 +619,7 @@ public class SqlUtil {
             connection.close();
         } catch (SQLException e) {
             e.printStackTrace();
+            ErrorUtil.displayError(e);
         }
     }
 }
