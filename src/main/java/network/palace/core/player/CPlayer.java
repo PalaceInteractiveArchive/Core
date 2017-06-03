@@ -681,4 +681,12 @@ public interface CPlayer {
      * @return the amount
      */
     int getStatistic(GameType gameType, StatisticType statisticType);
+
+    int getHonor();
+
+    void giveHonor(int amount);
+
+    void removeHonor(int amount);
+
+    void setHonor(int amount);
 }

@@ -39,7 +39,7 @@ public enum Rank {
         String rankName = name.toLowerCase();
 
         for (Rank rank : Rank.values()) {
-            if (rank.getName().toLowerCase().equals(rankName)) return rank;
+            if (rank.getName().equalsIgnoreCase(rankName)) return rank;
         }
         return SETTLER;
     }
