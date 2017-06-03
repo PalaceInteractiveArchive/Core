@@ -577,7 +577,7 @@ public class SqlUtil {
             }
 
             statement.close();
-            results.close();
+            if (results != null) results.close();
             connection.close();
         } catch (SQLException e) {
             e.printStackTrace();
@@ -599,18 +599,23 @@ public class SqlUtil {
         if (connection == null) {
             Core.logInfo("Core > Unable to add game stats - Cannot connect to MySql!");
             ErrorUtil.displayError(new Exception("Unable to connect to MySQL!"));
+            return;
         }
 
         try {
             int finalAmount = getGameStat(game, statistic, player) + amount;
-            PreparedStatement statement = connection.prepareStatement("INSERT INTO gameStatistics (uuid,type,game,amount) VALUES (?,?,?,?) ON DUPLICATE uuid UPDATE amount=?");
+            PreparedStatement statement = connection.prepareStatement("INSERT INTO gameStatistics (uuid,type,game,amount) VALUES (?,?,?,?) ON DUPLICATE uuid UPDATE SET amount=? WHERE uuid=?");
 
-            // Inject
+            // Injections
+
+            // Main statement
             statement.setString(1, player.getUuid().toString());
             statement.setString(2, statistic.getType());
             statement.setInt(3, game.getId());
             statement.setInt(4, finalAmount);
+            // Duplication check
             statement.setInt(5, finalAmount);
+            statement.setString(6, player.getUuid().toString());
 
             statement.execute();
 
