@@ -22,6 +22,7 @@ public class ErrorUtil {
      * @param plugin the plugin the error occurred on
      */
     public static void displayError(Exception e, JavaPlugin plugin) {
+        if (shouldStop()) return;
         String exceptionMessage = e.getClass().getSimpleName() + ": " + e.getMessage();
         ArrayList<String> errorInfo = new ArrayList<>();
         for (int i = 0; i < 3; i++) {
@@ -37,6 +38,7 @@ public class ErrorUtil {
     }
 
     public static void displayError(Exception e) {
+        if (shouldStop()) return;
         String exceptionMessage = e.getClass().getSimpleName() + ": " + e.getMessage();
         ArrayList<String> errorInfo = new ArrayList<>();
         for (int i = 0; i < 3; i++) {
@@ -48,5 +50,25 @@ public class ErrorUtil {
         message.multilineTooltip(ChatColor.RED + "Details (Core)", Arrays.toString(errorInfo.toArray()));
         Core.getPlayerManager().getOnlinePlayers().stream().filter(player -> player.getRank().getRankId() >= Rank.WIZARD.getRankId()).forEach(message::send);
         Core.getInstance().getRollbarHandler().error(e);
+    }
+
+    public static void displayError(String error) {
+        if (shouldStop()) return;
+        FormattedMessage message = new FormattedMessage(error).color(ChatColor.RED);
+        message.multilineTooltip(ChatColor.RED + "Details (Core)");
+        Core.getPlayerManager().getOnlinePlayers().stream().filter(player -> player.getRank().getRankId() >= Rank.WIZARD.getRankId()).forEach(message::send);
+        Core.getInstance().getRollbarHandler().error(e);
+    }
+
+    public static void displayError(String error, JavaPlugin plugin) {
+        if (shouldStop()) return;
+        FormattedMessage message = new FormattedMessage(error).color(ChatColor.RED);
+        message.multilineTooltip(ChatColor.RED + "Details (" + plugin.getName() + ")");
+        Core.getPlayerManager().getOnlinePlayers().stream().filter(player -> player.getRank().getRankId() >= Rank.WIZARD.getRankId()).forEach(message::send);
+        Core.getInstance().getRollbarHandler().error(error);
+    }
+
+    private static boolean shouldStop() {
+        return Core.isDashboardAndSqlDisabled();
     }
 }

@@ -63,7 +63,7 @@ public class SqlUtil {
     public Rank getRank(UUID uuid) {
         Connection connection = getConnection();
         if (connection == null) {
-            ErrorUtil.displayError(new Exception("Unable to connect to MySQL!"));
+            ErrorUtil.displayError("Unable to connect to MySQL!");
             Core.logInfo("Core > Could not get rank! - Cannot connect to MySQL!");
             return Rank.SETTLER;
         }
@@ -95,7 +95,7 @@ public class SqlUtil {
     public Rank getRank(String username) {
         Connection connection = getConnection();
         if (connection == null) {
-            ErrorUtil.displayError(new Exception("Unable to connect to MySQL!"));
+            ErrorUtil.displayError("Unable to connect to MySQL!");
             Core.logInfo("Core > Could not get rank! - Cannot connect to MySQL!");
             return Rank.SETTLER;
         }
@@ -127,7 +127,7 @@ public class SqlUtil {
     public boolean playerExists(String username) {
         Connection connection = getConnection();
         if (connection == null) {
-            ErrorUtil.displayError(new Exception("Unable to connect to MySQL!"));
+            ErrorUtil.displayError("Unable to connect to MySQL!");
             Core.logInfo("Core > Could not check if player exists! - Cannot connect to MySQL!");
             return false;
         }
@@ -156,7 +156,7 @@ public class SqlUtil {
     public UUID getUniqueIdFromName(String username) {
         Connection connection = getConnection();
         if (connection == null) {
-            ErrorUtil.displayError(new Exception("Unable to connect to MySQL!"));
+            ErrorUtil.displayError("Unable to connect to MySQL!");
             Core.logInfo("Core > Could not get UUID from name! - Cannot connect to MySQL!");
             return UUID.randomUUID();
         }
@@ -192,7 +192,7 @@ public class SqlUtil {
     public Map<String, Boolean> getPermissions(Rank rank) {
         Connection connection = getConnection();
         if (connection == null) {
-            ErrorUtil.displayError(new Exception("Unable to connect to MySQL!"));
+            ErrorUtil.displayError("Unable to connect to MySQL!");
             Core.logInfo("Core > Could not get permissions! - Cannot connect to MySQL!");
             return new HashMap<>();
         }
@@ -234,7 +234,7 @@ public class SqlUtil {
     public List<String> getMembers(Rank rank) {
         Connection connection = getConnection();
         if (connection == null) {
-            ErrorUtil.displayError(new Exception("Unable to connect to MySQL!"));
+            ErrorUtil.displayError("Unable to connect to MySQL!");
             Core.logInfo("Core > Could not get members! - Cannot connect to MySQL!");
             return new ArrayList<>();
         }
@@ -266,7 +266,7 @@ public class SqlUtil {
     public void setRank(UUID uuid, Rank rank) {
         Connection connection = getConnection();
         if (connection == null) {
-            ErrorUtil.displayError(new Exception("Unable to connect to MySQL!"));
+            ErrorUtil.displayError("Unable to connect to MySQL!");
             Core.logInfo("Core > Could not set player rank! - Cannot connect to MySQL!");
             return;
         }
@@ -294,7 +294,7 @@ public class SqlUtil {
         Connection connection = getConnection();
         if (connection == null) {
             Core.logInfo("Core > Could not set permission! - Cannot connect to MySQL!");
-            ErrorUtil.displayError(new Exception("Unable to connect to MySQL!"));
+            ErrorUtil.displayError("Unable to connect to MySQL!");
             return;
         }
         try {
@@ -328,7 +328,7 @@ public class SqlUtil {
         Connection connection = getConnection();
         if (connection == null) {
             Core.logInfo("Core > Could not add permission! - Cannot connect to MySQL!");
-            ErrorUtil.displayError(new Exception("Unable to connect to MySQL!"));
+            ErrorUtil.displayError("Unable to connect to MySQL!");
             return;
         }
         try {
@@ -355,7 +355,7 @@ public class SqlUtil {
         Connection connection = getConnection();
         if (connection == null) {
             Core.logInfo("Core > Could not add achievement! - Cannot connect to MySQL!");
-            ErrorUtil.displayError(new Exception("Unable to connect to MySQL!"));
+            ErrorUtil.displayError("Unable to connect to MySQL!");
             return;
         }
         try {
@@ -383,7 +383,7 @@ public class SqlUtil {
         Connection connection = getConnection();
         if (connection == null) {
             Core.logInfo("Core > Could not get achievements! - Cannot connect to MySQL!");
-            ErrorUtil.displayError(new Exception("Unable to connect to MySQL!"));
+            ErrorUtil.displayError("Unable to connect to MySQL!");
             return list;
         }
         try {
@@ -414,7 +414,7 @@ public class SqlUtil {
         Connection connection = getConnection();
         if (connection == null) {
             Core.logInfo("Core > Could not cache player hash! - Cannot connect to MySQL!");
-            ErrorUtil.displayError(new Exception("Unable to connect to MySQL!"));
+            ErrorUtil.displayError("Unable to connect to MySQL!");
             return;
         }
 
@@ -455,7 +455,7 @@ public class SqlUtil {
 
         if (connection == null) {
             Core.logInfo("Core > Could not get player hash! - Cannot connect to MySQL!");
-            ErrorUtil.displayError(new Exception("Unable to connect to MySQL!"));
+            ErrorUtil.displayError("Unable to connect to MySQL!");
             return texture;
         }
 
@@ -486,7 +486,7 @@ public class SqlUtil {
         Connection connection = getConnection();
         if (connection == null) {
             Core.logInfo("Core > Unable to give player cosmetic item - Cannot connect to MySql!");
-            ErrorUtil.displayError(new Exception("Unable to connect to MySQL!"));
+            ErrorUtil.displayError("Unable to connect to MySQL!");
             return;
         }
 
@@ -520,7 +520,7 @@ public class SqlUtil {
         Connection connection = getConnection();
         if (connection == null) {
             Core.logInfo("Core > Unable to check cosmetic status - Cannot connect to MySql!");
-            ErrorUtil.displayError(new Exception("Unable to connect to MySQL!"));
+            ErrorUtil.displayError("Unable to connect to MySQL!");
             return false;
         }
 
@@ -558,7 +558,7 @@ public class SqlUtil {
         Connection connection = getConnection();
         if (connection == null) {
             Core.logInfo("Core > Unable to get game stats - Cannot connect to MySql!");
-            ErrorUtil.displayError(new Exception("Unable to connect to MySQL!"));
+            ErrorUtil.displayError("Unable to connect to MySQL!");
             return 0;
         }
 
@@ -601,7 +601,7 @@ public class SqlUtil {
         Connection connection = getConnection();
         if (connection == null) {
             Core.logInfo("Core > Unable to add game stats - Cannot connect to MySql!");
-            ErrorUtil.displayError(new Exception("Unable to connect to MySQL!"));
+            ErrorUtil.displayError("Unable to connect to MySQL!");
             return;
         }
 
