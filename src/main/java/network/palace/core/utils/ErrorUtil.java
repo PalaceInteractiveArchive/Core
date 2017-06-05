@@ -57,7 +57,7 @@ public class ErrorUtil {
         FormattedMessage message = new FormattedMessage(error).color(ChatColor.RED);
         message.multilineTooltip(ChatColor.RED + "Details (Core)");
         Core.getPlayerManager().getOnlinePlayers().stream().filter(player -> player.getRank().getRankId() >= Rank.WIZARD.getRankId()).forEach(message::send);
-        Core.getInstance().getRollbarHandler().error(e);
+        Core.getInstance().getRollbarHandler().error(error);
     }
 
     public static void displayError(String error, JavaPlugin plugin) {
