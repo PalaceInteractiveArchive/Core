@@ -15,6 +15,8 @@ import network.palace.core.config.LanguageManager;
 import network.palace.core.config.YAMLConfigurationFile;
 import network.palace.core.dashboard.DashboardConnection;
 import network.palace.core.economy.EconomyManager;
+import network.palace.core.errors.EnvironmentType;
+import network.palace.core.errors.RollbarHandler;
 import network.palace.core.library.LibraryHandler;
 import network.palace.core.npc.SoftNPCManager;
 import network.palace.core.packets.adapters.PlayerInfoAdapter;
@@ -25,6 +27,7 @@ import network.palace.core.player.impl.CorePlayerWorldDownloadProtect;
 import network.palace.core.player.impl.managers.CorePlayerManager;
 import network.palace.core.plugin.PluginInfo;
 import network.palace.core.resource.ResourceManager;
+import network.palace.core.utils.ErrorUtil;
 import network.palace.core.utils.ItemUtil;
 import network.palace.core.utils.SqlUtil;
 import org.bukkit.Bukkit;
@@ -83,6 +86,8 @@ public class Core extends JavaPlugin {
     private CoreCommandMap commandMap;
     private DashboardConnection dashboardConnection;
 
+    @Getter private RollbarHandler rollbarHandler;
+
     @Getter private List<UUID> disabledPlayers = new ArrayList<>();
 
     @Override
@@ -95,6 +100,10 @@ public class Core extends JavaPlugin {
         LibraryHandler.loadLibraries(this);
         // Configurations
         configFile = new YAMLConfigurationFile(this, "config.yml");
+        System.out.println("ACCESS" + getCoreConfig().getString("accessToken"));
+        System.out.println("ENV" + EnvironmentType.fromString(getCoreConfig().getString("environment", "local")));
+        rollbarHandler = new RollbarHandler(getCoreConfig().getString("accessToken", ""), EnvironmentType.fromString(getCoreConfig().getString("environment", "local")));
+        rollbarHandler.initialize();
         // Get info from config
         serverType = getCoreConfig().getString("server-type", "Unknown");
         instanceName = getCoreConfig().getString("instance-name", "ServerName");
@@ -151,6 +160,7 @@ public class Core extends JavaPlugin {
             logMessage("Core", ChatColor.BLUE + "" + ChatColor.BOLD + "Running in game mode, skipping startup phase!");
             setStarting(false);
         } else runTaskLater(() -> setStarting(false), 20 * 7);
+        ErrorUtil.displayError(new Exception("Testing"), this);
     }
 
     /**
