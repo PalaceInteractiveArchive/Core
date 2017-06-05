@@ -3,5 +3,25 @@
     "groupId": "org.java-websocket",
     "artifactId": "Java-WebSocket",
     "version": "1.3.0"
+  },
+  {
+    "groupId": "com.rollbar",
+    "artifactId": "rollbar",
+    "version": "0.5.3"
+  },
+  {
+    "groupId": "com.rollbar",
+    "artifactId": "rollbar-utilities",
+    "version": "0.5.3"
+  },
+  {
+    "groupId": "com.rollbar",
+    "artifactId": "rollbar-payload",
+    "version": "0.5.3"
+  },
+  {
+    "groupId": "com.rollbar",
+    "artifactId": "rollbar-sender",
+    "version": "0.5.3"
   }
 ]

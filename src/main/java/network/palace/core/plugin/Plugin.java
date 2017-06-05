@@ -4,6 +4,8 @@ import network.palace.core.Core;
 import network.palace.core.command.CoreCommand;
 import network.palace.core.command.CoreCommandMap;
 import network.palace.core.config.LanguageManager;
+import network.palace.core.errors.ErrorLog;
+import network.palace.core.errors.RollbarHandler;
 import network.palace.core.library.LibraryHandler;
 import lombok.Getter;
 import org.bukkit.Bukkit;
@@ -18,8 +20,10 @@ import org.bukkit.scheduler.BukkitRunnable;
 public class Plugin extends JavaPlugin {
 
     @Getter private PluginInfo info;
+    @Getter private ErrorLog errorLog;
     @Getter private LanguageManager languageManager;
     @Getter private CoreCommandMap commandMap;
+    @Getter private RollbarHandler rollbarHandler;
 
     @Override
     public final void onEnable() {
@@ -32,6 +36,13 @@ public class Plugin extends JavaPlugin {
             info = getClass().getAnnotation(PluginInfo.class);
             if (info == null) {
                 throw new IllegalStateException("You must annotate your class with the @PluginInfo annotation!");
+            }
+            // Check rollbar info
+            errorLog = getClass().getAnnotation(ErrorLog.class);
+            if (errorLog != null) {
+                if (!errorLog.enabled()) return;
+                rollbarHandler = new RollbarHandler(errorLog.accessToken(), errorLog.environment());
+                rollbarHandler.initialize();
             }
             // Load languages
             languageManager = new LanguageManager(this);
