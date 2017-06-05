@@ -42,7 +42,7 @@ public class Plugin extends JavaPlugin {
             if (errorLog != null) {
                 if (!errorLog.enabled()) return;
                 rollbarHandler = new RollbarHandler(errorLog.accessToken(), errorLog.environment());
-                rollbarHandler.initialize();
+                rollbarHandler.watch();
             }
             // Load languages
             languageManager = new LanguageManager(this);

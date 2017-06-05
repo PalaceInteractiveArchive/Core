@@ -32,8 +32,8 @@ public class ErrorUtil {
         FormattedMessage message = new FormattedMessage(exceptionMessage).color(ChatColor.RED);
         message.multilineTooltip(ChatColor.RED + "Details (" + plugin.getName() + ")", Arrays.toString(errorInfo.toArray()));
         Core.getPlayerManager().getOnlinePlayers().stream().filter(player -> player.getRank().getRankId() >= Rank.WIZARD.getRankId()).forEach(message::send);
-        if (plugin instanceof Plugin) ((Plugin) plugin).getRollbarHandler().handleException(e);
-        else Core.getInstance().getRollbarHandler().handleException(e);
+        if (plugin instanceof Plugin) ((Plugin) plugin).getRollbarHandler().error(e);
+        else Core.getInstance().getRollbarHandler().error(e);
     }
 
     public static void displayError(Exception e) {
@@ -47,6 +47,6 @@ public class ErrorUtil {
         FormattedMessage message = new FormattedMessage(exceptionMessage).color(ChatColor.RED);
         message.multilineTooltip(ChatColor.RED + "Details (Core)", Arrays.toString(errorInfo.toArray()));
         Core.getPlayerManager().getOnlinePlayers().stream().filter(player -> player.getRank().getRankId() >= Rank.WIZARD.getRankId()).forEach(message::send);
-        Core.getInstance().getRollbarHandler().handleException(e);
+        Core.getInstance().getRollbarHandler().error(e);
     }
 }
