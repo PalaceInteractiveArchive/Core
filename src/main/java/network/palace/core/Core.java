@@ -100,10 +100,8 @@ public class Core extends JavaPlugin {
         LibraryHandler.loadLibraries(this);
         // Configurations
         configFile = new YAMLConfigurationFile(this, "config.yml");
-        System.out.println("ACCESS" + getCoreConfig().getString("accessToken"));
-        System.out.println("ENV" + EnvironmentType.fromString(getCoreConfig().getString("environment", "local")));
         rollbarHandler = new RollbarHandler(getCoreConfig().getString("accessToken", ""), EnvironmentType.fromString(getCoreConfig().getString("environment", "local")));
-        rollbarHandler.initialize();
+        rollbarHandler.watch();
         // Get info from config
         serverType = getCoreConfig().getString("server-type", "Unknown");
         instanceName = getCoreConfig().getString("instance-name", "ServerName");
@@ -551,7 +549,7 @@ public class Core extends JavaPlugin {
     /**
      * Debug log.
      *
-     * @param s the s
+     * @param s the message to log
      */
     public static void debugLog(String s) {
         if (isDebug()) {
