@@ -72,10 +72,16 @@ public class RollbarHandler {
         data.put("language", "Java");
         data.put("framework", "Java");
         data.put("timestamp", System.currentTimeMillis() / 1000);
-        data.put("user_ip", getIP());
         data.set("body", getBody(message, throwable));
+        data.set("request", getRequest());
         payload.set("data", data);
         return payload;
+    }
+
+    private ObjectNode getRequest() {
+        ObjectNode request = JsonNodeFactory.instance.objectNode();
+        request.put("user_ip", getIP());
+        return request;
     }
 
     private ObjectNode getBody(String message, Throwable original) {

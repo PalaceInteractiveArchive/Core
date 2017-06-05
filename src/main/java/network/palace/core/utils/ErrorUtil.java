@@ -68,6 +68,11 @@ public class ErrorUtil {
         Core.getInstance().getRollbarHandler().error(error);
     }
 
+    /**
+     * Should we continue with logging the error?
+     *
+     * @return the status of being able to continue
+     */
     private static boolean shouldStop() {
         return Core.isDashboardAndSqlDisabled();
     }
