@@ -11,10 +11,11 @@ import java.io.ByteArrayOutputStream;
 import java.io.DataOutputStream;
 import java.io.IOException;
 import java.io.PrintStream;
-import java.net.*;
+import java.net.HttpURLConnection;
+import java.net.InetAddress;
+import java.net.URL;
+import java.net.UnknownHostException;
 import java.util.ArrayList;
-import java.util.Arrays;
-import java.util.Enumeration;
 import java.util.List;
 
 /**
@@ -23,6 +24,7 @@ import java.util.List;
  */
 @RequiredArgsConstructor
 public class RollbarHandler {
+
     private final String accessToken;
     private final EnvironmentType environment;
     private String URL_STRING = "https://api.rollbar.com/api/1/item/";
@@ -71,8 +73,8 @@ public class RollbarHandler {
         data.put("framework", "Java");
         data.put("timestamp", System.currentTimeMillis() / 1000);
         data.put("user_ip", getIP());
-        data.put("body", getBody(message, throwable));
-        payload.put("data", data);
+        data.set("body", getBody(message, throwable));
+        payload.set("data", data);
         return payload;
     }
 
@@ -90,13 +92,13 @@ public class RollbarHandler {
             } while (throwable != null);
             ArrayNode tracesArray = JsonNodeFactory.instance.arrayNode();
             traces.forEach(tracesArray::add);
-            body.put("trace_chain", tracesArray);
+            body.set("trace_chain", tracesArray);
         }
         // If throwable is null and message exist then add message to body
         if (original == null && message != null) {
             ObjectNode messageBody = JsonNodeFactory.instance.objectNode();
             messageBody.put("body", message);
-            body.put("message", messageBody);
+            body.set("message", messageBody);
         }
         return body;
     }
@@ -130,8 +132,8 @@ public class RollbarHandler {
         ObjectNode exceptionData = JsonNodeFactory.instance.objectNode();
         exceptionData.put("class", throwable.getClass().getName());
         exceptionData.put("message", throwable.getMessage());
-        trace.put("frames", frames);
-        trace.put("exception", exceptionData);
+        trace.set("frames", frames);
+        trace.set("exception", exceptionData);
         return trace;
     }
 
@@ -156,23 +158,16 @@ public class RollbarHandler {
         }
     }
 
-
+    /**
+     * Get the ip of the server
+     *
+     * @return the ip
+     */
     private String getIP() {
-        StringBuilder response = new StringBuilder();
         try {
-            Enumeration<NetworkInterface> interfaces = NetworkInterface.getNetworkInterfaces();
-
-            while (interfaces.hasMoreElements()) {
-                NetworkInterface current = interfaces.nextElement();
-                response.append(current.getDisplayName()).append("'s addresses: ");
-                while (current.getInetAddresses().hasMoreElements()) {
-                    InetAddress address = current.getInetAddresses().nextElement();
-                    response.append(Arrays.toString(address.getAddress())).append(", ");
-                }
-            }
-        } catch (SocketException e) {
-            return "";
+            return InetAddress.getLocalHost().getHostAddress();
+        } catch (UnknownHostException e) {
+            return "Unknown IP";
         }
-        return response.toString();
     }
 }

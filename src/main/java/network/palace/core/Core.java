@@ -158,7 +158,6 @@ public class Core extends JavaPlugin {
             logMessage("Core", ChatColor.BLUE + "" + ChatColor.BOLD + "Running in game mode, skipping startup phase!");
             setStarting(false);
         } else runTaskLater(() -> setStarting(false), 20 * 7);
-        ErrorUtil.displayError(new Exception("Testing"), this);
     }
 
     /**

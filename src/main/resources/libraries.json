@@ -7,11 +7,16 @@
   {
     "groupId": "com.fasterxml.jackson.core",
     "artifactId": "jackson-core",
-    "version": "0.5.3"
+    "version": "2.6.0"
   },
   {
     "groupId": "com.fasterxml.jackson.core",
     "artifactId": "jackson-databind",
-    "version": "0.5.3"
+    "version": "2.6.0"
+  },
+  {
+    "groupId": "com.fasterxml.jackson.core",
+    "artifactId": "jackson-annotations",
+    "version": "2.6.0"
   }
 ]
