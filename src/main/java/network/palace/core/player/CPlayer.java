@@ -7,10 +7,12 @@ import org.bukkit.*;
 import org.bukkit.block.Block;
 import org.bukkit.entity.Player;
 import org.bukkit.inventory.Inventory;
+import org.bukkit.inventory.InventoryView;
 import org.bukkit.inventory.ItemStack;
 import org.bukkit.inventory.PlayerInventory;
 import org.bukkit.plugin.java.JavaPlugin;
 
+import java.util.Optional;
 import java.util.UUID;
 
 /**
@@ -682,11 +684,10 @@ public interface CPlayer {
      */
     int getStatistic(GameType gameType, StatisticType statisticType);
 
-    int getHonor();
-
-    void giveHonor(int amount);
-
-    void removeHonor(int amount);
-
-    void setHonor(int amount);
+    /**
+     * Get the currently open inventory of a player
+     *
+     * @return the currently open inventory
+     */
+    Optional<InventoryView> getOpenInventory();
 }
