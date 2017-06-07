@@ -25,7 +25,7 @@ public class PathfindingTile {
         PathfindingTile current = getParent();
         int combinedScore = 0;
 
-        while(!current.equals(start) && current != null) {
+        while(!current.equals(start)) {
             combinedScore += current.getGScore();
             current = current.getParent();
         }
