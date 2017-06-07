@@ -5,6 +5,7 @@ import network.palace.core.tracking.GameType;
 import network.palace.core.tracking.StatisticType;
 import org.bukkit.*;
 import org.bukkit.block.Block;
+import org.bukkit.entity.Entity;
 import org.bukkit.entity.Player;
 import org.bukkit.inventory.Inventory;
 import org.bukkit.inventory.InventoryView;
@@ -690,4 +691,11 @@ public interface CPlayer {
      * @return the currently open inventory
      */
     Optional<InventoryView> getOpenInventory();
+
+    /**
+     * Get the entity that the player is riding
+     *
+     * @return the entity that the player is riding
+     */
+    Optional<Entity> getVehicle();
 }

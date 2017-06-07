@@ -15,6 +15,7 @@ import network.palace.core.tracking.GameType;
 import network.palace.core.tracking.StatisticType;
 import org.bukkit.*;
 import org.bukkit.block.Block;
+import org.bukkit.entity.Entity;
 import org.bukkit.entity.Player;
 import org.bukkit.inventory.Inventory;
 import org.bukkit.inventory.InventoryView;
@@ -590,5 +591,11 @@ public class CorePlayer implements CPlayer {
     public Optional<InventoryView> getOpenInventory() {
         if (!getStatus().equals(PlayerStatus.JOINED)) return Optional.empty();
         return Optional.ofNullable(getBukkitPlayer().getOpenInventory());
+    }
+
+    @Override
+    public Optional<Entity> getVehicle() {
+        if (!getStatus().equals(PlayerStatus.JOINED)) return Optional.empty();
+        return Optional.ofNullable(getBukkitPlayer().getVehicle()) ;
     }
 }
