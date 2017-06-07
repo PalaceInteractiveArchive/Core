@@ -122,12 +122,6 @@ public abstract class CoreCommand implements CommandExecutor, TabCompleter {
         try {
             // STEP ONE: Handle sub-commands
             CoreCommand subCommand = null;
-            /*
-            // Get the permission and test for it
-            if (getClass().isAnnotationPresent(CommandPermission.class)) {
-                CommandPermission annotation = getClass().getAnnotation(CommandPermission.class);
-                if (!sender.hasPermission(annotation.value()) && !(sender.isOp() && annotation.isOpExempt())) throw new PermissionException();
-            }*/
             if (sender instanceof Player) {
                 CPlayer player = Core.getPlayerManager().getPlayer(((Player) sender).getUniqueId());
                 if (getClass().isAnnotationPresent(CommandPermission.class)) {

@@ -419,19 +419,15 @@ public class SqlUtil {
         }
 
         try {
-            String statementText = "IF EXISTS (SELECT * FROM skins WHERE uuid=?) UPDATE skins SET value=?,signature=? WHERE uuid=? ELSE INSERT INTO skins VALUE(?,?,?)";
+            String statementText = "INSERT INTO skins (uuid,value,signature) VALUES (?,?,?) ON DUPLICATE KEY UPDATE value=?,signature=?";
             PreparedStatement statement = connection.prepareStatement(statementText);
 
-            // If and update
             statement.setString(1, uuid.toString());
             statement.setString(2, value);
             statement.setString(3, signature);
-            statement.setString(4, uuid.toString());
 
-            // Insert
+            statement.setString(4, signature);
             statement.setString(5, uuid.toString());
-            statement.setString(6, value);
-            statement.setString(7, signature);
 
             statement.execute();
             statement.close();
