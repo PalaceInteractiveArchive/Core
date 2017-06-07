@@ -109,7 +109,6 @@ public abstract class CoreCommand implements CommandExecutor, TabCompleter {
                 }
                 String s = builder.toString();
                 // Looks like this /name - [subcommand1|subcommand2|]
-                // TODO Switch to language formatting?
                 sender.sendMessage(ChatColor.GRAY + "/" + ChatColor.DARK_AQUA + superHelpCommand.getFormattedName() + ChatColor.GOLD + " - [" + s.substring(0, s.length() - 1) + "]");
             }
         });
