@@ -21,6 +21,36 @@ public class MiscUtil {
     }
 
     /**
+     * Check if something is a float
+     *
+     * @param toCheck the string to check
+     * @return if it's a float
+     */
+    public static boolean checkIfFloat(String toCheck) {
+        try {
+            Float.parseFloat(toCheck);
+            return true;
+        } catch (NumberFormatException e) {
+            return false;
+        }
+    }
+
+    /**
+     * Check if something is a double
+     *
+     * @param toCheck the string to check
+     * @return if it's a double
+     */
+    public static boolean checkIfDouble(String toCheck) {
+        try {
+            Double.parseDouble(toCheck);
+            return true;
+        } catch (NumberFormatException e) {
+            return false;
+        }
+    }
+
+    /**
      * Capitalize first letter of a string.
      *
      * @param input the input
