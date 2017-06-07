@@ -522,7 +522,7 @@ public class SqlUtil {
 
         boolean hasCosmetic = false;
         try {
-            PreparedStatement statement = connection.prepareStatement("SELECT status FROM caseEarnings WHERE uuid=?,id=?,status=?");
+            PreparedStatement statement = connection.prepareStatement("SELECT status FROM caseEarnings WHERE uuid=? AND id=? AND status=?");
             statement.setString(1, player.getUuid().toString());
             statement.setInt(2, id);
             statement.setBoolean(3, true);
@@ -603,7 +603,7 @@ public class SqlUtil {
 
         try {
             int finalAmount = getGameStat(game, statistic, player) + amount;
-            PreparedStatement statement = connection.prepareStatement("INSERT INTO gameStatistics (uuid,type,game,amount) VALUES (?,?,?,?) ON DUPLICATE uuid UPDATE SET amount=? WHERE uuid=?");
+            PreparedStatement statement = connection.prepareStatement("INSERT INTO gameStatistics (uuid,type,game,amount) VALUES (?,?,?,?) ON DUPLICATE KEY UPDATE amount=?");
 
             // Injections
 
@@ -614,7 +614,6 @@ public class SqlUtil {
             statement.setInt(4, finalAmount);
             // Duplication check
             statement.setInt(5, finalAmount);
-            statement.setString(6, player.getUuid().toString());
 
             statement.execute();
 
