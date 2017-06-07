@@ -21,13 +21,11 @@ import org.bukkit.inventory.Inventory;
 import org.bukkit.inventory.InventoryView;
 import org.bukkit.inventory.ItemStack;
 import org.bukkit.inventory.PlayerInventory;
+import org.bukkit.metadata.MetadataValue;
 import org.bukkit.plugin.java.JavaPlugin;
 import org.bukkit.util.Vector;
 
-import java.util.List;
-import java.util.Optional;
-import java.util.Set;
-import java.util.UUID;
+import java.util.*;
 import java.util.logging.Level;
 
 /**
@@ -602,5 +600,23 @@ public class CorePlayer implements CPlayer {
     @Override
     public boolean isInVehicle() {
         return getStatus().equals(PlayerStatus.JOINED) && getBukkitPlayer().isInsideVehicle();
+    }
+
+    @Override
+    public void setMetadata(String name, MetadataValue metadata) {
+        if (!getStatus().equals(PlayerStatus.JOINED)) return;
+        getBukkitPlayer().setMetadata(name, metadata);
+    }
+
+    @Override
+    public List<MetadataValue> getMetadata(String name) {
+        if (!getStatus().equals(PlayerStatus.JOINED)) return new ArrayList<>();
+        return getBukkitPlayer().getMetadata(name);
+    }
+
+    @Override
+    public void removeMetadata(String name, Plugin plugin) {
+        if (!getStatus().equals(PlayerStatus.JOINED)) return;
+        getBukkitPlayer().removeMetadata(name, plugin);
     }
 }

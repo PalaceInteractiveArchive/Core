@@ -1,6 +1,7 @@
 package network.palace.core.player;
 
 import network.palace.core.packets.AbstractPacket;
+import network.palace.core.plugin.Plugin;
 import network.palace.core.tracking.GameType;
 import network.palace.core.tracking.StatisticType;
 import org.bukkit.*;
@@ -11,8 +12,10 @@ import org.bukkit.inventory.Inventory;
 import org.bukkit.inventory.InventoryView;
 import org.bukkit.inventory.ItemStack;
 import org.bukkit.inventory.PlayerInventory;
+import org.bukkit.metadata.MetadataValue;
 import org.bukkit.plugin.java.JavaPlugin;
 
+import java.util.List;
 import java.util.Optional;
 import java.util.UUID;
 
@@ -705,4 +708,27 @@ public interface CPlayer {
      * @return if the player is in a vehicle
      */
     boolean isInVehicle();
+
+    /**
+     * Set metadata of a player
+     *
+     * @param name the name of the metadata
+     * @param metadata the metadata to set
+     */
+    void setMetadata(String name, MetadataValue metadata);
+
+    /**
+     * Get the metadata from a player
+     *
+     * @param name the name of the metadata
+     * @return the metadata matching the name
+     */
+    List<MetadataValue> getMetadata(String name);
+
+    /**
+     * Remove metadata from a player
+     *
+     * @param name the name of the metadata to remove
+     */
+    void removeMetadata(String name, Plugin plugin);
 }
