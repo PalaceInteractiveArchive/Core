@@ -698,4 +698,11 @@ public interface CPlayer {
      * @return the entity that the player is riding
      */
     Optional<Entity> getVehicle();
+
+    /**
+     * Is the player currently in a vehicle?
+     *
+     * @return if the player is in a vehicle
+     */
+    boolean isInVehicle();
 }

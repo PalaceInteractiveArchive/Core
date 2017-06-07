@@ -598,4 +598,9 @@ public class CorePlayer implements CPlayer {
         if (!getStatus().equals(PlayerStatus.JOINED)) return Optional.empty();
         return Optional.ofNullable(getBukkitPlayer().getVehicle()) ;
     }
+
+    @Override
+    public boolean isInVehicle() {
+        return getStatus().equals(PlayerStatus.JOINED) && getBukkitPlayer().isInsideVehicle();
+    }
 }
