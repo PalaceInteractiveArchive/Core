@@ -31,6 +31,10 @@ public class PacketRankChange extends BasePacket {
         this.source = source;
     }
 
+    public PacketRankChange() {
+        super(PacketID.Dashboard.RANKCHANGE.getID());
+    }
+
     public PacketRankChange fromJSON(JsonObject obj) {
         try {
             this.uuid = UUID.fromString(obj.get("uuid").getAsString());

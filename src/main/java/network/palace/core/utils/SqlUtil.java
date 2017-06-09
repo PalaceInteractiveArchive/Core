@@ -566,23 +566,19 @@ public class SqlUtil {
             statement.setInt(3, game.getId());
             ResultSet results = statement.executeQuery();
 
-            // If there's no results, set the amount to -1
-            if (results == null || !results.next()) {
-                amount = -1;
-            } else {
-                while (results.next()) {
-                    amount = results.getInt("amount");
-                }
+            while (results.next()) {
+                amount = results.getInt("amount");
             }
 
             statement.close();
-            if (results != null) results.close();
+            results.close();
             connection.close();
+            return amount;
         } catch (SQLException e) {
             e.printStackTrace();
             ErrorUtil.displayError(e);
+            return 0;
         }
-        return amount;
     }
 
     /**

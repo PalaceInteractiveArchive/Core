@@ -10,6 +10,7 @@ import network.palace.core.events.CurrentPackReceivedEvent;
 import network.palace.core.events.EconomyUpdateEvent;
 import network.palace.core.events.IncomingPacketEvent;
 import network.palace.core.player.CPlayer;
+import network.palace.core.player.Rank;
 import org.bukkit.Bukkit;
 import org.bukkit.ChatColor;
 import org.bukkit.Sound;
@@ -77,6 +78,18 @@ public class DashboardConnection {
                             }
                             player.playSound(player.getLocation(), Sound.ENTITY_EXPERIENCE_ORB_PICKUP, 50F, 1F);
                             break;
+                        }
+                        case 55: {
+                            PacketRankChange packet = new PacketRankChange().fromJSON(object);
+                            final UUID uuid = packet.getUuid();
+                            final Rank rank = packet.getRank();
+                            final CPlayer player = Core.getPlayerManager().getPlayer(uuid);
+                            if (uuid == null) return;
+                            if (rank == null) return;
+                            if (player == null) return;
+
+                            player.setRank(rank);
+                            Core.getPlayerManager().displayRank(player);
                         }
                         case 67: {
                             PacketUpdateEconomy packet = new PacketUpdateEconomy().fromJSON(object);

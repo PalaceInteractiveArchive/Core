@@ -2,6 +2,7 @@ package network.palace.core.player.impl.managers;
 
 import com.comphenix.protocol.wrappers.WrappedGameProfile;
 import com.comphenix.protocol.wrappers.WrappedSignedProperty;
+import com.google.common.collect.ImmutableList;
 import network.palace.core.Core;
 import network.palace.core.dashboard.packets.dashboard.PacketConfirmPlayer;
 import network.palace.core.dashboard.packets.dashboard.PacketGetPack;
@@ -68,23 +69,13 @@ public class CorePlayerManager implements CPlayerManager {
                     Core.getSqlUtil().cacheSkin(corePlayer.getUuid(), corePlayer.getTextureValue(), corePlayer.getTextureSignature())
             );
         }
-        // Set op if they can be
-        boolean op = corePlayer.getRank().isOp();
-        if (corePlayer.isOp() != op) {
-            corePlayer.setOp(op);
-        }
         // Setup permissions for player
         Core.getPermissionManager().login(corePlayer);
         // Packets
         Core.getDashboardConnection().send(new PacketGetPack(corePlayer.getUniqueId(), ""));
         Core.getDashboardConnection().send(new PacketConfirmPlayer(corePlayer.getUniqueId(), false));
-        // Scoreboard
-        if (corePlayer.getScoreboard() != null) corePlayer.getScoreboard().setupPlayerTags();
-        for (CPlayer otherPlayer : Core.getPlayerManager().getOnlinePlayers()) {
-            if (corePlayer.getScoreboard() != null) corePlayer.getScoreboard().addPlayerTag(otherPlayer);
-            if (otherPlayer.getScoreboard() != null) otherPlayer.getScoreboard().addPlayerTag(corePlayer);
-        }
-        defaultScoreboard.setup(corePlayer);
+        // Display the scoreboard
+        displayRank(corePlayer);
         // Tab header and footer
         corePlayer.getHeaderFooter().setHeaderFooter(Core.getInstance().getTabHeader(), Core.getInstance().getTabFooter());
         // Show the title if we're supposed to
@@ -130,7 +121,23 @@ public class CorePlayerManager implements CPlayerManager {
     }
 
     @Override
-    public List<CPlayer> getOnlinePlayers() {
-        return new ArrayList<>(onlinePlayers.values());
+    public ImmutableList<CPlayer> getOnlinePlayers() {
+        return ImmutableList.copyOf(onlinePlayers.values());
+    }
+
+    @Override
+    public void displayRank(CPlayer player) {
+        // Set op if the player should be
+        boolean op = player.getRank().isOp();
+        if (player.isOp() != op) {
+            player.setOp(op);
+        }
+
+        player.getScoreboard().setupPlayerTags();
+        for (CPlayer otherPlayer : Core.getPlayerManager().getOnlinePlayers()) {
+            if (player.getScoreboard() != null) player.getScoreboard().addPlayerTag(otherPlayer);
+            if (otherPlayer.getScoreboard() != null) otherPlayer.getScoreboard().addPlayerTag(player);
+        }
+        defaultScoreboard.setup(player);
     }
 }

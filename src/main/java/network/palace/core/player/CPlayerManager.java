@@ -1,5 +1,6 @@
 package network.palace.core.player;
 
+import com.google.common.collect.ImmutableList;
 import org.bukkit.entity.Player;
 
 import java.util.List;
@@ -68,5 +69,12 @@ public interface CPlayerManager {
      *
      * @return the online players
      */
-    List<CPlayer> getOnlinePlayers();
+    ImmutableList<CPlayer> getOnlinePlayers();
+
+    /**
+     * Display the rank to all players.
+     *
+     * @param player the player who's rank to display
+     */
+    void displayRank(CPlayer player);
 }
