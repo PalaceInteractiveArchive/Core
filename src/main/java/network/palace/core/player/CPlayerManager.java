@@ -3,7 +3,6 @@ package network.palace.core.player;
 import com.google.common.collect.ImmutableList;
 import org.bukkit.entity.Player;
 
-import java.util.List;
 import java.util.UUID;
 
 /**
