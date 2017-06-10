@@ -2,7 +2,6 @@ package network.palace.core.player.impl.managers;
 
 import com.comphenix.protocol.wrappers.WrappedGameProfile;
 import com.comphenix.protocol.wrappers.WrappedSignedProperty;
-import com.google.common.collect.ImmutableList;
 import network.palace.core.Core;
 import network.palace.core.dashboard.packets.dashboard.PacketConfirmPlayer;
 import network.palace.core.dashboard.packets.dashboard.PacketGetPack;
@@ -122,6 +121,9 @@ public class CorePlayerManager implements CPlayerManager {
 
     @Override
     public List<CPlayer> getOnlinePlayers() {
+        if (onlinePlayers == null) {
+            return new ArrayList<>();
+        }
         return new ArrayList<>(onlinePlayers.values());
     }
 
