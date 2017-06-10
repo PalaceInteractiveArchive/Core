@@ -44,6 +44,7 @@ public class ReloadCommand extends CoreCommand {
         String p = args[0];
         if (p.equalsIgnoreCase("core")) {
             Core.getResourceManager().reload();
+            Core.getAchievementManager().reload();
             sender.sendMessage(ChatColor.GREEN + "Core reloaded!");
             return;
         }

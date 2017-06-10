@@ -33,6 +33,10 @@ public class CorePlayerAchievementManager implements CPlayerAchievementManager {
         }
         achievements.add(i);
         CoreAchievement ach = Core.getAchievementManager().getAchievement(i);
+        if (ach == null) {
+
+            return;
+        }
         player.sendMessage(ChatColor.GREEN + "--------------" + ChatColor.GOLD + "" + ChatColor.BOLD + "Achievement" +
                 ChatColor.GREEN + "--------------\n" + ChatColor.AQUA + ach.getDisplayName() + "\n" + ChatColor.GRAY +
                 "" + ChatColor.ITALIC + ach.getDescription() + ChatColor.GREEN + "\n----------------------------------------");

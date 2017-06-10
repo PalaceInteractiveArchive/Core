@@ -25,9 +25,16 @@ public class AchievementManager {
     private Map<UUID, List<Integer>> earned = new HashMap<>();
 
     /**
+     * Create a new achievement manager
+     */
+    public AchievementManager() {
+        init();
+    }
+
+    /**
      * Initialize the achievement manager
      */
-    public void init() {
+    private void init() {
         Core.runTaskTimerAsynchronously(this::reload, 0L, 6000L);
 
         Core.runTaskTimerAsynchronously(() -> {
@@ -72,7 +79,7 @@ public class AchievementManager {
     /**
      * Reload all achievements
      */
-    private void reload() {
+    public void reload() {
         JSONObject obj = readJsonFromUrl(url);
         if (obj == null) return;
 
