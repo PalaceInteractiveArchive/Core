@@ -121,8 +121,8 @@ public class CorePlayerManager implements CPlayerManager {
     }
 
     @Override
-    public ImmutableList<CPlayer> getOnlinePlayers() {
-        return ImmutableList.copyOf(onlinePlayers.values());
+    public List<CPlayer> getOnlinePlayers() {
+        return new ArrayList<>(onlinePlayers.values());
     }
 
     @Override
