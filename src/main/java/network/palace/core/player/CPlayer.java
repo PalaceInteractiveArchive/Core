@@ -188,6 +188,7 @@ public interface CPlayer {
 
     /**
      * Gets item in off hand.
+     *
      * @return the item
      */
     ItemStack getItemInOffHand();
@@ -673,16 +674,16 @@ public interface CPlayer {
     /**
      * Add a game statistic to a player
      *
-     * @param gameType the game type that the statistic was earned in
+     * @param gameType      the game type that the statistic was earned in
      * @param statisticType the statistic that was earned
-     * @param amount the amount that was earned
+     * @param amount        the amount that was earned
      */
     void addStatistic(GameType gameType, StatisticType statisticType, int amount);
 
     /**
      * Get a statistic of a player
      *
-     * @param gameType the game
+     * @param gameType      the game
      * @param statisticType the type of statistic
      * @return the amount
      */
@@ -712,7 +713,7 @@ public interface CPlayer {
     /**
      * Set metadata of a player
      *
-     * @param name the name of the metadata
+     * @param name     the name of the metadata
      * @param metadata the metadata to set
      */
     void setMetadata(String name, MetadataValue metadata);
@@ -731,4 +732,25 @@ public interface CPlayer {
      * @param name the name of the metadata to remove
      */
     void removeMetadata(String name, Plugin plugin);
+
+    /**
+     * Get time player connected to server
+     *
+     * @return login time
+     */
+    long getJoinTime();
+
+    /**
+     * Get online time
+     *
+     * @return time spent online
+     */
+    long getOnlineTime();
+
+    /**
+     * Load achievements after join, set them here
+     *
+     * @param manager player's achievement manager
+     */
+    void setAchievementManager(CPlayerAchievementManager manager);
 }

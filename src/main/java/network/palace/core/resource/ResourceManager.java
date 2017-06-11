@@ -4,6 +4,7 @@ import com.comphenix.protocol.PacketType;
 import network.palace.core.Core;
 import network.palace.core.dashboard.packets.dashboard.PacketSetPack;
 import network.palace.core.player.CPlayer;
+import org.bukkit.Bukkit;
 import org.bukkit.ChatColor;
 
 import java.sql.Connection;
@@ -60,6 +61,9 @@ public class ResourceManager {
      */
     public void downloadingResult(UUID uuid, PackStatus status) {
         String pack = downloading.remove(uuid);
+        if (pack == null) {
+            return;
+        }
         if (status != null) {
             switch (status) {
                 case LOADED: {
@@ -108,11 +112,22 @@ public class ResourceManager {
      * @param pack   the pack
      */
     public void sendPack(CPlayer player, ResourcePack pack) {
+        if (player.getOnlineTime() < 2000) {
+            Bukkit.getScheduler().runTaskLater(Core.getInstance(), new Runnable() {
+                @Override
+                public void run() {
+                    player.sendMessage(ChatColor.GREEN + "Attempting to send you the " + ChatColor.YELLOW + pack.getName() +
+                            ChatColor.GREEN + " Resource Pack!");
+                    downloading.put(player.getUniqueId(), pack.getName());
+                    player.getResourcePack().send(pack.getUrl(), pack.getHash().trim().equals("") ? "null" : pack.getHash());
+                }
+            }, 20L);
+            return;
+        }
         player.sendMessage(ChatColor.GREEN + "Attempting to send you the " + ChatColor.YELLOW + pack.getName() +
                 ChatColor.GREEN + " Resource Pack!");
-        player.getResourcePack().send(pack.getUrl(), pack.getHash().trim().equals("") ? "null" : pack.getHash());
         downloading.put(player.getUniqueId(), pack.getName());
-
+        player.getResourcePack().send(pack.getUrl(), pack.getHash().trim().equals("") ? "null" : pack.getHash());
     }
 
     /**

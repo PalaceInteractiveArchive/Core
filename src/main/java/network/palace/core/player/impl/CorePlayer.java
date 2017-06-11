@@ -49,6 +49,8 @@ public class CorePlayer implements CPlayer {
     @Getter @Setter private String textureValue = "";
     @Getter @Setter private String textureSignature = "";
     @Getter @Setter private String pack = "none";
+    @Getter private final long joinTime = System.currentTimeMillis();
+    private List<Integer> queuedAchievements = new ArrayList<>();
 
     @Getter @Setter private int ping;
 
@@ -60,11 +62,10 @@ public class CorePlayer implements CPlayer {
      * @param rank the rank
      * @param ids  achievement list
      */
-    public CorePlayer(UUID uuid, String name, Rank rank, List<Integer> ids) {
+    public CorePlayer(UUID uuid, String name, Rank rank) {
         this.uuid = uuid;
         this.name = name;
         this.rank = rank;
-        this.achievement = new CorePlayerAchievementManager(this, ids);
     }
 
     @Override
@@ -479,13 +480,17 @@ public class CorePlayer implements CPlayer {
 
     @Override
     public boolean hasAchievement(int i) {
-        return getStatus() == PlayerStatus.JOINED && getBukkitPlayer() != null && achievement.hasAchievement(i);
+        return getStatus() == PlayerStatus.JOINED && getBukkitPlayer() != null && achievement != null && achievement.hasAchievement(i);
     }
 
     @Override
     public void giveAchievement(int i) {
         if (getStatus() != PlayerStatus.JOINED) return;
         if (getBukkitPlayer() == null) return;
+        if (achievement == null) {
+            queuedAchievements.add(i);
+            return;
+        }
         achievement.giveAchievement(i);
     }
 
@@ -594,7 +599,7 @@ public class CorePlayer implements CPlayer {
     @Override
     public Optional<Entity> getVehicle() {
         if (!getStatus().equals(PlayerStatus.JOINED)) return Optional.empty();
-        return Optional.ofNullable(getBukkitPlayer().getVehicle()) ;
+        return Optional.ofNullable(getBukkitPlayer().getVehicle());
     }
 
     @Override
@@ -618,5 +623,18 @@ public class CorePlayer implements CPlayer {
     public void removeMetadata(String name, Plugin plugin) {
         if (!getStatus().equals(PlayerStatus.JOINED)) return;
         getBukkitPlayer().removeMetadata(name, plugin);
+    }
+
+    @Override
+    public long getOnlineTime() {
+        return System.currentTimeMillis() - joinTime;
+    }
+
+    @Override
+    public void setAchievementManager(CPlayerAchievementManager manager) {
+        this.achievement = manager;
+        for (int i : queuedAchievements) {
+            achievement.giveAchievement(i);
+        }
     }
 }

@@ -38,9 +38,11 @@ public class CorePlayerManager implements CPlayerManager {
 
     @Override
     public void playerLoggedIn(UUID uuid, String name) {
+        System.out.println(System.currentTimeMillis() + " a");
         Rank rank = Core.getSqlUtil().getRank(uuid);
-        List<Integer> ids = Core.getSqlUtil().getAchievements(uuid);
-        onlinePlayers.put(uuid, new CorePlayer(uuid, name, rank, ids));
+        System.out.println(System.currentTimeMillis() + " b");
+        onlinePlayers.put(uuid, new CorePlayer(uuid, name, rank));
+        System.out.println(System.currentTimeMillis() + " c");
     }
 
     @Override
@@ -70,6 +72,11 @@ public class CorePlayerManager implements CPlayerManager {
         }
         // Setup permissions for player
         Core.getPermissionManager().login(corePlayer);
+        // Achievements Task
+        Core.runTaskAsynchronously(() -> {
+            List<Integer> ids = Core.getSqlUtil().getAchievements(player.getUniqueId());
+            corePlayer.setAchievementManager(new CorePlayerAchievementManager(corePlayer, ids));
+        });
         // Packets
         Core.getDashboardConnection().send(new PacketGetPack(corePlayer.getUniqueId(), ""));
         Core.getDashboardConnection().send(new PacketConfirmPlayer(corePlayer.getUniqueId(), false));

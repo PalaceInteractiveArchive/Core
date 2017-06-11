@@ -53,7 +53,7 @@ public class ResourceListener extends PacketAdapter {
                     player.sendMessage(ChatColor.RED + "There seems to be an error, please report this to a Staff Member! (Error Code 100)");
             }
         } catch (Exception e) {
-            player.sendMessage(ChatColor.RED + "There seems to be an error, please report this to a Staff Member! (Error Code 100)");
+            player.sendMessage(ChatColor.RED + "There seems to be an error, please report this to a Staff Member! (Error Code 101)");
             e.printStackTrace();
         }
     }

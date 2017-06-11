@@ -5,10 +5,7 @@ import com.google.gson.JsonParser;
 import network.palace.core.Core;
 import network.palace.core.dashboard.packets.BasePacket;
 import network.palace.core.dashboard.packets.dashboard.*;
-import network.palace.core.events.CoreOnlineCountUpdate;
-import network.palace.core.events.CurrentPackReceivedEvent;
-import network.palace.core.events.EconomyUpdateEvent;
-import network.palace.core.events.IncomingPacketEvent;
+import network.palace.core.events.*;
 import network.palace.core.player.CPlayer;
 import network.palace.core.player.Rank;
 import org.bukkit.Bukkit;
@@ -137,6 +134,12 @@ public class DashboardConnection {
                     Core.logMessage("Core", ChatColor.DARK_GREEN + "Successfully connected to Dashboard");
                     DashboardConnection.this.send(new PacketConnectionType(PacketConnectionType.ConnectionType.INSTANCE).getJSON().toString());
                     DashboardConnection.this.send(new PacketServerName(Core.getInstanceName()).getJSON().toString());
+                    Bukkit.getScheduler().scheduleSyncDelayedTask(Core.getInstance(), new Runnable() {
+                        @Override
+                        public void run() {
+                            new DashboardConnectEvent().call();
+                        }
+                    }, 0L);
                 }
 
                 @Override

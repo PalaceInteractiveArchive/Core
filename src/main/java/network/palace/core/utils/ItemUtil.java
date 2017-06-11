@@ -26,7 +26,6 @@ import org.bukkit.material.MaterialData;
 import java.io.IOException;
 import java.lang.reflect.InvocationTargetException;
 import java.util.ArrayList;
-import java.util.Base64;
 import java.util.List;
 
 /**
@@ -34,10 +33,7 @@ import java.util.List;
  */
 public class ItemUtil implements Listener {
 
-    private static final Base64.Encoder encoder = Base64.getEncoder();
-    private static final Base64.Decoder decoder = Base64.getDecoder();
     private static final String UNABLE_TO_MOVE = "unableToMove";
-
     private static final String UNABLE_TO_DROP = "unableToDrop";
 
     /**
@@ -284,39 +280,9 @@ public class ItemUtil implements Listener {
         return item;
     }
 
-    public static byte[] getBase64FromInventory(Inventory inv) {
-        String json = getJsonFromInventory(inv).toString();
-        return encoder.encode(json.getBytes());
-    }
-
-    public static ItemStack[] getInventoryFromBase64(byte[] b, int size) {
-        String json = new String(decoder.decode(b));
-        return getInventoryFromJson(json, size);
-    }
-
-    public static byte[] getBase64FromItem(ItemStack i) {
-        String json = getJsonFromItem(i).toString();
-        return encoder.encode(json.getBytes());
-    }
-
-    public static ItemStack getItemFromBase64(byte[] b) {
-        String json = decoder.decode(b).toString();
-        return getItemFromJson(json);
-    }
-
-    public static byte[] getBase64FromArray(ItemStack[] arr) {
-        String json = getJsonFromArray(arr).toString();
-        return encoder.encode(json.getBytes());
-    }
-
-    public static ItemStack[] getArrayFromBase64(byte[] b) {
-        String json = decoder.decode(b).toString();
-        return getInventoryFromJson(json, 0);
-    }
-
     public static JsonObject getJsonFromItem(ItemStack i) {
         JsonObject o = new JsonObject();
-        if (i == null || i.getType().equals(Material.AIR)) {
+        if (i == null) {
             return o;
         }
         o.addProperty("t", i.getTypeId());
@@ -355,47 +321,23 @@ public class ItemUtil implements Listener {
 
     public static JsonArray getJsonFromArray(ItemStack[] arr) {
         JsonArray a = new JsonArray();
-        int pos = 0;
         for (ItemStack i : arr) {
-            if (i == null || i.getType().equals(Material.AIR)) {
-                pos++;
-                continue;
-            }
-            JsonObject o = getJsonFromItem(i);
-            o.addProperty("p", pos);
-            a.add(o);
-            pos++;
+            a.add(getJsonFromItem(i));
         }
         return a;
     }
 
-    public static ItemStack[] getInventoryFromJson(String json, int size) {
-        if ((size % 9 != 0 || size > 54) && size != 0) {
-            throw new IllegalArgumentException("Inventory size " + size + " must be divisible by 9 and no greater than 54!");
-        }
+    public static ItemStack[] getInventoryFromJson(String json) {
         JsonElement e = new JsonParser().parse(json);
         if (!e.isJsonArray()) {
             return new ItemStack[0];
         }
         JsonArray ja = e.getAsJsonArray();
-        if (size == 0) {
-            size = ja.size();
-        }
-        ItemStack[] a = new ItemStack[size];
-        for (int i = 0; i < size; i++) {
-            a[i] = new ItemStack(Material.AIR);
-        }
+        ItemStack[] a = new ItemStack[ja.size()];
         int i = 0;
         for (JsonElement e2 : ja) {
-            if (i >= size) {
-                break;
-            }
             JsonObject o = e2.getAsJsonObject();
-            int slot = o.get("p").getAsInt();
-            if (slot >= size) {
-                continue;
-            }
-            a[slot] = getItemFromJson(o.toString());
+            a[i] = getItemFromJson(o.toString());
             i++;
         }
         return a;
