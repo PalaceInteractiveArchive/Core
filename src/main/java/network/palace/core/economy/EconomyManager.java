@@ -28,6 +28,7 @@ public class EconomyManager {
      */
     public EconomyManager() {
         Core.runTaskTimerAsynchronously(() -> {
+            Map<UUID, Payment> localMap = new HashMap<>(balance);
             balance.clear();
             for (Map.Entry<UUID, Payment> entry : new HashSet<>(balance.entrySet())) {
                 Payment payment = new Payment(entry.getKey(), entry.getValue().getAmount(), entry.getValue().getSource());
@@ -42,9 +43,7 @@ public class EconomyManager {
             for (Map.Entry<UUID, Payment> entry : new HashSet<>(localMap.entrySet())) {
                 Payment payment = new Payment(entry.getKey(), entry.getValue().getAmount(), entry.getValue().getSource());
                 tokens.remove(entry.getKey());
-                if (payment.getAmount() == 0) {
-                    continue;
-                }
+                if (payment.getAmount() == 0) continue;
                 changeTokens(entry.getKey(), payment.getAmount(), payment.getSource());
             }
         }, 0L, 20L);
