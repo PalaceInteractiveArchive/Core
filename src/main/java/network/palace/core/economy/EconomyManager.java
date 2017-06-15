@@ -30,7 +30,7 @@ public class EconomyManager {
         Core.runTaskTimerAsynchronously(() -> {
             Map<UUID, Payment> localMap = new HashMap<>(balance);
             balance.clear();
-            for (Map.Entry<UUID, Payment> entry : new HashSet<>(balance.entrySet())) {
+            for (Map.Entry<UUID, Payment> entry : new HashSet<>(localMap.entrySet())) {
                 Payment payment = new Payment(entry.getKey(), entry.getValue().getAmount(), entry.getValue().getSource());
                 balance.remove(entry.getKey());
                 if (payment.getAmount() == 0) continue;
@@ -306,15 +306,7 @@ public class EconomyManager {
         String sign = amount > 0 ? "+ " : "- ";
         CPlayer player = Core.getPlayerManager().getPlayer(uuid);
         player.getActionBar().show(ChatColor.YELLOW + sign + "$" + Math.abs(amount));
-        if (balance.containsKey(uuid)) {
-            Payment payment = balance.remove(uuid);
-            if (amount + payment.getAmount() == 0) {
-                return;
-            }
-            balance.put(uuid, new Payment(uuid, amount + payment.getAmount(), source));
-        } else {
-            balance.put(uuid, new Payment(uuid, amount, source));
-        }
+        addCurrency(uuid, amount, source, balance);
     }
 
     /**
@@ -338,14 +330,26 @@ public class EconomyManager {
         String sign = amount > 0 ? "+ " : "- ";
         CPlayer player = Core.getPlayerManager().getPlayer(uuid);
         player.getActionBar().show(ChatColor.YELLOW + sign + Math.abs(amount) + " Tokens");
-        if (tokens.containsKey(uuid)) {
-            Payment payment = tokens.remove(uuid);
+        addCurrency(uuid, amount, source, tokens);
+    }
+
+    /**
+     * Method that works for both balance and tokens
+     *
+     * @param uuid   the uuid
+     * @param amount the amount
+     * @param source the source
+     * @param map    the map to add the payment to
+     */
+    private void addCurrency(UUID uuid, int amount, String source, Map<UUID, Payment> map) {
+        if (map.containsKey(uuid)) {
+            Payment payment = map.remove(uuid);
             if (amount + payment.getAmount() == 0) {
                 return;
             }
-            tokens.put(uuid, new Payment(uuid, amount + payment.getAmount(), source));
+            map.put(uuid, new Payment(uuid, amount + payment.getAmount(), source));
         } else {
-            tokens.put(uuid, new Payment(uuid, amount, source));
+            map.put(uuid, new Payment(uuid, amount, source));
         }
     }
 

@@ -60,7 +60,7 @@ public enum Rank {
      */
     public String getFormattedName() {
         String bold = getRankId() >= Rank.SQUIRE.getRankId() ? "" + ChatColor.BOLD : "";
-        return getTagColor() + bold + getName() + " ";
+        return getTagColor() + bold + getName();
     }
 
     /**

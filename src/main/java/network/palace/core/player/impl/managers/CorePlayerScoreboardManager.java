@@ -41,6 +41,7 @@ public class CorePlayerScoreboardManager implements CPlayerScoreboardManager {
 
     /**
      * Set a sidebar scoreboard value
+     *
      * @param id   the id of the location in the sidebar
      * @param text the text to show
      * @return scoreboard manager
@@ -66,6 +67,7 @@ public class CorePlayerScoreboardManager implements CPlayerScoreboardManager {
 
     /**
      * Create a blank entry at an id
+     *
      * @param id the id to create as blank
      * @return scoreboard manager
      */
@@ -76,6 +78,7 @@ public class CorePlayerScoreboardManager implements CPlayerScoreboardManager {
 
     /**
      * Remove an id from the sidebar
+     *
      * @param id the id to remove
      * @return scoreboard manager
      */
@@ -90,6 +93,7 @@ public class CorePlayerScoreboardManager implements CPlayerScoreboardManager {
 
     /**
      * Set the title of a sidebar scoreboard
+     *
      * @param title the title to use
      * @return scoreboard manager
      */
@@ -139,7 +143,7 @@ public class CorePlayerScoreboardManager implements CPlayerScoreboardManager {
         for (Rank rank : Rank.values()) {
             if (scoreboard.getTeam(rank.getName()) != null) continue;
             Team team = scoreboard.registerNewTeam(rank.getName());
-            team.setPrefix(rank.getFormattedName());
+            team.setPrefix(rank.getFormattedName() + " ");
             team.setOption(Team.Option.COLLISION_RULE, Team.OptionStatus.NEVER);
             team.setSuffix("");
         }
@@ -147,6 +151,7 @@ public class CorePlayerScoreboardManager implements CPlayerScoreboardManager {
 
     /**
      * Add a tag to a player
+     *
      * @param otherPlayer the other player
      */
     @Override
@@ -160,6 +165,7 @@ public class CorePlayerScoreboardManager implements CPlayerScoreboardManager {
 
     /**
      * Remove a tag from a player
+     *
      * @param otherPlayer the other player
      */
     @Override
