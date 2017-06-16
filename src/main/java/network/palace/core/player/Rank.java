@@ -22,7 +22,7 @@ public enum Rank {
     MCPROHOSTING("MCProHosting", ChatColor.RED + "MCPro ", ChatColor.RED, ChatColor.WHITE, false, 6),
     HONORABLE("Honorable", ChatColor.LIGHT_PURPLE + "Honorable ", ChatColor.LIGHT_PURPLE, ChatColor.WHITE, false, 5),
     MAJESTIC("Majestic", ChatColor.DARK_PURPLE + "Majestic ", ChatColor.DARK_PURPLE, ChatColor.WHITE, false, 4),
-    NOBLE("Noble", ChatColor.BLUE + "Noble " ,ChatColor.BLUE, ChatColor.WHITE, false, 3),
+    NOBLE("Noble", ChatColor.BLUE + "Noble ", ChatColor.BLUE, ChatColor.WHITE, false, 3),
     SHAREHOLDER("Shareholder", ChatColor.LIGHT_PURPLE + "Shareholder ", ChatColor.LIGHT_PURPLE, ChatColor.WHITE, false, 3),
     DWELLER("Dweller", ChatColor.AQUA + "Dweller ", ChatColor.AQUA, ChatColor.WHITE, false, 2),
     DVCMEMBER("DVC", ChatColor.AQUA + "DVC ", ChatColor.AQUA, ChatColor.WHITE, false, 2),
@@ -36,10 +36,10 @@ public enum Rank {
     @Getter private int rankId;
 
     public static Rank fromString(String name) {
-        String rankName = name.toLowerCase();
+        String rankName = name.toLowerCase().replaceAll(" ", "");
 
         for (Rank rank : Rank.values()) {
-            if (rank.getName().equalsIgnoreCase(rankName)) return rank;
+            if (rank.getName().replaceAll(" ", "").equalsIgnoreCase(rankName)) return rank;
         }
         return SETTLER;
     }
