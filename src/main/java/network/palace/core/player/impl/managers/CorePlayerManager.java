@@ -118,12 +118,18 @@ public class CorePlayerManager implements CPlayerManager {
 
     @Override
     public CPlayer getPlayer(Player player) {
+        if (player == null) {
+            return null;
+        }
         return getPlayer(player.getUniqueId());
     }
 
     @Override
     public CPlayer getPlayer(String name) {
-        return getPlayer(Bukkit.getPlayer(name));
+        Player p = Bukkit.getPlayer(name);
+        if (p == null)
+            return null;
+        return getPlayer(p);
     }
 
     @Override
