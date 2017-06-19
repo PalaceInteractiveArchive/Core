@@ -488,7 +488,7 @@ public class SqlUtil {
 
         try {
             // Create a new statement
-            PreparedStatement statement = connection.prepareStatement("INSERT INTO caseEarnings (uuid,id,status) VALUES (?,?,?)");
+            PreparedStatement statement = connection.prepareStatement("INSERT INTO cosmetics (uuid,id,`status`) VALUES (?,?,?)");
 
             // Set the params and execute
             statement.setString(1, player.getUuid().toString());
@@ -522,15 +522,11 @@ public class SqlUtil {
 
         boolean hasCosmetic = false;
         try {
-            PreparedStatement statement = connection.prepareStatement("SELECT status FROM caseEarnings WHERE uuid=? AND id=? AND status=?");
+            PreparedStatement statement = connection.prepareStatement("SELECT status FROM cosmetics WHERE uuid=? AND id=?");
             statement.setString(1, player.getUuid().toString());
             statement.setInt(2, id);
-            statement.setBoolean(3, true);
             ResultSet results = statement.executeQuery();
-
-            while (results.next()) {
-                hasCosmetic = true;
-            }
+            hasCosmetic = results.next();
 
             statement.close();
             results.close();
