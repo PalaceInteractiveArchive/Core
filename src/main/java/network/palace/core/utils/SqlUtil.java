@@ -472,13 +472,17 @@ public class SqlUtil {
         return texture;
     }
 
+    public void earnCosmetic(CPlayer player, int id) {
+        earnCosmetic(player.getUuid(), id);
+    }
+
     /**
      * Earn a cosmetic for a player
      *
-     * @param player the player that earned it
-     * @param id     the id of the cosmetic that they earned
+     * @param uuid the uuid that earned it
+     * @param id   the id of the cosmetic that they earned
      */
-    public void earnCosmetic(CPlayer player, int id) {
+    public void earnCosmetic(UUID uuid, int id) {
         Connection connection = getConnection();
         if (connection == null) {
             Core.logInfo("Core > Unable to give player cosmetic item - Cannot connect to MySql!");
@@ -486,12 +490,13 @@ public class SqlUtil {
             return;
         }
 
+        if (hasCosmetic(uuid, id)) return;
         try {
             // Create a new statement
-            PreparedStatement statement = connection.prepareStatement("INSERT INTO cosmetics (uuid,id,`status`) VALUES (?,?,?)");
+            PreparedStatement statement = connection.prepareStatement("INSERT INTO cosmetics (uuid,cosmetic,`status`) VALUES (?,?,?)");
 
             // Set the params and execute
-            statement.setString(1, player.getUuid().toString());
+            statement.setString(1, uuid.toString());
             statement.setInt(2, id);
             statement.setBoolean(3, true);
             statement.execute();
@@ -505,14 +510,18 @@ public class SqlUtil {
         }
     }
 
+    public boolean hasCosmetic(CPlayer player, int id) {
+        return hasCosmetic(player.getUuid(), id);
+    }
+
     /**
      * Does a player have a cosmetic item?
      *
-     * @param player the player to check
-     * @param id     the id to check
-     * @return        if the player has the cosmetic
+     * @param uuid the uuid to check
+     * @param id   the id to check
+     * @return     if the player has the cosmetic
      */
-    public boolean hasCosmetic(CPlayer player, int id) {
+    public boolean hasCosmetic(UUID uuid, int id) {
         Connection connection = getConnection();
         if (connection == null) {
             Core.logInfo("Core > Unable to check cosmetic status - Cannot connect to MySql!");
@@ -522,8 +531,8 @@ public class SqlUtil {
 
         boolean hasCosmetic = false;
         try {
-            PreparedStatement statement = connection.prepareStatement("SELECT status FROM cosmetics WHERE uuid=? AND id=?");
-            statement.setString(1, player.getUuid().toString());
+            PreparedStatement statement = connection.prepareStatement("SELECT status FROM cosmetics WHERE uuid=? AND cosmetic=?");
+            statement.setString(1, uuid.toString());
             statement.setInt(2, id);
             ResultSet results = statement.executeQuery();
             hasCosmetic = results.next();
