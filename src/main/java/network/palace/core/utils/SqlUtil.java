@@ -68,15 +68,15 @@ public class SqlUtil {
             return Rank.SETTLER;
         }
         try {
-            PreparedStatement sql = connection.prepareStatement("SELECT rank FROM player_data WHERE uuid=?");
-            sql.setString(1, uuid.toString());
-            ResultSet result = sql.executeQuery();
+            PreparedStatement statement = connection.prepareStatement("SELECT rank FROM player_data WHERE uuid=?");
+            statement.setString(1, uuid.toString());
+            ResultSet result = statement.executeQuery();
             if (!result.next()) {
                 return Rank.SETTLER;
             }
             Rank rank = Rank.fromString(result.getString("rank"));
             result.close();
-            sql.close();
+            statement.close();
             connection.close();
             return rank;
         } catch (SQLException e) {
@@ -100,15 +100,15 @@ public class SqlUtil {
             return Rank.SETTLER;
         }
         try {
-            PreparedStatement sql = connection.prepareStatement("SELECT rank FROM player_data WHERE username=?");
-            sql.setString(1, username);
-            ResultSet result = sql.executeQuery();
+            PreparedStatement statement = connection.prepareStatement("SELECT rank FROM player_data WHERE username=?");
+            statement.setString(1, username);
+            ResultSet result = statement.executeQuery();
             if (!result.next()) {
                 return Rank.SETTLER;
             }
             Rank rank = Rank.fromString(result.getString("rank"));
             result.close();
-            sql.close();
+            statement.close();
             connection.close();
             return rank;
         } catch (SQLException e) {
@@ -132,12 +132,12 @@ public class SqlUtil {
             return false;
         }
         try {
-            PreparedStatement sql = connection.prepareStatement("SELECT id FROM player_data WHERE username=?");
-            sql.setString(1, username);
-            ResultSet result = sql.executeQuery();
+            PreparedStatement statement = connection.prepareStatement("SELECT id FROM player_data WHERE username=?");
+            statement.setString(1, username);
+            ResultSet result = statement.executeQuery();
             boolean contains = result.next();
             result.close();
-            sql.close();
+            statement.close();
             connection.close();
             return contains;
         } catch (SQLException e) {
@@ -161,17 +161,17 @@ public class SqlUtil {
             return UUID.randomUUID();
         }
         try {
-            PreparedStatement sql = connection.prepareStatement("SELECT uuid FROM player_data WHERE username=?");
-            sql.setString(1, username);
-            ResultSet result = sql.executeQuery();
+            PreparedStatement statement = connection.prepareStatement("SELECT uuid FROM player_data WHERE username=?");
+            statement.setString(1, username);
+            ResultSet result = statement.executeQuery();
             if (!result.next()) {
                 result.close();
-                sql.close();
+                statement.close();
                 return null;
             }
             String uuid = result.getString("uuid");
             result.close();
-            sql.close();
+            statement.close();
             connection.close();
             return UUID.fromString(uuid);
         } catch (SQLException e) {
@@ -197,15 +197,15 @@ public class SqlUtil {
             return new HashMap<>();
         }
         try {
-            PreparedStatement sql = connection.prepareStatement("SELECT * FROM permissions WHERE rank=?");
-            sql.setString(1, rank.getSqlName());
-            ResultSet result = sql.executeQuery();
+            PreparedStatement statement = connection.prepareStatement("SELECT * FROM permissions WHERE rank=?");
+            statement.setString(1, rank.getSqlName());
+            ResultSet result = statement.executeQuery();
             Map<String, Boolean> permissions = new HashMap<>();
             while (result.next()) {
                 permissions.put(result.getString("node"), result.getInt("value") == 1);
             }
             result.close();
-            sql.close();
+            statement.close();
             connection.close();
             return permissions;
         } catch (SQLException e) {
@@ -239,15 +239,15 @@ public class SqlUtil {
             return new ArrayList<>();
         }
         try {
-            PreparedStatement sql = connection.prepareStatement("SELECT username FROM player_data WHERE rank=?");
-            sql.setString(1, rank.getSqlName());
-            ResultSet result = sql.executeQuery();
+            PreparedStatement statement = connection.prepareStatement("SELECT username FROM player_data WHERE rank=?");
+            statement.setString(1, rank.getSqlName());
+            ResultSet result = statement.executeQuery();
             List<String> members = new ArrayList<>();
             while (result.next()) {
                 members.add(result.getString("username"));
             }
             result.close();
-            sql.close();
+            statement.close();
             connection.close();
             return members;
         } catch (SQLException e) {
@@ -271,11 +271,11 @@ public class SqlUtil {
             return;
         }
         try {
-            PreparedStatement sql = connection.prepareStatement("UPDATE player_data SET rank=? WHERE uuid=?");
-            sql.setString(1, rank.getSqlName());
-            sql.setString(2, uuid.toString());
-            sql.execute();
-            sql.close();
+            PreparedStatement statement = connection.prepareStatement("UPDATE player_data SET rank=? WHERE uuid=?");
+            statement.setString(1, rank.getSqlName());
+            statement.setString(2, uuid.toString());
+            statement.execute();
+            statement.close();
             connection.close();
         } catch (SQLException e) {
             e.printStackTrace();
@@ -299,17 +299,17 @@ public class SqlUtil {
         }
         try {
             String s = "IF EXISTS (SELECT * FROM permissions WHERE rank=? AND node=?) UPDATE permissions SET value=? WHERE node=? AND rank=? ELSE INSERT INTO Table1 VALUES (0,?,?,?)";
-            PreparedStatement sql = connection.prepareStatement(s);
-            sql.setString(1, rank.getSqlName());
-            sql.setString(2, node);
-            sql.setInt(3, value ? 1 : 0);
-            sql.setString(4, node);
-            sql.setString(5, rank.getSqlName());
-            sql.setString(6, rank.getSqlName());
-            sql.setString(7, node);
-            sql.setInt(8, value ? 1 : 0);
-            sql.execute();
-            sql.close();
+            PreparedStatement statement = connection.prepareStatement(s);
+            statement.setString(1, rank.getSqlName());
+            statement.setString(2, node);
+            statement.setInt(3, value ? 1 : 0);
+            statement.setString(4, node);
+            statement.setString(5, rank.getSqlName());
+            statement.setString(6, rank.getSqlName());
+            statement.setString(7, node);
+            statement.setInt(8, value ? 1 : 0);
+            statement.execute();
+            statement.close();
             connection.close();
         } catch (SQLException e) {
             e.printStackTrace();
@@ -332,11 +332,11 @@ public class SqlUtil {
             return;
         }
         try {
-            PreparedStatement sql = connection.prepareStatement("DELETE FROM permissions WHERE rank=? AND node=?");
-            sql.setString(1, rank.getSqlName());
-            sql.setString(2, node);
-            sql.execute();
-            sql.close();
+            PreparedStatement statement = connection.prepareStatement("DELETE FROM permissions WHERE rank=? AND node=?");
+            statement.setString(1, rank.getSqlName());
+            statement.setString(2, node);
+            statement.execute();
+            statement.close();
             connection.close();
         } catch (SQLException e) {
             e.printStackTrace();
@@ -359,12 +359,12 @@ public class SqlUtil {
             return;
         }
         try {
-            PreparedStatement sql = connection.prepareStatement("INSERT INTO achievements (uuid, achid, time) VALUES (?,?,?)");
-            sql.setString(1, player.getUniqueId().toString());
-            sql.setInt(2, id);
-            sql.setInt(3, (int) (System.currentTimeMillis() / 1000));
-            sql.execute();
-            sql.close();
+            PreparedStatement statement = connection.prepareStatement("INSERT INTO achievements (uuid, achid, time) VALUES (?,?,?)");
+            statement.setString(1, player.getUniqueId().toString());
+            statement.setInt(2, id);
+            statement.setInt(3, (int) (System.currentTimeMillis() / 1000));
+            statement.execute();
+            statement.close();
             connection.close();
         } catch (SQLException e) {
             e.printStackTrace();
@@ -387,14 +387,14 @@ public class SqlUtil {
             return list;
         }
         try {
-            PreparedStatement ach = connection.prepareStatement("SELECT * FROM achievements WHERE uuid=?");
-            ach.setString(1, uuid.toString());
-            ResultSet achResult = ach.executeQuery();
+            PreparedStatement statement = connection.prepareStatement("SELECT * FROM achievements WHERE uuid=?");
+            statement.setString(1, uuid.toString());
+            ResultSet achResult = statement.executeQuery();
             while (achResult.next()) {
                 list.add(achResult.getInt("achid"));
             }
             achResult.close();
-            ach.close();
+            statement.close();
             connection.close();
         } catch (SQLException e) {
             e.printStackTrace();
@@ -494,13 +494,11 @@ public class SqlUtil {
         try {
             // Create a new statement
             PreparedStatement statement = connection.prepareStatement("INSERT INTO cosmetics (uuid,cosmetic,`status`) VALUES (?,?,?)");
-
             // Set the params and execute
             statement.setString(1, uuid.toString());
             statement.setInt(2, id);
             statement.setBoolean(3, true);
             statement.execute();
-
             // Finish up
             statement.close();
             connection.close();
