@@ -14,6 +14,7 @@ import network.palace.core.player.impl.CorePlayer;
 import network.palace.core.player.impl.CorePlayerDefaultScoreboard;
 import network.palace.core.player.impl.listeners.CorePlayerManagerListener;
 import network.palace.core.player.impl.listeners.CorePlayerStaffLoginListener;
+import network.palace.core.utils.SqlUtil;
 import org.bukkit.Bukkit;
 import org.bukkit.entity.Player;
 
@@ -38,11 +39,11 @@ public class CorePlayerManager implements CPlayerManager {
 
     @Override
     public void playerLoggedIn(UUID uuid, String name) {
-        System.out.println(System.currentTimeMillis() + " a");
-        Rank rank = Core.getSqlUtil().getRank(uuid);
-        System.out.println(System.currentTimeMillis() + " b");
-        onlinePlayers.put(uuid, new CorePlayer(uuid, name, rank));
-        System.out.println(System.currentTimeMillis() + " c");
+//        System.out.println(System.currentTimeMillis() + " a");
+        SqlUtil.JoinReport report = Core.getSqlUtil().getJoinReport(uuid);
+//        System.out.println(System.currentTimeMillis() + " b");
+        onlinePlayers.put(uuid, new CorePlayer(report.getSqlId(), uuid, name, report.getRank()));
+//        System.out.println(System.currentTimeMillis() + " c");
     }
 
     @Override
@@ -74,8 +75,11 @@ public class CorePlayerManager implements CPlayerManager {
         Core.getPermissionManager().login(corePlayer);
         // Achievements Task
         Core.runTaskAsynchronously(() -> {
-            List<Integer> ids = Core.getSqlUtil().getAchievements(player.getUniqueId());
+            List<Integer> ids = Core.getSqlUtil().getAchievements(corePlayer.getSqlId());
             corePlayer.setAchievementManager(new CorePlayerAchievementManager(corePlayer, ids));
+            corePlayer.setHonor(Core.getSqlUtil().getHonor(corePlayer.getSqlId()));
+            corePlayer.setPreviousHonorLevel(Core.getHonorManager().getLevel(corePlayer.getHonor()).getLevel());
+            Core.getHonorManager().displayHonor(corePlayer, true);
         });
         // Packets
         Core.getDashboardConnection().send(new PacketGetPack(corePlayer.getUniqueId(), ""));
@@ -130,6 +134,16 @@ public class CorePlayerManager implements CPlayerManager {
         if (p == null)
             return null;
         return getPlayer(p);
+    }
+
+    @Override
+    public CPlayer getPlayer(int sqlId) {
+        for (CPlayer p : getOnlinePlayers()) {
+            if (p.getSqlId() == sqlId) {
+                return p;
+            }
+        }
+        return null;
     }
 
     @Override

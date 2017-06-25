@@ -50,6 +50,8 @@ public class CorePlayerManagerListener implements Listener {
         if (!player.hasAchievement(Achievement.OPEN_INVENTORY)) {
             player.awardAchievement(Achievement.OPEN_INVENTORY);
         }
+        player.setExp(0);
+        player.setLevel(0);
         Core.getPlayerManager().playerJoined(player);
     }
 

@@ -23,6 +23,13 @@ import java.util.UUID;
  * The interface CPlayer.
  */
 public interface CPlayer {
+    /**
+     * Gets the sql id of the player
+     *
+     * @return sql id
+     * @implNote used to make sql calls much quicker
+     */
+    int getSqlId();
 
     /**
      * Gets player name.
@@ -690,6 +697,7 @@ public interface CPlayer {
     int getStatistic(GameType gameType, StatisticType statisticType);
 
     /**
+     * <<<<<<< HEAD
      * Get the currently open inventory of a player
      *
      * @return the currently open inventory
@@ -753,4 +761,74 @@ public interface CPlayer {
      * @param manager player's achievement manager
      */
     void setAchievementManager(CPlayerAchievementManager manager);
+
+    /**
+     * Set the player's level
+     *
+     * @param level the level to set to
+     */
+    void setLevel(int level);
+
+    /**
+     * Get the player's current level
+     *
+     * @return the current level
+     */
+    int getLevel();
+
+    /**
+     * Set player's exp amount
+     *
+     * @param exp amount
+     */
+    void setExp(float exp);
+
+    /**
+     * Get player's exp amount
+     *
+     * @return exp
+     */
+    float getExp();
+
+    /**
+     * Get the current honor the player has
+     *
+     * @return the total honor the player has
+     */
+    int getHonor();
+
+    /**
+     * Give honor to a player
+     *
+     * @param amount the amount of honor to add
+     */
+    void giveHonor(int amount);
+
+    /**
+     * Remove honor from the player
+     *
+     * @param amount the amount to remove
+     */
+    void removeHonor(int amount);
+
+    /**
+     * Set the player's honor
+     *
+     * @param amount the amount to set to
+     */
+    void setHonor(int amount);
+
+    /**
+     * Get stored honor level to keep track of level changes
+     *
+     * @return previously stored honor level
+     */
+    int getPreviousHonorLevel();
+
+    /**
+     * Update stored honor level for level changes
+     *
+     * @param level the level to store
+     */
+    void setPreviousHonorLevel(int level);
 }

@@ -29,10 +29,13 @@ import java.util.*;
 import java.util.logging.Level;
 
 /**
- * The type Core player.
+ * Implementation of CPlayer
+ *
+ * @see network.palace.core.player.CPlayer
  */
 public class CorePlayer implements CPlayer {
 
+    @Getter private final int sqlId;
     @Getter private final UUID uuid;
     private final String name;
     @Getter @Setter private Rank rank = Rank.SETTLER;
@@ -52,7 +55,9 @@ public class CorePlayer implements CPlayer {
     @Getter private final long joinTime = System.currentTimeMillis();
     private List<Integer> queuedAchievements = new ArrayList<>();
 
+    @Getter @Setter private int honor;
     @Getter @Setter private int ping;
+    @Getter @Setter private int previousHonorLevel;
 
     /**
      * Instantiates a new Core player.
@@ -62,7 +67,8 @@ public class CorePlayer implements CPlayer {
      * @param rank the rank
      * @param ids  achievement list
      */
-    public CorePlayer(UUID uuid, String name, Rank rank) {
+    public CorePlayer(int sqlId, UUID uuid, String name, Rank rank) {
+        this.sqlId = sqlId;
         this.uuid = uuid;
         this.name = name;
         this.rank = rank;
@@ -108,6 +114,7 @@ public class CorePlayer implements CPlayer {
         getBukkitPlayer().playSound(location, sound, volume, pitch);
     }
 
+    @SuppressWarnings("deprecation")
     @Override
     public void setMaxHealth(double health) {
         if (getStatus() != PlayerStatus.JOINED) return;
@@ -130,6 +137,7 @@ public class CorePlayer implements CPlayer {
         return getBukkitPlayer().getHealth();
     }
 
+    @SuppressWarnings("deprecation")
     @Override
     public double getMaxHealth() {
         if (getStatus() != PlayerStatus.JOINED) return 20;
@@ -206,6 +214,7 @@ public class CorePlayer implements CPlayer {
         getBukkitPlayer().sendMessage(message);
     }
 
+    @SuppressWarnings("deprecation")
     @Override
     public void resetPlayer() {
         if (getStatus() != PlayerStatus.JOINED) return;
@@ -591,6 +600,7 @@ public class CorePlayer implements CPlayer {
     }
 
     @Override
+
     public Optional<InventoryView> getOpenInventory() {
         if (!getStatus().equals(PlayerStatus.JOINED)) return Optional.empty();
         return Optional.ofNullable(getBukkitPlayer().getOpenInventory());
@@ -600,6 +610,47 @@ public class CorePlayer implements CPlayer {
     public Optional<Entity> getVehicle() {
         if (!getStatus().equals(PlayerStatus.JOINED)) return Optional.empty();
         return Optional.ofNullable(getBukkitPlayer().getVehicle());
+    }
+
+    @Override
+    public void setLevel(int level) {
+        if (!getStatus().equals(PlayerStatus.JOINED)) return;
+        getBukkitPlayer().setLevel(level);
+    }
+
+    @Override
+    public int getLevel() {
+        return getStatus().equals(PlayerStatus.JOINED) ? getBukkitPlayer().getLevel() : 1;
+    }
+
+    @Override
+    public void setExp(float exp) {
+        if (!getStatus().equals(PlayerStatus.JOINED)) return;
+        if (getBukkitPlayer() == null) return;
+        getBukkitPlayer().setExp(exp);
+    }
+
+    @Override
+    public float getExp() {
+        if (!getStatus().equals(PlayerStatus.JOINED)) return 0;
+        if (getBukkitPlayer() == null) return 0;
+        return getBukkitPlayer().getExp();
+    }
+
+    @Override
+    public void giveHonor(int amount) {
+        honor += amount;
+        Core.getHonorManager().displayHonor(this);
+        getActionBar().show(ChatColor.LIGHT_PURPLE + "+" + amount + " Honor");
+        Core.getSqlUtil().addHonor(sqlId, amount);
+    }
+
+    @Override
+    public void removeHonor(int amount) {
+        honor -= amount;
+        Core.getHonorManager().displayHonor(this);
+        getActionBar().show(ChatColor.DARK_PURPLE + "-" + amount + " Honor");
+        Core.getSqlUtil().addHonor(sqlId, -amount);
     }
 
     @Override

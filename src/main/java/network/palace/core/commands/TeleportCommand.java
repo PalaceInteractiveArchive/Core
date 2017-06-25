@@ -18,6 +18,7 @@ import org.bukkit.Location;
 @CommandPermission(rank = Rank.SQUIRE)
 @CommandMeta(description = "Teleport a player", aliases = "tp")
 public class TeleportCommand extends CoreCommand {
+
     public TeleportCommand() {
         super("teleport");
     }
