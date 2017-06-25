@@ -64,6 +64,14 @@ public interface CPlayerManager {
     CPlayer getPlayer(String name);
 
     /**
+     * Get a player by sql id
+     *
+     * @param sqlId the sql id
+     * @return the player
+     */
+    CPlayer getPlayer(int sqlId);
+
+    /**
      * Gets online players.
      *
      * @return the online players

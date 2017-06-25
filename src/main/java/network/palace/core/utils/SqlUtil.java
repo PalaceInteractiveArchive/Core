@@ -1,6 +1,10 @@
 package network.palace.core.utils;
 
+import lombok.AllArgsConstructor;
+import lombok.Getter;
 import network.palace.core.Core;
+import network.palace.core.honor.HonorMapping;
+import network.palace.core.honor.TopHonorReport;
 import network.palace.core.npc.mob.MobPlayerTexture;
 import network.palace.core.player.CPlayer;
 import network.palace.core.player.Rank;
@@ -58,7 +62,7 @@ public class SqlUtil {
      * Get rank.
      *
      * @param uuid the uuid
-     * @return     the rank
+     * @return the rank
      */
     public Rank getRank(UUID uuid) {
         Connection connection = getConnection();
@@ -90,7 +94,7 @@ public class SqlUtil {
      * Gets rank.
      *
      * @param username the username
-     * @return         the player's rank
+     * @return the player's rank
      */
     public Rank getRank(String username) {
         Connection connection = getConnection();
@@ -122,7 +126,7 @@ public class SqlUtil {
      * Player exists boolean.
      *
      * @param username the username
-     * @return         if the player exists or not
+     * @return if the player exists or not
      */
     public boolean playerExists(String username) {
         Connection connection = getConnection();
@@ -147,11 +151,39 @@ public class SqlUtil {
         }
     }
 
+    public int getIdFromName(String username) {
+        Connection connection = getConnection();
+        if (connection == null) {
+            ErrorUtil.displayError("Unable to connect to MySQL!");
+            Core.logInfo("Core > Could not get UUID from name! - Cannot connect to MySQL!");
+            return 0;
+        }
+        try {
+            PreparedStatement sql = connection.prepareStatement("SELECT id FROM player_data WHERE username=?");
+            sql.setString(1, username);
+            ResultSet result = sql.executeQuery();
+            if (!result.next()) {
+                result.close();
+                sql.close();
+                return 0;
+            }
+            int id = result.getInt("id");
+            result.close();
+            sql.close();
+            connection.close();
+            return id;
+        } catch (SQLException e) {
+            e.printStackTrace();
+            ErrorUtil.displayError(e);
+            return 0;
+        }
+    }
+
     /**
      * Gets unique id from name.
      *
      * @param username the username
-     * @return         the unique id from name
+     * @return the unique id from name
      */
     public UUID getUniqueIdFromName(String username) {
         Connection connection = getConnection();
@@ -187,7 +219,7 @@ public class SqlUtil {
      * Gets permissions.
      *
      * @param rank the rank
-     * @return     the permissions
+     * @return the permissions
      */
     public Map<String, Boolean> getPermissions(Rank rank) {
         Connection connection = getConnection();
@@ -219,7 +251,7 @@ public class SqlUtil {
      * Gets permissions.
      *
      * @param player the player
-     * @return       the permissions
+     * @return the permissions
      */
     public Map<String, Boolean> getPermissions(CPlayer player) {
         return getPermissions(player.getRank());
@@ -229,7 +261,7 @@ public class SqlUtil {
      * Gets members.
      *
      * @param rank the rank
-     * @return     the members
+     * @return the members
      */
     public List<String> getMembers(Rank rank) {
         Connection connection = getConnection();
@@ -376,9 +408,9 @@ public class SqlUtil {
      * Get all achievements for a player
      *
      * @param uuid The players uuid
-     * @return     list of the players achievements
+     * @return list of the players achievements
      */
-    public List<Integer> getAchievements(UUID uuid) {
+    public List<Integer> getAchievements(int id) {
         List<Integer> list = new ArrayList<>();
         Connection connection = getConnection();
         if (connection == null) {
@@ -387,8 +419,8 @@ public class SqlUtil {
             return list;
         }
         try {
-            PreparedStatement statement = connection.prepareStatement("SELECT * FROM achievements WHERE uuid=?");
-            statement.setString(1, uuid.toString());
+            PreparedStatement statement = connection.prepareStatement("SELECT * FROM achievements WHERE id=?");
+            statement.setInt(1, id);
             ResultSet achResult = statement.executeQuery();
             while (achResult.next()) {
                 list.add(achResult.getInt("achid"));
@@ -443,7 +475,7 @@ public class SqlUtil {
      * Get the cached skin for a player's uuid
      *
      * @param uuid The uuid to find
-     * @return     The texture
+     * @return The texture
      */
     public MobPlayerTexture getPlayerTextureHash(UUID uuid) {
         Connection connection = getConnection();
@@ -517,7 +549,7 @@ public class SqlUtil {
      *
      * @param uuid the uuid to check
      * @param id   the id to check
-     * @return     if the player has the cosmetic
+     * @return if the player has the cosmetic
      */
     public boolean hasCosmetic(UUID uuid, int id) {
         Connection connection = getConnection();
@@ -551,7 +583,7 @@ public class SqlUtil {
      * @param game   the game to get the statistic from
      * @param type   the type of statistic to get
      * @param player the player to get the statistic from
-     * @return       the amount of the statistic they have
+     * @return the amount of the statistic they have
      */
     public int getGameStat(GameType game, StatisticType type, CPlayer player) {
         Connection connection = getConnection();
@@ -623,5 +655,197 @@ public class SqlUtil {
             e.printStackTrace();
             ErrorUtil.displayError(e);
         }
+    }
+
+    /**
+     * Get the honor mappings from mysql.
+     *
+     * @return the mappings
+     */
+    public List<HonorMapping> getHonorMappings() {
+        Connection connection = getConnection();
+        if (connection == null) {
+            Core.logInfo("Core > Unable to get honor mappings - Cannot connect to MySQL!");
+            ErrorUtil.displayError("Unable to connect to MySQL!");
+            return new ArrayList<>();
+        }
+        try {
+            PreparedStatement statement = connection.prepareStatement("SELECT * FROM honorMappings");
+            ResultSet results = statement.executeQuery();
+
+            List<HonorMapping> result = new ArrayList<>();
+            while (results.next()) {
+                result.add(new HonorMapping(results.getInt("level"), results.getInt("honor")));
+            }
+
+            statement.close();
+            results.close();
+            return result;
+        } catch (SQLException e) {
+            e.printStackTrace();
+            ErrorUtil.displayError(e);
+            return new ArrayList<>();
+        }
+    }
+
+    /**
+     * Add honor to a player
+     * To remove honor, make amount negative
+     *
+     * @param uuid   the player's uuid
+     * @param amount the amount to add
+     */
+    public void addHonor(int id, int amount) {
+        Connection connection = getConnection();
+        if (connection == null) {
+            Core.logInfo("Core > Unable to add honor - Cannot connect to MySQL!");
+            ErrorUtil.displayError("Unable to connect to MySQL!");
+            return;
+        }
+        try {
+            String statementText = "UPDATE player_data SET honor=honor+? WHERE id=?";
+            PreparedStatement statement = connection.prepareStatement(statementText);
+            statement.setInt(1, amount);
+            statement.setInt(2, id);
+            statement.execute();
+            statement.close();
+        } catch (SQLException e) {
+            e.printStackTrace();
+            ErrorUtil.displayError(e);
+        }
+    }
+
+    /**
+     * Set a player's honor
+     *
+     * @param uuid   the player's uuid
+     * @param amount the amount
+     */
+    public void setHonor(int id, int amount) {
+        Connection connection = getConnection();
+        if (connection == null) {
+            Core.logInfo("Core > Unable to set honor - Cannot connect to MySQL!");
+            ErrorUtil.displayError("Unable to connect to MySQL!");
+            return;
+        }
+        try {
+            String statementText = "UPDATE player_data SET honor=? WHERE id=?";
+            PreparedStatement statement = connection.prepareStatement(statementText);
+            statement.setInt(1, amount);
+            statement.setInt(2, id);
+            statement.execute();
+            statement.close();
+        } catch (SQLException e) {
+            e.printStackTrace();
+            ErrorUtil.displayError(e);
+        }
+    }
+
+    /**
+     * Get a player's honor
+     *
+     * @param player the player to get
+     * @return the player's honor
+     */
+    public int getHonor(int id) {
+        Connection connection = getConnection();
+        if (connection == null) {
+            Core.logInfo("Core > Unable to get honor - Cannot connect to MySQL!");
+            ErrorUtil.displayError("Unable to connect to MySQL!");
+            return 1;
+        }
+
+        try {
+            PreparedStatement statement = connection.prepareStatement("SELECT honor FROM player_data WHERE id=?");
+            statement.setInt(1, id);
+            ResultSet results = statement.executeQuery();
+            int amount = 0;
+            while (results.next()) {
+                amount = results.getInt("honor");
+            }
+            return amount;
+        } catch (SQLException e) {
+            e.printStackTrace();
+            ErrorUtil.displayError(e);
+            return 1;
+        }
+    }
+
+    /**
+     * Get honor leaderboard
+     *
+     * @param limit amount to get (max 10)
+     * @return leaderboard map
+     */
+    public HashMap<Integer, TopHonorReport> getTopHonor(int limit) {
+        HashMap<Integer, TopHonorReport> map = new HashMap<>();
+        if (limit > 10) {
+            limit = 10;
+        }
+        Connection connection = getConnection();
+        if (connection == null) {
+            Core.logInfo("Core > Unable to get top honor report - Cannot connect to MySQL!");
+            ErrorUtil.displayError("Unable to connect to MySQL!");
+            return map;
+        }
+        try {
+            String statementText = "SELECT uuid,username,rank,honor FROM player_data ORDER BY honor DESC, username DESC LIMIT 0," + limit;
+            PreparedStatement statement = connection.prepareStatement(statementText);
+            ResultSet result = statement.executeQuery();
+            int place = 1;
+            while (result.next()) {
+                TopHonorReport report = new TopHonorReport(UUID.fromString(result.getString("uuid")),
+                        Rank.fromString(result.getString("rank")).getTagColor() +
+                                result.getString("username"), place, result.getInt("honor"));
+                map.put(place, report);
+                ++place;
+            }
+            result.close();
+            statement.close();
+            return map;
+        } catch (SQLException e) {
+            e.printStackTrace();
+            ErrorUtil.displayError(e);
+        }
+        return map;
+    }
+
+    /**
+     * Get join report for UUID
+     *
+     * @param uuid the uuid
+     * @return the join report
+     */
+    public JoinReport getJoinReport(UUID uuid) {
+        Connection connection = getConnection();
+        if (connection == null) {
+            Core.logInfo("Core > Unable to get top honor report - Cannot connect to MySQL!");
+            ErrorUtil.displayError("Unable to connect to MySQL!");
+            return new JoinReport(0, uuid, Rank.SETTLER);
+        }
+        try {
+            String statementText = "SELECT id,rank FROM player_data WHERE uuid=?";
+            PreparedStatement statement = connection.prepareStatement(statementText);
+            statement.setString(1, uuid.toString());
+            ResultSet result = statement.executeQuery();
+            if (!result.next()) {
+                return new JoinReport(0, uuid, Rank.SETTLER);
+            }
+            JoinReport report = new JoinReport(result.getInt("id"), uuid, Rank.fromString(result.getString("rank")));
+            result.close();
+            statement.close();
+            return report;
+        } catch (SQLException e) {
+            e.printStackTrace();
+            ErrorUtil.displayError(e);
+        }
+        return new JoinReport(0, uuid, Rank.SETTLER);
+    }
+
+    @AllArgsConstructor
+    public class JoinReport {
+        @Getter private final int sqlId;
+        @Getter private final UUID uuid;
+        @Getter private final Rank rank;
     }
 }

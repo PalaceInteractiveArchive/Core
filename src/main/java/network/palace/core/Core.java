@@ -17,6 +17,7 @@ import network.palace.core.dashboard.DashboardConnection;
 import network.palace.core.economy.EconomyManager;
 import network.palace.core.errors.EnvironmentType;
 import network.palace.core.errors.RollbarHandler;
+import network.palace.core.honor.HonorManager;
 import network.palace.core.library.LibraryHandler;
 import network.palace.core.npc.SoftNPCManager;
 import network.palace.core.packets.adapters.PlayerInfoAdapter;
@@ -37,6 +38,7 @@ import org.bukkit.entity.Player;
 import org.bukkit.event.Event;
 import org.bukkit.event.Listener;
 import org.bukkit.inventory.Inventory;
+import org.bukkit.plugin.Plugin;
 import org.bukkit.plugin.java.JavaPlugin;
 
 import java.util.ArrayList;
@@ -84,6 +86,7 @@ public class Core extends JavaPlugin {
     private CPlayerManager playerManager;
     private CoreCommandMap commandMap;
     private DashboardConnection dashboardConnection;
+    private HonorManager honorManager;
 
     @Getter private RollbarHandler rollbarHandler;
 
@@ -138,6 +141,9 @@ public class Core extends JavaPlugin {
         economyManager = new EconomyManager();
         achievementManager = new AchievementManager();
         softNPCManager = new SoftNPCManager();
+        // Setup the honor manager
+        honorManager = new HonorManager();
+        honorManager.provideMappings(sqlUtil.getHonorMappings());
         // Core command map
         commandMap = new CoreCommandMap(this);
         // Dashboard
@@ -180,18 +186,33 @@ public class Core extends JavaPlugin {
      */
     private void registerCommands() {
         registerCommand(new BalanceCommand());
+        registerCommand(new FlyCommand());
         registerCommand(new HelpopCommand());
+        registerCommand(new HonorCommand());
         registerCommand(new ListCommand());
+        registerCommand(new MyHonorCommand());
         registerCommand(new OnlineCommand());
         registerCommand(new PermCommand());
         registerCommand(new PingCommand());
         registerCommand(new PluginsCommand());
         registerCommand(new ReloadCommand());
         registerCommand(new SafestopCommand());
-        registerCommand(new TokenCommand());
-        registerCommand(new FlyCommand());
         registerCommand(new SpawnCommand());
-        registerCommand(new TeleportCommand());
+        registerCommand(new TokenCommand());
+        registerCommand(new TopHonorCommand());
+        runTask(new Runnable() {
+            @Override
+            public void run() {
+                boolean park = false;
+                for (Plugin p : Bukkit.getPluginManager().getPlugins()) {
+                    if (p.getName().equals("ParkManager")) {
+                        park = true;
+                    }
+                }
+                if (!park)
+                    registerCommand(new TeleportCommand());
+            }
+        });
     }
 
     /**
@@ -259,11 +280,8 @@ public class Core extends JavaPlugin {
      * @param isStarting the is starting
      */
     public static void setStarting(boolean isStarting) {
-        if (!isStarting) {
-            logMessage("Core", ChatColor.DARK_GREEN + "Server Joinable!");
-        } else {
-            logMessage("Core", ChatColor.DARK_RED + "Server Not Joinable!");
-        }
+        if (!isStarting) logMessage("Core", ChatColor.DARK_GREEN + "Server Joinable!");
+        else logMessage("Core", ChatColor.DARK_RED + "Server Not Joinable!");
         getInstance().starting = isStarting;
     }
 
@@ -312,6 +330,15 @@ public class Core extends JavaPlugin {
      */
     public static CPlayerManager getPlayerManager() {
         return getInstance().playerManager;
+    }
+
+    /**
+     * Gets honor manager
+     *
+     * @return the honor manager
+     */
+    public static HonorManager getHonorManager() {
+        return getInstance().honorManager;
     }
 
     /**
