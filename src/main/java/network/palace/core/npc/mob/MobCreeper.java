@@ -24,9 +24,9 @@ public class MobCreeper extends AbstractMob {
 
     @Override
     protected void onDataWatcherUpdate() {
-        int chargedIndex = 12;
+        int chargedIndex = 13;
         getDataWatcher().setObject(ProtocolLibSerializers.getBoolean(chargedIndex), isCharged);
-        int ignitedIndex = 13;
+        int ignitedIndex = 14;
         getDataWatcher().setObject(ProtocolLibSerializers.getBoolean(ignitedIndex), isIgnited);
         super.onDataWatcherUpdate();
     }
