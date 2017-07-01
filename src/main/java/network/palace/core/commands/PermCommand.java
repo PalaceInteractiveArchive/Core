@@ -20,7 +20,7 @@ import java.util.UUID;
  * The type Perm command.
  */
 @CommandMeta(description = "Permissions command")
-@CommandPermission(rank = Rank.WIZARD)
+@CommandPermission(rank = Rank.PALADIN)
 public class PermCommand extends CoreCommand {
 
     /**
