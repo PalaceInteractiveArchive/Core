@@ -61,7 +61,7 @@ public class TeleportCommand extends CoreCommand {
                 return;
             }
             to.teleport(new Location(to.getWorld(), Integer.parseInt(args[1]), Integer.parseInt(args[2]), Integer.parseInt(args[3])));
-            player.sendMessage(ChatColor.BLUE + "You teleported " + to.getName() + " to " + args[0] + ", " + args[1] + ", " + args[2]);
+            player.sendMessage(ChatColor.BLUE + "You teleported " + to.getName() + " to " + args[1] + ", " + args[2] + ", " + args[3]);
         } else if (args.length == 3) {
             if (!MiscUtil.checkIfInt(args[0])) {
                 player.sendMessage(ChatColor.RED + "" + ChatColor.BOLD + "Invalid location.");
