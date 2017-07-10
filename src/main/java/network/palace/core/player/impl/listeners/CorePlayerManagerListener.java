@@ -47,8 +47,11 @@ public class CorePlayerManagerListener implements Listener {
     public void onPlayerJoin(PlayerJoinEvent event) {
         event.setJoinMessage("");
         Player player = event.getPlayer();
-        if (!player.hasAchievement(Achievement.OPEN_INVENTORY)) {
-            player.awardAchievement(Achievement.OPEN_INVENTORY);
+        try {
+            if (!player.hasAchievement(Achievement.OPEN_INVENTORY)) {
+                player.awardAchievement(Achievement.OPEN_INVENTORY);
+            }
+        } catch (UnsupportedOperationException ignored) {
         }
         player.setExp(0);
         player.setLevel(0);
