@@ -1,5 +1,6 @@
 package network.palace.core.player.impl.managers;
 
+import com.comphenix.protocol.wrappers.EnumWrappers;
 import network.palace.core.packets.server.chat.WrapperPlayServerChat;
 import network.palace.core.player.CPlayer;
 import network.palace.core.player.CPlayerActionBarManager;
@@ -17,7 +18,7 @@ public class CorePlayerActionBarManager implements CPlayerActionBarManager {
     @Override
     public void show(String message) {
         WrapperPlayServerChat packet = new WrapperPlayServerChat();
-        packet.setPosition(WrapperPlayServerChat.Position.ACTION_BAR);
+        packet.setPosition(EnumWrappers.ChatType.GAME_INFO);
         packet.setMessage(WrappedChatComponent.fromText(message));
         player.sendPacket(packet);
     }

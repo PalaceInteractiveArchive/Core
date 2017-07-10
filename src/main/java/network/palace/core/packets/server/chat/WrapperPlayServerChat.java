@@ -18,6 +18,8 @@
  */
 package network.palace.core.packets.server.chat;
 
+import com.comphenix.protocol.wrappers.EnumWrappers;
+import network.palace.core.Core;
 import network.palace.core.packets.AbstractPacket;
 import com.comphenix.protocol.PacketType;
 import com.comphenix.protocol.events.PacketContainer;
@@ -68,8 +70,12 @@ public class WrapperPlayServerChat extends AbstractPacket {
      *
      * @return The current Position
      */
-    public Position getPosition() {
-        return Position.values()[handle.getBytes().read(0).intValue()];
+    public EnumWrappers.ChatType getPosition() {
+        if (Core.getInstance().isMinecraftGreaterOrEqualTo11_2()) {
+            return handle.getChatTypes().read(0);
+        } else {
+            return EnumWrappers.ChatType.values()[handle.getBytes().read(0).intValue()];
+        }
     }
 
     /**
@@ -77,31 +83,11 @@ public class WrapperPlayServerChat extends AbstractPacket {
      *
      * @param value - new value.
      */
-    public void setPosition(Position value) {
-        handle.getBytes().write(0, value.value);
-    }
-
-    /**
-     * The enum Position.
-     */
-    public enum Position {
-        /**
-         * Chat position.
-         */
-        CHAT((byte) 0),
-        /**
-         * Chat system position.
-         */
-        CHAT_SYSTEM((byte) 1),
-        /**
-         * Action bar position.
-         */
-        ACTION_BAR((byte) 2);
-
-        private final byte value;
-
-        Position(byte value) {
-            this.value = value;
+    public void setPosition(EnumWrappers.ChatType value) {
+        if (Core.getInstance().isMinecraftGreaterOrEqualTo11_2()) {
+            handle.getChatTypes().write(0, value);
+        } else {
+            handle.getBytes().write(0, value.getId());
         }
     }
 }

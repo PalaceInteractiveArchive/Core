@@ -2,6 +2,7 @@ package network.palace.core;
 
 import com.comphenix.protocol.ProtocolLibrary;
 import com.comphenix.protocol.events.PacketListener;
+import com.comphenix.protocol.utility.MinecraftVersion;
 import lombok.Getter;
 import lombok.Setter;
 import network.palace.core.achievements.AchievementManager;
@@ -52,7 +53,7 @@ import java.util.concurrent.Future;
  * <p>
  * You can access instances of other modules by depending on Core in your pom.xml, and then executing Core.get
  */
-@PluginInfo(name = "Core", version = "1.8.7", depend = {"ProtocolLib"})
+@PluginInfo(name = "Core", version = "1.8.8", depend = {"ProtocolLib"})
 public class Core extends JavaPlugin {
 
     private boolean starting = true;
@@ -91,6 +92,8 @@ public class Core extends JavaPlugin {
     @Getter private RollbarHandler rollbarHandler;
 
     @Getter private List<UUID> disabledPlayers = new ArrayList<>();
+
+    @Getter private boolean isMinecraftGreaterOrEqualTo11_2 = MinecraftVersion.getCurrentVersion().getMinor() >= 12;
 
     @Override
     public final void onEnable() {

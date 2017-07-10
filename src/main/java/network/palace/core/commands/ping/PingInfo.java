@@ -4,6 +4,7 @@ import network.palace.core.command.CommandException;
 import network.palace.core.command.CommandMeta;
 import network.palace.core.command.CoreCommand;
 import network.palace.core.player.CPlayer;
+import network.palace.core.utils.MiscUtil;
 import org.bukkit.ChatColor;
 
 @CommandMeta(description = "Get info about your ping")
@@ -15,7 +16,7 @@ public class PingInfo extends CoreCommand {
 
     @Override
     protected void handleCommand(CPlayer player, String[] args) throws CommandException {
-        if (args.length == 0 || args[0].equals("1") || !this.isInt(args[0])) {
+        if (args.length == 0 || args[0].equals("1") || !MiscUtil.checkIfInt(args[0])) {
             player.sendMessage(ChatColor.YELLOW + "Ping is the time in milliseconds that it takes for information" +
                     " to get from our servers to you and back. The lower your ping, the better experience you will have.");
             player.sendMessage(ChatColor.GREEN + "Type " + ChatColor.YELLOW + "/ping info [page] " + ChatColor.GREEN + "for more info, up to page 4");
@@ -47,15 +48,6 @@ public class PingInfo extends CoreCommand {
         }
         if (msg.isEmpty()) return;
         player.sendMessage(ChatColor.YELLOW + msg);
-    }
-
-    private boolean isInt(String s) {
-        try {
-            Integer.parseInt(s);
-            return true;
-        } catch (NumberFormatException e) {
-            return false;
-        }
     }
 }
 
