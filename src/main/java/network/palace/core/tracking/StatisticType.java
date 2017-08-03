@@ -42,6 +42,5 @@ public class StatisticType {
 
     public static class PIXIE_DUST_SHOOTOUT {
         public static final StatisticType ELIMINATIONS = new StatisticType("eliminations");
-        public static final StatisticType DEATHS = new StatisticType("deaths");
     }
 }
