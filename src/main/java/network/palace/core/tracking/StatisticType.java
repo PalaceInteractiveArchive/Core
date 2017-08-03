@@ -36,6 +36,7 @@ public class StatisticType {
      */
     public static class Spleef {
         public static final StatisticType DEATHS = new StatisticType("deaths");
+        public static final StatisticType BLOCKS_REMOVED = new StatisticType("blocks_removed");
     }
 
     /**
