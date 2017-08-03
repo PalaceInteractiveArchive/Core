@@ -2,6 +2,7 @@ package network.palace.core.tracking;
 
 import lombok.AllArgsConstructor;
 import lombok.Getter;
+import org.bukkit.Statistic;
 
 /**
  * @author Innectic
@@ -14,8 +15,10 @@ public class StatisticType {
     /**
      * Statistics shared between all games
      */
-    public enum Global {
-        TIME_PLAYED, WINS, LOSSES
+    public static class Global {
+        public static final StatisticType TIME_PLAYED = new StatisticType("time_played");
+        public static final StatisticType WINS = new StatisticType("wins");
+        public static final StatisticType LOSSES = new StatisticType("losses");
     }
 
     /**
@@ -33,15 +36,6 @@ public class StatisticType {
      */
     public static class Spleef {
         public static final StatisticType DEATHS = new StatisticType("deaths");
-    }
-
-    /**
-     * Statistics about CowTipping
-     */
-    public static class CowTipping {
-        public static final StatisticType COWS_TIPPED = new StatisticType("cows_tipped");
-        public static final StatisticType COWS_STOLEN = new StatisticType("cows_stolen");
-        public static final StatisticType TOTAL_POINTS = new StatisticType("cowtipping_total_points");
     }
 
     /**

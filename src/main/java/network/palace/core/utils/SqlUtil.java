@@ -11,6 +11,7 @@ import network.palace.core.player.Rank;
 import network.palace.core.tracking.GameType;
 import network.palace.core.tracking.StatisticType;
 import org.bukkit.ChatColor;
+import org.bukkit.Statistic;
 
 import java.sql.*;
 import java.util.*;
@@ -407,7 +408,7 @@ public class SqlUtil {
     /**
      * Get all achievements for a player
      *
-     * @param uuid The players uuid
+     * @param id    The player's internal id
      * @return list of the players achievements
      */
     public List<Integer> getAchievements(int id) {
@@ -577,15 +578,19 @@ public class SqlUtil {
         return hasCosmetic;
     }
 
+    public int getGameStat(GameType game, StatisticType type, CPlayer player) {
+        return getGameStat(game, type, player.getUuid());
+    }
+
     /**
      * Get a players statistic in a game
      *
      * @param game   the game to get the statistic from
      * @param type   the type of statistic to get
      * @param player the player to get the statistic from
-     * @return the amount of the statistic they have
+     * @return        the amount of the statistic they have
      */
-    public int getGameStat(GameType game, StatisticType type, CPlayer player) {
+    public int getGameStat(GameType game, StatisticType type, UUID player) {
         Connection connection = getConnection();
         if (connection == null) {
             Core.logInfo("Core > Unable to get game stats - Cannot connect to MySql!");
@@ -596,13 +601,13 @@ public class SqlUtil {
         int amount = 0;
         try {
             PreparedStatement statement = connection.prepareStatement("SELECT amount FROM gameStatistics WHERE uuid=? AND type=? AND game=?");
-            statement.setString(1, player.getUuid().toString());
+            statement.setString(1, player.toString());
             statement.setString(2, type.getType());
             statement.setInt(3, game.getId());
             ResultSet results = statement.executeQuery();
 
             while (results.next()) {
-                amount = results.getInt("amount");
+                amount += results.getInt("amount");
             }
 
             statement.close();
@@ -617,6 +622,18 @@ public class SqlUtil {
     }
 
     /**
+     * Add a game statistic to a player.
+     *
+     * @param game      the game that this happened in
+     * @param statistic the statistic to add
+     * @param amount    the amount to give the player
+     * @param player      the player who earned this stat
+     */
+    public void addGameStat(GameType game, StatisticType statistic, int amount, CPlayer player) {
+        addGameStat(game, statistic, amount, player.getUuid());
+    }
+
+    /**
      * Add a game statistic to a player
      *
      * @param game      the game that this happened in
@@ -624,7 +641,7 @@ public class SqlUtil {
      * @param player    the player who earned this stat
      * @param amount    the amount to give the player
      */
-    public void addGameStat(GameType game, StatisticType statistic, int amount, CPlayer player) {
+    public void addGameStat(GameType game, StatisticType statistic, int amount, UUID player) {
         Connection connection = getConnection();
         if (connection == null) {
             Core.logInfo("Core > Unable to add game stats - Cannot connect to MySql!");
@@ -634,17 +651,12 @@ public class SqlUtil {
 
         try {
             int finalAmount = getGameStat(game, statistic, player) + amount;
-            PreparedStatement statement = connection.prepareStatement("INSERT INTO gameStatistics (uuid,type,game,amount) VALUES (?,?,?,?) ON DUPLICATE KEY UPDATE amount=?");
-
+            PreparedStatement statement = connection.prepareStatement("INSERT INTO gameStatistics (uuid,type,game,amount) VALUES (?,?,?,?)");
             // Injections
-
-            // Main statement
-            statement.setString(1, player.getUuid().toString());
+            statement.setString(1, player.toString());
             statement.setString(2, statistic.getType());
             statement.setInt(3, game.getId());
             statement.setInt(4, finalAmount);
-            // Duplication check
-            statement.setInt(5, finalAmount);
 
             statement.execute();
 
@@ -692,7 +704,7 @@ public class SqlUtil {
      * Add honor to a player
      * To remove honor, make amount negative
      *
-     * @param uuid   the player's uuid
+     * @param id     the player's internal-id
      * @param amount the amount to add
      */
     public void addHonor(int id, int amount) {
@@ -718,7 +730,7 @@ public class SqlUtil {
     /**
      * Set a player's honor
      *
-     * @param uuid   the player's uuid
+     * @param id     the player's internal id
      * @param amount the amount
      */
     public void setHonor(int id, int amount) {
@@ -744,8 +756,8 @@ public class SqlUtil {
     /**
      * Get a player's honor
      *
-     * @param player the player to get
-     * @return the player's honor
+     * @param id the player's id to get from
+     * @return   the player's honor
      */
     public int getHonor(int id) {
         Connection connection = getConnection();
