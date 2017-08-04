@@ -12,6 +12,7 @@ import org.bukkit.inventory.Inventory;
 import org.bukkit.inventory.InventoryView;
 import org.bukkit.inventory.ItemStack;
 import org.bukkit.inventory.PlayerInventory;
+import org.bukkit.map.MapView;
 import org.bukkit.metadata.MetadataValue;
 import org.bukkit.plugin.java.JavaPlugin;
 
@@ -831,4 +832,11 @@ public interface CPlayer {
      * @param level the level to store
      */
     void setPreviousHonorLevel(int level);
+
+    /**
+     * Send player a map
+     *
+     * @param view the map view
+     */
+    void sendMap(MapView view);
 }

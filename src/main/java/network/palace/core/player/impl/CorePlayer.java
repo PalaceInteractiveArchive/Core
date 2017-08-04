@@ -21,6 +21,7 @@ import org.bukkit.inventory.Inventory;
 import org.bukkit.inventory.InventoryView;
 import org.bukkit.inventory.ItemStack;
 import org.bukkit.inventory.PlayerInventory;
+import org.bukkit.map.MapView;
 import org.bukkit.metadata.MetadataValue;
 import org.bukkit.plugin.java.JavaPlugin;
 import org.bukkit.util.Vector;
@@ -654,6 +655,14 @@ public class CorePlayer implements CPlayer {
     }
 
     @Override
+    public void sendMap(MapView view) {
+        if (view == null) return;
+        if (!getStatus().equals(PlayerStatus.JOINED)) return;
+        if (getBukkitPlayer() == null) return;
+        getBukkitPlayer().sendMap(view);
+    }
+
+    @Override
     public boolean isInVehicle() {
         return getStatus().equals(PlayerStatus.JOINED) && getBukkitPlayer().isInsideVehicle();
     }
@@ -686,6 +695,7 @@ public class CorePlayer implements CPlayer {
         this.achievement = manager;
         for (int i : queuedAchievements) {
             achievement.giveAchievement(i);
+            queuedAchievements.remove(i);
         }
     }
 }
