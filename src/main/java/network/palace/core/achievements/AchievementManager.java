@@ -64,7 +64,8 @@ public class AchievementManager {
 
                 PreparedStatement sql = connection.prepareStatement(statement + ";");
                 for (Map.Entry<Integer, String> entry : new HashSet<>(lastList.entrySet())) {
-                    if (MiscUtil.checkIfInt(entry.getValue())) sql.setInt(entry.getKey(), Integer.parseInt(entry.getValue()));
+                    if (MiscUtil.checkIfInt(entry.getValue()))
+                        sql.setInt(entry.getKey(), Integer.parseInt(entry.getValue()));
                     else sql.setString(entry.getKey(), entry.getValue());
                 }
 
@@ -85,15 +86,17 @@ public class AchievementManager {
 
         JSONArray array = (JSONArray) ((JSONObject) obj.get("feed")).get("entry");
         achievements.clear();
+        CoreAchievement lastAchievement = null;
         for (Object objectArray : array) {
             JSONObject object = (JSONObject) objectArray;
             JSONObject content = (JSONObject) object.get("content");
             JSONObject id = (JSONObject) object.get("title");
             String column = (String) id.get("$t");
             if (!MiscUtil.checkIfInt(column)) continue;
-            CoreAchievement lastAchievement = new CoreAchievement(Integer.parseInt((String) content.get("$t")), null, null);
-
             switch (column.substring(0, 1).toLowerCase()) {
+                case "a":
+                    lastAchievement = new CoreAchievement(Integer.parseInt((String) content.get("$t")), null, null);
+                    break;
                 case "b":
                     lastAchievement.setDisplayName((String) content.get("$t"));
                     break;
