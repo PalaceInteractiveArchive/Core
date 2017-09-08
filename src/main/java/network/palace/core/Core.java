@@ -24,11 +24,13 @@ import network.palace.core.npc.SoftNPCManager;
 import network.palace.core.packets.adapters.PlayerInfoAdapter;
 import network.palace.core.packets.adapters.SettingsAdapter;
 import network.palace.core.permissions.PermissionManager;
+import network.palace.core.player.CPlayer;
 import network.palace.core.player.CPlayerManager;
 import network.palace.core.player.impl.CorePlayerWorldDownloadProtect;
 import network.palace.core.player.impl.managers.CorePlayerManager;
 import network.palace.core.plugin.PluginInfo;
 import network.palace.core.resource.ResourceManager;
+import network.palace.core.utils.Callback;
 import network.palace.core.utils.ItemUtil;
 import network.palace.core.utils.SqlUtil;
 import org.bukkit.Bukkit;
@@ -203,18 +205,14 @@ public class Core extends JavaPlugin {
         registerCommand(new SpawnCommand());
         registerCommand(new TokenCommand());
         registerCommand(new TopHonorCommand());
-        runTask(new Runnable() {
-            @Override
-            public void run() {
-                boolean park = false;
-                for (Plugin p : Bukkit.getPluginManager().getPlugins()) {
-                    if (p.getName().equals("ParkManager")) {
-                        park = true;
-                    }
+        runTask(() -> {
+            boolean park = false;
+            for (Plugin p : Bukkit.getPluginManager().getPlugins()) {
+                if (p.getName().equals("ParkManager")) {
+                    park = true;
                 }
-                if (!park)
-                    registerCommand(new TeleportCommand());
             }
+            if (!park) registerCommand(new TeleportCommand());
         });
     }
 
@@ -602,5 +600,21 @@ public class Core extends JavaPlugin {
      */
     public static void addPacketListener(PacketListener listener) {
         ProtocolLibrary.getProtocolManager().addPacketListener(listener);
+    }
+
+    /**
+     * Send all players to another server
+     *
+     * @param server   the server to send to
+     * @param callback the callbacks for the actions
+     */
+    public static void sendAllPlayers(String server, Callback callback) {
+        runTaskAsynchronously(() -> {
+            do {
+                CPlayer player = Core.getPlayerManager().getOnlinePlayers().get(0);
+                player.sendToServer(server);
+            } while (Core.getPlayerManager().getOnlinePlayers().size() > 0);
+            callback.finished();
+        });
     }
 }
