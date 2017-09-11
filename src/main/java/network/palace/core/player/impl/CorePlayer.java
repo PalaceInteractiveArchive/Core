@@ -693,9 +693,9 @@ public class CorePlayer implements CPlayer {
     @Override
     public void setAchievementManager(CPlayerAchievementManager manager) {
         this.achievement = manager;
-        for (int i : new ArrayList<>(queuedAchievements)) {
+        for (Integer i : new ArrayList<>(queuedAchievements)) {
             achievement.giveAchievement(i);
-            queuedAchievements.remove(i);
         }
+        queuedAchievements.clear();
     }
 }

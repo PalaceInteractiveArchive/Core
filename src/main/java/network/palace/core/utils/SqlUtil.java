@@ -11,7 +11,6 @@ import network.palace.core.player.Rank;
 import network.palace.core.tracking.GameType;
 import network.palace.core.tracking.StatisticType;
 import org.bukkit.ChatColor;
-import org.bukkit.Statistic;
 
 import java.sql.*;
 import java.util.*;
@@ -408,10 +407,10 @@ public class SqlUtil {
     /**
      * Get all achievements for a player
      *
-     * @param id    The player's internal id
+     * @param uuid The player's uuid
      * @return list of the players achievements
      */
-    public List<Integer> getAchievements(int id) {
+    public List<Integer> getAchievements(UUID uuid) {
         List<Integer> list = new ArrayList<>();
         Connection connection = getConnection();
         if (connection == null) {
@@ -420,8 +419,8 @@ public class SqlUtil {
             return list;
         }
         try {
-            PreparedStatement statement = connection.prepareStatement("SELECT * FROM achievements WHERE id=?");
-            statement.setInt(1, id);
+            PreparedStatement statement = connection.prepareStatement("SELECT achid FROM achievements WHERE uuid=?");
+            statement.setString(1, uuid.toString());
             ResultSet achResult = statement.executeQuery();
             while (achResult.next()) {
                 list.add(achResult.getInt("achid"));
@@ -588,7 +587,7 @@ public class SqlUtil {
      * @param game   the game to get the statistic from
      * @param type   the type of statistic to get
      * @param player the player to get the statistic from
-     * @return        the amount of the statistic they have
+     * @return the amount of the statistic they have
      */
     public int getGameStat(GameType game, StatisticType type, UUID player) {
         Connection connection = getConnection();
@@ -627,7 +626,7 @@ public class SqlUtil {
      * @param game      the game that this happened in
      * @param statistic the statistic to add
      * @param amount    the amount to give the player
-     * @param player      the player who earned this stat
+     * @param player    the player who earned this stat
      */
     public void addGameStat(GameType game, StatisticType statistic, int amount, CPlayer player) {
         addGameStat(game, statistic, amount, player.getUuid());
@@ -757,7 +756,7 @@ public class SqlUtil {
      * Get a player's honor
      *
      * @param id the player's id to get from
-     * @return   the player's honor
+     * @return the player's honor
      */
     public int getHonor(int id) {
         Connection connection = getConnection();

@@ -75,7 +75,7 @@ public class CorePlayerManager implements CPlayerManager {
         Core.getPermissionManager().login(corePlayer);
         // Achievements Task
         Core.runTaskAsynchronously(() -> {
-            List<Integer> ids = Core.getSqlUtil().getAchievements(corePlayer.getSqlId());
+            List<Integer> ids = Core.getSqlUtil().getAchievements(corePlayer.getUniqueId());
             corePlayer.setAchievementManager(new CorePlayerAchievementManager(corePlayer, ids));
             corePlayer.setHonor(Core.getSqlUtil().getHonor(corePlayer.getSqlId()));
             corePlayer.setPreviousHonorLevel(Core.getHonorManager().getLevel(corePlayer.getHonor()).getLevel());
