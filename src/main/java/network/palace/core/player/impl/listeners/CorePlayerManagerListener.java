@@ -38,6 +38,13 @@ public class CorePlayerManagerListener implements Listener {
         }
     }
 
+    @EventHandler(ignoreCancelled = true, priority = EventPriority.MONITOR)
+    public void onPlayerLoginMonitor(AsyncPlayerPreLoginEvent event) {
+        if (!event.getLoginResult().equals(AsyncPlayerPreLoginEvent.Result.ALLOWED)) {
+            Core.getPlayerManager().removePlayer(event.getUniqueId());
+        }
+    }
+
     /**
      * On player join.
      *

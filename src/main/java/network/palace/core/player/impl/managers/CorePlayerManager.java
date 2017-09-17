@@ -99,8 +99,15 @@ public class CorePlayerManager implements CPlayerManager {
 
     @Override
     public void playerLoggedOut(Player player) {
-        if (getPlayer(player) == null) return;
-        CPlayer cPlayer = getPlayer(player);
+        if (player == null) return;
+        removePlayer(player.getUniqueId());
+    }
+
+    @Override
+    public void removePlayer(UUID uuid) {
+        if (uuid == null) return;
+        CPlayer cPlayer = getPlayer(uuid);
+        if (cPlayer == null) return;
         for (CPlayer otherPlayer : Core.getPlayerManager().getOnlinePlayers()) {
             cPlayer.getScoreboard().removePlayerTag(otherPlayer);
             otherPlayer.getScoreboard().removePlayerTag(cPlayer);

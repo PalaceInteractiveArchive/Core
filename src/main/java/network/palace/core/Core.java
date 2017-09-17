@@ -55,7 +55,7 @@ import java.util.concurrent.Future;
  * <p>
  * You can access instances of other modules by depending on Core in your pom.xml, and then executing Core.get
  */
-@PluginInfo(name = "Core", version = "1.9.0", depend = {"ProtocolLib"})
+@PluginInfo(name = "Core", version = "1.9.1", depend = {"ProtocolLib"})
 public class Core extends JavaPlugin {
 
     private boolean starting = true;
@@ -201,7 +201,7 @@ public class Core extends JavaPlugin {
         registerCommand(new PingCommand());
         registerCommand(new PluginsCommand());
         registerCommand(new ReloadCommand());
-        registerCommand(new SafestopCommand());
+        registerCommand(new ShutdownCommand());
         registerCommand(new SpawnCommand());
         registerCommand(new TokenCommand());
         registerCommand(new TopHonorCommand());

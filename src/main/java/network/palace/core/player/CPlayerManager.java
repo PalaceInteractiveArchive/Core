@@ -33,6 +33,13 @@ public interface CPlayerManager {
     void playerLoggedOut(Player player);
 
     /**
+     * Remove player object if it exists
+     *
+     * @param uuid the uuid of the player
+     */
+    void removePlayer(UUID uuid);
+
+    /**
      * Broadcast message to all players.
      *
      * @param message the message to broadcast
