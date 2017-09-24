@@ -24,6 +24,7 @@ import network.palace.core.errors.EnvironmentType;
 import network.palace.core.errors.RollbarHandler;
 import network.palace.core.honor.HonorManager;
 import network.palace.core.library.LibraryHandler;
+import network.palace.core.mongo.MongoHandler;
 import network.palace.core.npc.SoftNPCManager;
 import network.palace.core.packets.adapters.PlayerInfoAdapter;
 import network.palace.core.packets.adapters.SettingsAdapter;
@@ -84,6 +85,7 @@ public class Core extends JavaPlugin {
     @Getter @Setter private String tabFooter = ChatColor.LIGHT_PURPLE + "You're on the " + ChatColor.GREEN + "Hub " + ChatColor.LIGHT_PURPLE + "server";
 
     private SqlUtil sqlUtil;
+    private MongoHandler mongoHandler;
     private LanguageManager languageManager;
     private PermissionManager permissionManager;
     private EconomyManager economyManager;
@@ -148,6 +150,8 @@ public class Core extends JavaPlugin {
         getServer().getMessenger().registerIncomingPluginChannel(this, "WDL|INIT", new CorePlayerWorldDownloadProtect());
         // SQL Classes
         sqlUtil = new SqlUtil();
+        // Mongo Classes
+        mongoHandler = new MongoHandler();
         // Managers
         languageManager = new LanguageManager();
         playerManager = new CorePlayerManager();
@@ -437,6 +441,15 @@ public class Core extends JavaPlugin {
      */
     public static SqlUtil getSqlUtil() {
         return getInstance().sqlUtil;
+    }
+
+    /**
+     * Gets mongo handler
+     *
+     * @return the mongo handler
+     */
+    public static MongoHandler getMongoHandler() {
+        return getInstance().mongoHandler;
     }
 
     /**

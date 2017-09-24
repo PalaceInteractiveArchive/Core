@@ -6,6 +6,7 @@ import network.palace.core.Core;
 import network.palace.core.config.LanguageManager;
 import network.palace.core.honor.HonorMapping;
 import network.palace.core.honor.TopHonorReport;
+import network.palace.core.mongo.JoinReport;
 import network.palace.core.npc.mob.MobPlayerTexture;
 import network.palace.core.player.CPlayer;
 import network.palace.core.player.Rank;
@@ -833,7 +834,7 @@ public class SqlUtil {
         if (connection == null) {
             Core.logInfo("Core > Unable to get top honor report - Cannot connect to MySQL!");
             ErrorUtil.displayError("Unable to connect to MySQL!");
-            return new JoinReport(0, uuid, Rank.SETTLER, LanguageManager.DEFAULT_LANG);
+            return new JoinReport(uuid, Rank.SETTLER);
         }
         try {
             String statementText = "SELECT id,rank,lang FROM player_data WHERE uuid=?";
@@ -841,9 +842,9 @@ public class SqlUtil {
             statement.setString(1, uuid.toString());
             ResultSet result = statement.executeQuery();
             if (!result.next()) {
-                return new JoinReport(0, uuid, Rank.SETTLER, LanguageManager.DEFAULT_LANG);
+                return new JoinReport(uuid, Rank.SETTLER);
             }
-            JoinReport report = new JoinReport(result.getInt("id"), uuid, Rank.fromString(result.getString("rank")), result.getString("lang"));
+            JoinReport report = new JoinReport(uuid, Rank.fromString(result.getString("rank")));
             result.close();
             statement.close();
             return report;
@@ -851,14 +852,6 @@ public class SqlUtil {
             e.printStackTrace();
             ErrorUtil.displayError(e);
         }
-        return new JoinReport(0, uuid, Rank.SETTLER, LanguageManager.DEFAULT_LANG);
-    }
-
-    @AllArgsConstructor
-    public class JoinReport {
-        @Getter private final int sqlId;
-        @Getter private final UUID uuid;
-        @Getter private final Rank rank;
-        @Getter private final String locale;
+        return new JoinReport(uuid, Rank.SETTLER);
     }
 }

@@ -6,6 +6,7 @@ import network.palace.core.Core;
 import network.palace.core.dashboard.packets.dashboard.PacketConfirmPlayer;
 import network.palace.core.dashboard.packets.dashboard.PacketGetPack;
 import network.palace.core.events.CorePlayerJoinedEvent;
+import network.palace.core.mongo.JoinReport;
 import network.palace.core.player.CPlayer;
 import network.palace.core.player.CPlayerManager;
 import network.palace.core.player.PlayerStatus;
@@ -39,6 +40,7 @@ public class CorePlayerManager implements CPlayerManager {
 
     @Override
     public void playerLoggedIn(UUID uuid, String name) {
+        //TODO Make mongo
         SqlUtil.JoinReport report = Core.getSqlUtil().getJoinReport(uuid);
         onlinePlayers.put(uuid, new CorePlayer(report.getSqlId(), uuid, name, report.getRank(), report.getLocale()));
     }
@@ -64,18 +66,16 @@ public class CorePlayerManager implements CPlayerManager {
         corePlayer.setTextureValue(textureValue);
         corePlayer.setTextureSignature(textureSignature);
         if (corePlayer.getRank().getRankId() >= Rank.CHARACTER.getRankId()) {
-            Core.runTaskAsynchronously(() ->
-                    Core.getSqlUtil().cacheSkin(corePlayer.getUuid(), corePlayer.getTextureValue(), corePlayer.getTextureSignature())
-            );
+            Core.runTaskAsynchronously(() -> Core.getMongoHandler().cacheSkin(corePlayer.getUuid(), corePlayer.getTextureValue(), corePlayer.getTextureSignature()));
         }
         // Setup permissions for player
         Core.getPermissionManager().login(corePlayer);
         // Achievements Task
         Core.runTaskAsynchronously(() -> {
-            List<Integer> ids = Core.getSqlUtil().getAchievements(corePlayer.getUniqueId());
+            List<Integer> ids = Core.getMongoHandler().getAchievements(corePlayer.getUniqueId());
             corePlayer.setAchievementManager(new CorePlayerAchievementManager(corePlayer, ids));
             Core.getCraftingMenu().update(corePlayer, 2, Core.getCraftingMenu().getAchievement(corePlayer));
-            corePlayer.setHonor(Core.getSqlUtil().getHonor(corePlayer.getSqlId()));
+            corePlayer.setHonor(Core.getMongoHandler().getHonor(corePlayer.getUniqueId()));
             corePlayer.setPreviousHonorLevel(Core.getHonorManager().getLevel(corePlayer.getHonor()).getLevel());
             Core.getHonorManager().displayHonor(corePlayer, true);
         });
@@ -141,16 +141,6 @@ public class CorePlayerManager implements CPlayerManager {
         if (p == null)
             return null;
         return getPlayer(p);
-    }
-
-    @Override
-    public CPlayer getPlayer(int sqlId) {
-        for (CPlayer p : getOnlinePlayers()) {
-            if (p.getSqlId() == sqlId) {
-                return p;
-            }
-        }
-        return null;
     }
 
     @Override

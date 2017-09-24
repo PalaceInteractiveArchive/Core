@@ -35,6 +35,11 @@ public class ResourceManager {
     private void initialize() {
         packs.clear();
         if (Core.isDashboardAndSqlDisabled()) return;
+        List<ResourcePack> list = Core.getMongoHandler().getResourcePacks();
+        if (first) {
+            Core.addPacketListener(new ResourceListener(Core.getInstance(), PacketType.Play.Client.RESOURCE_PACK_STATUS));
+            first = false;
+        }
         try (Connection connection = Core.getSqlUtil().getConnection()) {
             PreparedStatement sql = connection.prepareStatement("SELECT * FROM resource_packs");
             ResultSet result = sql.executeQuery();

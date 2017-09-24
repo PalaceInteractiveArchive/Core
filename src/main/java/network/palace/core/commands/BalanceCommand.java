@@ -5,6 +5,7 @@ import network.palace.core.command.CommandException;
 import network.palace.core.command.CommandMeta;
 import network.palace.core.command.CommandPermission;
 import network.palace.core.command.CoreCommand;
+import network.palace.core.economy.CurrencyType;
 import network.palace.core.player.Rank;
 import network.palace.core.utils.MiscUtil;
 import org.bukkit.Bukkit;
@@ -13,6 +14,8 @@ import org.bukkit.Location;
 import org.bukkit.command.BlockCommandSender;
 import org.bukkit.command.CommandSender;
 import org.bukkit.entity.Player;
+
+import java.util.UUID;
 
 /**
  * The type Balance command.
@@ -33,9 +36,9 @@ public class BalanceCommand extends CoreCommand {
         boolean isPlayer = sender instanceof Player;
         if (args.length == 0) {
             if (isPlayer) {
-                Core.runTaskAsynchronously(() -> sender.sendMessage(ChatColor.YELLOW +
-                        "" + ChatColor.BOLD + "Your Balance: " + ChatColor.GREEN + "$" +
-                        Core.getEconomy().getBalance(((Player) sender).getUniqueId())));
+                Core.runTaskAsynchronously(() -> sender.sendMessage(ChatColor.YELLOW + "" + ChatColor.BOLD +
+                        "Your Balance: " + ChatColor.GREEN + "$" +
+                        Core.getMongoHandler().getCurrency(((Player) sender).getUniqueId(), CurrencyType.BALANCE)));
             } else {
                 helpMenu(sender);
             }
@@ -43,9 +46,11 @@ public class BalanceCommand extends CoreCommand {
         }
         if (args.length == 1) {
             final String user = args[0];
-            Core.runTaskAsynchronously(() -> sender.sendMessage(ChatColor.YELLOW +
-                    "" + ChatColor.BOLD + "Balance for " + user + ": " + ChatColor.GREEN + "$" +
-                    Core.getEconomy().getBalance(sender, user)));
+            Core.runTaskAsynchronously(() -> {
+                UUID uuid = Core.getMongoHandler().usernameToUUID(user);
+                sender.sendMessage(ChatColor.YELLOW + "" + ChatColor.BOLD + "Balance for " + user + ": " +
+                        ChatColor.GREEN + "$" + Core.getMongoHandler().getCurrency(uuid, CurrencyType.BALANCE));
+            });
             return;
         }
         if (args.length == 2) {
@@ -62,13 +67,13 @@ public class BalanceCommand extends CoreCommand {
                 int amount = Integer.parseInt(args[1]);
                 switch (action.toLowerCase()) {
                     case "set":
-                        Core.getEconomy().setBalance(tp.getUniqueId(), amount, source, true);
+                        Core.getEconomy().changeAmount(tp.getUniqueId(), amount, source, CurrencyType.BALANCE, true);
                         break;
                     case "add":
-                        Core.getEconomy().addBalance(tp.getUniqueId(), amount, source);
+                        Core.getEconomy().changeAmount(tp.getUniqueId(), amount, source, CurrencyType.BALANCE, false);
                         break;
                     case "minus":
-                        Core.getEconomy().addBalance(tp.getUniqueId(), -amount, source);
+                        Core.getEconomy().changeAmount(tp.getUniqueId(), -amount, source, CurrencyType.BALANCE, false);
                         break;
                 }
             }
@@ -96,13 +101,13 @@ public class BalanceCommand extends CoreCommand {
             int amount = Integer.parseInt(args[1]);
             switch (action.toLowerCase()) {
                 case "set":
-                    Core.getEconomy().setBalance(tp.getUniqueId(), amount, source, true);
+                    Core.getEconomy().changeAmount(tp.getUniqueId(), amount, source, CurrencyType.BALANCE, true);
                     break;
                 case "add":
-                    Core.getEconomy().addBalance(tp.getUniqueId(), amount, source);
+                    Core.getEconomy().changeAmount(tp.getUniqueId(), amount, source, CurrencyType.BALANCE, false);
                     break;
                 case "minus":
-                    Core.getEconomy().addBalance(tp.getUniqueId(), -amount, source);
+                    Core.getEconomy().changeAmount(tp.getUniqueId(), -amount, source, CurrencyType.BALANCE, false);
                     break;
             }
             return;
