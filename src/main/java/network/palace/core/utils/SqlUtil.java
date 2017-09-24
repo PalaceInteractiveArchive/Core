@@ -1,10 +1,9 @@
 package network.palace.core.utils;
 
-import lombok.AllArgsConstructor;
-import lombok.Getter;
 import network.palace.core.Core;
 import network.palace.core.honor.HonorMapping;
 import network.palace.core.honor.TopHonorReport;
+import network.palace.core.mongo.JoinReport;
 import network.palace.core.npc.mob.MobPlayerTexture;
 import network.palace.core.player.CPlayer;
 import network.palace.core.player.Rank;
@@ -13,7 +12,10 @@ import network.palace.core.tracking.StatisticType;
 import org.bukkit.ChatColor;
 
 import java.sql.*;
-import java.util.*;
+import java.util.ArrayList;
+import java.util.HashMap;
+import java.util.List;
+import java.util.UUID;
 
 /**
  * Utility functions for interacting with MySQL.
@@ -53,421 +55,6 @@ public class SqlUtil {
                 ErrorUtil.displayError(e);
             }
             return null;
-        }
-    }
-
-    /* Player Methods */
-
-    /**
-     * Get rank.
-     *
-     * @param uuid the uuid
-     * @return the rank
-     */
-    public Rank getRank(UUID uuid) {
-        Connection connection = getConnection();
-        if (connection == null) {
-            ErrorUtil.displayError("Unable to connect to MySQL!");
-            Core.logInfo("Core > Could not get rank! - Cannot connect to MySQL!");
-            return Rank.SETTLER;
-        }
-        try {
-            PreparedStatement statement = connection.prepareStatement("SELECT rank FROM player_data WHERE uuid=?");
-            statement.setString(1, uuid.toString());
-            ResultSet result = statement.executeQuery();
-            if (!result.next()) {
-                return Rank.SETTLER;
-            }
-            Rank rank = Rank.fromString(result.getString("rank"));
-            result.close();
-            statement.close();
-            connection.close();
-            return rank;
-        } catch (SQLException e) {
-            e.printStackTrace();
-            ErrorUtil.displayError(e);
-            return Rank.SETTLER;
-        }
-    }
-
-    /**
-     * Gets rank.
-     *
-     * @param username the username
-     * @return the player's rank
-     */
-    public Rank getRank(String username) {
-        Connection connection = getConnection();
-        if (connection == null) {
-            ErrorUtil.displayError("Unable to connect to MySQL!");
-            Core.logInfo("Core > Could not get rank! - Cannot connect to MySQL!");
-            return Rank.SETTLER;
-        }
-        try {
-            PreparedStatement statement = connection.prepareStatement("SELECT rank FROM player_data WHERE username=?");
-            statement.setString(1, username);
-            ResultSet result = statement.executeQuery();
-            if (!result.next()) {
-                return Rank.SETTLER;
-            }
-            Rank rank = Rank.fromString(result.getString("rank"));
-            result.close();
-            statement.close();
-            connection.close();
-            return rank;
-        } catch (SQLException e) {
-            e.printStackTrace();
-            ErrorUtil.displayError(e);
-            return Rank.SETTLER;
-        }
-    }
-
-    /**
-     * Player exists boolean.
-     *
-     * @param username the username
-     * @return if the player exists or not
-     */
-    public boolean playerExists(String username) {
-        Connection connection = getConnection();
-        if (connection == null) {
-            ErrorUtil.displayError("Unable to connect to MySQL!");
-            Core.logInfo("Core > Could not check if player exists! - Cannot connect to MySQL!");
-            return false;
-        }
-        try {
-            PreparedStatement statement = connection.prepareStatement("SELECT id FROM player_data WHERE username=?");
-            statement.setString(1, username);
-            ResultSet result = statement.executeQuery();
-            boolean contains = result.next();
-            result.close();
-            statement.close();
-            connection.close();
-            return contains;
-        } catch (SQLException e) {
-            e.printStackTrace();
-            ErrorUtil.displayError(e);
-            return false;
-        }
-    }
-
-    public int getIdFromName(String username) {
-        Connection connection = getConnection();
-        if (connection == null) {
-            ErrorUtil.displayError("Unable to connect to MySQL!");
-            Core.logInfo("Core > Could not get UUID from name! - Cannot connect to MySQL!");
-            return 0;
-        }
-        try {
-            PreparedStatement sql = connection.prepareStatement("SELECT id FROM player_data WHERE username=?");
-            sql.setString(1, username);
-            ResultSet result = sql.executeQuery();
-            if (!result.next()) {
-                result.close();
-                sql.close();
-                return 0;
-            }
-            int id = result.getInt("id");
-            result.close();
-            sql.close();
-            connection.close();
-            return id;
-        } catch (SQLException e) {
-            e.printStackTrace();
-            ErrorUtil.displayError(e);
-            return 0;
-        }
-    }
-
-    /**
-     * Gets unique id from name.
-     *
-     * @param username the username
-     * @return the unique id from name
-     */
-    public UUID getUniqueIdFromName(String username) {
-        Connection connection = getConnection();
-        if (connection == null) {
-            ErrorUtil.displayError("Unable to connect to MySQL!");
-            Core.logInfo("Core > Could not get UUID from name! - Cannot connect to MySQL!");
-            return UUID.randomUUID();
-        }
-        try {
-            PreparedStatement statement = connection.prepareStatement("SELECT uuid FROM player_data WHERE username=?");
-            statement.setString(1, username);
-            ResultSet result = statement.executeQuery();
-            if (!result.next()) {
-                result.close();
-                statement.close();
-                return null;
-            }
-            String uuid = result.getString("uuid");
-            result.close();
-            statement.close();
-            connection.close();
-            return UUID.fromString(uuid);
-        } catch (SQLException e) {
-            e.printStackTrace();
-            ErrorUtil.displayError(e);
-            return null;
-        }
-    }
-
-    /* Permission Methods */
-
-    /**
-     * Gets permissions.
-     *
-     * @param rank the rank
-     * @return the permissions
-     */
-    public Map<String, Boolean> getPermissions(Rank rank) {
-        Connection connection = getConnection();
-        if (connection == null) {
-            ErrorUtil.displayError("Unable to connect to MySQL!");
-            Core.logInfo("Core > Could not get permissions! - Cannot connect to MySQL!");
-            return new HashMap<>();
-        }
-        try {
-            PreparedStatement statement = connection.prepareStatement("SELECT * FROM permissions WHERE rank=?");
-            statement.setString(1, rank.getSqlName());
-            ResultSet result = statement.executeQuery();
-            Map<String, Boolean> permissions = new HashMap<>();
-            while (result.next()) {
-                permissions.put(result.getString("node"), result.getInt("value") == 1);
-            }
-            result.close();
-            statement.close();
-            connection.close();
-            return permissions;
-        } catch (SQLException e) {
-            e.printStackTrace();
-            ErrorUtil.displayError(e);
-            return new HashMap<>();
-        }
-    }
-
-    /**
-     * Gets permissions.
-     *
-     * @param player the player
-     * @return the permissions
-     */
-    public Map<String, Boolean> getPermissions(CPlayer player) {
-        return getPermissions(player.getRank());
-    }
-
-    /**
-     * Gets members.
-     *
-     * @param rank the rank
-     * @return the members
-     */
-    public List<String> getMembers(Rank rank) {
-        Connection connection = getConnection();
-        if (connection == null) {
-            ErrorUtil.displayError("Unable to connect to MySQL!");
-            Core.logInfo("Core > Could not get members! - Cannot connect to MySQL!");
-            return new ArrayList<>();
-        }
-        try {
-            PreparedStatement statement = connection.prepareStatement("SELECT username FROM player_data WHERE rank=?");
-            statement.setString(1, rank.getSqlName());
-            ResultSet result = statement.executeQuery();
-            List<String> members = new ArrayList<>();
-            while (result.next()) {
-                members.add(result.getString("username"));
-            }
-            result.close();
-            statement.close();
-            connection.close();
-            return members;
-        } catch (SQLException e) {
-            e.printStackTrace();
-            ErrorUtil.displayError(e);
-            return new ArrayList<>();
-        }
-    }
-
-    /**
-     * Sets rank.
-     *
-     * @param uuid the uuid
-     * @param rank the rank
-     */
-    public void setRank(UUID uuid, Rank rank) {
-        Connection connection = getConnection();
-        if (connection == null) {
-            ErrorUtil.displayError("Unable to connect to MySQL!");
-            Core.logInfo("Core > Could not set player rank! - Cannot connect to MySQL!");
-            return;
-        }
-        try {
-            PreparedStatement statement = connection.prepareStatement("UPDATE player_data SET rank=? WHERE uuid=?");
-            statement.setString(1, rank.getSqlName());
-            statement.setString(2, uuid.toString());
-            statement.execute();
-            statement.close();
-            connection.close();
-        } catch (SQLException e) {
-            e.printStackTrace();
-            ErrorUtil.displayError(e);
-        }
-    }
-
-    /**
-     * Sets permission.
-     *
-     * @param node  the node
-     * @param rank  the rank
-     * @param value the value
-     */
-    public void setPermission(String node, Rank rank, boolean value) {
-        Connection connection = getConnection();
-        if (connection == null) {
-            Core.logInfo("Core > Could not set permission! - Cannot connect to MySQL!");
-            ErrorUtil.displayError("Unable to connect to MySQL!");
-            return;
-        }
-        try {
-            String s = "IF EXISTS (SELECT * FROM permissions WHERE rank=? AND node=?) UPDATE permissions SET value=? WHERE node=? AND rank=? ELSE INSERT INTO Table1 VALUES (0,?,?,?)";
-            PreparedStatement statement = connection.prepareStatement(s);
-            statement.setString(1, rank.getSqlName());
-            statement.setString(2, node);
-            statement.setInt(3, value ? 1 : 0);
-            statement.setString(4, node);
-            statement.setString(5, rank.getSqlName());
-            statement.setString(6, rank.getSqlName());
-            statement.setString(7, node);
-            statement.setInt(8, value ? 1 : 0);
-            statement.execute();
-            statement.close();
-            connection.close();
-        } catch (SQLException e) {
-            e.printStackTrace();
-            ErrorUtil.displayError(e);
-        }
-        Core.getPermissionManager().setPermission(rank, node, value);
-    }
-
-    /**
-     * Unset permission.
-     *
-     * @param node the node
-     * @param rank the rank
-     */
-    public void unsetPermission(String node, Rank rank) {
-        Connection connection = getConnection();
-        if (connection == null) {
-            Core.logInfo("Core > Could not add permission! - Cannot connect to MySQL!");
-            ErrorUtil.displayError("Unable to connect to MySQL!");
-            return;
-        }
-        try {
-            PreparedStatement statement = connection.prepareStatement("DELETE FROM permissions WHERE rank=? AND node=?");
-            statement.setString(1, rank.getSqlName());
-            statement.setString(2, node);
-            statement.execute();
-            statement.close();
-            connection.close();
-        } catch (SQLException e) {
-            e.printStackTrace();
-            ErrorUtil.displayError(e);
-        }
-        Core.getPermissionManager().unsetPermission(rank, node);
-    }
-
-    /**
-     * Give player Achievement
-     *
-     * @param player the player
-     * @param id     achievement ID
-     */
-    public void addAchievement(CPlayer player, int id) {
-        Connection connection = getConnection();
-        if (connection == null) {
-            Core.logInfo("Core > Could not add achievement! - Cannot connect to MySQL!");
-            ErrorUtil.displayError("Unable to connect to MySQL!");
-            return;
-        }
-        try {
-            PreparedStatement statement = connection.prepareStatement("INSERT INTO achievements (uuid, achid, time) VALUES (?,?,?)");
-            statement.setString(1, player.getUniqueId().toString());
-            statement.setInt(2, id);
-            statement.setInt(3, (int) (System.currentTimeMillis() / 1000));
-            statement.execute();
-            statement.close();
-            connection.close();
-        } catch (SQLException e) {
-            e.printStackTrace();
-            ErrorUtil.displayError(e);
-        }
-    }
-
-    /**
-     * Get all achievements for a player
-     *
-     * @param uuid The player's uuid
-     * @return list of the players achievements
-     */
-    public List<Integer> getAchievements(UUID uuid) {
-        List<Integer> list = new ArrayList<>();
-        Connection connection = getConnection();
-        if (connection == null) {
-            Core.logInfo("Core > Could not get achievements! - Cannot connect to MySQL!");
-            ErrorUtil.displayError("Unable to connect to MySQL!");
-            return list;
-        }
-        try {
-            PreparedStatement statement = connection.prepareStatement("SELECT achid FROM achievements WHERE uuid=?");
-            statement.setString(1, uuid.toString());
-            ResultSet achResult = statement.executeQuery();
-            while (achResult.next()) {
-                list.add(achResult.getInt("achid"));
-            }
-            achResult.close();
-            statement.close();
-            connection.close();
-        } catch (SQLException e) {
-            e.printStackTrace();
-            ErrorUtil.displayError(e);
-        }
-        return list;
-    }
-
-    /**
-     * Cache a skin for later use
-     *
-     * @param uuid      UUID of the player
-     * @param value     Value of the skin
-     * @param signature Signature of the skin
-     */
-    public void cacheSkin(UUID uuid, String value, String signature) {
-        Connection connection = getConnection();
-        if (connection == null) {
-            Core.logInfo("Core > Could not cache player hash! - Cannot connect to MySQL!");
-            ErrorUtil.displayError("Unable to connect to MySQL!");
-            return;
-        }
-
-        try {
-            String statementText = "INSERT INTO skins (uuid,value,signature) VALUES (?,?,?) ON DUPLICATE KEY UPDATE value=?,signature=?";
-            PreparedStatement statement = connection.prepareStatement(statementText);
-
-            statement.setString(1, uuid.toString());
-            statement.setString(2, value);
-            statement.setString(3, signature);
-
-            statement.setString(4, signature);
-            statement.setString(5, uuid.toString());
-
-            statement.execute();
-            statement.close();
-
-            connection.close();
-        } catch (SQLException e) {
-            e.printStackTrace();
-            ErrorUtil.displayError(e);
         }
     }
 
@@ -700,89 +287,6 @@ public class SqlUtil {
     }
 
     /**
-     * Add honor to a player
-     * To remove honor, make amount negative
-     *
-     * @param id     the player's internal-id
-     * @param amount the amount to add
-     */
-    public void addHonor(int id, int amount) {
-        Connection connection = getConnection();
-        if (connection == null) {
-            Core.logInfo("Core > Unable to add honor - Cannot connect to MySQL!");
-            ErrorUtil.displayError("Unable to connect to MySQL!");
-            return;
-        }
-        try {
-            String statementText = "UPDATE player_data SET honor=honor+? WHERE id=?";
-            PreparedStatement statement = connection.prepareStatement(statementText);
-            statement.setInt(1, amount);
-            statement.setInt(2, id);
-            statement.execute();
-            statement.close();
-        } catch (SQLException e) {
-            e.printStackTrace();
-            ErrorUtil.displayError(e);
-        }
-    }
-
-    /**
-     * Set a player's honor
-     *
-     * @param id     the player's internal id
-     * @param amount the amount
-     */
-    public void setHonor(int id, int amount) {
-        Connection connection = getConnection();
-        if (connection == null) {
-            Core.logInfo("Core > Unable to set honor - Cannot connect to MySQL!");
-            ErrorUtil.displayError("Unable to connect to MySQL!");
-            return;
-        }
-        try {
-            String statementText = "UPDATE player_data SET honor=? WHERE id=?";
-            PreparedStatement statement = connection.prepareStatement(statementText);
-            statement.setInt(1, amount);
-            statement.setInt(2, id);
-            statement.execute();
-            statement.close();
-        } catch (SQLException e) {
-            e.printStackTrace();
-            ErrorUtil.displayError(e);
-        }
-    }
-
-    /**
-     * Get a player's honor
-     *
-     * @param id the player's id to get from
-     * @return the player's honor
-     */
-    public int getHonor(int id) {
-        Connection connection = getConnection();
-        if (connection == null) {
-            Core.logInfo("Core > Unable to get honor - Cannot connect to MySQL!");
-            ErrorUtil.displayError("Unable to connect to MySQL!");
-            return 1;
-        }
-
-        try {
-            PreparedStatement statement = connection.prepareStatement("SELECT honor FROM player_data WHERE id=?");
-            statement.setInt(1, id);
-            ResultSet results = statement.executeQuery();
-            int amount = 0;
-            while (results.next()) {
-                amount = results.getInt("honor");
-            }
-            return amount;
-        } catch (SQLException e) {
-            e.printStackTrace();
-            ErrorUtil.displayError(e);
-            return 1;
-        }
-    }
-
-    /**
      * Get honor leaderboard
      *
      * @param limit amount to get (max 10)
@@ -832,7 +336,7 @@ public class SqlUtil {
         if (connection == null) {
             Core.logInfo("Core > Unable to get top honor report - Cannot connect to MySQL!");
             ErrorUtil.displayError("Unable to connect to MySQL!");
-            return new JoinReport(0, uuid, Rank.SETTLER);
+            return new JoinReport(uuid, Rank.SETTLER);
         }
         try {
             String statementText = "SELECT id,rank FROM player_data WHERE uuid=?";
@@ -840,9 +344,9 @@ public class SqlUtil {
             statement.setString(1, uuid.toString());
             ResultSet result = statement.executeQuery();
             if (!result.next()) {
-                return new JoinReport(0, uuid, Rank.SETTLER);
+                return new JoinReport(uuid, Rank.SETTLER);
             }
-            JoinReport report = new JoinReport(result.getInt("id"), uuid, Rank.fromString(result.getString("rank")));
+            JoinReport report = new JoinReport(uuid, Rank.fromString(result.getString("rank")));
             result.close();
             statement.close();
             return report;
@@ -850,13 +354,7 @@ public class SqlUtil {
             e.printStackTrace();
             ErrorUtil.displayError(e);
         }
-        return new JoinReport(0, uuid, Rank.SETTLER);
+        return new JoinReport(uuid, Rank.SETTLER);
     }
 
-    @AllArgsConstructor
-    public class JoinReport {
-        @Getter private final int sqlId;
-        @Getter private final UUID uuid;
-        @Getter private final Rank rank;
-    }
 }

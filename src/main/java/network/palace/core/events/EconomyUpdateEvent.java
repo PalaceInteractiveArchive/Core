@@ -2,6 +2,7 @@ package network.palace.core.events;
 
 import lombok.AllArgsConstructor;
 import lombok.Getter;
+import network.palace.core.economy.CurrencyType;
 
 import java.util.UUID;
 
@@ -12,5 +13,5 @@ import java.util.UUID;
 public class EconomyUpdateEvent extends CoreEvent {
     @Getter private UUID uuid;
     @Getter private int amount;
-    @Getter private boolean isBalance;
+    @Getter private CurrencyType currency;
 }

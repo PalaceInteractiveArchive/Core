@@ -72,12 +72,12 @@ public class PermCommand extends CoreCommand {
                             helpMenu(sender, "player");
                             return;
                         }
-                        if (!Core.getSqlUtil().playerExists(arg2)) {
+                        if (!Core.getMongoHandler().playerExists(arg2)) {
                             sender.sendMessage(ChatColor.RED + "Player '" + arg2 + "' not found!");
                             return;
                         }
                         if (arg3.equalsIgnoreCase("getgroup")) {
-                            Rank rank = Core.getSqlUtil().getRank(Core.getSqlUtil().getUniqueIdFromName(arg2));
+                            Rank rank = Core.getMongoHandler().getRank(Core.getMongoHandler().usernameToUUID(arg2));
                             sender.sendMessage(ChatColor.BLUE + arg2 + ChatColor.YELLOW + " is in the " + rank.getFormattedName() + ChatColor.YELLOW + " group.");
                             return;
                         }
@@ -87,7 +87,8 @@ public class PermCommand extends CoreCommand {
                     if (arg1.equalsIgnoreCase("group")) {
                         Rank rank = Rank.fromString(arg2);
                         if (arg3.equalsIgnoreCase("members")) {
-                            Core.getSqlUtil().getMembers(rank);
+                            sender.sendMessage(ChatColor.GREEN + "Members of the rank " + rank.getFormattedName() + ":");
+                            Core.getMongoHandler().getMembers(rank).forEach(s -> sender.sendMessage(ChatColor.AQUA + "- " + rank.getTagColor() + s));
                             return;
                         }
                         if (arg3.equalsIgnoreCase("perms")) {
@@ -111,7 +112,7 @@ public class PermCommand extends CoreCommand {
                     String action = args[2];
                     String rankName = args[3];
                     if (type.equalsIgnoreCase("player")) {
-                        if (!Core.getSqlUtil().playerExists(playerName)) {
+                        if (!Core.getMongoHandler().playerExists(playerName)) {
                             sender.sendMessage(ChatColor.RED + "Player not found!");
                             return;
                         }
@@ -124,16 +125,16 @@ public class PermCommand extends CoreCommand {
                                     uuid = tp.getUniqueId();
                                     Core.getPlayerManager().getPlayer(tp).setRank(rank);
                                 } else {
-                                    uuid = Core.getSqlUtil().getUniqueIdFromName(playerName);
+                                    uuid = Core.getMongoHandler().usernameToUUID(playerName);
                                 }
-                                Core.getSqlUtil().setRank(uuid, rank);
+                                Core.getMongoHandler().setRank(uuid, rank);
                                 String source = sender instanceof Player ? sender.getName() : "Console on " + Core.getInstanceName();
                                 PacketRankChange packet = new PacketRankChange(uuid, rank, source);
                                 Core.getDashboardConnection().send(packet);
                                 sender.sendMessage(ChatColor.YELLOW + playerName + "'s rank has been changed to " + rank.getFormattedName());
                                 return;
                             case "get":
-                                final Rank currentRank2 = Core.getSqlUtil().getRank(Core.getSqlUtil().getUniqueIdFromName(playerName));
+                                final Rank currentRank2 = Core.getMongoHandler().getRank(Core.getMongoHandler().usernameToUUID(playerName));
                                 Map<String, Boolean> permissions2 = currentRank2.getPermissions();
                                 if (!permissions2.containsKey(rankName)) {
                                     sender.sendMessage(currentRank2.getFormattedName() + ChatColor.YELLOW + " does not set " + ChatColor.RED + rankName);
@@ -166,7 +167,7 @@ public class PermCommand extends CoreCommand {
                                 }
                                 return;
                             case "set":
-                                Core.getSqlUtil().setPermission(rankName, rank, true);
+                                Core.getMongoHandler().setPermission(rankName, rank, true);
                                 for (CPlayer tp : Core.getPlayerManager().getOnlinePlayers()) {
                                     if (tp.getRank().equals(rank)) {
                                         Core.getPermissionManager().attachments.get(tp.getUniqueId()).setPermission(rankName, true);
@@ -175,7 +176,7 @@ public class PermCommand extends CoreCommand {
                                 sender.sendMessage(rank.getFormattedName() + ChatColor.YELLOW + " now sets " + ChatColor.AQUA + rankName + ChatColor.YELLOW + " to " + ChatColor.GREEN + "" + ChatColor.BOLD + "true");
                                 return;
                             case "unset":
-                                Core.getSqlUtil().unsetPermission(rankName, rank);
+                                Core.getMongoHandler().unsetPermission(rankName, rank);
                                 for (CPlayer tp : Core.getPlayerManager().getOnlinePlayers()) {
                                     if (tp.getRank().equals(rank)) {
                                         Core.getPermissionManager().attachments.get(tp.getUniqueId()).unsetPermission(rankName);
@@ -199,7 +200,7 @@ public class PermCommand extends CoreCommand {
                         Rank rank = Rank.fromString(arg2);
                         if (arg3.equalsIgnoreCase("set")) {
                             boolean value = arg5.equalsIgnoreCase("true");
-                            Core.getSqlUtil().setPermission(arg4, rank, value);
+                            Core.getMongoHandler().setPermission(arg4, rank, value);
                             for (CPlayer tp : Core.getPlayerManager().getOnlinePlayers()) {
                                 if (tp.getRank().equals(rank)) {
                                     Core.getPermissionManager().attachments.get(tp.getUniqueId()).setPermission(arg4, true);

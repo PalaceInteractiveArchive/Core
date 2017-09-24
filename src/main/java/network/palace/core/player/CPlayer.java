@@ -24,13 +24,6 @@ import java.util.UUID;
  * The interface CPlayer.
  */
 public interface CPlayer {
-    /**
-     * Gets the sql id of the player
-     *
-     * @return sql id
-     * @implNote used to make sql calls much quicker
-     */
-    int getSqlId();
 
     /**
      * Gets player name.

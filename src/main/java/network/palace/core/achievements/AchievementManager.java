@@ -2,6 +2,7 @@ package network.palace.core.achievements;
 
 import com.google.common.collect.ImmutableList;
 import network.palace.core.Core;
+import network.palace.core.mongo.MongoHandler;
 import network.palace.core.utils.MiscUtil;
 import org.json.simple.JSONArray;
 import org.json.simple.JSONObject;
@@ -11,9 +12,6 @@ import org.json.simple.parser.ParseException;
 import java.io.*;
 import java.net.URL;
 import java.nio.charset.Charset;
-import java.sql.Connection;
-import java.sql.PreparedStatement;
-import java.sql.SQLException;
 import java.util.*;
 
 /**
@@ -38,42 +36,10 @@ public class AchievementManager {
         Core.runTaskTimerAsynchronously(this::reload, 0L, 6000L);
 
         Core.runTaskTimerAsynchronously(() -> {
-            Connection connection = Core.getSqlUtil().getConnection();
-            if (connection == null) return;
-            try {
-                if (earned.isEmpty()) return;
-
-                int amount = 0;
-                for (Map.Entry<UUID, List<Integer>> entry : new HashSet<>(earned.entrySet())) {
-                    amount += entry.getValue().size();
-                }
-
-                StringBuilder statement = new StringBuilder("INSERT INTO achievements (uuid, achid, time) VALUES ");
-                int i = 0;
-                Map<Integer, String> lastList = new HashMap<>();
-                for (Map.Entry<UUID, List<Integer>> entry : new HashSet<>(earned.entrySet())) {
-                    if (entry == null || entry.getKey() == null || entry.getValue() == null) continue;
-                    for (Integer in : new ArrayList<>(earned.remove(entry.getKey()))) {
-                        statement.append("(?, ?, ?)");
-                        if (((i / 3) + 1) < amount) statement.append(", ");
-                        lastList.put(i += 1, entry.getKey().toString());
-                        lastList.put(i += 1, in + "");
-                        lastList.put(i += 1, (int) (System.currentTimeMillis() / 1000) + "");
-                    }
-                }
-
-                PreparedStatement sql = connection.prepareStatement(statement + ";");
-                for (Map.Entry<Integer, String> entry : new HashSet<>(lastList.entrySet())) {
-                    if (MiscUtil.checkIfInt(entry.getValue()))
-                        sql.setInt(entry.getKey(), Integer.parseInt(entry.getValue()));
-                    else sql.setString(entry.getKey(), entry.getValue());
-                }
-
-                sql.execute();
-                sql.close();
-            } catch (SQLException e) {
-                e.printStackTrace();
-            }
+            MongoHandler handler = Core.getMongoHandler();
+            new HashSet<>(earned.entrySet()).stream().forEach(entry -> entry.getValue().stream().forEach(i -> {
+                handler.addAchievement(entry.getKey(), i);
+            }));
         }, 0L, 100L);
     }
 

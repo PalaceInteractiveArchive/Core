@@ -27,7 +27,7 @@ public class CorePlayerManagerListener implements Listener {
             return;
         }
         if (!Core.isDashboardAndSqlDisabled()) {
-            if (Core.getDashboardConnection() == null || !Core.getDashboardConnection().isConnected() || Core.getSqlUtil() == null || Core.getSqlUtil().getConnection() == null) {
+            if (Core.getDashboardConnection() == null || !Core.getDashboardConnection().isConnected() || Core.getMongoHandler() == null) {
                 event.setKickMessage(ChatColor.AQUA + "Players can not join right now. Try again in a few seconds!");
                 event.setLoginResult(AsyncPlayerPreLoginEvent.Result.KICK_OTHER);
                 return;

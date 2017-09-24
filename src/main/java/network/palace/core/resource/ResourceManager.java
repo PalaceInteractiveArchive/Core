@@ -7,17 +7,12 @@ import network.palace.core.player.CPlayer;
 import org.bukkit.Bukkit;
 import org.bukkit.ChatColor;
 
-import java.sql.Connection;
-import java.sql.PreparedStatement;
-import java.sql.ResultSet;
-import java.sql.SQLException;
 import java.util.*;
 
 /**
  * The type Resource manager.
  */
 public class ResourceManager {
-
     private Map<String, ResourcePack> packs = new HashMap<>();
     private boolean first = true;
     private Map<UUID, String> downloading = new HashMap<>();
@@ -35,21 +30,10 @@ public class ResourceManager {
     private void initialize() {
         packs.clear();
         if (Core.isDashboardAndSqlDisabled()) return;
-        try (Connection connection = Core.getSqlUtil().getConnection()) {
-            PreparedStatement sql = connection.prepareStatement("SELECT * FROM resource_packs");
-            ResultSet result = sql.executeQuery();
-            while (result.next()) {
-                packs.put(result.getString("name"), new ResourcePack(result.getString("name"),
-                        result.getString("url"), result.getString("hash")));
-            }
-            result.close();
-            sql.close();
-            if (first) {
-                Core.addPacketListener(new ResourceListener(Core.getInstance(), PacketType.Play.Client.RESOURCE_PACK_STATUS));
-                first = false;
-            }
-        } catch (SQLException e) {
-            e.printStackTrace();
+        List<ResourcePack> list = Core.getMongoHandler().getResourcePacks();
+        if (first) {
+            Core.addPacketListener(new ResourceListener(Core.getInstance(), PacketType.Play.Client.RESOURCE_PACK_STATUS));
+            first = false;
         }
     }
 

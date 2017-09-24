@@ -6,6 +6,7 @@ import network.palace.core.Core;
 import network.palace.core.dashboard.packets.dashboard.PacketConfirmPlayer;
 import network.palace.core.dashboard.packets.dashboard.PacketGetPack;
 import network.palace.core.events.CorePlayerJoinedEvent;
+import network.palace.core.mongo.JoinReport;
 import network.palace.core.player.CPlayer;
 import network.palace.core.player.CPlayerManager;
 import network.palace.core.player.PlayerStatus;
@@ -14,7 +15,6 @@ import network.palace.core.player.impl.CorePlayer;
 import network.palace.core.player.impl.CorePlayerDefaultScoreboard;
 import network.palace.core.player.impl.listeners.CorePlayerManagerListener;
 import network.palace.core.player.impl.listeners.CorePlayerStaffLoginListener;
-import network.palace.core.utils.SqlUtil;
 import org.bukkit.Bukkit;
 import org.bukkit.entity.Player;
 
@@ -40,9 +40,9 @@ public class CorePlayerManager implements CPlayerManager {
     @Override
     public void playerLoggedIn(UUID uuid, String name) {
 //        System.out.println(System.currentTimeMillis() + " a");
-        SqlUtil.JoinReport report = Core.getSqlUtil().getJoinReport(uuid);
+        JoinReport report = Core.getSqlUtil().getJoinReport(uuid);
 //        System.out.println(System.currentTimeMillis() + " b");
-        onlinePlayers.put(uuid, new CorePlayer(report.getSqlId(), uuid, name, report.getRank()));
+        onlinePlayers.put(uuid, new CorePlayer(uuid, name, report.getRank()));
 //        System.out.println(System.currentTimeMillis() + " c");
     }
 
@@ -67,17 +67,15 @@ public class CorePlayerManager implements CPlayerManager {
         corePlayer.setTextureValue(textureValue);
         corePlayer.setTextureSignature(textureSignature);
         if (corePlayer.getRank().getRankId() >= Rank.CHARACTER.getRankId()) {
-            Core.runTaskAsynchronously(() ->
-                    Core.getSqlUtil().cacheSkin(corePlayer.getUuid(), corePlayer.getTextureValue(), corePlayer.getTextureSignature())
-            );
+            Core.runTaskAsynchronously(() -> Core.getMongoHandler().cacheSkin(corePlayer.getUuid(), corePlayer.getTextureValue(), corePlayer.getTextureSignature()));
         }
         // Setup permissions for player
         Core.getPermissionManager().login(corePlayer);
         // Achievements Task
         Core.runTaskAsynchronously(() -> {
-            List<Integer> ids = Core.getSqlUtil().getAchievements(corePlayer.getUniqueId());
+            List<Integer> ids = Core.getMongoHandler().getAchievements(corePlayer.getUniqueId());
             corePlayer.setAchievementManager(new CorePlayerAchievementManager(corePlayer, ids));
-            corePlayer.setHonor(Core.getSqlUtil().getHonor(corePlayer.getSqlId()));
+            corePlayer.setHonor(Core.getMongoHandler().getHonor(corePlayer.getUniqueId()));
             corePlayer.setPreviousHonorLevel(Core.getHonorManager().getLevel(corePlayer.getHonor()).getLevel());
             Core.getHonorManager().displayHonor(corePlayer, true);
         });
@@ -141,16 +139,6 @@ public class CorePlayerManager implements CPlayerManager {
         if (p == null)
             return null;
         return getPlayer(p);
-    }
-
-    @Override
-    public CPlayer getPlayer(int sqlId) {
-        for (CPlayer p : getOnlinePlayers()) {
-            if (p.getSqlId() == sqlId) {
-                return p;
-            }
-        }
-        return null;
     }
 
     @Override

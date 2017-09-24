@@ -87,19 +87,21 @@ public class CorePlayerDefaultScoreboard implements Listener {
     @EventHandler
     public void onEconomyUpdate(EconomyUpdateEvent event) {
         int amount = event.getAmount();
-        boolean isBalance = event.isBalance();
         CPlayer player = Core.getPlayerManager().getPlayer(event.getUuid());
         if (player == null) return;
-        if (isBalance) {
-            setBalance(9, player.getScoreboard(), amount);
-        } else {
-            setTokens(7, player.getScoreboard(), amount);
+        switch (event.getCurrency()) {
+            case BALANCE:
+                setBalance(9, player.getScoreboard(), amount);
+                break;
+            case TOKENS:
+                setTokens(7, player.getScoreboard(), amount);
+                break;
         }
     }
 
     public void loadTokens(CPlayer player, CPlayerScoreboardManager scoreboard, int position) {
         Core.runTaskAsynchronously(() -> {
-            int tokens = Core.getEconomy().getTokens(player.getUuid());
+            int tokens = player.getTokens();
             Core.callSyncMethod((Callable<Object>) () -> {
                 setTokens(position, scoreboard, tokens);
                 return true;
@@ -109,7 +111,7 @@ public class CorePlayerDefaultScoreboard implements Listener {
 
     public void loadBalance(CPlayer player, CPlayerScoreboardManager scoreboard, int position) {
         Core.runTaskAsynchronously(() -> {
-            int balance = Core.getEconomy().getBalance(player.getUuid());
+            int balance = player.getBalance();
             Core.callSyncMethod((Callable<Object>) () -> {
                 setBalance(position, scoreboard, balance);
                 return true;

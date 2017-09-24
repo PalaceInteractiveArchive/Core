@@ -42,7 +42,7 @@ public class PermissionManager {
         Rank previous = null;
         for (int i = ranks.length - 1; i >= 0; i--) {
             Rank r = ranks[i];
-            Map<String, Boolean> perms = Core.getSqlUtil().getPermissions(r);
+            Map<String, Boolean> perms = Core.getMongoHandler().getPermissions(r);
             if (previous != null) {
                 for (Map.Entry<String, Boolean> perm : getPermissions(previous).entrySet()) {
                     if (perms.containsKey(perm.getKey())) {
