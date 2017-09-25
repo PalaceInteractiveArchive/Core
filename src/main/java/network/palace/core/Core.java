@@ -162,7 +162,7 @@ public class Core extends JavaPlugin {
         softNPCManager = new SoftNPCManager();
         // Setup the honor manager
         honorManager = new HonorManager();
-        honorManager.provideMappings(sqlUtil.getHonorMappings());
+        honorManager.provideMappings(mongoHandler.getHonorMappings());
         // Core command map
         commandMap = new CoreCommandMap(this);
         // Dashboard
@@ -656,9 +656,12 @@ public class Core extends JavaPlugin {
      * @param callback the callbacks for the actions
      */
     public static void sendAllPlayers(String server, Callback callback) {
-        for (CPlayer player : Core.getPlayerManager().getOnlinePlayers()) {
-            player.sendToServer(server);
-        }
-        Core.runTaskLater(callback::finished, 40L);
+        runTaskAsynchronously(() -> {
+            do {
+                CPlayer player = Core.getPlayerManager().getOnlinePlayers().get(0);
+                player.sendToServer(server);
+            } while (Core.getPlayerManager().getOnlinePlayers().size() > 0);
+            callback.finished();
+        });
     }
 }
