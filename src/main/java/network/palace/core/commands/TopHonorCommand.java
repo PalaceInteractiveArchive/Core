@@ -31,7 +31,7 @@ public class TopHonorCommand extends CoreCommand {
                 if (args.length > 0 && isInt(args[0]) && (limit = Integer.parseInt(args[0])) > 10) {
                     limit = 10;
                 }
-                HashMap<Integer, TopHonorReport> map = Core.getSqlUtil().getTopHonor(limit);
+                HashMap<Integer, TopHonorReport> map = Core.getMongoHandler().getTopHonor(limit);
                 StringBuilder msg = new StringBuilder(ChatColor.GOLD + "Honor Leaderboard: Top " + limit + " Players\n");
                 ArrayList<TopHonorReport> list = new ArrayList<>(map.values());
                 for (int i = 0; i < map.size(); i++) {

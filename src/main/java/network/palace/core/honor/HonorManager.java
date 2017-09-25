@@ -2,8 +2,6 @@ package network.palace.core.honor;
 
 import network.palace.core.Core;
 import network.palace.core.player.CPlayer;
-import org.bukkit.ChatColor;
-import org.bukkit.Sound;
 
 import java.util.*;
 

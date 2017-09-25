@@ -1,15 +1,21 @@
 package network.palace.core.mongo;
 
 import com.mongodb.*;
+import com.mongodb.client.FindIterable;
 import com.mongodb.client.MongoCollection;
 import com.mongodb.client.MongoDatabase;
 import com.mongodb.client.model.Filters;
 import com.mongodb.client.model.UpdateOptions;
 import network.palace.core.Core;
 import network.palace.core.economy.CurrencyType;
+import network.palace.core.honor.HonorMapping;
+import network.palace.core.honor.TopHonorReport;
+import network.palace.core.npc.mob.MobPlayerTexture;
 import network.palace.core.player.CPlayer;
 import network.palace.core.player.Rank;
 import network.palace.core.resource.ResourcePack;
+import network.palace.core.tracking.GameType;
+import network.palace.core.tracking.StatisticType;
 import org.bson.Document;
 
 import java.util.*;
@@ -25,6 +31,7 @@ public class MongoHandler {
     private MongoCollection<Document> playerCollection = null;
     private MongoCollection<Document> permissionCollection = null;
     private MongoCollection<Document> resourcePackCollection = null;
+    private MongoCollection<Document> honorMappingCollection = null;
 
     /**
      * Connect to the MongoDB database
@@ -36,6 +43,7 @@ public class MongoHandler {
         playerCollection = database.getCollection("players");
         permissionCollection = database.getCollection("permissions");
         resourcePackCollection = database.getCollection("resourcepacks");
+        honorMappingCollection = database.getCollection("honorMapping");
     }
 
     /* Player Methods */
@@ -144,6 +152,17 @@ public class MongoHandler {
         playerCollection.updateOne(Filters.eq("uuid", uuid), new BasicDBObject("skin", new Document("hash", value).append("signature", signature)));
     }
 
+    /**
+     * Get the cached skin for a player's uuid
+     *
+     * @param uuid The uuid to find
+     * @return The texture
+     */
+    public MobPlayerTexture getPlayerTextureHash(UUID uuid) {
+        BasicDBObject skin = (BasicDBObject) getPlayer(uuid, new Document("skin", 1)).get("skin");
+        return new MobPlayerTexture(skin.getString("hash"), skin.getString("signature"));
+    }
+
     /* Achievement Methods */
 
     /**
@@ -172,6 +191,52 @@ public class MongoHandler {
             list.add(doc.getInteger("id"));
         }
         return list;
+    }
+
+    /* Cosmetics */
+
+    /**
+     * Earn a cosmetic for a player
+     *
+     * @param player the player that earned it
+     * @param id     the id of the cosmetic they earned
+     */
+    public void earnCosmetic(CPlayer player, int id) {
+        earnCosmetic(player.getUniqueId(), id);
+    }
+
+    /**
+     * Earn a cosmetic for a player
+     *
+     * @param uuid the uuid that earned it
+     * @param id   the id of the cosmetic they earned
+     */
+    public void earnCosmetic(UUID uuid, int id) {
+        //TODO do this
+    }
+
+    /**
+     * Does a player have a cosmetic item?
+     *
+     * @param player the player to check
+     * @param id     the id to check
+     * @return if the player has the cosmetic
+     */
+    public boolean hasCosmetic(CPlayer player, int id) {
+        //TODO do this
+        return false;
+    }
+
+    /**
+     * Does a player have a cosmetic item?
+     *
+     * @param uuid the uuid to check
+     * @param id   the id to check
+     * @return if the player has the cosmetic
+     */
+    public boolean hasCosmetic(UUID uuid, int id) {
+        //TODO do this
+        return false;
     }
 
     /* Economy Methods */
@@ -220,7 +285,77 @@ public class MongoHandler {
                         .append("timestamp", System.currentTimeMillis() / 1000))));
     }
 
+    /* Game Methods */
+
+    /**
+     * Get a players statistic in a game
+     *
+     * @param game   the game to get the statistic from
+     * @param type   the type of statistic to get
+     * @param player the player to get the statistic from
+     * @return the amount of the statistic they have
+     */
+    public int getGameStat(GameType game, StatisticType type, CPlayer player) {
+        return getGameStat(game, type, player.getUniqueId());
+    }
+
+    /**
+     * Get a players statistic in a game
+     *
+     * @param game the game to get the statistic from
+     * @param type the type of statistic to get
+     * @param uuid the player to get the statistic from
+     * @return the amount of the statistic they have
+     */
+    public int getGameStat(GameType game, StatisticType type, UUID uuid) {
+        Document player = getPlayer(uuid, new Document("gameData", 1));
+        BasicDBObject obj = (BasicDBObject) player.get(game.getDbName());
+        if (!obj.containsField(type.getType()) || (!(obj.get(type.getType()) instanceof Number) && !(obj.get(type.getType()) instanceof Boolean))) {
+            return 0;
+        }
+        return obj.getInt(type.getType());
+    }
+
+    /**
+     * Add a game statistic to a player.
+     *
+     * @param game      the game that this happened in
+     * @param statistic the statistic to add
+     * @param amount    the amount to give the player
+     * @param player    the player who earned this stat
+     */
+    public void addGameStat(GameType game, StatisticType statistic, int amount, CPlayer player) {
+        addGameStat(game, statistic, amount, player.getUuid());
+    }
+
+    /**
+     * Add a game statistic to a player
+     *
+     * @param game      the game that this happened in
+     * @param statistic the statistic to add
+     * @param uuid      the player who earned this stat
+     * @param amount    the amount to give the player
+     */
+    public void addGameStat(GameType game, StatisticType statistic, int amount, UUID uuid) {
+        playerCollection.updateOne(new Document("uuid", uuid), new BasicDBObject("$set", new BasicDBObject("gameData",
+                new BasicDBObject(game.getDbName(), new BasicDBObject(statistic.getType(), amount)))));
+    }
+
     /* Honor Methods */
+
+    /**
+     * Get the honor mappings from mysql.
+     *
+     * @return the mappings
+     */
+    public List<HonorMapping> getHonorMappings() {
+        List<HonorMapping> list = new ArrayList<>();
+        FindIterable<Document> iter = honorMappingCollection.find();
+        for (Document doc : iter) {
+            list.add(new HonorMapping(doc.getInteger("level"), doc.getInteger("honor")));
+        }
+        return list;
+    }
 
     /**
      * Add honor to a player
@@ -253,6 +388,27 @@ public class MongoHandler {
         Document player = getPlayer(uuid, new Document("honor", 1));
         if (player == null) return 0;
         return (int) player.getOrDefault("honor", 1);
+    }
+
+    /**
+     * Get honor leaderboard
+     *
+     * @param limit amount to get (max 10)
+     * @return leaderboard map
+     */
+    public HashMap<Integer, TopHonorReport> getTopHonor(int limit) {
+        HashMap<Integer, TopHonorReport> map = new HashMap<>();
+        if (limit > 10) {
+            limit = 10;
+        }
+        FindIterable<Document> list = playerCollection.find().projection(new Document("uuid", 1).append("username", 1)
+                .append("rank", 1).append("honor", 1)).sort(new Document("honor", -1)).limit(limit);
+        int place = 1;
+        for (Document doc : list) {
+            map.put(doc.getInteger("honor"), new TopHonorReport(UUID.fromString(doc.getString("uuid")),
+                    doc.getString("username"), place++, doc.getInteger("honor")));
+        }
+        return map;
     }
 
     /* Resource Pack Methods */

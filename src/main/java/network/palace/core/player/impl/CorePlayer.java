@@ -588,13 +588,13 @@ public class CorePlayer implements CPlayer {
 
     @Override
     public void addStatistic(GameType gameType, StatisticType statisticType, int amount) {
-        Core.getSqlUtil().addGameStat(gameType, statisticType, amount, this);
+        Core.getMongoHandler().addGameStat(gameType, statisticType, amount, this);
         new GameStatisticChangeEvent(this, gameType, statisticType, amount).call();
     }
 
     @Override
     public int getStatistic(GameType gameType, StatisticType statisticType) {
-        return Core.getSqlUtil().getGameStat(gameType, statisticType, this);
+        return Core.getMongoHandler().getGameStat(gameType, statisticType, this);
     }
 
     @Override

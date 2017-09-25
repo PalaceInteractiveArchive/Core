@@ -6,7 +6,6 @@ import network.palace.core.Core;
 import network.palace.core.dashboard.packets.dashboard.PacketConfirmPlayer;
 import network.palace.core.dashboard.packets.dashboard.PacketGetPack;
 import network.palace.core.events.CorePlayerJoinedEvent;
-import network.palace.core.mongo.JoinReport;
 import network.palace.core.player.CPlayer;
 import network.palace.core.player.CPlayerManager;
 import network.palace.core.player.PlayerStatus;
@@ -39,11 +38,7 @@ public class CorePlayerManager implements CPlayerManager {
 
     @Override
     public void playerLoggedIn(UUID uuid, String name) {
-//        System.out.println(System.currentTimeMillis() + " a");
-        JoinReport report = Core.getSqlUtil().getJoinReport(uuid);
-//        System.out.println(System.currentTimeMillis() + " b");
-        onlinePlayers.put(uuid, new CorePlayer(uuid, name, report.getRank()));
-//        System.out.println(System.currentTimeMillis() + " c");
+        onlinePlayers.put(uuid, new CorePlayer(uuid, name, Core.getMongoHandler().getRank(uuid)));
     }
 
     @Override

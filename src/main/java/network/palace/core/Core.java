@@ -33,7 +33,6 @@ import network.palace.core.plugin.PluginInfo;
 import network.palace.core.resource.ResourceManager;
 import network.palace.core.utils.Callback;
 import network.palace.core.utils.ItemUtil;
-import network.palace.core.utils.SqlUtil;
 import org.bukkit.Bukkit;
 import org.bukkit.ChatColor;
 import org.bukkit.World;
@@ -56,7 +55,7 @@ import java.util.concurrent.Future;
  * <p>
  * You can access instances of other modules by depending on Core in your pom.xml, and then executing Core.get
  */
-@PluginInfo(name = "Core", version = "1.9.1", depend = {"ProtocolLib"})
+@PluginInfo(name = "Core", version = "1.9.2", depend = {"ProtocolLib"})
 public class Core extends JavaPlugin {
 
     private boolean starting = true;
@@ -80,7 +79,6 @@ public class Core extends JavaPlugin {
     @Getter @Setter private String tabHeader = ChatColor.GOLD + "Palace Network - A Family of Servers";
     @Getter @Setter private String tabFooter = ChatColor.LIGHT_PURPLE + "You're on the " + ChatColor.GREEN + "Hub " + ChatColor.LIGHT_PURPLE + "server";
 
-    private SqlUtil sqlUtil;
     private MongoHandler mongoHandler;
     private LanguageManager languageManager;
     private PermissionManager permissionManager;
@@ -139,8 +137,6 @@ public class Core extends JavaPlugin {
         // Register plugin channel
         getServer().getMessenger().registerOutgoingPluginChannel(this, "BungeeCord");
         getServer().getMessenger().registerIncomingPluginChannel(this, "WDL|INIT", new CorePlayerWorldDownloadProtect());
-        // SQL Classes
-        sqlUtil = new SqlUtil();
         // Mongo Classes
         mongoHandler = new MongoHandler();
         // Managers
@@ -152,7 +148,7 @@ public class Core extends JavaPlugin {
         softNPCManager = new SoftNPCManager();
         // Setup the honor manager
         honorManager = new HonorManager();
-        honorManager.provideMappings(sqlUtil.getHonorMappings());
+        honorManager.provideMappings(mongoHandler.getHonorMappings());
         // Core command map
         commandMap = new CoreCommandMap(this);
         // Dashboard
@@ -398,15 +394,6 @@ public class Core extends JavaPlugin {
      */
     public static SoftNPCManager getSoftNPCManager() {
         return getInstance().softNPCManager;
-    }
-
-    /**
-     * Gets sql util.
-     *
-     * @return the sql util
-     */
-    public static SqlUtil getSqlUtil() {
-        return getInstance().sqlUtil;
     }
 
     /**
