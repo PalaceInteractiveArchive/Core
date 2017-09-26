@@ -6,6 +6,7 @@ import com.mongodb.client.MongoCollection;
 import com.mongodb.client.MongoDatabase;
 import com.mongodb.client.model.Filters;
 import com.mongodb.client.model.UpdateOptions;
+import lombok.Getter;
 import network.palace.core.Core;
 import network.palace.core.economy.CurrencyType;
 import network.palace.core.honor.HonorMapping;
@@ -27,9 +28,10 @@ import java.util.*;
 public class MongoHandler {
 
     private MongoClient client = null;
-    private MongoDatabase database = null;
+    @Getter private MongoDatabase database = null;
     private MongoCollection<Document> playerCollection = null;
     private MongoCollection<Document> permissionCollection = null;
+    private MongoCollection<Document> cosmeticsCollection = null;
     private MongoCollection<Document> resourcePackCollection = null;
     private MongoCollection<Document> honorMappingCollection = null;
 
@@ -44,6 +46,7 @@ public class MongoHandler {
         permissionCollection = database.getCollection("permissions");
         resourcePackCollection = database.getCollection("resourcepacks");
         honorMappingCollection = database.getCollection("honorMapping");
+        cosmeticsCollection = database.getCollection("cosmetics");
     }
 
     /* Player Methods */
@@ -212,7 +215,7 @@ public class MongoHandler {
      * @param id   the id of the cosmetic they earned
      */
     public void earnCosmetic(UUID uuid, int id) {
-        //TODO do this
+
     }
 
     /**
@@ -223,8 +226,7 @@ public class MongoHandler {
      * @return if the player has the cosmetic
      */
     public boolean hasCosmetic(CPlayer player, int id) {
-        //TODO do this
-        return false;
+        return hasCosmetic(player.getUniqueId(), id);
     }
 
     /**
@@ -350,7 +352,7 @@ public class MongoHandler {
      */
     public List<HonorMapping> getHonorMappings() {
         List<HonorMapping> list = new ArrayList<>();
-        FindIterable<Document> iter = honorMappingCollection.find();
+        FindIterable<Document> iter = cosmeticsCollection.find();
         for (Document doc : iter) {
             list.add(new HonorMapping(doc.getInteger("level"), doc.getInteger("honor")));
         }
