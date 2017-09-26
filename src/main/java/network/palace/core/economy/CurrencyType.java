@@ -1,7 +1,13 @@
 package network.palace.core.economy;
 
+import lombok.AllArgsConstructor;
+import lombok.Getter;
+
+@AllArgsConstructor
 public enum CurrencyType {
-    BALANCE, TOKENS;
+    BALANCE("$"), TOKENS("✪ ");
+
+    @Getter private String icon;
 
     public String getName() {
         return name().toLowerCase();

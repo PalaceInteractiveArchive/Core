@@ -135,6 +135,8 @@ public class Core extends JavaPlugin {
             loginTitleStay = getCoreConfig().getInt("loginStay", 100);
             loginTitleFadeOut = getCoreConfig().getInt("loginFadeOut", 20);
         }
+        // Language Manager
+        languageManager = new LanguageManager(this);
         // Settings adapter for player locales
         addPacketListener(new SettingsAdapter());
         // Player info adapter for player ping
