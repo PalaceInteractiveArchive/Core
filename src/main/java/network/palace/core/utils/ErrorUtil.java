@@ -32,7 +32,7 @@ public class ErrorUtil {
         errorInfo.add("\n");
         FormattedMessage message = new FormattedMessage(exceptionMessage).color(ChatColor.RED);
         message.multilineTooltip(ChatColor.RED + "Details (" + plugin.getName() + ")", Arrays.toString(errorInfo.toArray()));
-        Core.getPlayerManager().getOnlinePlayers().stream().filter(player -> player.getRank().getRankId() >= Rank.WIZARD.getRankId()).forEach(message::send);
+        Core.getPlayerManager().getOnlinePlayers().stream().filter(player -> player.getRank().getRankId() >= Rank.DEVELOPER.getRankId()).forEach(message::send);
         if (plugin instanceof Plugin) ((Plugin) plugin).getRollbarHandler().error(e);
         else Core.getInstance().getRollbarHandler().error(e);
     }
@@ -48,7 +48,7 @@ public class ErrorUtil {
         errorInfo.add("\n");
         FormattedMessage message = new FormattedMessage(exceptionMessage).color(ChatColor.RED);
         message.multilineTooltip(ChatColor.RED + "Details (Core)", Arrays.toString(errorInfo.toArray()));
-        Core.getPlayerManager().getOnlinePlayers().stream().filter(player -> player.getRank().getRankId() >= Rank.WIZARD.getRankId()).forEach(message::send);
+        Core.getPlayerManager().getOnlinePlayers().stream().filter(player -> player.getRank().getRankId() >= Rank.DEVELOPER.getRankId()).forEach(message::send);
         Core.getInstance().getRollbarHandler().error(e);
     }
 
@@ -56,7 +56,7 @@ public class ErrorUtil {
         if (shouldStop()) return;
         FormattedMessage message = new FormattedMessage(error).color(ChatColor.RED);
         message.multilineTooltip(ChatColor.RED + "Details (Core)");
-        Core.getPlayerManager().getOnlinePlayers().stream().filter(player -> player.getRank().getRankId() >= Rank.WIZARD.getRankId()).forEach(message::send);
+        Core.getPlayerManager().getOnlinePlayers().stream().filter(player -> player.getRank().getRankId() >= Rank.DEVELOPER.getRankId()).forEach(message::send);
         Core.getInstance().getRollbarHandler().error(error);
     }
 
@@ -64,7 +64,7 @@ public class ErrorUtil {
         if (shouldStop()) return;
         FormattedMessage message = new FormattedMessage(error).color(ChatColor.RED);
         message.multilineTooltip(ChatColor.RED + "Details (" + plugin.getName() + ")");
-        Core.getPlayerManager().getOnlinePlayers().stream().filter(player -> player.getRank().getRankId() >= Rank.WIZARD.getRankId()).forEach(message::send);
+        Core.getPlayerManager().getOnlinePlayers().stream().filter(player -> player.getRank().getRankId() >= Rank.DEVELOPER.getRankId()).forEach(message::send);
         Core.getInstance().getRollbarHandler().error(error);
     }
 

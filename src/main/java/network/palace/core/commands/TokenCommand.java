@@ -18,7 +18,7 @@ import org.bukkit.entity.Player;
  * The type Token command.
  */
 @CommandMeta(description = "Manage economy tokens")
-@CommandPermission(rank = Rank.KNIGHT)
+@CommandPermission(rank = Rank.MOD)
 public class TokenCommand extends CoreCommand {
 
     /**

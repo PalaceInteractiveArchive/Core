@@ -31,7 +31,7 @@ public class PrefixCommandListener implements Listener {
         List<String> completions =  event.getCompletions();
         if (event.getSender() instanceof Player) {
             CPlayer player = Core.getPlayerManager().getPlayer((Player) event.getSender());
-            if (player == null || player.getRank().getRankId() < Rank.SQUIRE.getRankId()) {
+            if (player == null || player.getRank().getRankId() < Rank.TRAINEE.getRankId()) {
                 for (String completion : completions) {
                     if (!completion.startsWith("/minecraft:") && !completion.startsWith("/bukkit:")
                             && !completion.startsWith("/ncp") && !completion.startsWith("/nocheatplus")

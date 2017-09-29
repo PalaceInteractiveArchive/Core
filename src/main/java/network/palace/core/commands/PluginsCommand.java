@@ -33,7 +33,7 @@ import java.util.List;
  * The type Plugins command.
  */
 @CommandMeta(aliases = {"about", "pl", "ver", "version", "help", "?"}, description = "Lists the plugins for the server.")
-@CommandPermission(rank = Rank.WIZARD)
+@CommandPermission(rank = Rank.DEVELOPER)
 public class PluginsCommand extends CoreCommand {
 
     private String versionsBehind = "Loading version...";

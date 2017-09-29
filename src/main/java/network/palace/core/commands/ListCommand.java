@@ -18,7 +18,7 @@ import java.util.stream.Collectors;
  * The type List command.
  */
 @CommandMeta(aliases = {"who"}, description = "Lists all players on the server.")
-@CommandPermission(rank = Rank.SQUIRE)
+@CommandPermission(rank = Rank.TRAINEE)
 public class ListCommand extends CoreCommand {
 
     /**

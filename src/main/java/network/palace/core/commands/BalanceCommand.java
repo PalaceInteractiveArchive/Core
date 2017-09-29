@@ -18,7 +18,7 @@ import org.bukkit.entity.Player;
  * The type Balance command.
  */
 @CommandMeta(aliases = "bal", description = "Manage economy balances")
-@CommandPermission(rank = Rank.KNIGHT)
+@CommandPermission(rank = Rank.MOD)
 public class BalanceCommand extends CoreCommand {
 
     /**

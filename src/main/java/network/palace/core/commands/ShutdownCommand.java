@@ -17,7 +17,7 @@ import org.bukkit.command.CommandSender;
  * Server shutdown command.
  */
 @CommandMeta(description = "Safely stop the server.")
-@CommandPermission(rank = Rank.WIZARD)
+@CommandPermission(rank = Rank.DEVELOPER)
 public class ShutdownCommand extends CoreCommand {
     private int taskID = 0;
 

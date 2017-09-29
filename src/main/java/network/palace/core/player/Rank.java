@@ -10,16 +10,14 @@ import java.util.Map;
 @AllArgsConstructor
 public enum Rank {
 
-    EMPRESS("Empress", ChatColor.RED + "Empress ", ChatColor.RED, ChatColor.YELLOW, true, 11),
-    EMPEROR("Emperor", ChatColor.RED + "Emperor ", ChatColor.RED, ChatColor.YELLOW, true, 11),
-    WIZARD("Wizard", ChatColor.GOLD + "Wizard ", ChatColor.GOLD, ChatColor.YELLOW, true, 11),
-    PALADIN("Paladin", ChatColor.YELLOW + "Paladin ", ChatColor.YELLOW, ChatColor.GREEN, true, 10),
-    ARCHITECT("Architect", ChatColor.GREEN + "Architect ", ChatColor.GREEN, ChatColor.GREEN, true, 9),
-    KNIGHT("Knight", ChatColor.GREEN + "Knight ", ChatColor.GREEN, ChatColor.GREEN, true, 9),
-    SQUIRE("Squire", ChatColor.DARK_GREEN + "Squire ", ChatColor.DARK_GREEN, ChatColor.DARK_GREEN, false, 8),
+    MANAGER("Manager", ChatColor.RED + "Manager ", ChatColor.RED, ChatColor.YELLOW, true, 11),
+    ADMIN("Admin", ChatColor.RED + "Admin ", ChatColor.RED, ChatColor.YELLOW, true, 11),
+    DEVELOPER("Developer", ChatColor.GOLD + "Developer ", ChatColor.GOLD, ChatColor.YELLOW, true, 11),
+    SRMOD("Sr Mod", ChatColor.YELLOW + "Sr Mod ", ChatColor.YELLOW, ChatColor.GREEN, true, 10),
+    MOD("Mod", ChatColor.GREEN + "Mod ", ChatColor.GREEN, ChatColor.GREEN, true, 9),
+    TRAINEE("Trainee", ChatColor.DARK_GREEN + "Trainee ", ChatColor.DARK_GREEN, ChatColor.DARK_GREEN, false, 8),
     CHARACTER("Character", ChatColor.BLUE + "Character ", ChatColor.BLUE, ChatColor.BLUE, false, 7),
     SPECIALGUEST("Special Guest", ChatColor.DARK_PURPLE + "SG ", ChatColor.DARK_PURPLE, ChatColor.WHITE, false, 6),
-    MCPROHOSTING("MCProHosting", ChatColor.RED + "MCPro ", ChatColor.RED, ChatColor.WHITE, false, 6),
     HONORABLE("Honorable", ChatColor.LIGHT_PURPLE + "Honorable ", ChatColor.LIGHT_PURPLE, ChatColor.WHITE, false, 5),
     MAJESTIC("Majestic", ChatColor.DARK_PURPLE + "Majestic ", ChatColor.DARK_PURPLE, ChatColor.WHITE, false, 4),
     NOBLE("Noble", ChatColor.BLUE + "Noble ", ChatColor.BLUE, ChatColor.WHITE, false, 3),
@@ -59,7 +57,7 @@ public enum Rank {
      * @return the rank name with any additional formatting that should exist
      */
     public String getFormattedName() {
-        String bold = getRankId() >= Rank.SQUIRE.getRankId() ? "" + ChatColor.BOLD : "";
+        String bold = getRankId() >= Rank.TRAINEE.getRankId() ? "" + ChatColor.BOLD : "";
         return getTagColor() + bold + getName();
     }
 

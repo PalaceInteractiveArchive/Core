@@ -17,7 +17,7 @@ import org.bukkit.command.ConsoleCommandSender;
  * The type Helpop command.
  */
 @CommandMeta(aliases = "ac", description = "Staff Chat command")
-@CommandPermission(rank = Rank.SQUIRE)
+@CommandPermission(rank = Rank.TRAINEE)
 public class HelpopCommand extends CoreCommand {
 
     /**
@@ -71,7 +71,7 @@ public class HelpopCommand extends CoreCommand {
         String msg = ChatColor.DARK_RED + "[CM CHAT] " + ChatColor.GRAY + sender + ": " + ChatColor.WHITE +
                 ChatColor.translateAlternateColorCodes('&', message);
         for (CPlayer tp : Core.getPlayerManager().getOnlinePlayers()) {
-            if (tp.getRank().getRankId() >= Rank.SQUIRE.getRankId()) {
+            if (tp.getRank().getRankId() >= Rank.TRAINEE.getRankId()) {
                 tp.sendMessage(msg);
             }
         }

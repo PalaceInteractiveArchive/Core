@@ -14,7 +14,7 @@ import org.bukkit.ChatColor;
  * @since 5/23/2017
  */
 @CommandMeta(description = "Get back to the world spawn")
-@CommandPermission(rank = Rank.SQUIRE)
+@CommandPermission(rank = Rank.TRAINEE)
 public class SpawnCommand extends CoreCommand {
 
     public SpawnCommand() {

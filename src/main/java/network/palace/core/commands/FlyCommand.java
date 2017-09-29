@@ -8,7 +8,7 @@ import network.palace.core.player.CPlayer;
 import network.palace.core.player.Rank;
 
 @CommandMeta(description = "Toggles player flight")
-@CommandPermission(rank = Rank.SQUIRE)
+@CommandPermission(rank = Rank.TRAINEE)
 public class FlyCommand extends CoreCommand {
 
     public FlyCommand() {

@@ -24,7 +24,7 @@ import java.util.List;
  * The type Reload command.
  */
 @CommandMeta(aliases = {"rl"}, description = "Reload individual Core plugins.")
-@CommandPermission(rank = Rank.WIZARD)
+@CommandPermission(rank = Rank.DEVELOPER)
 public class ReloadCommand extends CoreCommand {
 
     /**

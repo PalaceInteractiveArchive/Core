@@ -17,7 +17,7 @@ import org.bukkit.entity.Player;
  * @author Innectic
  * @since 6/19/2017
  */
-@CommandPermission(rank = Rank.SQUIRE)
+@CommandPermission(rank = Rank.TRAINEE)
 @CommandMeta(description = "Teleport a player", aliases = "tp")
 public class TeleportCommand extends CoreCommand {
 
