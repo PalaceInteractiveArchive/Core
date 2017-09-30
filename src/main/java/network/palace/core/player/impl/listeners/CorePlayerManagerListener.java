@@ -33,7 +33,7 @@ public class CorePlayerManagerListener implements Listener {
                 return;
             }
         }
-        if (event.getLoginResult() == AsyncPlayerPreLoginEvent.Result.ALLOWED) {
+        if (event.getLoginResult().equals(AsyncPlayerPreLoginEvent.Result.ALLOWED)) {
             Core.getPlayerManager().playerLoggedIn(event.getUniqueId(), event.getName());
         }
     }
