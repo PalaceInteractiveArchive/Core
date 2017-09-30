@@ -31,7 +31,7 @@ public class ShutdownCommand extends CoreCommand {
     @Override
     protected void handleCommandUnspecific(CommandSender sender, String[] args) throws CommandException {
         if (args.length == 0) {
-            sender.sendMessage(ChatColor.RED + "/shutdown [delay] <reason>");
+            sender.sendMessage(ChatColor.RED + "/shutdown [delay]");
             sender.sendMessage(ChatColor.RED + "/shutdown cancel " + ChatColor.AQUA + "- Cancel existing shutdown");
             return;
         }
@@ -53,7 +53,7 @@ public class ShutdownCommand extends CoreCommand {
         try {
             delay = Integer.parseInt(args[0]);
         } catch (NumberFormatException ignored) {
-            sender.sendMessage(ChatColor.RED + "/shutdown [delay] <reason>");
+            sender.sendMessage(ChatColor.RED + "/shutdown [delay]");
             return;
         }
         sender.sendMessage(ChatColor.RED + "Shutting the server down in " + delay + " seconds...");
