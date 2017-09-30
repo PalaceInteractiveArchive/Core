@@ -73,8 +73,7 @@ public class CorePlayerDefaultScoreboard implements Listener {
     public void onOnlineCountUpdate(CoreOnlineCountUpdate event) {
         playerCount = event.getCount();
         for (CPlayer player : Core.getPlayerManager().getOnlinePlayers()) {
-            if (player.getStatus() != PlayerStatus.JOINED) return;
-            if (!player.getScoreboard().isSetup()) return;
+            if (player.getStatus() != PlayerStatus.JOINED || !player.getScoreboard().isSetup()) continue;
             player.getScoreboard().set(3, ChatColor.GREEN + "Online Players: " + playerCount);
         }
     }
@@ -118,16 +117,16 @@ public class CorePlayerDefaultScoreboard implements Listener {
     }
 
     private void setTokens(int position, CPlayerScoreboardManager scoreboard, int tokens) {
-        if (tokens > 2147483646) {
-            scoreboard.set(position, ChatColor.GREEN + "\u272a " + 2147483646 + "+");
+        if (tokens > (Integer.MAX_VALUE - 1)) {
+            scoreboard.set(position, ChatColor.GREEN + "\u272a " + (Integer.MAX_VALUE - 1) + "+");
         } else {
             scoreboard.set(position, ChatColor.GREEN + "\u272a " + tokens);
         }
     }
 
     private void setBalance(int position, CPlayerScoreboardManager scoreboard, int balance) {
-        if (balance > 2147483646) {
-            scoreboard.set(position, ChatColor.GREEN + "$ " + 2147483646 + "+");
+        if (balance > (Integer.MAX_VALUE - 1)) {
+            scoreboard.set(position, ChatColor.GREEN + "$ " + (Integer.MAX_VALUE - 1) + "+");
         } else {
             scoreboard.set(position, ChatColor.GREEN + "$ " + balance);
         }
