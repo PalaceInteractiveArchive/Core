@@ -108,10 +108,12 @@ public class CorePlayerManager implements CPlayerManager {
         if (uuid == null) return;
         CPlayer cPlayer = getPlayer(uuid);
         if (cPlayer == null) return;
-        for (CPlayer otherPlayer : Core.getPlayerManager().getOnlinePlayers()) {
-            cPlayer.getScoreboard().removePlayerTag(otherPlayer);
-            otherPlayer.getScoreboard().removePlayerTag(cPlayer);
-        }
+        Core.runTask(() -> {
+            for (CPlayer otherPlayer : Core.getPlayerManager().getOnlinePlayers()) {
+                cPlayer.getScoreboard().removePlayerTag(otherPlayer);
+                otherPlayer.getScoreboard().removePlayerTag(cPlayer);
+            }
+        });
         cPlayer.resetManagers();
         cPlayer.setStatus(PlayerStatus.LEFT);
         onlinePlayers.remove(cPlayer.getUniqueId());
