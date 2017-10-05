@@ -419,6 +419,13 @@ public interface CPlayer {
     CPlayerScoreboardManager getScoreboard();
 
     /**
+     * Sets the scoreboard.
+     *
+     * @param manager the scoreboard manager
+     */
+    void setScoreboard(CPlayerScoreboardManager manager);
+
+    /**
      * Gets title.
      *
      * @return the title

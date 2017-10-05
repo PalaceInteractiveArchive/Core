@@ -9,6 +9,6 @@ import lombok.Getter;
  */
 @AllArgsConstructor
 public enum GameType {
-    OUTPOST(1), SPLEEF(2), PIXIE_DUST_SHOOTOUT(3), ONESHOT(4), FREEZETAG(5);
+    OUTPOST(1), SPLEEF(2), PIXIE_DUST_SHOOTOUT(3), ONESHOT(4), FREEZETAG(5), DEATHRUN(6);
     @Getter int id;
 }

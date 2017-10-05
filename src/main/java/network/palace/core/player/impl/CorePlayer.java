@@ -46,7 +46,7 @@ public class CorePlayer implements CPlayer {
     @Getter private CPlayerActionBarManager actionBar = new CorePlayerActionBarManager(this);
     @Getter private CPlayerBossBarManager bossBar = new CorePlayerBossBarManager(this);
     @Getter private CPlayerHeaderFooterManager headerFooter = new CorePlayerHeaderFooterManager(this);
-    @Getter private CPlayerScoreboardManager scoreboard = new CorePlayerScoreboardManager(this);
+    @Getter @Setter private CPlayerScoreboardManager scoreboard = new CorePlayerScoreboardManager(this);
     @Getter private CPlayerTitleManager title = new CorePlayerTitleManager(this);
     @Getter private CPlayerParticlesManager particles = new CorePlayerParticlesManager(this);
     @Getter private CPlayerResourcePackManager resourcePack = new CorePlayerResourcePackManager(this);
