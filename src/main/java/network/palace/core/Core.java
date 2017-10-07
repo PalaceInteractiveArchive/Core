@@ -609,12 +609,9 @@ public class Core extends JavaPlugin {
      * @param callback the callbacks for the actions
      */
     public static void sendAllPlayers(String server, Callback callback) {
-        runTaskAsynchronously(() -> {
-            do {
-                CPlayer player = Core.getPlayerManager().getOnlinePlayers().get(0);
-                player.sendToServer(server);
-            } while (Core.getPlayerManager().getOnlinePlayers().size() > 0);
-            callback.finished();
-        });
+        for (CPlayer player : Core.getPlayerManager().getOnlinePlayers()) {
+            player.sendToServer(server);
+        }
+        Core.runTaskLater(callback::finished, 40L);
     }
 }
