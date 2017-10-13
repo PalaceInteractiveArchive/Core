@@ -24,6 +24,8 @@ import org.bukkit.inventory.PlayerInventory;
 import org.bukkit.map.MapView;
 import org.bukkit.metadata.MetadataValue;
 import org.bukkit.plugin.java.JavaPlugin;
+import org.bukkit.potion.PotionEffect;
+import org.bukkit.potion.PotionEffectType;
 import org.bukkit.util.Vector;
 
 import java.util.*;
@@ -660,6 +662,47 @@ public class CorePlayer implements CPlayer {
         if (!getStatus().equals(PlayerStatus.JOINED)) return;
         if (getBukkitPlayer() == null) return;
         getBukkitPlayer().sendMap(view);
+    }
+
+    @Override
+    public void removePotionEffect(PotionEffectType type) {
+        if (!getStatus().equals(PlayerStatus.JOINED)) return;
+        if (getBukkitPlayer() == null) return;
+        getBukkitPlayer().removePotionEffect(type);
+    }
+
+    @Override
+    public boolean addPotionEffect(PotionEffect effect) {
+        return getStatus().equals(PlayerStatus.JOINED) && getBukkitPlayer().addPotionEffect(effect);
+    }
+
+    @Override
+    public boolean addPotionEffect(PotionEffect effect, boolean force) {
+        return getStatus().equals(PlayerStatus.JOINED) && getBukkitPlayer().addPotionEffect(effect, force);
+    }
+
+    @Override
+    public boolean hasPotionEffect(PotionEffectType type) {
+        return getStatus().equals(PlayerStatus.JOINED) && getBukkitPlayer().hasPotionEffect(type);
+    }
+
+    @Override
+    public boolean addPotionEffects(Collection<PotionEffect> effects) {
+        return getStatus().equals(PlayerStatus.JOINED) && getBukkitPlayer().addPotionEffects(effects);
+    }
+
+    @Override
+    public Collection<PotionEffect> getActivePotionEffects() {
+        if (!getStatus().equals(PlayerStatus.JOINED)) return Collections.emptyList();
+        if (getBukkitPlayer() == null) return Collections.emptyList();
+        return getBukkitPlayer().getActivePotionEffects();
+    }
+
+    @Override
+    public PotionEffect getPotionEffect(PotionEffectType type) {
+        if (!getStatus().equals(PlayerStatus.JOINED)) return null;
+        if (getBukkitPlayer() == null) return null;
+        return getBukkitPlayer().getPotionEffect(type);
     }
 
     @Override

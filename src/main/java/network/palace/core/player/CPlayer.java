@@ -15,7 +15,10 @@ import org.bukkit.inventory.PlayerInventory;
 import org.bukkit.map.MapView;
 import org.bukkit.metadata.MetadataValue;
 import org.bukkit.plugin.java.JavaPlugin;
+import org.bukkit.potion.PotionEffect;
+import org.bukkit.potion.PotionEffectType;
 
+import java.util.Collection;
 import java.util.List;
 import java.util.Optional;
 import java.util.UUID;
@@ -846,4 +849,60 @@ public interface CPlayer {
      * @param view the map view
      */
     void sendMap(MapView view);
+
+    /**
+     * Remove any potion effects of the type from the player
+     *
+     * @param type the potion type to remove
+     */
+    void removePotionEffect(PotionEffectType type);
+
+    /**
+     * Adds the given potion effect to the player
+     *
+     * @param effect the effect to add
+     * @return whether the effect could be added
+     */
+    boolean addPotionEffect(PotionEffect effect);
+
+    /**
+     * Adds the given potion effect to the player
+     *
+     * @param effect the effect to add
+     * @param force  whether conflicting effects should be removed
+     * @return whether the effect could be added
+     */
+    boolean addPotionEffect(PotionEffect effect, boolean force);
+
+    /**
+     * Returns whether the player already has a potion effect of the given type
+     *
+     * @param type the type to check
+     * @return whether the player has this potion effect type active on them
+     */
+    boolean hasPotionEffect(PotionEffectType type);
+
+    /**
+     * Attempts to add all of the given effects to the player
+     *
+     * @param effects the array of effects
+     * @return whether all of the effects could be added
+     */
+    boolean addPotionEffects(Collection<PotionEffect> effects);
+
+    /**
+     * Returns all currently active potion effects on the player
+     *
+     * @return a collection of potion effects
+     */
+    Collection<PotionEffect> getActivePotionEffects();
+
+    /**
+     * Returns the active potion effect of the specified type.
+     * If the effect is not present on the player then null will be returned.
+     *
+     * @param type the potion type to check
+     * @return the effect active on this player, or null if not active.
+     */
+    PotionEffect getPotionEffect(PotionEffectType type);
 }
