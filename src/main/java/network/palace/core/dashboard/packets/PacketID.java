@@ -246,4 +246,20 @@ public enum PacketID {
          */
         @Getter final int ID;
     }
+
+    /**
+     * The enum Dashboard.
+     */
+    @AllArgsConstructor
+    public enum Arcade {
+        /**
+         * Statusrequest dashboard.
+         */
+        GAMESTATUS(70);
+
+        /**
+         * The Id.
+         */
+        @Getter final int ID;
+    }
 }
