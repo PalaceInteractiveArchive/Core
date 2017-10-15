@@ -255,7 +255,7 @@ public enum PacketID {
         /**
          * Statusrequest dashboard.
          */
-        GAMESTATUS(70);
+        GAMESTATUS(64);
 
         /**
          * The Id.
