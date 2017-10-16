@@ -92,7 +92,6 @@ public class AchievementManager {
             JSONObject content = (JSONObject) object.get("content");
             JSONObject id = (JSONObject) object.get("title");
             String column = (String) id.get("$t");
-            if (!MiscUtil.checkIfInt(column)) continue;
             switch (column.substring(0, 1).toLowerCase()) {
                 case "a":
                     lastAchievement = new CoreAchievement(Integer.parseInt((String) content.get("$t")), null, null);
