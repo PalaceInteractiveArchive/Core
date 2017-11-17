@@ -24,6 +24,6 @@ public class SpawnCommand extends CoreCommand {
     @Override
     protected void handleCommand(CPlayer player, String[] args) throws CommandException {
         player.teleport(Core.getDefaultWorld().getSpawnLocation());
-        player.sendMessage(ChatColor.BLUE + "" + ChatColor.BOLD + ChatColor.ITALIC + "WHOOSH!");
+        player.sendMessage(ChatColor.GRAY + "Teleported you to the spawn.");
     }
 }

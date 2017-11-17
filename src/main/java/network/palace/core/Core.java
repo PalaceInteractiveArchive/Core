@@ -14,6 +14,7 @@ import network.palace.core.commands.disabled.PrefixCommandListener;
 import network.palace.core.commands.disabled.StopCommand;
 import network.palace.core.config.LanguageManager;
 import network.palace.core.config.YAMLConfigurationFile;
+import network.palace.core.crafting.CraftingMenu;
 import network.palace.core.dashboard.DashboardConnection;
 import network.palace.core.economy.EconomyManager;
 import network.palace.core.errors.EnvironmentType;
@@ -90,6 +91,7 @@ public class Core extends JavaPlugin {
     private CoreCommandMap commandMap;
     private DashboardConnection dashboardConnection;
     private HonorManager honorManager;
+    private CraftingMenu craftingMenu;
 
     @Getter private RollbarHandler rollbarHandler;
 
@@ -153,12 +155,15 @@ public class Core extends JavaPlugin {
         commandMap = new CoreCommandMap(this);
         // Dashboard
         dashboardConnection = new DashboardConnection();
+        // Crafting Menu
+        craftingMenu = new CraftingMenu();
         // Register Listeners
         registerListeners();
         // Register Commands
         registerCommands();
         registerDisabledCommands();
-        mcVersion = mcVersion.replace("-SNAPSHOT", "").replace("R0.", "R").replace(".", "_").replaceAll("_[0-9]-R", "_R").replace("-", "_");
+        mcVersion = mcVersion.replace("-SNAPSHOT", "").replace("R0.", "R")
+                .replace(".", "_").replaceAll("_[0-9]-R", "_R").replace("-", "_");
         // Log
         logMessage("Core", ChatColor.DARK_GREEN + "Enabled");
 
@@ -176,6 +181,7 @@ public class Core extends JavaPlugin {
     private void registerListeners() {
         registerListener(new ItemUtil());
         registerListener(new PrefixCommandListener());
+        registerListener(craftingMenu);
     }
 
     /**
@@ -190,6 +196,7 @@ public class Core extends JavaPlugin {
      * Register commands.
      */
     private void registerCommands() {
+        registerCommand(new AchievementCommand());
         registerCommand(new BalanceCommand());
         registerCommand(new FlyCommand());
         registerCommand(new HelpopCommand());
@@ -340,6 +347,15 @@ public class Core extends JavaPlugin {
      */
     public static HonorManager getHonorManager() {
         return getInstance().honorManager;
+    }
+
+    /**
+     * Gets crafting menu
+     *
+     * @return the crafting menu
+     */
+    public static CraftingMenu getCraftingMenu() {
+        return getInstance().craftingMenu;
     }
 
     /**

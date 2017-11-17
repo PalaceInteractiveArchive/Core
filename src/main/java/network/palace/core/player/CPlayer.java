@@ -183,6 +183,11 @@ public interface CPlayer {
     PlayerInventory getInventory();
 
     /**
+     * Forces an update of the player's entire inventory.
+     */
+    void updateInventory();
+
+    /**
      * Gets item in slot
      *
      * @param slot the slot
@@ -378,6 +383,13 @@ public interface CPlayer {
      * @return if player can be seen
      */
     boolean canSee(Player player);
+
+    /**
+     * Gets achievement manager.
+     *
+     * @return the achievement manager
+     */
+    CPlayerAchievementManager getAchievementManager();
 
     /**
      * Gets action bar.
@@ -584,12 +596,12 @@ public interface CPlayer {
      */
     int getPing();
 
-    /**
-     * Set the player's ping to the server
-     *
-     * @param ping the current ping
-     */
-    void setPing(int ping);
+//    /**
+//     * Set the player's ping to the server
+//     *
+//     * @param ping the current ping
+//     */
+//    void setPing(int ping);
 
     /**
      * Get whether a player can fly

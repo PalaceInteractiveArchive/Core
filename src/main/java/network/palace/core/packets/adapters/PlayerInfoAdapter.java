@@ -31,7 +31,7 @@ public class PlayerInfoAdapter extends PacketAdapter {
                 PlayerInfoData infoData = (PlayerInfoData) infoDataObj;
                 CPlayer player = Core.getPlayerManager().getPlayer(infoData.getProfile().getName());
                 if (player == null) return;
-                player.setPing(infoData.getLatency());
+//                player.setPing(infoData.getLatency());
             }
         }
     }

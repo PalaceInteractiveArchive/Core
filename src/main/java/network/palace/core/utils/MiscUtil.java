@@ -1,5 +1,8 @@
 package network.palace.core.utils;
 
+import java.text.NumberFormat;
+import java.util.Locale;
+
 /**
  * The type Misc util.
  */
@@ -58,6 +61,16 @@ public class MiscUtil {
      */
     public static String capitalizeFirstLetter(String input) {
         return input.substring(0, 1).toUpperCase() + input.substring(1);
+    }
+
+    /**
+     * Add commas to a number to format it properly
+     *
+     * @param i the number to format
+     * @return the number with commas
+     */
+    public static String formatNumber(int i) {
+        return NumberFormat.getNumberInstance(Locale.US).format(i);
     }
 
     public static <T> boolean contains(T[] ts, T t) {

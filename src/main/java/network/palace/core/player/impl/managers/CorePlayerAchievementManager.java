@@ -34,7 +34,6 @@ public class CorePlayerAchievementManager implements CPlayerAchievementManager {
         achievements.add(i);
         CoreAchievement ach = Core.getAchievementManager().getAchievement(i);
         if (ach == null) {
-
             return;
         }
         player.sendMessage(ChatColor.GREEN + "--------------" + ChatColor.GOLD + "" + ChatColor.BOLD + "Achievement" +
@@ -42,6 +41,8 @@ public class CorePlayerAchievementManager implements CPlayerAchievementManager {
                 "" + ChatColor.ITALIC + ach.getDescription() + ChatColor.GREEN + "\n----------------------------------------");
         player.playSound(player.getLocation(), Sound.ENTITY_ARROW_HIT_PLAYER, 100f, 0.75f);
         Core.runTaskAsynchronously(() -> Core.getSqlUtil().addAchievement(player, i));
-        Core.getEconomy().addTokens(player.getUniqueId(), 5, "Achievement ID " + i);
+//        Core.getEconomy().addTokens(player.getUniqueId(), 5, "Achievement ID " + i);
+        player.giveHonor(5);
+        Core.getCraftingMenu().update(player, 2, Core.getCraftingMenu().getAchievement(player));
     }
 }

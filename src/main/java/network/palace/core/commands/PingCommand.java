@@ -2,12 +2,15 @@ package network.palace.core.commands;
 
 import network.palace.core.command.CommandException;
 import network.palace.core.command.CommandMeta;
+import network.palace.core.command.CommandPermission;
 import network.palace.core.command.CoreCommand;
 import network.palace.core.commands.ping.PingInfo;
 import network.palace.core.player.CPlayer;
+import network.palace.core.player.Rank;
 import org.bukkit.ChatColor;
 
 @CommandMeta(description = "Tell players their current ping with the server")
+@CommandPermission(rank = Rank.SETTLER)
 public class PingCommand extends CoreCommand {
 
     public PingCommand() {

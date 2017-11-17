@@ -3,9 +3,11 @@ package network.palace.core.commands;
 import network.palace.core.Core;
 import network.palace.core.command.CommandException;
 import network.palace.core.command.CommandMeta;
+import network.palace.core.command.CommandPermission;
 import network.palace.core.command.CoreCommand;
 import network.palace.core.honor.HonorMapping;
 import network.palace.core.player.CPlayer;
+import network.palace.core.player.Rank;
 import org.bukkit.ChatColor;
 import org.bukkit.command.CommandSender;
 import org.bukkit.entity.Player;
@@ -17,6 +19,7 @@ import java.text.DecimalFormat;
  * @since 6/18/17
  */
 @CommandMeta(description = "Get your current honor count and level")
+@CommandPermission(rank = Rank.DEVELOPER)
 public class HonorCommand extends CoreCommand {
     private DecimalFormat format = new DecimalFormat("#,###");
 
@@ -93,8 +96,13 @@ public class HonorCommand extends CoreCommand {
             HonorMapping nextLevel = Core.getHonorManager().getNextLevel(honor);
             float progress = Core.getHonorManager().progressToNextLevel(honor);
             sender.sendMessage(ChatColor.GREEN + args[0] + " is Level " + format(level) + " with " + format(honor) +
-                    " Honor.\nThey are " + (nextLevel.getHonor() - honor) + " Honor (" + (int) (progress * 100.0f) +
-                    "%) away from Level " + nextLevel.getLevel());
+                    " Honor.");
+            if (level < Core.getHonorManager().getTopLevel()) {
+                sender.sendMessage(ChatColor.GREEN + "They are " + (nextLevel.getHonor() - honor) + " Honor (" +
+                        (int) (progress * 100.0f) + "%) away from Level " + nextLevel.getLevel());
+            } else {
+                sender.sendMessage(ChatColor.GREEN + "They are at the highest level.");
+            }
         });
     }
 

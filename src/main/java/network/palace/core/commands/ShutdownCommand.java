@@ -16,7 +16,7 @@ import org.bukkit.command.CommandSender;
 /**
  * Server shutdown command.
  */
-@CommandMeta(description = "Safely stop the server.")
+@CommandMeta(description = "Safely stop the server.", aliases = "sd")
 @CommandPermission(rank = Rank.DEVELOPER)
 public class ShutdownCommand extends CoreCommand {
     private int taskID = 0;
@@ -63,8 +63,8 @@ public class ShutdownCommand extends CoreCommand {
             @Override
             public void run() {
                 if (i > 0) {
-                    i--;
                     message(i);
+                    i--;
                     return;
                 }
                 Core.setStarting(true);
@@ -84,7 +84,7 @@ public class ShutdownCommand extends CoreCommand {
         if (seconds <= 0) {
             return;
         }
-        String time = "";
+        String time;
         if (seconds > 60 && seconds % 60 == 0) {
             time = seconds / 60 + " minutes";
         } else if (seconds == 60) {

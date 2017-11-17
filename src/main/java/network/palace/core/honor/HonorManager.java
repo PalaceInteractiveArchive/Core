@@ -15,6 +15,7 @@ public class HonorManager {
 
     private Set<HonorMapping> mappings = new HashSet<>();
     private TreeSet<Integer> honorMappings = new TreeSet<>();
+    private int highest = 0;
 
     /**
      * Provide mappings to the manager
@@ -22,6 +23,13 @@ public class HonorManager {
      * @param mappings the mappings that should be used
      */
     public void provideMappings(List<HonorMapping> mappings) {
+        this.mappings.clear();
+        honorMappings.clear();
+        mappings.forEach(m -> {
+            if (m.getLevel() > highest) {
+                highest = m.getLevel();
+            }
+        });
         this.mappings.addAll(mappings);
         this.mappings.stream().map(HonorMapping::getHonor).forEach(honorMappings::add);
         if (Core.getPlayerManager().getOnlinePlayers().isEmpty()) {
@@ -42,7 +50,9 @@ public class HonorManager {
         if (player.getHonor() == 0) {
             return new HonorMapping(1, 0);
         }
-        Optional<HonorMapping> mapping = getMapped(honorMappings.floor(player.getHonor()));
+        Integer i = honorMappings.floor(player.getHonor());
+        if (i == null) return new HonorMapping(1, 0);
+        Optional<HonorMapping> mapping = getMapped(i);
         if (!mapping.isPresent()) {
             return new HonorMapping(1, 0);
         }
@@ -60,7 +70,9 @@ public class HonorManager {
         if (honor == 0) {
             return new HonorMapping(1, 0);
         }
-        Optional<HonorMapping> mapping = getMapped(honorMappings.floor(honor));
+        Integer i = honorMappings.floor(honor);
+        if (i == null) return new HonorMapping(1, 0);
+        Optional<HonorMapping> mapping = getMapped(i);
         return mapping.orElseGet(() -> new HonorMapping(1, 0));
     }
 
@@ -74,7 +86,9 @@ public class HonorManager {
         if (honor == 0) {
             return new HonorMapping(1, 0);
         }
-        Optional<HonorMapping> mapping = getMapped(honorMappings.floor(honor));
+        Integer i = honorMappings.floor(honor);
+        if (i == null) return new HonorMapping(1, 0);
+        Optional<HonorMapping> mapping = getMapped(i);
         if (!mapping.isPresent()) {
             return new HonorMapping(1, 0);
         }
@@ -97,7 +111,9 @@ public class HonorManager {
         if (honor == 0) {
             return 0.0f;
         }
-        Optional<HonorMapping> mapping = getMapped(honorMappings.floor(honor));
+        Integer i = honorMappings.floor(honor);
+        if (i == null) return 1.0f;
+        Optional<HonorMapping> mapping = getMapped(i);
         if (!mapping.isPresent()) {
             return 1.0f;
         }
@@ -132,7 +148,7 @@ public class HonorManager {
      * @implNote Do NOT use this method outside of the player join task!
      */
     public void displayHonor(CPlayer player, boolean first) {
-        /*HonorMapping mapping = getMapped(player);
+        HonorMapping mapping = getMapped(player);
         if (mapping == null) {
             if (!Core.isGameMode()) {
                 player.setLevel(1);
@@ -140,16 +156,14 @@ public class HonorManager {
             }
             return;
         }
-        if (player.getPreviousHonorLevel() != mapping.getLevel() && !first) {
+        if (player.getPreviousHonorLevel() != mapping.getLevel() && !first && mapping.getLevel() > 1) {
             // Level change
             if (player.getPreviousHonorLevel() < mapping.getLevel()) {
                 // Level increase (most common)
-                player.sendMessage(ChatColor.GOLD + "" + ChatColor.MAGIC + "================================================");
                 player.sendMessage("\n");
                 player.sendMessage(ChatColor.GREEN + "" + ChatColor.BOLD + "LEVEL UP: " + ChatColor.YELLOW +
-                        "You are now " + ChatColor.GOLD + "" + ChatColor.BOLD + "Level " + mapping.getLevel());
+                        "You are now " + getColorFromLevel(mapping.getLevel()) + "" + ChatColor.BOLD + "Level " + mapping.getLevel());
                 player.sendMessage("\n");
-                player.sendMessage(ChatColor.GOLD + "" + ChatColor.MAGIC + "================================================");
                 player.playSound(player.getLocation(), Sound.ENTITY_PLAYER_LEVELUP, 1, 1);
             }
         }
@@ -159,7 +173,32 @@ public class HonorManager {
             return;
         }
         player.setLevel(mapping.getLevel());
-        player.setExp(progress);*/
+        player.setExp(progress);
+        Core.getCraftingMenu().update(player, 1, Core.getCraftingMenu().getPlayerHead(player));
+    }
+
+    private ChatColor getColorFromLevel(int level) {
+        if (level < 10) {
+            return ChatColor.GREEN;
+        } else if (level < 20) {
+            return ChatColor.DARK_GREEN;
+        } else if (level < 30) {
+            return ChatColor.YELLOW;
+        } else if (level < 40) {
+            return ChatColor.RED;
+        } else if (level < 50) {
+            return ChatColor.AQUA;
+        } else if (level < 60) {
+            return ChatColor.BLUE;
+        } else if (level < 70) {
+            return ChatColor.DARK_BLUE;
+        } else if (level < 80) {
+            return ChatColor.LIGHT_PURPLE;
+        } else if (level < 90) {
+            return ChatColor.DARK_PURPLE;
+        } else {
+            return ChatColor.GOLD;
+        }
     }
 
     /**
@@ -170,5 +209,9 @@ public class HonorManager {
      */
     private Optional<HonorMapping> getMapped(int honor) {
         return mappings.stream().filter(mapping -> mapping.getHonor() == honor).findFirst();
+    }
+
+    public int getTopLevel() {
+        return highest;
     }
 }

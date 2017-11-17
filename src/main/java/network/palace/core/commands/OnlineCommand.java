@@ -3,7 +3,9 @@ package network.palace.core.commands;
 import network.palace.core.Core;
 import network.palace.core.command.CommandException;
 import network.palace.core.command.CommandMeta;
+import network.palace.core.command.CommandPermission;
 import network.palace.core.command.CoreCommand;
+import network.palace.core.player.Rank;
 import org.bukkit.ChatColor;
 import org.bukkit.command.CommandSender;
 
@@ -15,6 +17,7 @@ import java.util.GregorianCalendar;
  * Created by Marc on 2/9/17.
  */
 @CommandMeta(aliases = "ot", description = "View the amount of time the server has been online")
+@CommandPermission(rank = Rank.SETTLER)
 public class OnlineCommand extends CoreCommand {
 
     public OnlineCommand() {

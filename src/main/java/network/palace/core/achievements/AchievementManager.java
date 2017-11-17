@@ -105,6 +105,7 @@ public class AchievementManager {
                     break;
             }
         }
+        Core.getPlayerManager().getOnlinePlayers().forEach(player -> Core.getCraftingMenu().update(player));
     }
 
     /**

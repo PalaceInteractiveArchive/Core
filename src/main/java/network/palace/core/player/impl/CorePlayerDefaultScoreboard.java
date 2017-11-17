@@ -6,6 +6,7 @@ import network.palace.core.events.EconomyUpdateEvent;
 import network.palace.core.player.CPlayer;
 import network.palace.core.player.CPlayerScoreboardManager;
 import network.palace.core.player.PlayerStatus;
+import network.palace.core.utils.MiscUtil;
 import org.bukkit.ChatColor;
 import org.bukkit.event.EventHandler;
 import org.bukkit.event.Listener;
@@ -74,7 +75,7 @@ public class CorePlayerDefaultScoreboard implements Listener {
         playerCount = event.getCount();
         for (CPlayer player : Core.getPlayerManager().getOnlinePlayers()) {
             if (player.getStatus() != PlayerStatus.JOINED || !player.getScoreboard().isSetup()) continue;
-            player.getScoreboard().set(3, ChatColor.GREEN + "Online Players: " + playerCount);
+            player.getScoreboard().set(3, ChatColor.GREEN + "Online Players: " + MiscUtil.formatNumber(playerCount));
         }
     }
 

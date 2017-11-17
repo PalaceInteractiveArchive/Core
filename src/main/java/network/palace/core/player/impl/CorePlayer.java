@@ -28,6 +28,9 @@ import org.bukkit.potion.PotionEffect;
 import org.bukkit.potion.PotionEffectType;
 import org.bukkit.util.Vector;
 
+import java.lang.reflect.Field;
+import java.lang.reflect.InvocationTargetException;
+import java.lang.reflect.Method;
 import java.util.*;
 import java.util.logging.Level;
 
@@ -44,7 +47,7 @@ public class CorePlayer implements CPlayer {
     @Getter @Setter private Rank rank = Rank.SETTLER;
     @Getter @Setter private String locale = "en_US";
     @Getter @Setter private PlayerStatus status = PlayerStatus.LOGIN;
-    @Getter private CPlayerAchievementManager achievement;
+    @Getter private CPlayerAchievementManager achievementManager;
     @Getter private CPlayerActionBarManager actionBar = new CorePlayerActionBarManager(this);
     @Getter private CPlayerBossBarManager bossBar = new CorePlayerBossBarManager(this);
     @Getter private CPlayerHeaderFooterManager headerFooter = new CorePlayerHeaderFooterManager(this);
@@ -59,16 +62,15 @@ public class CorePlayer implements CPlayer {
     private List<Integer> queuedAchievements = new ArrayList<>();
 
     @Getter @Setter private int honor;
-    @Getter @Setter private int ping;
     @Getter @Setter private int previousHonorLevel;
 
     /**
      * Instantiates a new Core player.
      *
-     * @param uuid the uuid
-     * @param name the name
-     * @param rank the rank
-     * @param ids  achievement list
+     * @param sqlId the sqlid
+     * @param uuid  the uuid
+     * @param name  the name
+     * @param rank  the rank
      */
     public CorePlayer(int sqlId, UUID uuid, String name, Rank rank) {
         this.sqlId = sqlId;
@@ -375,6 +377,13 @@ public class CorePlayer implements CPlayer {
     }
 
     @Override
+    public void updateInventory() {
+        if (getStatus() != PlayerStatus.JOINED) return;
+        if (getBukkitPlayer() == null) return;
+        getBukkitPlayer().updateInventory();
+    }
+
+    @Override
     public ItemStack getItem(int slot) {
         if (getStatus() != PlayerStatus.JOINED) return null;
         if (getBukkitPlayer() == null) return null;
@@ -492,24 +501,42 @@ public class CorePlayer implements CPlayer {
 
     @Override
     public boolean hasAchievement(int i) {
-        return getStatus() == PlayerStatus.JOINED && getBukkitPlayer() != null && achievement != null && achievement.hasAchievement(i);
+        return getStatus() == PlayerStatus.JOINED && getBukkitPlayer() != null && achievementManager != null && achievementManager.hasAchievement(i);
     }
 
     @Override
     public void giveAchievement(int i) {
         if (getStatus() != PlayerStatus.JOINED) return;
         if (getBukkitPlayer() == null) return;
-        if (achievement == null) {
+        if (achievementManager == null) {
             queuedAchievements.add(i);
             return;
         }
-        achievement.giveAchievement(i);
+        achievementManager.giveAchievement(i);
     }
 
     @Override
     public Block getTargetBlock(int range) {
         if (getBukkitPlayer() == null) return null;
         return getBukkitPlayer().getTargetBlock((Set<Material>) null, range);
+    }
+
+    @Override
+    public int getPing() {
+        if (getStatus() != PlayerStatus.JOINED) return 0;
+        if (getBukkitPlayer() == null) return 0;
+        try {
+            Object craftPlayer = Class.forName("org.bukkit.craftbukkit.v" + Core.getInstance().getMcVersion() +
+                    ".entity.CraftPlayer").cast(getBukkitPlayer());
+            Method m = craftPlayer.getClass().getDeclaredMethod("getHandle");
+            Object entityPlayer = m.invoke(craftPlayer);
+            Field ping = entityPlayer.getClass().getDeclaredField("ping");
+            ping.setAccessible(true);
+            return (int) ping.get(entityPlayer);
+        } catch (ClassNotFoundException | NoSuchMethodException | IllegalAccessException | InvocationTargetException |
+                NoSuchFieldException e) {
+            return 0;
+        }
     }
 
     @Override
@@ -735,9 +762,9 @@ public class CorePlayer implements CPlayer {
 
     @Override
     public void setAchievementManager(CPlayerAchievementManager manager) {
-        this.achievement = manager;
+        this.achievementManager = manager;
         for (Integer i : new ArrayList<>(queuedAchievements)) {
-            achievement.giveAchievement(i);
+            achievementManager.giveAchievement(i);
         }
         queuedAchievements.clear();
     }
