@@ -179,6 +179,7 @@ public class CraftingMenu implements Listener {
     }
 
     public void update(CPlayer player, int slot, ItemStack item) {
+        if (player == null || player.getBukkitPlayer() == null) return;
         PacketContainer cont = new PacketContainer(PacketType.Play.Server.SET_SLOT);
         StructureModifier<Integer> mod = cont.getIntegers();
         mod.write(0, 0);
