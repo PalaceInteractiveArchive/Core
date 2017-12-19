@@ -135,7 +135,7 @@ public class CraftingMenu implements Listener {
         CPlayer player = Core.getPlayerManager().getPlayer(event.getWhoClicked().getUniqueId());
         if (player == null) return;
         Inventory inv = event.getClickedInventory();
-        if (!inv.getName().startsWith(ChatColor.BLUE + "Achievements Page ")) return;
+        if (inv == null || !inv.getName().startsWith(ChatColor.BLUE + "Achievements Page ")) return;
         event.setCancelled(true);
         String name;
         try {
