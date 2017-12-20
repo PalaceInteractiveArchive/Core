@@ -23,7 +23,6 @@ import org.bukkit.inventory.ItemStack;
 import org.bukkit.inventory.PlayerInventory;
 import org.bukkit.map.MapView;
 import org.bukkit.metadata.MetadataValue;
-import org.bukkit.plugin.java.JavaPlugin;
 import org.bukkit.potion.PotionEffect;
 import org.bukkit.potion.PotionEffectType;
 import org.bukkit.util.Vector;
@@ -32,7 +31,6 @@ import java.lang.reflect.Field;
 import java.lang.reflect.InvocationTargetException;
 import java.lang.reflect.Method;
 import java.util.*;
-import java.util.logging.Level;
 
 /**
  * Implementation of CPlayer
@@ -45,7 +43,7 @@ public class CorePlayer implements CPlayer {
     @Getter private final UUID uuid;
     private final String name;
     @Getter @Setter private Rank rank;
-    @Getter @Setter private String locale = "en_US";
+    @Getter @Setter private String locale;
     @Getter @Setter private PlayerStatus status = PlayerStatus.LOGIN;
     @Getter private CPlayerAchievementManager achievementManager;
     @Getter private CPlayerActionBarManager actionBar = new CorePlayerActionBarManager(this);
@@ -67,16 +65,18 @@ public class CorePlayer implements CPlayer {
     /**
      * Instantiates a new Core player.
      *
-     * @param sqlId the sqlid
-     * @param uuid  the uuid
-     * @param name  the name
-     * @param rank  the rank
+     * @param sqlId  the sqlid
+     * @param uuid   the uuid
+     * @param name   the name
+     * @param rank   the rank
+     * @param locale the locale
      */
-    public CorePlayer(int sqlId, UUID uuid, String name, Rank rank) {
+    public CorePlayer(int sqlId, UUID uuid, String name, Rank rank, String locale) {
         this.sqlId = sqlId;
         this.uuid = uuid;
         this.name = name;
         this.rank = rank;
+        this.locale = locale;
     }
 
     @Override
@@ -198,22 +198,17 @@ public class CorePlayer implements CPlayer {
     }
 
     @Override
-    public void sendFormatMessage(JavaPlugin plugin, String key) {
+    public void sendFormatMessage(String key) {
         if (getStatus() != PlayerStatus.JOINED) return;
         if (getBukkitPlayer() == null) return;
-        LanguageManager languageManager = null;
-        if (plugin instanceof Core) {
-            languageManager = Core.getLanguageFormatter();
-        } else if (plugin instanceof Plugin) {
-            languageManager = ((Plugin) plugin).getLanguageManager();
-        }
+        LanguageManager languageManager = Core.getLanguageFormatter();
         if (languageManager == null) {
-            plugin.getLogger().log(Level.SEVERE, "PROBLEM GETTING LANGUAGE FORMATTER for key: " + key);
+            Core.logMessage("Language Formatter", "PROBLEM GETTING LANGUAGE FORMATTER for key: " + key);
             return;
         }
         String message = languageManager.getFormat(getLocale(), key);
-        if (message.equals("")) {
-            plugin.getLogger().log(Level.SEVERE, "MESSAGE NULL for key: " + key);
+        if (message.isEmpty()) {
+            Core.logMessage("Language Formatter", "MESSAGE NULL for key: " + key);
             return;
         }
         getBukkitPlayer().sendMessage(message);

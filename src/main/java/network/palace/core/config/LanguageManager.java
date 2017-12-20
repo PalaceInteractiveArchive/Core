@@ -2,52 +2,66 @@ package network.palace.core.config;
 
 import network.palace.core.Core;
 import network.palace.core.player.CPlayer;
+import network.palace.core.utils.MiscUtil;
 import org.bukkit.ChatColor;
 import org.bukkit.command.CommandSender;
-import org.bukkit.configuration.file.FileConfiguration;
 import org.bukkit.entity.Player;
-import org.bukkit.plugin.java.JavaPlugin;
+import org.json.simple.JSONArray;
+import org.json.simple.JSONObject;
 
-import java.io.BufferedReader;
-import java.io.IOException;
-import java.io.InputStreamReader;
 import java.util.HashMap;
-import java.util.Map;
 
 /**
  * The type Language manager.
  */
 public class LanguageManager {
+    private final String url = "https://spreadsheets.google.com/feeds/cells/1Sy0BswfWXjGybjchn6YGj68fN19cl4P4wtrEF8EkPhw/od6/public/basic?alt=json";
+    public static final String DEFAULT_LANG = "en_US";
 
-    private static final String DEFAULT_LANG = "en_US";
-    private static final String PATH = "lang/";
-    private final String LANG_FILE_NAME = "languages.txt";
-    private final String YML_EXTENSION = ".yml";
-
-    private final Map<String, YAMLConfigurationFile> languages = new HashMap<>();
+    private final HashMap<String, HashMap<String, String>> languages = new HashMap<>();
 
     /**
      * Instantiates a new Language manager.
-     *
-     * @param plugin the plugin
      */
-    public LanguageManager(JavaPlugin plugin) {
-        if (plugin == null) return;
-        // Return if languages file does not exist
-        if (plugin.getResource(PATH + LANG_FILE_NAME) == null) return;
-        // Languages text file to get all the languages to load
-        try {
-            BufferedReader languagesReader = new BufferedReader(new InputStreamReader(plugin.getResource(PATH + LANG_FILE_NAME)));
-            String language;
-            while ((language = languagesReader.readLine()) != null) {
-                // Check if resource exist if not continue
-                if (plugin.getResource(PATH + language + YML_EXTENSION) == null) continue;
-                // Add to list of languages
-                languages.put(language, new YAMLConfigurationFile(plugin, PATH, PATH + language + YML_EXTENSION));
+    public LanguageManager() {
+        Core.runTaskTimerAsynchronously(this::reload, 0L, 6000L);
+    }
+
+    public void reload() {
+        JSONObject obj = MiscUtil.readJsonFromUrl(url);
+        if (obj == null) return;
+
+        JSONArray array = (JSONArray) ((JSONObject) obj.get("feed")).get("entry");
+        languages.clear();
+        HashMap<Integer, String> langs = new HashMap<>();
+        String key = "";
+        for (Object objectArray : array) {
+            JSONObject object = (JSONObject) objectArray;
+            JSONObject content = (JSONObject) object.get("content");
+            JSONObject id = (JSONObject) object.get("title");
+            String column = (String) id.get("$t");
+            String letter = column.substring(0, 1).toLowerCase();
+            int row = Integer.parseInt(column.substring(1));
+            String text = (String) content.get("$t");
+            if (text == null || text.isEmpty()) continue;
+            if (row == 1) {
+                if (!text.equals("node")) {
+                    languages.put(text, new HashMap<>());
+                    langs.put(getColumnInt(letter), text);
+                }
+                continue;
             }
-        } catch (IOException e) {
-            e.printStackTrace();
+            if (letter.equalsIgnoreCase("a")) {
+                key = text;
+                continue;
+            }
+            HashMap<String, String> map = languages.get(langs.get(getColumnInt(letter)));
+            map.put(key, text);
         }
+    }
+
+    private int getColumnInt(String s) {
+        return s.toLowerCase().charAt(0) - 97;
     }
 
     /**
@@ -67,38 +81,29 @@ public class LanguageManager {
     }
 
     /**
+     * Get format from player's selected locale
+     *
+     * @param player the player
+     * @param key    the key
+     * @return the format from player's locale
+     */
+    public String getFormat(CPlayer player, String key) {
+        String locale = player.getLocale();
+        return getFormat(locale, key);
+    }
+
+    /**
      * Gets format.
      *
      * @param locale the locale
      * @param key    the key
      * @return the format
      */
-    public final String getFormat(String locale, String key) {
-        String format = getFormatFromLang(locale, key);
-        if (format != null) {
-            return ChatColor.translateAlternateColorCodes('&', format);
-        } else {
-            format = getFormatFromLang(DEFAULT_LANG, key);
-            if (format != null) {
-                return ChatColor.translateAlternateColorCodes('&', format);
-            } else {
-                return "";
-            }
+    public String getFormat(String locale, String key) {
+        HashMap<String, String> lang = languages.get(locale);
+        if (lang == null) {
+            lang = languages.get(DEFAULT_LANG);
         }
-    }
-
-    private String getFormatFromLang(String lang, String key) {
-        if (getYamlFile(lang) == null) return null;
-        FileConfiguration langFile = getYamlFile(lang).getConfig();
-        if (langFile == null) return null;
-        if (langFile.contains(key)) {
-            return langFile.getString(key);
-        } else {
-            return null;
-        }
-    }
-
-    private YAMLConfigurationFile getYamlFile(String lang) {
-        return languages.get(lang);
+        return ChatColor.translateAlternateColorCodes('&', lang.getOrDefault(key, ""));
     }
 }

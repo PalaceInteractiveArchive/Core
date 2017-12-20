@@ -3,6 +3,7 @@ package network.palace.core.utils;
 import lombok.AllArgsConstructor;
 import lombok.Getter;
 import network.palace.core.Core;
+import network.palace.core.config.LanguageManager;
 import network.palace.core.honor.HonorMapping;
 import network.palace.core.honor.TopHonorReport;
 import network.palace.core.npc.mob.MobPlayerTexture;
@@ -832,17 +833,17 @@ public class SqlUtil {
         if (connection == null) {
             Core.logInfo("Core > Unable to get top honor report - Cannot connect to MySQL!");
             ErrorUtil.displayError("Unable to connect to MySQL!");
-            return new JoinReport(0, uuid, Rank.SETTLER);
+            return new JoinReport(0, uuid, Rank.SETTLER, LanguageManager.DEFAULT_LANG);
         }
         try {
-            String statementText = "SELECT id,rank FROM player_data WHERE uuid=?";
+            String statementText = "SELECT id,rank,lang FROM player_data WHERE uuid=?";
             PreparedStatement statement = connection.prepareStatement(statementText);
             statement.setString(1, uuid.toString());
             ResultSet result = statement.executeQuery();
             if (!result.next()) {
-                return new JoinReport(0, uuid, Rank.SETTLER);
+                return new JoinReport(0, uuid, Rank.SETTLER, LanguageManager.DEFAULT_LANG);
             }
-            JoinReport report = new JoinReport(result.getInt("id"), uuid, Rank.fromString(result.getString("rank")));
+            JoinReport report = new JoinReport(result.getInt("id"), uuid, Rank.fromString(result.getString("rank")), result.getString("lang"));
             result.close();
             statement.close();
             return report;
@@ -850,7 +851,7 @@ public class SqlUtil {
             e.printStackTrace();
             ErrorUtil.displayError(e);
         }
-        return new JoinReport(0, uuid, Rank.SETTLER);
+        return new JoinReport(0, uuid, Rank.SETTLER, LanguageManager.DEFAULT_LANG);
     }
 
     @AllArgsConstructor
@@ -858,5 +859,6 @@ public class SqlUtil {
         @Getter private final int sqlId;
         @Getter private final UUID uuid;
         @Getter private final Rank rank;
+        @Getter private final String locale;
     }
 }

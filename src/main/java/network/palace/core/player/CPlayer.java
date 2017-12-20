@@ -14,7 +14,6 @@ import org.bukkit.inventory.ItemStack;
 import org.bukkit.inventory.PlayerInventory;
 import org.bukkit.map.MapView;
 import org.bukkit.metadata.MetadataValue;
-import org.bukkit.plugin.java.JavaPlugin;
 import org.bukkit.potion.PotionEffect;
 import org.bukkit.potion.PotionEffectType;
 
@@ -153,10 +152,9 @@ public interface CPlayer {
     /**
      * Send format message.
      *
-     * @param plugin the plugin
-     * @param key    the key
+     * @param key the key
      */
-    void sendFormatMessage(JavaPlugin plugin, String key);
+    void sendFormatMessage(String key);
 
     /**
      * Reset player.
