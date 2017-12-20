@@ -56,7 +56,7 @@ import java.util.concurrent.Future;
  * <p>
  * You can access instances of other modules by depending on Core in your pom.xml, and then executing Core.get
  */
-@PluginInfo(name = "Core", version = "2.0.3", depend = {"ProtocolLib"})
+@PluginInfo(name = "Core", version = "2.0.4", depend = {"ProtocolLib"})
 public class Core extends JavaPlugin {
 
     private boolean starting = true;
@@ -173,6 +173,7 @@ public class Core extends JavaPlugin {
             logMessage("Core", ChatColor.BLUE + "" + ChatColor.BOLD + "Running in game mode, skipping startup phase!");
             setStarting(false);
         } else runTaskLater(() -> setStarting(false), 20 * 7);
+        Bukkit.getServer().clearRecipes();
     }
 
     /**

@@ -25,7 +25,7 @@ import java.util.*;
  */
 public class CorePlayerManager implements CPlayerManager {
 
-    private CorePlayerDefaultScoreboard defaultScoreboard;
+    private final CorePlayerDefaultScoreboard defaultScoreboard;
     private final Map<UUID, CPlayer> onlinePlayers = new HashMap<>();
 
     /**

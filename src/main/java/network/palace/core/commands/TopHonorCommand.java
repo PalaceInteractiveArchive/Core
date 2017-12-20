@@ -17,7 +17,7 @@ import java.util.HashMap;
 @CommandMeta(description = "View honor leaderboard")
 @CommandPermission(rank = Rank.SETTLER)
 public class TopHonorCommand extends CoreCommand {
-    private DecimalFormat format = new DecimalFormat("#,###");
+    private final DecimalFormat format = new DecimalFormat("#,###");
 
     public TopHonorCommand() {
         super("tophonor");

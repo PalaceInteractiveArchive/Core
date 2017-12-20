@@ -44,7 +44,7 @@ public class CorePlayer implements CPlayer {
     @Getter private final int sqlId;
     @Getter private final UUID uuid;
     private final String name;
-    @Getter @Setter private Rank rank = Rank.SETTLER;
+    @Getter @Setter private Rank rank;
     @Getter @Setter private String locale = "en_US";
     @Getter @Setter private PlayerStatus status = PlayerStatus.LOGIN;
     @Getter private CPlayerAchievementManager achievementManager;
@@ -59,7 +59,7 @@ public class CorePlayer implements CPlayer {
     @Getter @Setter private String textureSignature = "";
     @Getter @Setter private String pack = "none";
     @Getter private final long joinTime = System.currentTimeMillis();
-    private List<Integer> queuedAchievements = new ArrayList<>();
+    private final List<Integer> queuedAchievements = new ArrayList<>();
 
     @Getter @Setter private int honor;
     @Getter @Setter private int previousHonorLevel;
@@ -447,7 +447,7 @@ public class CorePlayer implements CPlayer {
         if (player == null) return;
         if (player.getStatus() != PlayerStatus.JOINED) return;
         if (getBukkitPlayer() == null) return;
-        getBukkitPlayer().showPlayer(player.getBukkitPlayer());
+        getBukkitPlayer().showPlayer(Core.getInstance(), player.getBukkitPlayer());
     }
 
     @Override
@@ -456,7 +456,7 @@ public class CorePlayer implements CPlayer {
         if (player == null) return;
         if (player.getStatus() != PlayerStatus.JOINED) return;
         if (getBukkitPlayer() == null) return;
-        getBukkitPlayer().hidePlayer(player.getBukkitPlayer());
+        getBukkitPlayer().hidePlayer(Core.getInstance(), player.getBukkitPlayer());
     }
 
     @Override
@@ -518,7 +518,7 @@ public class CorePlayer implements CPlayer {
     @Override
     public Block getTargetBlock(int range) {
         if (getBukkitPlayer() == null) return null;
-        return getBukkitPlayer().getTargetBlock((Set<Material>) null, range);
+        return getBukkitPlayer().getTargetBlock(null, range);
     }
 
     @Override

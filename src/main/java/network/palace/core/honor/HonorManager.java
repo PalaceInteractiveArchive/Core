@@ -13,8 +13,8 @@ import java.util.*;
  */
 public class HonorManager {
 
-    private Set<HonorMapping> mappings = new HashSet<>();
-    private TreeSet<Integer> honorMappings = new TreeSet<>();
+    private final Set<HonorMapping> mappings = new HashSet<>();
+    private final TreeSet<Integer> honorMappings = new TreeSet<>();
     private int highest = 0;
 
     /**

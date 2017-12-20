@@ -20,8 +20,8 @@ import java.util.UUID;
  */
 public class EconomyManager {
 
-    private Map<UUID, Payment> balance = new HashMap<>();
-    private Map<UUID, Payment> tokens = new HashMap<>();
+    private final Map<UUID, Payment> balance = new HashMap<>();
+    private final Map<UUID, Payment> tokens = new HashMap<>();
 
     /**
      * Instantiates a new Economy manager.

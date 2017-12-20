@@ -20,9 +20,9 @@ import java.util.*;
  * Created by Marc on 6/26/16
  */
 public class AchievementManager {
-    public String url = "https://spreadsheets.google.com/feeds/cells/14OHnSeMJVmtFnE7xIdCzMaE0GPOR3Sh4SyE-ZR3hQ7o/od6/public/basic?alt=json";
-    private Map<Integer, CoreAchievement> achievements = new HashMap<>();
-    private Map<UUID, List<Integer>> earned = new HashMap<>();
+    public final String url = "https://spreadsheets.google.com/feeds/cells/14OHnSeMJVmtFnE7xIdCzMaE0GPOR3Sh4SyE-ZR3hQ7o/od6/public/basic?alt=json";
+    private final Map<Integer, CoreAchievement> achievements = new HashMap<>();
+    private final Map<UUID, List<Integer>> earned = new HashMap<>();
 
     /**
      * Create a new achievement manager

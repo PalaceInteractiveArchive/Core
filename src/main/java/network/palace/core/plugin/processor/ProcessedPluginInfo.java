@@ -6,19 +6,17 @@ import org.yaml.snakeyaml.introspector.PropertyUtils;
 import org.yaml.snakeyaml.nodes.*;
 import org.yaml.snakeyaml.representer.Representer;
 
-import java.beans.IntrospectionException;
 import java.util.LinkedHashSet;
 import java.util.Set;
 
-@SuppressWarnings("unused")
 public class ProcessedPluginInfo {
 
-    private String name = "";
-    private String author = "";
-    private String version = "";
-    private String[] depend = {};
-    private String[] softdepend = {};
-    private String main = "";
+    private String name;
+    private String author;
+    private String version;
+    private String[] depend;
+    private String[] softdepend;
+    private String main;
 
     public ProcessedPluginInfo(String name, String author, String version, String[] depend, String[] softdepend, String main) {
         this.name = name;
@@ -38,7 +36,7 @@ public class ProcessedPluginInfo {
 
     private class UnsortedPropertyUtils extends PropertyUtils {
         @Override
-        protected Set<Property> createPropertySet(Class<?> type, BeanAccess bAccess) throws IntrospectionException {
+        protected Set<Property> createPropertySet(Class<?> type, BeanAccess bAccess) {
             return new LinkedHashSet<>(getPropertiesMap(type, BeanAccess.FIELD).values());
         }
     }

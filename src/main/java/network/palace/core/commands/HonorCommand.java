@@ -21,7 +21,7 @@ import java.text.DecimalFormat;
 @CommandMeta(description = "Get your current honor count and level")
 @CommandPermission(rank = Rank.DEVELOPER)
 public class HonorCommand extends CoreCommand {
-    private DecimalFormat format = new DecimalFormat("#,###");
+    private final DecimalFormat format = new DecimalFormat("#,###");
 
     public HonorCommand() {
         super("honor");
