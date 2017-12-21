@@ -1,12 +1,13 @@
 package network.palace.core.player.impl.listeners;
 
 import network.palace.core.Core;
-import org.bukkit.Achievement;
 import org.bukkit.ChatColor;
+import org.bukkit.advancement.Advancement;
 import org.bukkit.entity.Player;
 import org.bukkit.event.EventHandler;
 import org.bukkit.event.EventPriority;
 import org.bukkit.event.Listener;
+import org.bukkit.event.entity.EntityPickupItemEvent;
 import org.bukkit.event.player.*;
 
 /**
@@ -54,12 +55,6 @@ public class CorePlayerManagerListener implements Listener {
     public void onPlayerJoin(PlayerJoinEvent event) {
         event.setJoinMessage("");
         Player player = event.getPlayer();
-        try {
-            if (!player.hasAchievement(Achievement.OPEN_INVENTORY)) {
-                player.awardAchievement(Achievement.OPEN_INVENTORY);
-            }
-        } catch (UnsupportedOperationException ignored) {
-        }
         player.setExp(0);
         player.setLevel(0);
         Core.getPlayerManager().playerJoined(player);
@@ -93,8 +88,12 @@ public class CorePlayerManagerListener implements Listener {
      * @param event the event
      */
     @EventHandler
-    public void onPlayerAchievementAwarded(PlayerAchievementAwardedEvent event) {
-        event.setCancelled(true);
+    public void onPlayerAchievementAwarded(PlayerAdvancementDoneEvent event) {
+        Player player = event.getPlayer();
+        Advancement adv = event.getAdvancement();
+        for (String criteria : adv.getCriteria()) {
+            player.getAdvancementProgress(adv).revokeCriteria(criteria);
+        }
     }
 
     /**
@@ -103,7 +102,7 @@ public class CorePlayerManagerListener implements Listener {
      * @param event the event
      */
     @EventHandler
-    public void onPlayerPickupItem(PlayerPickupItemEvent event) {
+    public void onPlayerPickupItem(EntityPickupItemEvent event) {
         if (event.getItem().hasMetadata("special")) {
             if (event.getItem().getMetadata("special").get(0).asBoolean()) {
                 event.setCancelled(true);

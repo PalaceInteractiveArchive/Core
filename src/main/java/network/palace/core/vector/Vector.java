@@ -10,7 +10,7 @@ import org.bukkit.Location;
  */
 public class Vector {
 
-    @Getter private org.bukkit.util.Vector vector;
+    @Getter private final org.bukkit.util.Vector vector;
 
     private Vector(Location location) {
         this(location.getX(), location.getY(), location.getZ());
@@ -54,6 +54,7 @@ public class Vector {
 
     /**
      * Get the location that the vector is based on
+     *
      * @return Location of the vector in the world
      */
     public Location getLocation() {

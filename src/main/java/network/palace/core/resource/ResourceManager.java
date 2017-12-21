@@ -18,9 +18,9 @@ import java.util.*;
  */
 public class ResourceManager {
 
-    private Map<String, ResourcePack> packs = new HashMap<>();
+    private final Map<String, ResourcePack> packs = new HashMap<>();
     private boolean first = true;
-    private Map<UUID, String> downloading = new HashMap<>();
+    private final Map<UUID, String> downloading = new HashMap<>();
 
     /**
      * Instantiates a new Resource manager.
@@ -113,14 +113,11 @@ public class ResourceManager {
      */
     public void sendPack(CPlayer player, ResourcePack pack) {
         if (player.getOnlineTime() < 2000) {
-            Bukkit.getScheduler().runTaskLater(Core.getInstance(), new Runnable() {
-                @Override
-                public void run() {
-                    player.sendMessage(ChatColor.GREEN + "Attempting to send you the " + ChatColor.YELLOW + pack.getName() +
-                            ChatColor.GREEN + " Resource Pack!");
-                    downloading.put(player.getUniqueId(), pack.getName());
-                    player.getResourcePack().send(pack.getUrl(), pack.getHash().trim().equals("") ? "null" : pack.getHash());
-                }
+            Bukkit.getScheduler().runTaskLater(Core.getInstance(), () -> {
+                player.sendMessage(ChatColor.GREEN + "Attempting to send you the " + ChatColor.YELLOW + pack.getName() +
+                        ChatColor.GREEN + " Resource Pack!");
+                downloading.put(player.getUniqueId(), pack.getName());
+                player.getResourcePack().send(pack.getUrl(), pack.getHash().trim().equals("") ? "null" : pack.getHash());
             }, 20L);
             return;
         }

@@ -23,7 +23,6 @@ import org.bukkit.inventory.ItemStack;
 import org.bukkit.inventory.PlayerInventory;
 import org.bukkit.map.MapView;
 import org.bukkit.metadata.MetadataValue;
-import org.bukkit.plugin.java.JavaPlugin;
 import org.bukkit.potion.PotionEffect;
 import org.bukkit.potion.PotionEffectType;
 import org.bukkit.util.Vector;
@@ -32,7 +31,6 @@ import java.lang.reflect.Field;
 import java.lang.reflect.InvocationTargetException;
 import java.lang.reflect.Method;
 import java.util.*;
-import java.util.logging.Level;
 
 /**
  * Implementation of CPlayer
@@ -44,8 +42,8 @@ public class CorePlayer implements CPlayer {
     @Getter private final int sqlId;
     @Getter private final UUID uuid;
     private final String name;
-    @Getter @Setter private Rank rank = Rank.SETTLER;
-    @Getter @Setter private String locale = "en_US";
+    @Getter @Setter private Rank rank;
+    @Getter @Setter private String locale;
     @Getter @Setter private PlayerStatus status = PlayerStatus.LOGIN;
     @Getter private CPlayerAchievementManager achievementManager;
     @Getter private CPlayerActionBarManager actionBar = new CorePlayerActionBarManager(this);
@@ -59,7 +57,7 @@ public class CorePlayer implements CPlayer {
     @Getter @Setter private String textureSignature = "";
     @Getter @Setter private String pack = "none";
     @Getter private final long joinTime = System.currentTimeMillis();
-    private List<Integer> queuedAchievements = new ArrayList<>();
+    private final List<Integer> queuedAchievements = new ArrayList<>();
 
     @Getter @Setter private int honor;
     @Getter @Setter private int previousHonorLevel;
@@ -67,16 +65,18 @@ public class CorePlayer implements CPlayer {
     /**
      * Instantiates a new Core player.
      *
-     * @param sqlId the sqlid
-     * @param uuid  the uuid
-     * @param name  the name
-     * @param rank  the rank
+     * @param sqlId  the sqlid
+     * @param uuid   the uuid
+     * @param name   the name
+     * @param rank   the rank
+     * @param locale the locale
      */
-    public CorePlayer(int sqlId, UUID uuid, String name, Rank rank) {
+    public CorePlayer(int sqlId, UUID uuid, String name, Rank rank, String locale) {
         this.sqlId = sqlId;
         this.uuid = uuid;
         this.name = name;
         this.rank = rank;
+        this.locale = locale;
     }
 
     @Override
@@ -198,22 +198,17 @@ public class CorePlayer implements CPlayer {
     }
 
     @Override
-    public void sendFormatMessage(JavaPlugin plugin, String key) {
+    public void sendFormatMessage(String key) {
         if (getStatus() != PlayerStatus.JOINED) return;
         if (getBukkitPlayer() == null) return;
-        LanguageManager languageManager = null;
-        if (plugin instanceof Core) {
-            languageManager = Core.getLanguageFormatter();
-        } else if (plugin instanceof Plugin) {
-            languageManager = ((Plugin) plugin).getLanguageManager();
-        }
+        LanguageManager languageManager = Core.getLanguageFormatter();
         if (languageManager == null) {
-            plugin.getLogger().log(Level.SEVERE, "PROBLEM GETTING LANGUAGE FORMATTER for key: " + key);
+            Core.logMessage("Language Formatter", "PROBLEM GETTING LANGUAGE FORMATTER for key: " + key);
             return;
         }
         String message = languageManager.getFormat(getLocale(), key);
-        if (message.equals("")) {
-            plugin.getLogger().log(Level.SEVERE, "MESSAGE NULL for key: " + key);
+        if (message.isEmpty()) {
+            Core.logMessage("Language Formatter", "MESSAGE NULL for key: " + key);
             return;
         }
         getBukkitPlayer().sendMessage(message);
@@ -443,20 +438,32 @@ public class CorePlayer implements CPlayer {
 
     @Override
     public void showPlayer(CPlayer player) {
+        showPlayer(null, player);
+    }
+
+    @Override
+    public void showPlayer(org.bukkit.plugin.Plugin plugin, CPlayer player) {
         if (getStatus() != PlayerStatus.JOINED) return;
         if (player == null) return;
         if (player.getStatus() != PlayerStatus.JOINED) return;
         if (getBukkitPlayer() == null) return;
-        getBukkitPlayer().showPlayer(player.getBukkitPlayer());
+        if (plugin == null) plugin = Core.getInstance();
+        getBukkitPlayer().showPlayer(plugin, player.getBukkitPlayer());
     }
 
     @Override
     public void hidePlayer(CPlayer player) {
+        hidePlayer(null, player);
+    }
+
+    @Override
+    public void hidePlayer(org.bukkit.plugin.Plugin plugin, CPlayer player) {
         if (getStatus() != PlayerStatus.JOINED) return;
         if (player == null) return;
         if (player.getStatus() != PlayerStatus.JOINED) return;
         if (getBukkitPlayer() == null) return;
-        getBukkitPlayer().hidePlayer(player.getBukkitPlayer());
+        if (plugin == null) plugin = Core.getInstance();
+        getBukkitPlayer().hidePlayer(plugin, player.getBukkitPlayer());
     }
 
     @Override
@@ -518,7 +525,7 @@ public class CorePlayer implements CPlayer {
     @Override
     public Block getTargetBlock(int range) {
         if (getBukkitPlayer() == null) return null;
-        return getBukkitPlayer().getTargetBlock((Set<Material>) null, range);
+        return getBukkitPlayer().getTargetBlock(null, range);
     }
 
     @Override

@@ -1,5 +1,11 @@
 package network.palace.core.utils;
 
+import org.json.simple.JSONObject;
+import org.json.simple.parser.JSONParser;
+
+import java.io.*;
+import java.net.URL;
+import java.nio.charset.Charset;
 import java.text.NumberFormat;
 import java.util.Locale;
 
@@ -80,5 +86,39 @@ public class MiscUtil {
             if (t1.equals(t)) return true;
         }
         return false;
+    }
+
+    /**
+     * Parse the contents of a URL and return JSON objects
+     *
+     * @param url the url
+     * @return JSON objects with the content of the URL
+     */
+    public static JSONObject readJsonFromUrl(String url) {
+        try (InputStream is = new URL(url).openStream()) {
+            BufferedReader rd = new BufferedReader(new InputStreamReader(is, Charset.forName("UTF-8")));
+            String jsonText = readAll(rd);
+            JSONParser parser = new JSONParser();
+            return (JSONObject) parser.parse(jsonText);
+        } catch (Exception e) {
+            e.printStackTrace();
+            return null;
+        }
+    }
+
+    /**
+     * Read all data from a buffer and output a string
+     *
+     * @param rd the reader
+     * @return a string
+     * @throws IOException in case of an error while reading the buffer
+     */
+    public static String readAll(Reader rd) throws IOException {
+        StringBuilder sb = new StringBuilder();
+        int cp;
+        while ((cp = rd.read()) != -1) {
+            sb.append((char) cp);
+        }
+        return sb.toString();
     }
 }

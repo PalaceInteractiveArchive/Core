@@ -12,7 +12,7 @@ import java.util.Optional;
  */
 public class Hologram {
 
-    private Optional<MobArmorStand> armorStand = Optional.empty();
+    private Optional<MobArmorStand> armorStand;
 
     public Hologram(Point point, String text) {
         MobArmorStand mobArmorStand = new MobArmorStand(point, null, text);

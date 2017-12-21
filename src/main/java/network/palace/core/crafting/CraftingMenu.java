@@ -31,9 +31,9 @@ import java.util.*;
 
 public class CraftingMenu implements Listener {
     //Pages
-    private ItemStack nextPage = ItemUtil.create(Material.ARROW, ChatColor.GREEN + "Next Page");
-    private ItemStack lastPage = ItemUtil.create(Material.ARROW, ChatColor.GREEN + "Last Page");
-    private List<UUID> refresh = new ArrayList<>();
+    private final ItemStack nextPage = ItemUtil.create(Material.ARROW, ChatColor.GREEN + "Next Page");
+    private final ItemStack lastPage = ItemUtil.create(Material.ARROW, ChatColor.GREEN + "Last Page");
+    private final List<UUID> refresh = new ArrayList<>();
 
 
     public CraftingMenu() {
@@ -124,9 +124,9 @@ public class CraftingMenu implements Listener {
                 if (!contains) return;
                 player.updateInventory();
                 update(player);
-                return;
+            } else if (!refresh.contains(player.getUniqueId())) {
+                refresh.add(player.getUniqueId());
             }
-            refresh.add(player.getUniqueId());
         }), 0L, 10L);
     }
 

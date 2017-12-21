@@ -25,7 +25,7 @@ import java.util.*;
  */
 public class CorePlayerManager implements CPlayerManager {
 
-    private CorePlayerDefaultScoreboard defaultScoreboard;
+    private final CorePlayerDefaultScoreboard defaultScoreboard;
     private final Map<UUID, CPlayer> onlinePlayers = new HashMap<>();
 
     /**
@@ -39,11 +39,8 @@ public class CorePlayerManager implements CPlayerManager {
 
     @Override
     public void playerLoggedIn(UUID uuid, String name) {
-//        System.out.println(System.currentTimeMillis() + " a");
         SqlUtil.JoinReport report = Core.getSqlUtil().getJoinReport(uuid);
-//        System.out.println(System.currentTimeMillis() + " b");
-        onlinePlayers.put(uuid, new CorePlayer(report.getSqlId(), uuid, name, report.getRank()));
-//        System.out.println(System.currentTimeMillis() + " c");
+        onlinePlayers.put(uuid, new CorePlayer(report.getSqlId(), uuid, name, report.getRank(), report.getLocale()));
     }
 
     @Override

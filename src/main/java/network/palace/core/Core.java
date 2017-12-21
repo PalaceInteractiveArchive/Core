@@ -56,7 +56,7 @@ import java.util.concurrent.Future;
  * <p>
  * You can access instances of other modules by depending on Core in your pom.xml, and then executing Core.get
  */
-@PluginInfo(name = "Core", version = "2.0.3", depend = {"ProtocolLib"})
+@PluginInfo(name = "Core", version = "2.0.5", depend = {"ProtocolLib"})
 public class Core extends JavaPlugin {
 
     private boolean starting = true;
@@ -130,8 +130,6 @@ public class Core extends JavaPlugin {
             loginTitleStay = getCoreConfig().getInt("loginStay", 100);
             loginTitleFadeOut = getCoreConfig().getInt("loginFadeOut", 20);
         }
-        // Language Manager
-        languageManager = new LanguageManager(this);
         // Settings adapter for player locales
         addPacketListener(new SettingsAdapter());
         // Player info adapter for player ping
@@ -142,6 +140,7 @@ public class Core extends JavaPlugin {
         // SQL Classes
         sqlUtil = new SqlUtil();
         // Managers
+        languageManager = new LanguageManager();
         playerManager = new CorePlayerManager();
         permissionManager = new PermissionManager();
         resourceManager = new ResourceManager();
@@ -173,6 +172,7 @@ public class Core extends JavaPlugin {
             logMessage("Core", ChatColor.BLUE + "" + ChatColor.BOLD + "Running in game mode, skipping startup phase!");
             setStarting(false);
         } else runTaskLater(() -> setStarting(false), 20 * 7);
+        Bukkit.getServer().clearRecipes();
     }
 
     /**
@@ -329,6 +329,15 @@ public class Core extends JavaPlugin {
      */
     public static String getVersion() {
         return getInstance().getDescription().getVersion();
+    }
+
+    /**
+     * Gets command map.
+     *
+     * @return the command map
+     */
+    public static CoreCommandMap getCommandMap() {
+        return getInstance().commandMap;
     }
 
     /**

@@ -1,13 +1,12 @@
 package network.palace.core.plugin;
 
+import lombok.Getter;
 import network.palace.core.Core;
 import network.palace.core.command.CoreCommand;
 import network.palace.core.command.CoreCommandMap;
-import network.palace.core.config.LanguageManager;
 import network.palace.core.errors.ErrorLog;
 import network.palace.core.errors.RollbarHandler;
 import network.palace.core.library.LibraryHandler;
-import lombok.Getter;
 import org.bukkit.Bukkit;
 import org.bukkit.ChatColor;
 import org.bukkit.event.Listener;
@@ -21,7 +20,6 @@ public class Plugin extends JavaPlugin {
 
     @Getter private PluginInfo info;
     @Getter private ErrorLog errorLog;
-    @Getter private LanguageManager languageManager;
     @Getter private CoreCommandMap commandMap;
     @Getter private RollbarHandler rollbarHandler;
 
@@ -44,8 +42,6 @@ public class Plugin extends JavaPlugin {
                 rollbarHandler = new RollbarHandler(errorLog.accessToken(), errorLog.environment());
                 rollbarHandler.watch();
             }
-            // Load languages
-            languageManager = new LanguageManager(this);
             // Start command map
             commandMap = new CoreCommandMap(this);
             // Plugin enabled finally
@@ -73,14 +69,17 @@ public class Plugin extends JavaPlugin {
      *
      * @throws Exception any error thrown during the plugin's startup phase
      */
-    protected void onPluginEnable() throws Exception { Core.logMessage(getInfo().name(), ChatColor.RED + "Did not run any code on enable!"); }
+    protected void onPluginEnable() throws Exception {
+        Core.logMessage(getInfo().name(), ChatColor.RED + "Did not run any code on enable!");
+    }
 
     /**
      * Shut the plugin down
      *
      * @throws Exception any error thrown during the plugin's shutdown phase
      */
-    protected void onPluginDisable() throws Exception {}
+    protected void onPluginDisable() throws Exception {
+    }
 
     /**
      * Register command a Core command.

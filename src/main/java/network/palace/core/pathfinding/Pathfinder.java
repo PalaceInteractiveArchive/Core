@@ -45,8 +45,7 @@ public class Pathfinder {
             closedSet.add(current);
             if (range != -1 && closedSet.size() == range) break;
         }
-        List<PathfindingTile> pathTiles = new ArrayList<>();
-        pathTiles.addAll(closedSet);
+        List<PathfindingTile> pathTiles = new ArrayList<>(closedSet);
         Collections.reverse(pathTiles);
         return pathTiles;
     }

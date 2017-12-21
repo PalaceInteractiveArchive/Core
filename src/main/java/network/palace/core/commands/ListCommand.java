@@ -10,7 +10,6 @@ import network.palace.core.player.CPlayer;
 import network.palace.core.player.Rank;
 import org.bukkit.command.CommandSender;
 
-import java.util.Collections;
 import java.util.List;
 import java.util.stream.Collectors;
 
@@ -30,8 +29,7 @@ public class ListCommand extends CoreCommand {
 
     @Override
     protected void handleCommandUnspecific(CommandSender sender, String[] args) throws CommandException {
-        List<String> playerNames = Core.getPlayerManager().getOnlinePlayers().stream().map(CPlayer::getName).collect(Collectors.toList());
-        Collections.sort(playerNames);
+        List<String> playerNames = Core.getPlayerManager().getOnlinePlayers().stream().map(CPlayer::getName).sorted().collect(Collectors.toList());
         String playerList = Joiner.on(" ").skipNulls().join(playerNames);
         // Formatter
         String playersOnlineFormat = Core.getLanguageFormatter().getFormat(sender, "command.list.playersOnline")

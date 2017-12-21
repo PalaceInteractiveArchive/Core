@@ -46,6 +46,7 @@ public class ReloadCommand extends CoreCommand {
             Core.getResourceManager().reload();
             Core.getHonorManager().provideMappings(Core.getSqlUtil().getHonorMappings());
             Core.getAchievementManager().reload();
+            Core.getLanguageFormatter().reload();
             sender.sendMessage(ChatColor.GREEN + "Core reloaded!");
             return;
         }

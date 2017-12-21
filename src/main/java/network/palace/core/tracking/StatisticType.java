@@ -2,7 +2,6 @@ package network.palace.core.tracking;
 
 import lombok.AllArgsConstructor;
 import lombok.Getter;
-import org.bukkit.Statistic;
 
 /**
  * @author Innectic
