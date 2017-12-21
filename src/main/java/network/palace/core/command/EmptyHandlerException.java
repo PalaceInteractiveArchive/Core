@@ -9,7 +9,7 @@ public final class EmptyHandlerException extends CommandException implements Fri
      * Instantiates a new Empty handler exception.
      */
     public EmptyHandlerException() {
-        super("command.error.invalid.handler");
+        super("command.error.handler.invalid");
     }
 
     @Override

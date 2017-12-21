@@ -1,12 +1,13 @@
 package network.palace.core.command;
 
 import com.google.common.collect.ImmutableList;
+import lombok.Getter;
+import lombok.Setter;
 import network.palace.core.Core;
 import network.palace.core.player.CPlayer;
 import network.palace.core.player.Rank;
 import network.palace.core.plugin.Plugin;
-import lombok.Getter;
-import lombok.Setter;
+import network.palace.core.utils.MiscUtil;
 import org.bukkit.Bukkit;
 import org.bukkit.ChatColor;
 import org.bukkit.command.*;
@@ -47,6 +48,8 @@ public abstract class CoreCommand implements CommandExecutor, TabCompleter {
 
     @Getter @Setter private Rank rank = Rank.SETTLER;
 
+    @Getter @Setter private String description = "";
+
     /**
      * Main constructor without sub-commands.
      *
@@ -77,8 +80,12 @@ public abstract class CoreCommand implements CommandExecutor, TabCompleter {
         for (CoreCommand subCommand : subCommands) {
             if (subCommand.getSuperCommand() != null)
                 throw new IllegalArgumentException("The command you attempted to register already has a supercommand.");
-            this.subCommands.put(subCommand.getName(), subCommand);
+            CommandMeta annotation = subCommand.getClass().getAnnotation(CommandMeta.class); // Get the commandMeta
+            if (annotation != null) {
+                subCommand.setDescription(annotation.description());
+            }
             subCommand.setSuperCommand(this);
+            this.subCommands.put(subCommand.getName(), subCommand);
         }
         // Add a provided help command
         regenerateHelpCommand();
@@ -97,21 +104,33 @@ public abstract class CoreCommand implements CommandExecutor, TabCompleter {
         return ImmutableList.copyOf(this.subCommands.values());
     }
 
-    private void regenerateHelpCommand() {
-        if (!shouldGenerateHelpCommand()) return;
+    public void regenerateHelpCommand() {
+        if (subCommands.containsKey("help")) return;
         final CoreCommand superHelpCommand = this;
-        this.subCommands.put("help", new CoreCommand("help") {
+        CoreCommand help = new CoreCommand("help") {
             @Override
             public void handleCommandUnspecific(CommandSender sender, String[] args) {
-                StringBuilder builder = new StringBuilder();
-                for (Map.Entry<String, CoreCommand> stringModuleCommandEntry : CoreCommand.this.subCommands.entrySet()) {
-                    builder.append(stringModuleCommandEntry.getKey()).append("|");
+                String name = CoreCommand.this.getFormattedName();
+                String msg = ChatColor.GREEN + MiscUtil.capitalizeFirstLetter(name) + " Commands:";
+                if (!isUsingSubCommandsOnly()) {
+                    msg += "\n" + ChatColor.GREEN + "/" + name.toLowerCase() + " " + ChatColor.AQUA + "- " + CoreCommand.this.getDescription();
                 }
-                String s = builder.toString();
+                for (Map.Entry<String, CoreCommand> entry : subCommands.entrySet()) {
+                    msg += "\n" + ChatColor.GREEN + "/" + entry.getValue().getFormattedName() + " " + ChatColor.AQUA + "- " + entry.getValue().getDescription();
+                }
+                sender.sendMessage(msg);
+//                StringBuilder builder = new StringBuilder();
+//                for (Map.Entry<String, CoreCommand> stringModuleCommandEntry : CoreCommand.this.subCommands.entrySet()) {
+//                    builder.append(stringModuleCommandEntry.getKey()).append("|");
+//                }
+//                String s = msg;
                 // Looks like this /name - [subcommand1|subcommand2|]
-                sender.sendMessage(ChatColor.GRAY + "/" + ChatColor.DARK_AQUA + superHelpCommand.getFormattedName() + ChatColor.GOLD + " - [" + s.substring(0, s.length() - 1) + "]");
+//                sender.sendMessage(ChatColor.GRAY + "/" + ChatColor.DARK_AQUA + superHelpCommand.getFormattedName() + ChatColor.GOLD + " - [" + s.substring(0, s.length() - 1) + "]");
             }
-        });
+        };
+        help.setSuperCommand(this);
+        help.setDescription("Open the help menu");
+        this.subCommands.put("help", help);
     }
 
     @Override
@@ -133,7 +152,10 @@ public abstract class CoreCommand implements CommandExecutor, TabCompleter {
             // Check if we HAVE to use sub-commands (a behavior this class provides)
             if (isUsingSubCommandsOnly()) {
                 // Check if there are not enough args for there to be a sub command
-                if (args.length < 1) throw new ArgumentRequirementException("command.error.arguments.specify");
+                if (args.length < 1) {
+                    args = new String[1];
+                    args[0] = "help";
+                }
                 // Also check if the sub command is valid by assigning and checking the value of the resolved sub command from the first argument.
                 if ((subCommand = getSubCommandFor(args[0])) == null)
                     throw new ArgumentRequirementException("command.error.arguments.invalid");
@@ -280,10 +302,6 @@ public abstract class CoreCommand implements CommandExecutor, TabCompleter {
 
     protected void handlePostSubCommand(CommandSender sender, String[] args) throws CommandException {
         throw new EmptyHandlerException();
-    }
-
-    protected boolean shouldGenerateHelpCommand() {
-        return true;
     }
 
     // Default behavior if we delegate the call to the sub-class

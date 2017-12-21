@@ -16,7 +16,7 @@ import java.util.HashMap;
  */
 public class LanguageManager {
     private final String url = "https://spreadsheets.google.com/feeds/cells/1Sy0BswfWXjGybjchn6YGj68fN19cl4P4wtrEF8EkPhw/od6/public/basic?alt=json";
-    public static final String DEFAULT_LANG = "en_US";
+    public static final String DEFAULT_LANG = "en_us";
 
     private final HashMap<String, HashMap<String, String>> languages = new HashMap<>();
 
@@ -104,6 +104,10 @@ public class LanguageManager {
         if (lang == null) {
             lang = languages.get(DEFAULT_LANG);
         }
-        return ChatColor.translateAlternateColorCodes('&', lang.getOrDefault(key, ""));
+        String val = lang.getOrDefault(key, "");
+        if (val.isEmpty()) {
+            val = languages.get(DEFAULT_LANG).get(key);
+        }
+        return ChatColor.translateAlternateColorCodes('&', val);
     }
 }

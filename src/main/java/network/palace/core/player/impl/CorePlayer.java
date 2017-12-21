@@ -438,20 +438,32 @@ public class CorePlayer implements CPlayer {
 
     @Override
     public void showPlayer(CPlayer player) {
+        showPlayer(null, player);
+    }
+
+    @Override
+    public void showPlayer(org.bukkit.plugin.Plugin plugin, CPlayer player) {
         if (getStatus() != PlayerStatus.JOINED) return;
         if (player == null) return;
         if (player.getStatus() != PlayerStatus.JOINED) return;
         if (getBukkitPlayer() == null) return;
-        getBukkitPlayer().showPlayer(Core.getInstance(), player.getBukkitPlayer());
+        if (plugin == null) plugin = Core.getInstance();
+        getBukkitPlayer().showPlayer(plugin, player.getBukkitPlayer());
     }
 
     @Override
     public void hidePlayer(CPlayer player) {
+        hidePlayer(null, player);
+    }
+
+    @Override
+    public void hidePlayer(org.bukkit.plugin.Plugin plugin, CPlayer player) {
         if (getStatus() != PlayerStatus.JOINED) return;
         if (player == null) return;
         if (player.getStatus() != PlayerStatus.JOINED) return;
         if (getBukkitPlayer() == null) return;
-        getBukkitPlayer().hidePlayer(Core.getInstance(), player.getBukkitPlayer());
+        if (plugin == null) plugin = Core.getInstance();
+        getBukkitPlayer().hidePlayer(plugin, player.getBukkitPlayer());
     }
 
     @Override

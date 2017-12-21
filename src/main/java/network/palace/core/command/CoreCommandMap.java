@@ -29,6 +29,7 @@ public final class CoreCommandMap {
 
     /**
      * Registers a command for handling.
+     *
      * @param command The command to register.
      */
     public void registerCommand(CoreCommand command) {
@@ -38,10 +39,11 @@ public final class CoreCommandMap {
         command1.setExecutor(command); //Set the executor
         command1.setTabCompleter(command); //Tab completer
         CommandMeta annotation = command.getClass().getAnnotation(CommandMeta.class); // Get the commandMeta
-        if (annotation != null){
+        if (annotation != null) {
             command1.setAliases(Arrays.asList(annotation.aliases()));
             command1.setDescription(annotation.description());
             command1.setUsage(annotation.usage());
+            command.setDescription(annotation.description());
         }
         // Remove old commands before register
         List<String> tempList = new ArrayList<>(Collections.singletonList(command.getName()));
@@ -136,6 +138,7 @@ public final class CoreCommandMap {
 
     /**
      * Gets a current command by the name you specify.
+     *
      * @param name The name you are looking for.
      * @return The command by that name or null if it cannot find the command.
      */

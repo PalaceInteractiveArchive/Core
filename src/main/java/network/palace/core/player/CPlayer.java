@@ -360,11 +360,27 @@ public interface CPlayer {
     void showPlayer(CPlayer player);
 
     /**
+     * Show player.
+     *
+     * @param player the player
+     * @param plugin the plugin making this call
+     */
+    void showPlayer(org.bukkit.plugin.Plugin plugin, CPlayer player);
+
+    /**
      * Hide player.
      *
      * @param player the player
      */
     void hidePlayer(CPlayer player);
+
+    /**
+     * Hide player.
+     *
+     * @param player the player
+     * @param plugin the plugin making this call
+     */
+    void hidePlayer(org.bukkit.plugin.Plugin plugin, CPlayer player);
 
     /**
      * Can see boolean.
