@@ -1,6 +1,9 @@
 package network.palace.core;
 
+import com.comphenix.protocol.PacketType;
 import com.comphenix.protocol.ProtocolLibrary;
+import com.comphenix.protocol.events.PacketAdapter;
+import com.comphenix.protocol.events.PacketEvent;
 import com.comphenix.protocol.events.PacketListener;
 import com.comphenix.protocol.utility.MinecraftVersion;
 import lombok.Getter;
@@ -134,6 +137,12 @@ public class Core extends JavaPlugin {
         addPacketListener(new SettingsAdapter());
         // Player info adapter for player ping
         addPacketListener(new PlayerInfoAdapter());
+        addPacketListener(new PacketAdapter(this, PacketType.Play.Server.RECIPES) {
+            @Override
+            public void onPacketSending(PacketEvent event) {
+                event.setCancelled(true);
+            }
+        });
         // Register plugin channel
         getServer().getMessenger().registerOutgoingPluginChannel(this, "BungeeCord");
         getServer().getMessenger().registerIncomingPluginChannel(this, "WDL|INIT", new CorePlayerWorldDownloadProtect());
@@ -172,7 +181,7 @@ public class Core extends JavaPlugin {
             logMessage("Core", ChatColor.BLUE + "" + ChatColor.BOLD + "Running in game mode, skipping startup phase!");
             setStarting(false);
         } else runTaskLater(() -> setStarting(false), 20 * 7);
-        Bukkit.getServer().clearRecipes();
+//        Bukkit.getServer().clearRecipes();
     }
 
     /**
