@@ -301,16 +301,21 @@ public class ItemUtil implements Listener {
         if (!o.has("t")) {
             return new ItemStack(Material.AIR);
         }
-        ItemStack i = MinecraftReflection.getBukkitItemStack(new ItemStack(o.get("t").getAsInt()));
-        i.setData(new MaterialData(o.get("t").getAsInt(), (byte) o.get("da").getAsInt()));
-        i.setAmount(o.get("a").getAsInt());
-        i.setDurability(o.get("du").getAsShort());
-        if (o.has("ta")) {
-            try {
-                NbtFactory.setItemTag(i, new NbtTextSerializer().deserializeCompound(o.get("ta").getAsString()));
-            } catch (IOException ex) {
-                ex.printStackTrace();
+        ItemStack i;
+        try {
+            i = MinecraftReflection.getBukkitItemStack(new ItemStack(o.get("t").getAsInt()));
+            i.setData(new MaterialData(o.get("t").getAsInt(), (byte) o.get("da").getAsInt()));
+            i.setAmount(o.get("a").getAsInt());
+            i.setDurability(o.get("du").getAsShort());
+            if (o.has("ta")) {
+                try {
+                    NbtFactory.setItemTag(i, new NbtTextSerializer().deserializeCompound(o.get("ta").getAsString()));
+                } catch (IOException ex) {
+                    ex.printStackTrace();
+                }
             }
+        } catch (IllegalArgumentException ignored) {
+            return new ItemStack(Material.AIR);
         }
         return i;
     }
