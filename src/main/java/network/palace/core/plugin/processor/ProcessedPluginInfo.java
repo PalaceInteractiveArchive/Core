@@ -6,6 +6,7 @@ import org.yaml.snakeyaml.introspector.PropertyUtils;
 import org.yaml.snakeyaml.nodes.*;
 import org.yaml.snakeyaml.representer.Representer;
 
+import java.beans.IntrospectionException;
 import java.util.LinkedHashSet;
 import java.util.Set;
 
@@ -36,7 +37,7 @@ public class ProcessedPluginInfo {
 
     private class UnsortedPropertyUtils extends PropertyUtils {
         @Override
-        protected Set<Property> createPropertySet(Class<?> type, BeanAccess bAccess) {
+        protected Set<Property> createPropertySet(Class<?> type, BeanAccess bAccess) throws IntrospectionException {
             return new LinkedHashSet<>(getPropertiesMap(type, BeanAccess.FIELD).values());
         }
     }

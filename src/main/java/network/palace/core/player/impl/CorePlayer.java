@@ -438,32 +438,34 @@ public class CorePlayer implements CPlayer {
 
     @Override
     public void showPlayer(CPlayer player) {
-        showPlayer(null, player);
-    }
-
-    @Override
-    public void showPlayer(org.bukkit.plugin.Plugin plugin, CPlayer player) {
+//        showPlayer(null, player);
+//    }
+//
+//    @Override
+//    public void showPlayer(org.bukkit.plugin.Plugin plugin, CPlayer player) {
         if (getStatus() != PlayerStatus.JOINED) return;
         if (player == null) return;
         if (player.getStatus() != PlayerStatus.JOINED) return;
         if (getBukkitPlayer() == null) return;
-        if (plugin == null) plugin = Core.getInstance();
-        getBukkitPlayer().showPlayer(plugin, player.getBukkitPlayer());
+//        if (plugin == null) plugin = Core.getInstance();
+//        getBukkitPlayer().showPlayer(plugin, player.getBukkitPlayer());
+        getBukkitPlayer().showPlayer(player.getBukkitPlayer());
     }
 
     @Override
     public void hidePlayer(CPlayer player) {
-        hidePlayer(null, player);
-    }
-
-    @Override
-    public void hidePlayer(org.bukkit.plugin.Plugin plugin, CPlayer player) {
+//        hidePlayer(null, player);
+//    }
+//
+//    @Override
+//    public void hidePlayer(org.bukkit.plugin.Plugin plugin, CPlayer player) {
         if (getStatus() != PlayerStatus.JOINED) return;
         if (player == null) return;
         if (player.getStatus() != PlayerStatus.JOINED) return;
         if (getBukkitPlayer() == null) return;
-        if (plugin == null) plugin = Core.getInstance();
-        getBukkitPlayer().hidePlayer(plugin, player.getBukkitPlayer());
+//        if (plugin == null) plugin = Core.getInstance();
+//        getBukkitPlayer().hidePlayer(plugin, player.getBukkitPlayer());
+        getBukkitPlayer().hidePlayer(player.getBukkitPlayer());
     }
 
     @Override
@@ -525,7 +527,7 @@ public class CorePlayer implements CPlayer {
     @Override
     public Block getTargetBlock(int range) {
         if (getBukkitPlayer() == null) return null;
-        return getBukkitPlayer().getTargetBlock(null, range);
+        return getBukkitPlayer().getTargetBlock((Set<Material>) null, range);
     }
 
     @Override

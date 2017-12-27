@@ -2,12 +2,10 @@ package network.palace.core.player.impl.listeners;
 
 import network.palace.core.Core;
 import org.bukkit.ChatColor;
-import org.bukkit.advancement.Advancement;
 import org.bukkit.entity.Player;
 import org.bukkit.event.EventHandler;
 import org.bukkit.event.EventPriority;
 import org.bukkit.event.Listener;
-import org.bukkit.event.entity.EntityPickupItemEvent;
 import org.bukkit.event.player.*;
 
 /**
@@ -88,12 +86,8 @@ public class CorePlayerManagerListener implements Listener {
      * @param event the event
      */
     @EventHandler
-    public void onPlayerAchievementAwarded(PlayerAdvancementDoneEvent event) {
-        Player player = event.getPlayer();
-        Advancement adv = event.getAdvancement();
-        for (String criteria : adv.getCriteria()) {
-            player.getAdvancementProgress(adv).revokeCriteria(criteria);
-        }
+    public void onPlayerAchievementAwarded(PlayerAchievementAwardedEvent event) {
+        event.setCancelled(true);
     }
 
     /**
@@ -102,7 +96,7 @@ public class CorePlayerManagerListener implements Listener {
      * @param event the event
      */
     @EventHandler
-    public void onPlayerPickupItem(EntityPickupItemEvent event) {
+    public void onPlayerPickupItem(PlayerPickupItemEvent event) {
         if (event.getItem().hasMetadata("special")) {
             if (event.getItem().getMetadata("special").get(0).asBoolean()) {
                 event.setCancelled(true);
