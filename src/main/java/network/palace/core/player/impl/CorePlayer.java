@@ -198,15 +198,26 @@ public class CorePlayer implements CPlayer {
     }
 
     @Override
-    public void sendFormatMessage(String key) {
-        if (getStatus() != PlayerStatus.JOINED) return;
-        if (getBukkitPlayer() == null) return;
+    public String getFormattedMessage(String key) {
+        if (getStatus() != PlayerStatus.JOINED) return "";
         LanguageManager languageManager = Core.getLanguageFormatter();
         if (languageManager == null) {
             Core.logMessage("Language Formatter", "PROBLEM GETTING LANGUAGE FORMATTER for key: " + key);
-            return;
+            return "";
         }
         String message = languageManager.getFormat(getLocale(), key);
+        if (message.isEmpty()) {
+            Core.logMessage("Language Formatter", "MESSAGE NULL for key: " + key);
+            return "";
+        }
+        return message;
+    }
+
+    @Override
+    public void sendFormatMessage(String key) {
+        if (getStatus() != PlayerStatus.JOINED) return;
+        if (getBukkitPlayer() == null) return;
+        String message = getFormattedMessage(key);
         if (message.isEmpty()) {
             Core.logMessage("Language Formatter", "MESSAGE NULL for key: " + key);
             return;

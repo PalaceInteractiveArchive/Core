@@ -196,7 +196,7 @@ public class CraftingMenu implements Listener {
         if (player == null) return new ItemStack[5];
         ItemStack air = new ItemStack(Material.AIR);
         return new ItemStack[]{air, getPlayerHead(player), getAchievement(player),
-                ItemUtil.create(Material.ANVIL, ChatColor.GREEN + "Cosmetics",
+                ItemUtil.create(Material.ENDER_CHEST, ChatColor.GREEN + "Cosmetics",
                         Collections.singletonList(ChatColor.GRAY + "Open Cosmetics Menu")),
                 ItemUtil.create(Material.STORAGE_MINECART, ChatColor.GREEN + "Leveling Rewards",
                         Collections.singletonList(ChatColor.GRAY + "" + ChatColor.ITALIC + "Coming soon!"))};
@@ -281,7 +281,7 @@ public class CraftingMenu implements Listener {
 
     private void openCosmeticsInventory(CPlayer player) {
         try {
-            network.palace.cosmetics.Cosmetics.getInstance().getCosmeticsInventory().open(player);
+            network.palace.cosmetics.Cosmetics.getInstance().openCosmeticsInventory(player);
         } catch (Exception ignored) {
         }
     }

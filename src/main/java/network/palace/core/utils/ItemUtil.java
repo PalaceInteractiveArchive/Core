@@ -9,6 +9,7 @@ import com.google.gson.JsonArray;
 import com.google.gson.JsonElement;
 import com.google.gson.JsonObject;
 import com.google.gson.JsonParser;
+import org.bukkit.Color;
 import org.bukkit.Material;
 import org.bukkit.enchantments.Enchantment;
 import org.bukkit.event.EventHandler;
@@ -20,6 +21,7 @@ import org.bukkit.inventory.Inventory;
 import org.bukkit.inventory.ItemFlag;
 import org.bukkit.inventory.ItemStack;
 import org.bukkit.inventory.meta.ItemMeta;
+import org.bukkit.inventory.meta.LeatherArmorMeta;
 import org.bukkit.inventory.meta.SkullMeta;
 import org.bukkit.material.MaterialData;
 
@@ -194,7 +196,32 @@ public class ItemUtil implements Listener {
      * @return the item stack
      */
     public static ItemStack create(Material type, String name) {
-        return create(type, name, new ArrayList<>());
+        return create(type, name, (byte) 0);
+    }
+
+    /**
+     * Create item stack.
+     *
+     * @param type the type
+     * @param name the name
+     * @param data the data
+     * @return the item stack
+     */
+    public static ItemStack create(Material type, String name, byte data) {
+        return create(type, name, data, new ArrayList<>());
+    }
+
+    /**
+     * Create item stack
+     *
+     * @param type the type
+     * @param name the name
+     * @param data the data
+     * @param lore the lore
+     * @return the item stack
+     */
+    public static ItemStack create(Material type, String name, byte data, List<String> lore) {
+        return create(type, 1, data, name, lore);
     }
 
     /**
@@ -237,6 +264,28 @@ public class ItemUtil implements Listener {
         ItemMeta meta = item.getItemMeta();
         meta.setDisplayName(name);
         meta.setLore(lore);
+        item.setItemMeta(meta);
+        return item;
+    }
+
+    /**
+     * Create colored armor
+     *
+     * @param type the armor type to color
+     * @param name what to name the armor
+     * @param r    the red value
+     * @param g    the green value
+     * @param b    the blue value
+     * @return the colored armor
+     */
+    public static ItemStack coloredArmor(Material type, String name, int r, int g, int b) {
+        if (!type.equals(Material.LEATHER_HELMET) && !type.equals(Material.LEATHER_CHESTPLATE) &&
+                !type.equals(Material.LEATHER_LEGGINGS) && !type.equals(Material.LEATHER_BOOTS)) {
+            throw new IllegalArgumentException("You must provide a leather armor type for this method");
+        }
+        ItemStack item = create(type, name);
+        LeatherArmorMeta meta = (LeatherArmorMeta) item.getItemMeta();
+        meta.setColor(Color.fromRGB(r, g, b));
         item.setItemMeta(meta);
         return item;
     }

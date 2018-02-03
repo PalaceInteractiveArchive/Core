@@ -228,7 +228,7 @@ public class Core extends JavaPlugin {
                     park = true;
                 }
             }
-            if (!park) registerCommand(new TeleportCommand());
+//            if (!park) registerCommand(new TeleportCommand());
         });
     }
 

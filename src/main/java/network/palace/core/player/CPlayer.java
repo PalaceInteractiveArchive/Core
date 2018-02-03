@@ -150,6 +150,14 @@ public interface CPlayer {
     void sendMessage(String message);
 
     /**
+     * Gets the string formatted in the player's locale
+     *
+     * @param key the string to format
+     * @return the formatted string
+     */
+    String getFormattedMessage(String key);
+
+    /**
      * Send format message.
      *
      * @param key the key
