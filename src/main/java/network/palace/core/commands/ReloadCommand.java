@@ -44,7 +44,7 @@ public class ReloadCommand extends CoreCommand {
         String p = args[0];
         if (p.equalsIgnoreCase("core")) {
             Core.getResourceManager().reload();
-            Core.getHonorManager().provideMappings(Core.getSqlUtil().getHonorMappings());
+//            Core.getHonorManager().provideMappings(Core.getSqlUtil().getHonorMappings());
 //            Core.getAchievementManager().reload();
             Core.getLanguageFormatter().reload();
             Core.getAchievementManager().reload();

@@ -435,15 +435,6 @@ public class Core extends JavaPlugin {
     }
 
     /**
-     * Gets sql util.
-     *
-     * @return the sql util
-     */
-    public static SqlUtil getSqlUtil() {
-        return getInstance().sqlUtil;
-    }
-
-    /**
      * Gets mongo handler
      *
      * @return the mongo handler

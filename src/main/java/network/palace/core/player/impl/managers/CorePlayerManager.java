@@ -15,7 +15,6 @@ import network.palace.core.player.impl.CorePlayer;
 import network.palace.core.player.impl.CorePlayerDefaultScoreboard;
 import network.palace.core.player.impl.listeners.CorePlayerManagerListener;
 import network.palace.core.player.impl.listeners.CorePlayerStaffLoginListener;
-import network.palace.core.utils.SqlUtil;
 import org.bukkit.Bukkit;
 import org.bukkit.entity.Player;
 
