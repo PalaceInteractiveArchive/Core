@@ -43,7 +43,7 @@ public class CorePlayerManager implements CPlayerManager {
         //TODO Make mongo
 //        SqlUtil.JoinReport report = Core.getSqlUtil().getJoinReport(uuid);
 //        onlinePlayers.put(uuid, new CorePlayer(report.getSqlId(), uuid, name, report.getRank(), report.getLocale()));
-        onlinePlayers.put(uuid, new CorePlayer(uuid, name, Core.getMongoHandler().getRank(uuid)));
+        onlinePlayers.put(uuid, new CorePlayer(uuid, name, Core.getMongoHandler().getRank(uuid), Core.getMongoHandler().getLanguage(uuid)));
     }
 
     @Override

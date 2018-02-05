@@ -124,7 +124,7 @@ public class MongoHandler {
      * Get rank from username
      *
      * @param username the username
-     * @returnthe rank, or settler if doesn't exist
+     * @return the rank, or settler if doesn't exist
      */
     public Rank getRank(String username) {
         return Rank.fromString(playerCollection.find(Filters.eq("username", username)).first().getString("rank"));
@@ -164,6 +164,16 @@ public class MongoHandler {
     public MobPlayerTexture getPlayerTextureHash(UUID uuid) {
         BasicDBObject skin = (BasicDBObject) getPlayer(uuid, new Document("skin", 1)).get("skin");
         return new MobPlayerTexture(skin.getString("hash"), skin.getString("signature"));
+    }
+
+    /**
+     * Get the language the player has selected
+     *
+     * @param uuid the player's uuid
+     * @return the language the player uses
+     */
+    public String getLanguage(UUID uuid) {
+        return "en_us";
     }
 
     /* Achievement Methods */
@@ -265,6 +275,10 @@ public class MongoHandler {
      * @param set    true if the value should be set to amount, false if existing value should be incremented
      */
     public void changeAmount(UUID uuid, int amount, CurrencyType type, boolean set) {
+        changeAmount(uuid, amount, "plugin", type, set);
+    }
+
+    public void changeAmount(UUID uuid, int amount, String source, CurrencyType type, boolean set) {
         playerCollection.updateOne(Filters.eq("uuid", uuid), new BasicDBObject(set ? "$set" : "$inc",
                 new BasicDBObject(type.getName(), amount)));
     }

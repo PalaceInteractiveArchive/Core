@@ -73,7 +73,7 @@ public class EconomyManager {
             sql.execute();
             sql.close();
             logTransaction(uuid, amount, source, "add balance");
-            new EconomyUpdateEvent(uuid, getBalance(uuid), true).call();
+            new EconomyUpdateEvent(uuid, getBalance(uuid), CurrencyType.BALANCE).call();
         } catch (SQLException e) {
             e.printStackTrace();
         }
@@ -89,7 +89,7 @@ public class EconomyManager {
             sql.execute();
             sql.close();
             logTransaction(uuid, amount, source, "add tokens");
-            new EconomyUpdateEvent(uuid, getTokens(uuid), false).call();
+            new EconomyUpdateEvent(uuid, getTokens(uuid), CurrencyType.TOKENS).call();
         } catch (SQLException e) {
             e.printStackTrace();
         }
@@ -112,7 +112,7 @@ public class EconomyManager {
             sql.setString(2, uuid.toString());
             sql.execute();
             sql.close();
-            new EconomyUpdateEvent(uuid, getBalance(uuid), true).call();
+            new EconomyUpdateEvent(uuid, getBalance(uuid), CurrencyType.BALANCE).call();
         } catch (SQLException e) {
             e.printStackTrace();
         }
@@ -138,7 +138,7 @@ public class EconomyManager {
             sql.setString(2, uuid.toString());
             sql.execute();
             sql.close();
-            new EconomyUpdateEvent(uuid, getTokens(uuid), false).call();
+            new EconomyUpdateEvent(uuid, getTokens(uuid), CurrencyType.TOKENS).call();
         } catch (SQLException e) {
             e.printStackTrace();
         }

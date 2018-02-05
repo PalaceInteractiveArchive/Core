@@ -6,6 +6,7 @@ import lombok.Getter;
 import lombok.Setter;
 import network.palace.core.Core;
 import network.palace.core.config.LanguageManager;
+import network.palace.core.economy.CurrencyType;
 import network.palace.core.events.GameStatisticChangeEvent;
 import network.palace.core.packets.AbstractPacket;
 import network.palace.core.player.*;
@@ -604,32 +605,32 @@ public class CorePlayer implements CPlayer {
 
     @Override
     public void addTokens(int amount) {
-        Core.getEconomy().changeAmount(getUuid(), amount, "plugin", CurrencyType.TOKENS, false);
+        Core.getMongoHandler().changeAmount(getUuid(), amount, "plugin", CurrencyType.TOKENS, false);
     }
 
     @Override
     public void addBalance(int amount) {
-        Core.getEconomy().changeAmount(getUuid(), amount, "plugin", CurrencyType.BALANCE, false);
+        Core.getMongoHandler().changeAmount(getUuid(), amount, "plugin", CurrencyType.BALANCE, false);
     }
 
     @Override
     public void setTokens(int amount) {
-        Core.getEconomy().changeAmount(getUuid(), amount, "Core", CurrencyType.TOKENS, true);
+        Core.getMongoHandler().changeAmount(getUuid(), amount, "Core", CurrencyType.TOKENS, true);
     }
 
     @Override
     public void setBalance(int amount) {
-        Core.getEconomy().changeAmount(getUuid(), amount, "Core", CurrencyType.BALANCE, true);
+        Core.getMongoHandler().changeAmount(getUuid(), amount, "Core", CurrencyType.BALANCE, true);
     }
 
     @Override
     public void removeTokens(int amount) {
-        Core.getEconomy().changeAmount(getUuid(), -amount, "Core", CurrencyType.TOKENS, false);
+        Core.getMongoHandler().changeAmount(getUuid(), -amount, "Core", CurrencyType.TOKENS, false);
     }
 
     @Override
     public void removeBalance(int amount) {
-        Core.getEconomy().changeAmount(getUuid(), -amount, "Core", CurrencyType.BALANCE, false);
+        Core.getMongoHandler().changeAmount(getUuid(), -amount, "Core", CurrencyType.BALANCE, false);
     }
 
     @Override

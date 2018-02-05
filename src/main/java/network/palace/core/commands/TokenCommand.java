@@ -67,13 +67,13 @@ public class TokenCommand extends CoreCommand {
                 int amount = Integer.parseInt(args[1]);
                 switch (action.toLowerCase()) {
                     case "set":
-                        Core.getEconomy().changeAmount(tp.getUniqueId(), amount, source, CurrencyType.TOKENS, true);
+                        Core.getMongoHandler().changeAmount(tp.getUniqueId(), amount, source, CurrencyType.TOKENS, true);
                         break;
                     case "add":
-                        Core.getEconomy().changeAmount(tp.getUniqueId(), amount, source, CurrencyType.TOKENS, false);
+                        Core.getMongoHandler().changeAmount(tp.getUniqueId(), amount, source, CurrencyType.TOKENS, false);
                         break;
                     case "minus":
-                        Core.getEconomy().changeAmount(tp.getUniqueId(), -amount, source, CurrencyType.TOKENS, false);
+                        Core.getMongoHandler().changeAmount(tp.getUniqueId(), -amount, source, CurrencyType.TOKENS, false);
                         break;
                 }
             }
@@ -100,13 +100,13 @@ public class TokenCommand extends CoreCommand {
             int amount = Integer.parseInt(args[1]);
             switch (action.toLowerCase()) {
                 case "set":
-                    Core.getEconomy().changeAmount(tp.getUniqueId(), amount, source, CurrencyType.TOKENS, true);
+                    Core.getMongoHandler().changeAmount(tp.getUniqueId(), amount, source, CurrencyType.TOKENS, true);
                     break;
                 case "add":
-                    Core.getEconomy().changeAmount(tp.getUniqueId(), amount, source, CurrencyType.TOKENS, false);
+                    Core.getMongoHandler().changeAmount(tp.getUniqueId(), amount, source, CurrencyType.TOKENS, false);
                     break;
                 case "minus":
-                    Core.getEconomy().changeAmount(tp.getUniqueId(), -amount, source, CurrencyType.TOKENS, false);
+                    Core.getMongoHandler().changeAmount(tp.getUniqueId(), -amount, source, CurrencyType.TOKENS, false);
                     break;
             }
             return;
