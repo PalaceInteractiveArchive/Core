@@ -64,25 +64,37 @@ import java.util.concurrent.Future;
 public class Core extends JavaPlugin {
 
     private boolean starting = true;
-    @Getter private final long startTime = System.currentTimeMillis();
+    @Getter
+    private final long startTime = System.currentTimeMillis();
     private YAMLConfigurationFile configFile;
     private String serverType = "Hub";
     private String instanceName = "";
     private boolean debug = false;
     private boolean dashboardAndSqlDisabled = false;
-    @Getter private String mcVersion = Bukkit.getBukkitVersion();
+    @Getter
+    private String mcVersion = Bukkit.getBukkitVersion();
     private boolean gameMode = false;
 
-    @Getter private boolean showTitleOnLogin = false;
-    @Getter private String loginTitle = "";
-    @Getter private String loginSubTitle = "";
+    @Getter
+    private boolean showTitleOnLogin = false;
+    @Getter
+    private String loginTitle = "";
+    @Getter
+    private String loginSubTitle = "";
 
-    @Getter private int loginTitleFadeIn = 10;
-    @Getter private int loginTitleStay = 10;
-    @Getter private int loginTitleFadeOut = 10;
+    @Getter
+    private int loginTitleFadeIn = 10;
+    @Getter
+    private int loginTitleStay = 10;
+    @Getter
+    private int loginTitleFadeOut = 10;
 
-    @Getter @Setter private String tabHeader = ChatColor.GOLD + "Palace Network - A Family of Servers";
-    @Getter @Setter private String tabFooter = ChatColor.LIGHT_PURPLE + "You're on the " + ChatColor.GREEN + "Hub " + ChatColor.LIGHT_PURPLE + "server";
+    @Getter
+    @Setter
+    private String tabHeader = ChatColor.GOLD + "Palace Network - A Family of Servers";
+    @Getter
+    @Setter
+    private String tabFooter = ChatColor.LIGHT_PURPLE + "You're on the " + ChatColor.GREEN + "Hub " + ChatColor.LIGHT_PURPLE + "server";
 
     private SqlUtil sqlUtil;
     private MongoHandler mongoHandler;
@@ -98,11 +110,14 @@ public class Core extends JavaPlugin {
     private HonorManager honorManager;
     private CraftingMenu craftingMenu;
 
-    @Getter private RollbarHandler rollbarHandler;
+    @Getter
+    private RollbarHandler rollbarHandler;
 
-    @Getter private List<UUID> disabledPlayers = new ArrayList<>();
+    @Getter
+    private List<UUID> disabledPlayers = new ArrayList<>();
 
-    @Getter private boolean isMinecraftGreaterOrEqualTo11_2 = MinecraftVersion.getCurrentVersion().getMinor() >= 12;
+    @Getter
+    private boolean isMinecraftGreaterOrEqualTo11_2 = MinecraftVersion.getCurrentVersion().getMinor() >= 12;
 
     @Override
     public final void onEnable() {
@@ -432,6 +447,15 @@ public class Core extends JavaPlugin {
      */
     public static SoftNPCManager getSoftNPCManager() {
         return getInstance().softNPCManager;
+    }
+
+    /**
+     * Gets sql util.
+     *
+     * @return the sql util
+     */
+    public static SqlUtil getSqlUtil() {
+        return getInstance().sqlUtil;
     }
 
     /**

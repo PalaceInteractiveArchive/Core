@@ -7,6 +7,10 @@ import network.palace.core.player.CPlayer;
 import org.bukkit.Bukkit;
 import org.bukkit.ChatColor;
 
+import java.sql.Connection;
+import java.sql.PreparedStatement;
+import java.sql.ResultSet;
+import java.sql.SQLException;
 import java.util.*;
 
 /**
