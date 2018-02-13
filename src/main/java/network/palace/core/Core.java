@@ -19,7 +19,6 @@ import network.palace.core.config.LanguageManager;
 import network.palace.core.config.YAMLConfigurationFile;
 import network.palace.core.crafting.CraftingMenu;
 import network.palace.core.dashboard.DashboardConnection;
-import network.palace.core.economy.EconomyManager;
 import network.palace.core.errors.EnvironmentType;
 import network.palace.core.errors.RollbarHandler;
 import network.palace.core.honor.HonorManager;
@@ -37,7 +36,6 @@ import network.palace.core.plugin.PluginInfo;
 import network.palace.core.resource.ResourceManager;
 import network.palace.core.utils.Callback;
 import network.palace.core.utils.ItemUtil;
-import network.palace.core.utils.SqlUtil;
 import org.bukkit.Bukkit;
 import org.bukkit.ChatColor;
 import org.bukkit.World;
@@ -84,11 +82,11 @@ public class Core extends JavaPlugin {
     @Getter @Setter private String tabHeader = ChatColor.GOLD + "Palace Network - A Family of Servers";
     @Getter @Setter private String tabFooter = ChatColor.LIGHT_PURPLE + "You're on the " + ChatColor.GREEN + "Hub " + ChatColor.LIGHT_PURPLE + "server";
 
-    private SqlUtil sqlUtil;
+    //    private SqlUtil sqlUtil;
     private MongoHandler mongoHandler;
     private LanguageManager languageManager;
     private PermissionManager permissionManager;
-    private EconomyManager economyManager;
+    //    private EconomyManager economyManager;
     private ResourceManager resourceManager;
     private AchievementManager achievementManager;
     private SoftNPCManager softNPCManager;
@@ -149,7 +147,7 @@ public class Core extends JavaPlugin {
         getServer().getMessenger().registerOutgoingPluginChannel(this, "BungeeCord");
         getServer().getMessenger().registerIncomingPluginChannel(this, "WDL|INIT", new CorePlayerWorldDownloadProtect());
         // SQL Classes
-        sqlUtil = new SqlUtil();
+//        sqlUtil = new SqlUtil();
         // Mongo Classes
         mongoHandler = new MongoHandler();
         // Managers
@@ -157,7 +155,7 @@ public class Core extends JavaPlugin {
         playerManager = new CorePlayerManager();
         permissionManager = new PermissionManager();
         resourceManager = new ResourceManager();
-        economyManager = new EconomyManager();
+//        economyManager = new EconomyManager();
         achievementManager = new AchievementManager();
         softNPCManager = new SoftNPCManager();
         // Setup the honor manager
@@ -398,14 +396,14 @@ public class Core extends JavaPlugin {
         return getInstance().permissionManager;
     }
 
-    /**
-     * Gets economy.
-     *
-     * @return the economy
-     */
-    public static EconomyManager getEconomy() {
-        return getInstance().economyManager;
-    }
+//    /**
+//     * Gets economy.
+//     *
+//     * @return the economy
+//     */
+//    public static EconomyManager getEconomy() {
+//        return getInstance().economyManager;
+//    }
 
     /**
      * Gets resource manager.

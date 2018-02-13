@@ -32,7 +32,7 @@ public class AchievementManager {
 
         Core.runTaskTimerAsynchronously(() -> {
             MongoHandler handler = Core.getMongoHandler();
-            new HashSet<>(earned.entrySet()).stream().forEach(entry -> entry.getValue().stream().forEach(i -> {
+            new HashSet<>(earned.entrySet()).forEach(entry -> entry.getValue().forEach(i -> {
                 handler.addAchievement(entry.getKey(), i);
             }));
         }, 0L, 100L);

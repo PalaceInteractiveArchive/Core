@@ -32,25 +32,12 @@ public class ResourceManager {
         packs.clear();
         if (Core.isDashboardAndSqlDisabled()) return;
         List<ResourcePack> list = Core.getMongoHandler().getResourcePacks();
+        for (ResourcePack pack : list) {
+            packs.put(pack.getName(), pack);
+        }
         if (first) {
             Core.addPacketListener(new ResourceListener(Core.getInstance(), PacketType.Play.Client.RESOURCE_PACK_STATUS));
             first = false;
-        }
-        try (Connection connection = Core.getSqlUtil().getConnection()) {
-            PreparedStatement sql = connection.prepareStatement("SELECT * FROM resource_packs");
-            ResultSet result = sql.executeQuery();
-            while (result.next()) {
-                packs.put(result.getString("name"), new ResourcePack(result.getString("name"),
-                        result.getString("url"), result.getString("hash")));
-            }
-            result.close();
-            sql.close();
-            if (first) {
-                Core.addPacketListener(new ResourceListener(Core.getInstance(), PacketType.Play.Client.RESOURCE_PACK_STATUS));
-                first = false;
-            }
-        } catch (SQLException e) {
-            e.printStackTrace();
         }
     }
 

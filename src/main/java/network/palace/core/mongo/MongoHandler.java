@@ -6,6 +6,7 @@ import com.mongodb.client.MongoCollection;
 import com.mongodb.client.MongoDatabase;
 import com.mongodb.client.model.Filters;
 import com.mongodb.client.model.UpdateOptions;
+import com.mongodb.client.model.Updates;
 import lombok.Getter;
 import network.palace.core.Core;
 import network.palace.core.economy.CurrencyType;
@@ -26,6 +27,9 @@ import java.util.*;
  * @since 9/23/17
  */
 public class MongoHandler {
+    private String username;
+    private String password;
+    private String hostname;
 
     private MongoClient client = null;
     @Getter private MongoDatabase database = null;
@@ -35,11 +39,18 @@ public class MongoHandler {
     private MongoCollection<Document> resourcePackCollection = null;
     private MongoCollection<Document> honorMappingCollection = null;
 
+    public MongoHandler() {
+        connect();
+    }
+
     /**
      * Connect to the MongoDB database
      */
     public void connect() {
-        MongoClientURI connectionString = new MongoClientURI("mongodb://admin:testing@localhost");
+        username = Core.getCoreConfig().getString("db.user");
+        password = Core.getCoreConfig().getString("db.password");
+        hostname = Core.getCoreConfig().getString("db.hostname");
+        MongoClientURI connectionString = new MongoClientURI("mongodb://" + username + ":" + password + "@" + hostname);
         client = new MongoClient(connectionString);
         database = client.getDatabase("palace");
         playerCollection = database.getCollection("players");
@@ -66,7 +77,7 @@ public class MongoHandler {
                 .append("currency", 1)
                 .append("currentServer", "Hub1")
                 .append("isp", "localhost")
-                .append("rank", player.getRank().getSqlName())
+                .append("rank", player.getRank().getDBName())
                 .append("lastOnline", System.currentTimeMillis())
                 .append("isVisible", true)
                 .append("currentMute", null)
@@ -152,7 +163,7 @@ public class MongoHandler {
      * @param signature Signature of the skin
      */
     public void cacheSkin(UUID uuid, String value, String signature) {
-        playerCollection.updateOne(Filters.eq("uuid", uuid), new BasicDBObject("skin", new Document("hash", value).append("signature", signature)));
+        playerCollection.updateOne(Filters.eq("uuid", uuid), Updates.set("skin", new Document("hash", value).append("signature", signature)));
     }
 
     /**
@@ -185,8 +196,7 @@ public class MongoHandler {
      * @param achievementID the achievement ID
      */
     public void addAchievement(UUID uuid, int achievementID) {
-        playerCollection.updateOne(new Document("uuid", uuid), new BasicDBObject("$push", new BasicDBObject("achievements",
-                new BasicDBObject("id", achievementID).append("time", System.currentTimeMillis() / 1000))));
+        playerCollection.updateOne(Filters.eq("uuid", uuid), Updates.push("achievements", new BasicDBObject("id", achievementID).append("time", System.currentTimeMillis() / 1000)));
     }
 
     /**
@@ -279,8 +289,7 @@ public class MongoHandler {
     }
 
     public void changeAmount(UUID uuid, int amount, String source, CurrencyType type, boolean set) {
-        playerCollection.updateOne(Filters.eq("uuid", uuid), new BasicDBObject(set ? "$set" : "$inc",
-                new BasicDBObject(type.getName(), amount)));
+        playerCollection.updateOne(Filters.eq("uuid", uuid), set ? Updates.set(type.getName(), amount) : Updates.inc(type.getName(), amount));
     }
 
     /**
@@ -293,12 +302,11 @@ public class MongoHandler {
      * @param set    whether or not the transaction was a set
      */
     public void logTransaction(UUID uuid, int amount, String source, CurrencyType type, boolean set) {
-        playerCollection.updateOne(new Document("uuid", uuid), new BasicDBObject("$push", new BasicDBObject("transactions",
-                new BasicDBObject("amount", amount)
-                        .append("type", (set ? "set " : "add ") + type.getName())
-                        .append("source", source)
-                        .append("server", Core.getInstanceName())
-                        .append("timestamp", System.currentTimeMillis() / 1000))));
+        playerCollection.updateOne(Filters.eq("uuid", uuid), Updates.push("transactions", new BasicDBObject("amount", amount)
+                .append("type", (set ? "set " : "add ") + type.getName())
+                .append("source", source)
+                .append("server", Core.getInstanceName())
+                .append("timestamp", System.currentTimeMillis() / 1000)));
     }
 
     /* Game Methods */
@@ -353,8 +361,7 @@ public class MongoHandler {
      * @param amount    the amount to give the player
      */
     public void addGameStat(GameType game, StatisticType statistic, int amount, UUID uuid) {
-        playerCollection.updateOne(new Document("uuid", uuid), new BasicDBObject("$set", new BasicDBObject("gameData",
-                new BasicDBObject(game.getDbName(), new BasicDBObject(statistic.getType(), amount)))));
+        playerCollection.updateOne(Filters.eq("uuid", uuid), Updates.set("gameData", new BasicDBObject(game.getDbName(), new BasicDBObject(statistic.getType(), amount))));
     }
 
     /* Honor Methods */
@@ -381,7 +388,7 @@ public class MongoHandler {
      * @param amount the amount to add
      */
     public void addHonor(UUID uuid, int amount) {
-        playerCollection.updateOne(Filters.eq("uuid", uuid), new BasicDBObject("$inc", new BasicDBObject("honor", amount)));
+        playerCollection.updateOne(Filters.eq("uuid", uuid), Updates.inc("honor", amount));
     }
 
     /**
@@ -391,7 +398,7 @@ public class MongoHandler {
      * @param amount the amount
      */
     public void setHonor(UUID uuid, int amount) {
-        playerCollection.updateOne(Filters.eq("uuid", uuid), new BasicDBObject("$set", new BasicDBObject("honor", amount)));
+        playerCollection.updateOne(Filters.eq("uuid", uuid), Updates.set("honor", amount));
     }
 
     /**
@@ -451,7 +458,7 @@ public class MongoHandler {
      */
     public Map<String, Boolean> getPermissions(Rank rank) {
         Map<String, Boolean> map = new HashMap<>();
-        permissionCollection.find().projection(new Document(rank.getSqlName(), 1))
+        permissionCollection.find().projection(new Document(rank.getDBName(), 1))
                 .forEach((Block<Document>) doc -> map.put(doc.getString("node"), doc.getInteger("value") == 1));
         return map;
     }
@@ -474,7 +481,7 @@ public class MongoHandler {
      */
     public List<String> getMembers(Rank rank) {
         List<String> list = new ArrayList<>();
-        playerCollection.find(Filters.eq("rank", rank.getSqlName())).projection(new Document("username", 1))
+        playerCollection.find(Filters.eq("rank", rank.getDBName())).projection(new Document("username", 1))
                 .forEach((Block<Document>) d -> list.add(d.getString("username")));
         return list;
     }
@@ -486,7 +493,7 @@ public class MongoHandler {
      * @param rank the rank
      */
     public void setRank(UUID uuid, Rank rank) {
-        playerCollection.updateOne(Filters.eq("uuid", uuid), new BasicDBObject("$set", new BasicDBObject("rank", rank.getSqlName())));
+        playerCollection.updateOne(Filters.eq("uuid", uuid), Updates.set("rank", rank.getDBName()));
     }
 
     /**
@@ -497,7 +504,7 @@ public class MongoHandler {
      * @param value the value
      */
     public void setPermission(String node, Rank rank, boolean value) {
-        permissionCollection.updateOne(new Document(rank.getSqlName(), 1).append("node", node),
+        permissionCollection.updateOne(new Document(rank.getDBName(), 1).append("node", node),
                 new BasicDBObject("$set", new BasicDBObject("node", node).append("value", value)), new UpdateOptions().upsert(true));
     }
 
@@ -508,7 +515,8 @@ public class MongoHandler {
      * @param rank the rank
      */
     public void unsetPermission(String node, Rank rank) {
-        permissionCollection.updateOne(new Document(), new Document("$pull", new Document(rank.getSqlName(), new Document("node", node))));
+        permissionCollection.updateOne(new Document(), Updates.pull(rank.getDBName(), new Document("node", node)));
+        permissionCollection.updateOne(new Document(), new Document("$pull", new Document(rank.getDBName(), new Document("node", node))));
     }
 
     /**

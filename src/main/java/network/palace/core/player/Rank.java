@@ -43,7 +43,12 @@ public enum Rank {
         return SETTLER;
     }
 
+    @Deprecated
     public String getSqlName() {
+        return getDBName();
+    }
+
+    public String getDBName() {
         return name.toLowerCase().replaceAll(" ", "");
     }
 
