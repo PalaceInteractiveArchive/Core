@@ -27,8 +27,8 @@ public class PrefixCommandListener implements Listener {
 
     @EventHandler
     public void onTabComplete(TabCompleteEvent event) {
-        List<String> newCompletions =  new ArrayList<>();
-        List<String> completions =  event.getCompletions();
+        List<String> newCompletions = new ArrayList<>();
+        List<String> completions = event.getCompletions();
         if (event.getSender() instanceof Player) {
             CPlayer player = Core.getPlayerManager().getPlayer((Player) event.getSender());
             if (player == null || player.getRank().getRankId() < Rank.TRAINEE.getRankId()) {
