@@ -33,11 +33,11 @@ public class MongoHandler {
 
     private MongoClient client = null;
     @Getter private MongoDatabase database = null;
-    @Getter private MongoCollection<Document> playerCollection = null;
-    @Getter private MongoCollection<Document> permissionCollection = null;
-    @Getter private MongoCollection<Document> cosmeticsCollection = null;
-    @Getter private MongoCollection<Document> resourcePackCollection = null;
-    @Getter private MongoCollection<Document> honorMappingCollection = null;
+    private MongoCollection<Document> playerCollection = null;
+    private MongoCollection<Document> permissionCollection = null;
+    private MongoCollection<Document> cosmeticsCollection = null;
+    private MongoCollection<Document> resourcePackCollection = null;
+    private MongoCollection<Document> honorMappingCollection = null;
 
     public MongoHandler() {
         connect();
