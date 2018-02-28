@@ -34,10 +34,13 @@ public class MongoHandler {
     private MongoClient client = null;
     @Getter private MongoDatabase database = null;
     private MongoCollection<Document> playerCollection = null;
+    private MongoCollection<Document> friendsCollection = null;
     private MongoCollection<Document> permissionCollection = null;
     private MongoCollection<Document> cosmeticsCollection = null;
     private MongoCollection<Document> resourcePackCollection = null;
     private MongoCollection<Document> honorMappingCollection = null;
+    private MongoCollection<Document> outfitsCollection = null;
+    private MongoCollection<Document> hotelCollection = null;
 
     public MongoHandler() {
         connect();
@@ -54,10 +57,13 @@ public class MongoHandler {
         client = new MongoClient(connectionString);
         database = client.getDatabase("palace");
         playerCollection = database.getCollection("players");
+        friendsCollection = database.getCollection("friends");
         permissionCollection = database.getCollection("permissions");
+        cosmeticsCollection = database.getCollection("cosmetics");
         resourcePackCollection = database.getCollection("resourcepacks");
         honorMappingCollection = database.getCollection("honorMapping");
-        cosmeticsCollection = database.getCollection("cosmetics");
+        outfitsCollection = database.getCollection("outfits");
+        hotelCollection = database.getCollection("hotels");
     }
 
     /* Player Methods */
@@ -288,8 +294,20 @@ public class MongoHandler {
         changeAmount(uuid, amount, "plugin", type, set);
     }
 
+    /**
+     * Change a player's currency amount
+     *
+     * @param uuid   the uuid
+     * @param amount the amount
+     * @param source the source of the transaction
+     * @param type   the currency type
+     * @param set    true if the value should be set to amount, false if existing value should be incremented
+     */
     public void changeAmount(UUID uuid, int amount, String source, CurrencyType type, boolean set) {
         playerCollection.updateOne(Filters.eq("uuid", uuid), set ? Updates.set(type.getName(), amount) : Updates.inc(type.getName(), amount));
+        Document doc = new Document("amount", amount).append("type", type.getName()).append("source", source)
+                .append("server", Core.getInstanceName()).append("timestamp", System.currentTimeMillis() / 1000);
+        playerCollection.updateOne(Filters.eq("uuid", uuid), Updates.push("transactions", doc));
     }
 
     /**
@@ -517,6 +535,415 @@ public class MongoHandler {
     public void unsetPermission(String node, Rank rank) {
         permissionCollection.updateOne(new Document(), Updates.pull(rank.getDBName(), new Document("node", node)));
         permissionCollection.updateOne(new Document(), new Document("$pull", new Document(rank.getDBName(), new Document("node", node))));
+    }
+
+    /**
+     * Get a document storing monthly rewards data for a specific player
+     *
+     * @param uuid the uuid of the player
+     * @return a document with monthly rewards data
+     */
+    public Document getMonthlyRewards(UUID uuid) {
+        return getPlayer(uuid, new Document("monthlyRewards", 1));
+    }
+
+    /**
+     * Get a document storing voting data for a specific player
+     *
+     * @param uuid the uuid of the player
+     * @return a document with voting data
+     */
+    public Document getVoteData(UUID uuid) {
+        return getPlayer(uuid, new Document("vote", 1));
+    }
+
+    /**
+     * Get a list of UUIDs a player is friends with
+     *
+     * @param uuid the uuid of the player
+     * @return a list of UUIDs the player is friends with
+     */
+    public List<UUID> getFriendList(UUID uuid) {
+        return getList(uuid, true);
+    }
+
+    /**
+     * Get a list of the player's friend request UUIDs
+     *
+     * @param uuid the uuid of the player
+     * @return a list of UUIDs from friend requests
+     */
+    public List<UUID> getRequestList(UUID uuid) {
+        return getList(uuid, false);
+    }
+
+    /**
+     * Base method for getFriendList and getRequestList, not recommended to call this directly in case of API changes
+     *
+     * @param uuid    the uuid of the player
+     * @param friends true if getting a friend list, false if a request list
+     * @return a list of UUIDs
+     */
+    public List<UUID> getList(UUID uuid, boolean friends) {
+        List<UUID> list = new ArrayList<>();
+        List<String> prelist = new ArrayList<>();
+        friendsCollection.find(Filters.eq(new Document("sender", uuid.toString()))).projection(new Document("receiver", 1).append("started", 1))
+                .forEach((Block<Document>) d -> {
+                    if (friends ? d.getLong("started") > 0 : d.getLong("started") <= 0) {
+                        prelist.add(d.getString("receiver"));
+                    }
+                });
+        friendsCollection.find(Filters.eq(new Document("receiver", uuid.toString()))).projection(new Document("sender", 1).append("started", 1))
+                .forEach((Block<Document>) d -> {
+                    if (friends ? d.getLong("started") > 0 : d.getLong("started") <= 0) {
+                        prelist.add(d.getString("sender"));
+                    }
+                });
+        for (String s : prelist) {
+            if (s.equals(uuid.toString())) continue;
+            list.add(UUID.fromString(s));
+        }
+        return list;
+    }
+
+    /**
+     * Update monthly reward data for a player
+     *
+     * @param uuid      the uuid of the player
+     * @param settler   the timestamp settler was last claimed
+     * @param dweller   the timestamp dweller was last claimed
+     * @param noble     the timestamp noble was last claimed
+     * @param majestic  the timestamp majestic was last claimed
+     * @param honorable the timestamp honorable was last claimed
+     */
+    public void updateMonthlyRewardData(UUID uuid, long settler, long dweller, long noble, long majestic, long honorable) {
+        playerCollection.updateOne(Filters.eq("uuid", uuid.toString()), Updates.set("monthlyRewards",
+                new Document("settler", settler).append("dweller", dweller).append("noble", noble)
+                        .append("majestic", majestic).append("honorable", honorable)));
+    }
+
+    public Document getHotels() {
+        return hotelCollection.find().projection(new Document("hotels", 1)).first();
+    }
+
+    public Document getHotelMessages() {
+        return hotelCollection.find().projection(new Document("messages", 1)).first();
+    }
+
+    public FindIterable<Document> getHotelMessages(UUID uuid) {
+        return hotelCollection.find(Filters.eq("messages.target", uuid.toString()));
+    }
+
+    /*
+    Park Methods
+     */
+
+    /**
+     * Get data for a specific section of park data. If no limit is provided, the entire parks section is returned.
+     *
+     * @param uuid  the uuid of the player
+     * @param limit a document specifying the limits of the search
+     * @return a document with the requested data
+     */
+    public Document getParkData(UUID uuid, Document limit) {
+        return getPlayer(uuid, new Document("parks", limit == null ? 1 : limit));
+    }
+
+    /**
+     * Get the specific value of a string inside the parks document
+     *
+     * @param uuid the uuid of the player
+     * @param key  the string to search for
+     * @return the value of that string
+     */
+    public String getParkData(UUID uuid, String key) {
+        return getPlayer(uuid, new Document("parks", 1)).getString(key);
+    }
+
+    /**
+     * Get the namecolor data for a player's MagicBand
+     *
+     * @param uuid the uuid of the player
+     * @return the namecolor
+     */
+    public String getMagicBandNameColor(UUID uuid) {
+        Document data = getMagicBandData(uuid);
+        return data.getString("namecolor");
+    }
+
+    /**
+     * Get the bandtype data for a player's MagicBand
+     *
+     * @param uuid the uuid of the player
+     * @return the bandtype
+     */
+    public String getMagicBandType(UUID uuid) {
+        Document data = getMagicBandData(uuid);
+        return data.getString("bandtype");
+    }
+
+    /**
+     * Base method for getMagicBandNameColor and getMagicBandType, not recommended to call this directly in case of API changes
+     *
+     * @param uuid the uuid of the player
+     * @return a document with MagicBand data
+     */
+    public Document getMagicBandData(UUID uuid) {
+        return getParkData(uuid, new Document("magicband", 1));
+    }
+
+    /**
+     * Get a specific park setting for a player
+     *
+     * @param uuid    the uuid of the player
+     * @param setting the setting
+     * @return the value of the setting
+     */
+    public String getParkSetting(UUID uuid, String setting) {
+        return getParkData(uuid, new Document("settings", 1)).getString(setting);
+    }
+
+    /**
+     * Get a document with ride counter data for a player
+     *
+     * @param uuid the uuid of the player
+     * @return a document with ride counter data
+     */
+    public Document getRideCounterData(UUID uuid) {
+        return getParkData(uuid, new Document("rides", 1));
+    }
+
+    /**
+     * Log a ride counter entry into the player's document
+     *
+     * @param uuid the uuid of the player
+     * @param name the name of the ride
+     */
+    public void logRideCounter(UUID uuid, String name) {
+        playerCollection.updateOne(Filters.eq("uuid", uuid.toString()),
+                Updates.push("parks.rides", new Document("name", name)
+                        .append("server", Core.getInstanceName())
+                        .append("time", System.currentTimeMillis() / 1000)));
+    }
+
+    /**
+     * Get all autographs for a player
+     *
+     * @param uuid the uuid of the player
+     * @return an iterable of the player's autographs
+     */
+    public FindIterable<Document> getAutographs(UUID uuid) {
+        return playerCollection.find(Filters.eq("uuid", uuid.toString())).projection(new Document("autgraphs", 1));
+    }
+
+    /**
+     * Sign a player's book
+     *
+     * @param player  the player's book being signed
+     * @param sender  the player signing the book
+     * @param message the message
+     */
+    public void signBook(UUID player, String sender, String message) {
+        Document doc = new Document("author", sender).append("message", message).append("time", System.currentTimeMillis() / 1000);
+        playerCollection.updateOne(Filters.eq("uuid", player), Updates.push("autographs", doc));
+    }
+
+    /**
+     * Delete an autograph from a player's book
+     *
+     * @param uuid   the uuid of the player
+     * @param sender the author of the autograph
+     * @param time   the time the autograph was written
+     */
+    public void deleteAutograph(UUID uuid, String sender, long time) {
+        playerCollection.updateOne(Filters.eq("uuid", uuid), Updates.pull("autographs",
+                new Document("sender", sender).append("time", time)));
+    }
+
+    /**
+     * Charge a player a specific type of FastPass
+     *
+     * @param uuid   the uuid of the player
+     * @param type   the FP type
+     * @param amount the amount to charge (usually 1)
+     */
+    public void chargeFastPass(UUID uuid, String type, int amount) {
+        playerCollection.updateOne(Filters.eq("uuid", uuid), Updates.inc("parks.fastpass." + type, -amount));
+    }
+
+    /**
+     * Get all outfits from the database
+     *
+     * @return an iterable of outfit data
+     */
+    public FindIterable<Document> getOutfits() {
+        return getOutfits(-1);
+    }
+
+    /**
+     * Get all outfits for a specific resort
+     *
+     * @param resort the resort id
+     * @return an iterable of outfit data
+     */
+    public FindIterable<Document> getOutfits(int resort) {
+        if (resort < 0) {
+            return outfitsCollection.find();
+        } else {
+            return outfitsCollection.find(Filters.eq("resort", resort));
+        }
+    }
+
+    /**
+     * Get a document with the outfit purchases of a player
+     *
+     * @param uuid the uuid of the player
+     * @return a document with outfit purchases data
+     */
+    public Document getOutfitPurchases(UUID uuid) {
+        return getParkData(uuid, new Document("outfitPurchases", 1));
+    }
+
+    /**
+     * Set a player's outfit code value
+     *
+     * @param uuid the uuid of the player
+     * @param code the value of the code
+     */
+    public void setOutfitCode(UUID uuid, String code) {
+        playerCollection.updateOne(Filters.eq("uuid", uuid.toString()), Updates.set("parks.outfit", code));
+    }
+
+    /**
+     * Log the purchase of an outfit
+     *
+     * @param uuid the uuid of the player
+     * @param id   the id of the outfit
+     */
+    public void purchaseOutfit(UUID uuid, int id) {
+        playerCollection.updateOne(Filters.eq("uuid", uuid.toString()), Updates.push("parks.outfitPurchases", new Document("id", id).append("time", System.currentTimeMillis() / 1000)));
+    }
+
+    /**
+     * Create a new outfit (with a lot of variables)
+     *
+     * @param name       the name
+     * @param hid        the helmet ID
+     * @param hdata      the helmet data
+     * @param head       the helmet nbt
+     * @param cid        the chestplate ID
+     * @param cdata      the chestplate data
+     * @param chestplate the chestplate nbt
+     * @param lid        the leggings ID
+     * @param ldata      the leggings data
+     * @param leggings   the leggings nbt
+     * @param bid        the boots ID
+     * @param bdata      the boots data
+     * @param boots      the boots nbt
+     * @param resort     the resort id
+     */
+    public void createOutfit(String name, int hid, byte hdata, String head, int cid, byte cdata, String chestplate,
+                             int lid, byte ldata, String leggings, int bid, byte bdata, String boots, int resort) {
+        Document doc = new Document("id", getNextSequence());
+        doc.append("name", name);
+        doc.append("headID", hid);
+        doc.append("headData", hdata);
+        doc.append("head", head);
+        doc.append("chestID", cid);
+        doc.append("chestData", cdata);
+        doc.append("chest", chestplate);
+        doc.append("leggingsID", lid);
+        doc.append("leggingsData", ldata);
+        doc.append("leggings", leggings);
+        doc.append("bootsID", bid);
+        doc.append("bootsData", bdata);
+        doc.append("boots", boots);
+        outfitsCollection.insertOne(doc);
+    }
+
+    /**
+     * Used for creating new outfits
+     *
+     * @return the value of that field plus one
+     */
+    private Object getNextSequence() {
+        BasicDBObject find = new BasicDBObject();
+        find.put("_id", "userid");
+        BasicDBObject update = new BasicDBObject();
+        update.put("$inc", new BasicDBObject("seq", 1));
+        Document obj = outfitsCollection.findOneAndUpdate(find, update);
+        return obj.get("seq");
+    }
+
+    /**
+     * Delete an outfit
+     *
+     * @param id the id of the outfit to delete
+     */
+    public void deleteOutfit(int id) {
+        outfitsCollection.deleteOne(Filters.eq("id", id));
+    }
+
+    /**
+     * Set a park setting for a player
+     *
+     * @param uuid    the uuid of the player
+     * @param setting the setting to set
+     * @param value   the value of the setting
+     */
+    public void setParkSetting(UUID uuid, String setting, Object value) {
+        playerCollection.updateOne(Filters.eq("uuid", uuid.toString()), Updates.set("parks.settings." + setting, value));
+    }
+
+    /**
+     * Set MagicBand data for a player
+     *
+     * @param uuid  the uuid of the player
+     * @param key   the key to set
+     * @param value the value to set the key to
+     */
+    public void setMagicBandData(UUID uuid, String key, String value) {
+        playerCollection.updateOne(Filters.eq("uuid", uuid.toString()), Updates.set("parks.magicband." + key, value));
+    }
+
+    /**
+     * Set a player's build mode status
+     *
+     * @param uuid  the uuid of the player
+     * @param value the value to set it to
+     */
+    public void setBuildMode(UUID uuid, boolean value) {
+        playerCollection.updateOne(Filters.eq("uuid", uuid.toString()), Updates.set("parks.buildmode", value));
+    }
+
+    /**
+     * Update a player's inventory size for a specific resort
+     *
+     * @param uuid   the uuid of the player
+     * @param type   the type of inventory (packsize or lockersize)
+     * @param size   the size 0 (small) or 1 (large)
+     * @param resort the resort
+     */
+    public void setInventorySize(UUID uuid, String type, int size, int resort) {
+        playerCollection.updateOne(Filters.and(Filters.eq("uuid", uuid.toString()), Filters.eq("parks.inventories.resort", resort)),
+                new Document("parks.inventories." + type, size));
+    }
+
+    /**
+     * Update the FastPass data for a specific UUID
+     *
+     * @param uuid        the uuid of the player
+     * @param slow        the amount of slow FPs
+     * @param moderate    the amount of moderate FPs
+     * @param thrill      the amount of thrill FPs
+     * @param slowday     the day of the year a slow FP was last claimed
+     * @param moderateday the day of the year a moderate FP was last claimed
+     * @param thrillday   the day of the year a thrill FP was last claimed
+     */
+    public void updateFPData(UUID uuid, int slow, int moderate, int thrill, int slowday, int moderateday, int thrillday) {
+        playerCollection.updateOne(Filters.eq("uuid", uuid.toString()), Updates.set("parks.fastpass",
+                new Document("slow", slow).append("moderate", moderate).append("thrill", thrill).append("slowday", slowday)
+                        .append("moderateday", moderateday).append("thrillday", thrillday)));
     }
 
     /**
