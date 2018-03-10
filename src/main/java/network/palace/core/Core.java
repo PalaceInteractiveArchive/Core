@@ -194,10 +194,11 @@ public class Core extends JavaPlugin {
 
         // If we're running in game-mode, set starting to false immediately.
         // Otherwise, we'll wait the 7 seconds.
-        if (isGameMode()) {
-            logMessage("Core", ChatColor.BLUE + "" + ChatColor.BOLD + "Running in game mode, skipping startup phase!");
-            setStarting(false);
-        } else runTaskLater(() -> setStarting(false), 20 * 7);
+        setStarting(false);
+//        if (isGameMode()) {
+//            logMessage("Core", ChatColor.BLUE + "" + ChatColor.BOLD + "Running in game mode, skipping startup phase!");
+//            setStarting(false);
+//        } else runTaskLater(() -> setStarting(false), 20 * 7);
 //        Bukkit.getServer().clearRecipes();
     }
 
@@ -245,7 +246,7 @@ public class Core extends JavaPlugin {
                     park = true;
                 }
             }
-//            if (!park) registerCommand(new TeleportCommand());
+            if (!park) registerCommand(new TeleportCommand());
         });
     }
 

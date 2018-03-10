@@ -136,6 +136,13 @@ public interface CPlayer {
     void teleport(Location location);
 
     /**
+     * Teleport to a player
+     *
+     * @param tp the player to teleport to
+     */
+    void teleport(CPlayer tp);
+
+    /**
      * Send message.
      *
      * @param message the message
@@ -932,4 +939,11 @@ public interface CPlayer {
      * @return the effect active on this player, or null if not active.
      */
     PotionEffect getPotionEffect(PotionEffectType type);
+
+    /**
+     * Returns whether or not the player is inside a vehicle
+     *
+     * @return true if the player is inside a vehicle
+     */
+    boolean isInsideVehicle();
 }

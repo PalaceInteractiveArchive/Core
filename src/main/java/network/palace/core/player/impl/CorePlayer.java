@@ -187,6 +187,15 @@ public class CorePlayer implements CPlayer {
     }
 
     @Override
+    public void teleport(CPlayer tp) {
+        if (getStatus() != PlayerStatus.JOINED) return;
+        if (getBukkitPlayer() == null) return;
+        if (tp == null) return;
+        Location location = tp.getLocation();
+        teleport(location);
+    }
+
+    @Override
     public void sendMessage(String message) {
         if (getStatus() != PlayerStatus.JOINED) return;
         if (getBukkitPlayer() == null) return;
@@ -745,6 +754,11 @@ public class CorePlayer implements CPlayer {
         if (!getStatus().equals(PlayerStatus.JOINED)) return null;
         if (getBukkitPlayer() == null) return null;
         return getBukkitPlayer().getPotionEffect(type);
+    }
+
+    @Override
+    public boolean isInsideVehicle() {
+        return getStatus().equals(PlayerStatus.JOINED) && getBukkitPlayer() != null && getBukkitPlayer().isInsideVehicle();
     }
 
     @Override
