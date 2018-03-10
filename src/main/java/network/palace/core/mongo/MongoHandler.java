@@ -47,6 +47,7 @@ public class MongoHandler {
     private MongoCollection<Document> honorMappingCollection = null;
     private MongoCollection<Document> outfitsCollection = null;
     private MongoCollection<Document> hotelCollection = null;
+    private MongoCollection<Document> warpsCollection = null;
 
     public MongoHandler() {
         connect();
@@ -74,6 +75,7 @@ public class MongoHandler {
         honorMappingCollection = database.getCollection("honorMapping");
         outfitsCollection = database.getCollection("outfits");
         hotelCollection = database.getCollection("hotels");
+        warpsCollection = database.getCollection("warps");
     }
 
     /* Player Methods */
@@ -207,6 +209,21 @@ public class MongoHandler {
      */
     public String getLanguage(UUID uuid) {
         return "en_us";
+    }
+
+    /* Warp Methods */
+
+    public FindIterable<Document> getWarps() {
+        return warpsCollection.find();
+    }
+
+    public void deleteWarp(String name) {
+        warpsCollection.deleteOne(Filters.eq("name", name));
+    }
+
+    public void createWarp(String name, String server, double x, double y, double z, float yaw, float pitch, String world) {
+        warpsCollection.insertOne(new Document("name", name).append("server", server).append("x", x).append("y", y)
+                .append("z", z).append("yaw", (int) yaw).append("pitch", (int) pitch).append("world", world));
     }
 
     /* Achievement Methods */
