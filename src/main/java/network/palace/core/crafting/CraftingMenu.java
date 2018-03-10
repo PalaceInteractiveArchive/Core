@@ -280,9 +280,9 @@ public class CraftingMenu implements Listener {
     }
 
     private void openCosmeticsInventory(CPlayer player) {
-        try {
-            network.palace.cosmetics.Cosmetics.getInstance().openCosmeticsInventory(player);
-        } catch (Exception ignored) {
-        }
+//        try {
+//            network.palace.cosmetics.Cosmetics.getInstance().openCosmeticsInventory(player);
+//        } catch (Exception ignored) {
+//        }
     }
 }
