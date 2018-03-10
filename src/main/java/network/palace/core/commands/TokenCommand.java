@@ -48,8 +48,12 @@ public class TokenCommand extends CoreCommand {
             final String user = args[0];
             Core.runTaskAsynchronously(() -> {
                 UUID uuid = Core.getMongoHandler().usernameToUUID(user);
-                sender.sendMessage(ChatColor.YELLOW + "" + ChatColor.BOLD + "Tokens for " + user + ": " +
-                        ChatColor.GREEN + "✪ " + Core.getMongoHandler().getCurrency(uuid, CurrencyType.TOKENS));
+                if (uuid != null) {
+                    sender.sendMessage(ChatColor.YELLOW + "" + ChatColor.BOLD + "Tokens for " + user + ": " +
+                            ChatColor.GREEN + "✪ " + Core.getMongoHandler().getCurrency(uuid, CurrencyType.TOKENS));
+                } else {
+                    sender.sendMessage(ChatColor.RED + "Player not found!");
+                }
             });
             return;
         }

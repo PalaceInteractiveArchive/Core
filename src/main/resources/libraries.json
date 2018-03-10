@@ -18,5 +18,20 @@
     "groupId": "com.fasterxml.jackson.core",
     "artifactId": "jackson-annotations",
     "version": "2.6.0"
+  },
+  {
+    "groupId": "org.mongodb",
+    "artifactId": "mongodb-driver-core",
+    "version": "3.5.0"
+  },
+  {
+    "groupId": "org.mongodb",
+    "artifactId": "mongodb-driver",
+    "version": "3.5.0"
+  },
+  {
+    "groupId": "org.mongodb",
+    "artifactId": "bson",
+    "version": "3.5.0"
   }
 ]
