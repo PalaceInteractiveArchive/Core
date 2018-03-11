@@ -40,7 +40,7 @@ public class RankCommand extends CoreCommand {
                 }
                 boolean val = perms.getOrDefault(node, false);
                 if (val) {
-                    sender.sendMessage(ChatColor.GREEN + "Rank " + rank.getFormattedName() + ChatColor.RED + " sets true for " + ChatColor.AQUA + node);
+                    sender.sendMessage(ChatColor.GREEN + "Rank " + rank.getFormattedName() + ChatColor.GREEN + " sets true for " + ChatColor.AQUA + node);
                 } else {
                     sender.sendMessage(ChatColor.RED + "Rank " + rank.getFormattedName() + ChatColor.RED + " sets false for " + ChatColor.AQUA + node);
                 }
@@ -64,7 +64,7 @@ public class RankCommand extends CoreCommand {
                     Core.getPermissionManager().setPermission(rank, node, finalVal);
                     Core.getPermissionManager().refresh();
                     if (finalVal) {
-                        sender.sendMessage(ChatColor.GREEN + "Rank " + rank.getFormattedName() + ChatColor.RED + " now sets true for " + ChatColor.AQUA + node);
+                        sender.sendMessage(ChatColor.GREEN + "Rank " + rank.getFormattedName() + ChatColor.GREEN + " now sets true for " + ChatColor.AQUA + node);
                     } else {
                         sender.sendMessage(ChatColor.RED + "Rank " + rank.getFormattedName() + ChatColor.RED + " now sets false for " + ChatColor.AQUA + node);
                     }
@@ -79,14 +79,14 @@ public class RankCommand extends CoreCommand {
                 String node = args[2];
                 Map<String, Boolean> perms = Core.getPermissionManager().getPermissions(rank);
                 if (!perms.containsKey(node)) {
-                    sender.sendMessage(ChatColor.RED + "Rank " + rank.getFormattedName() + ChatColor.RED + " doesn't set " + ChatColor.AQUA + node);
+                    sender.sendMessage(ChatColor.YELLOW + "Rank " + rank.getFormattedName() + ChatColor.YELLOW + " doesn't set " + ChatColor.AQUA + node);
                 } else {
                     perms.remove(node);
                     Core.runTaskAsynchronously(() -> {
                         Core.getPermissionManager().unsetPermission(rank, node);
                         Core.getMongoHandler().unsetPermission(node, rank);
                         Core.getPermissionManager().refresh();
-                        sender.sendMessage(ChatColor.RED + "Rank " + rank.getFormattedName() + ChatColor.RED + " no longer sets " + ChatColor.AQUA + node);
+                        sender.sendMessage(ChatColor.YELLOW + "Rank " + rank.getFormattedName() + ChatColor.YELLOW + " no longer sets " + ChatColor.AQUA + node);
                     });
                 }
                 return;

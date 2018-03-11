@@ -8,7 +8,6 @@ import com.mongodb.client.FindIterable;
 import com.mongodb.client.MongoCollection;
 import com.mongodb.client.MongoDatabase;
 import com.mongodb.client.model.Filters;
-import com.mongodb.client.model.UpdateOptions;
 import com.mongodb.client.model.Updates;
 import lombok.Getter;
 import network.palace.core.Core;
@@ -149,6 +148,7 @@ public class MongoHandler {
      * @return the rank, or settler if doesn't exist
      */
     public Rank getRank(UUID uuid) {
+        if (uuid == null) return Rank.SETTLER;
         Document result = playerCollection.find(MongoFilter.UUID.getFilter(uuid.toString())).first();
         if (result == null) return Rank.SETTLER;
         return Rank.fromString(result.getString("rank"));
@@ -505,36 +505,6 @@ public class MongoHandler {
     /* Permission Methods */
 
     /**
-     * Gets permissions.
-     *
-     * @param rank the rank
-     * @return the permissions
-     */
-    public Map<String, Boolean> getPermissions(Rank rank) {
-        Map<String, Boolean> map = new HashMap<>();
-        for (Document main : permissionCollection.find(Filters.exists(rank.getDBName(), true))) {
-            ArrayList list = (ArrayList) main.get(rank.getDBName());
-            for (Object o : list) {
-                Document doc = (Document) o;
-                if (doc == null || doc.isEmpty() || doc.getString("node") == null || doc.getBoolean("value") == null)
-                    continue;
-                map.put(doc.getString("node"), doc.getBoolean("value"));
-            }
-        }
-        return map;
-    }
-
-    /**
-     * Gets permissions.
-     *
-     * @param player the player
-     * @return the permissions
-     */
-    public Map<String, Boolean> getPermissions(CPlayer player) {
-        return getPermissions(player.getRank());
-    }
-
-    /**
      * Gets members.
      *
      * @param rank the rank
@@ -558,6 +528,46 @@ public class MongoHandler {
     }
 
     /**
+     * Gets permissions.
+     *
+     * @param player the player
+     * @return the permissions
+     */
+    public Map<String, Boolean> getPermissions(CPlayer player) {
+        return getPermissions(player.getRank());
+    }
+
+    /**
+     * Gets permissions.
+     *
+     * @param rank the rank
+     * @return the permissions
+     */
+    public Map<String, Boolean> getPermissions(Rank rank) {
+        Map<String, Boolean> map = new HashMap<>();
+        for (Document main : permissionCollection.find(new Document("rank", rank.getDBName()))) {
+            ArrayList allowed = (ArrayList) main.get("allowed");
+            ArrayList denied = (ArrayList) main.get("denied");
+            for (Object o : denied) {
+                String s = (String) o;
+                map.put(MongoUtil.commaToPeriod(s), false);
+            }
+            for (Object o : allowed) {
+                String s = (String) o;
+                map.put(MongoUtil.commaToPeriod(s), true);
+            }
+//            ArrayList list = (ArrayList) main.get(rank.getDBName());
+//            for (Object o : list) {
+//                Document doc = (Document) o;
+//                if (doc == null || doc.isEmpty() || doc.getString("node") == null || doc.getBoolean("value") == null)
+//                    continue;
+//                map.put(MongoUtil.commaToPeriod(doc.getString("node")), doc.getBoolean("value"));
+//            }
+        }
+        return map;
+    }
+
+    /**
      * Sets permission.
      *
      * @param node  the node
@@ -565,8 +575,18 @@ public class MongoHandler {
      * @param value the value
      */
     public void setPermission(String node, Rank rank, boolean value) {
-        permissionCollection.updateOne(new Document(rank.getDBName(), 1).append("node", node),
-                new BasicDBObject("$set", new BasicDBObject("node", node).append("value", value)), new UpdateOptions().upsert(true));
+        node = MongoUtil.periodToComma(node);
+        boolean removeFromOtherList = false;
+        String other = value ? "denied" : "allowed";
+        for (Document d : permissionCollection.find(MongoFilter.RANK.getFilter(rank.getDBName())).projection(new Document(other, 1))) {
+            for (Object o : d.get(other, ArrayList.class)) {
+                String s = (String) o;
+                if (s != null && s.equals(node)) {
+                    permissionCollection.updateOne(MongoFilter.RANK.getFilter(rank.getDBName()), Updates.pull(other, node));
+                }
+            }
+        }
+        permissionCollection.updateOne(MongoFilter.RANK.getFilter(rank.getDBName()), Updates.addToSet(value ? "allowed" : "denied", node));
     }
 
     /**
@@ -576,8 +596,11 @@ public class MongoHandler {
      * @param rank the rank
      */
     public void unsetPermission(String node, Rank rank) {
-        permissionCollection.updateOne(new Document(), Updates.pull(rank.getDBName(), new Document("node", node)));
-        permissionCollection.updateOne(new Document(), new Document("$pull", new Document(rank.getDBName(), new Document("node", node))));
+        node = MongoUtil.periodToComma(node);
+        permissionCollection.updateOne(MongoFilter.RANK.getFilter(rank.getDBName()), Updates.pull("allowed", node));
+        permissionCollection.updateOne(MongoFilter.RANK.getFilter(rank.getDBName()), Updates.pull("denied", node));
+//        permissionCollection.updateOne(new Document(), Updates.pull(rank.getDBName(), new Document("node", node)));
+//        permissionCollection.updateOne(new Document(), new Document("$pull", new Document(rank.getDBName(), new Document("node", node))));
     }
 
     /**

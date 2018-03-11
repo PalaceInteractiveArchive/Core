@@ -23,7 +23,7 @@ public class PlayerCommand extends CoreCommand {
 
     @Override
     protected void handleCommandUnspecific(CommandSender sender, String[] args) throws CommandException {
-        if (args.length < 1) {
+        if (args.length < 2) {
             helpMenu(sender);
             return;
         }
@@ -40,6 +40,10 @@ public class PlayerCommand extends CoreCommand {
             name = player.getName();
             rank = player.getRank();
         }
+        if (uuid == null) {
+            sender.sendMessage(ChatColor.RED + "Player not found!");
+            return;
+        }
         switch (args[1].toLowerCase()) {
             case "get": {
                 if (args.length < 3) {
@@ -54,7 +58,7 @@ public class PlayerCommand extends CoreCommand {
                     return;
                 }
                 if (val) {
-                    sender.sendMessage(ChatColor.GREEN + "Rank " + rank.getFormattedName() + ChatColor.RED + " sets true for " + ChatColor.AQUA + node);
+                    sender.sendMessage(ChatColor.GREEN + "Rank " + rank.getFormattedName() + ChatColor.GREEN + " sets true for " + ChatColor.AQUA + node);
                 } else {
                     sender.sendMessage(ChatColor.RED + "Rank " + rank.getFormattedName() + ChatColor.RED + " sets false for " + ChatColor.AQUA + node);
                 }
@@ -75,6 +79,13 @@ public class PlayerCommand extends CoreCommand {
                     return;
                 }
                 Core.getMongoHandler().setRank(uuid, next);
+                if (player != null) {
+                    player.setRank(next);
+                    for (CPlayer tp : Core.getPlayerManager().getOnlinePlayers()) {
+                        tp.getScoreboard();
+                        Core.getPlayerManager().displayRank(player);
+                    }
+                }
                 String source = sender instanceof Player ? sender.getName() : "Console on " + Core.getInstanceName();
                 PacketRankChange packet = new PacketRankChange(uuid, rank, source);
                 Core.getDashboardConnection().send(packet);
