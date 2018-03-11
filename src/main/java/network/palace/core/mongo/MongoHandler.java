@@ -72,7 +72,7 @@ public class MongoHandler {
         permissionCollection = database.getCollection("permissions");
         cosmeticsCollection = database.getCollection("cosmetics");
         resourcePackCollection = database.getCollection("resourcepacks");
-        honorMappingCollection = database.getCollection("honorMapping");
+        honorMappingCollection = database.getCollection("honormapping");
         outfitsCollection = database.getCollection("outfits");
         hotelCollection = database.getCollection("hotels");
         warpsCollection = database.getCollection("warps");
@@ -427,9 +427,10 @@ public class MongoHandler {
      */
     public List<HonorMapping> getHonorMappings() {
         List<HonorMapping> list = new ArrayList<>();
-        FindIterable<Document> iter = cosmeticsCollection.find();
+        FindIterable<Document> iter = honorMappingCollection.find();
         for (Document doc : iter) {
-            list.add(new HonorMapping(doc.getInteger("level"), doc.getInteger("honor")));
+            HonorMapping map = new HonorMapping(doc.getInteger("level"), doc.getInteger("honor"));
+            list.add(map);
         }
         return list;
     }
