@@ -512,12 +512,15 @@ public class MongoHandler {
      */
     public Map<String, Boolean> getPermissions(Rank rank) {
         Map<String, Boolean> map = new HashMap<>();
-        for (Document doc : permissionCollection.find().projection(new Document(rank.getDBName(), 1))) {
-            if (doc == null || doc.isEmpty() || doc.getInteger("value") == null) continue;
-            map.put(doc.getString("node"), doc.getInteger("value") == 1);
+        for (Document main : permissionCollection.find(Filters.exists(rank.getDBName(), true))) {
+            ArrayList list = (ArrayList) main.get(rank.getDBName());
+            for (Object o : list) {
+                Document doc = (Document) o;
+                if (doc == null || doc.isEmpty() || doc.getString("node") == null || doc.getBoolean("value") == null)
+                    continue;
+                map.put(doc.getString("node"), doc.getBoolean("value"));
+            }
         }
-//        permissionCollection.find().projection(new Document(rank.getDBName(), 1))
-//                .forEach((Block<Document>) doc -> map.put(doc.getString("node"), doc.getInteger("value") == 1));
         return map;
     }
 

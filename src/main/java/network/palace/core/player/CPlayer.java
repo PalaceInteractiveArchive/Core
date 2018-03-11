@@ -242,6 +242,14 @@ public interface CPlayer {
     void closeInventory();
 
     /**
+     * Check if a player has a permission node
+     *
+     * @param node the node
+     * @return whether or not the player has a permission node
+     */
+    boolean hasPermission(String node);
+
+    /**
      * Sets inventory slot.
      *
      * @param slot  the slot

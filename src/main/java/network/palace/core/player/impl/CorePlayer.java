@@ -446,6 +446,11 @@ public class CorePlayer implements CPlayer {
     }
 
     @Override
+    public boolean hasPermission(String node) {
+        return getStatus() == PlayerStatus.JOINED && getBukkitPlayer() != null && getBukkitPlayer().hasPermission(node);
+    }
+
+    @Override
     public void respawn() {
         if (getStatus() != PlayerStatus.JOINED) return;
         if (getBukkitPlayer() == null) return;

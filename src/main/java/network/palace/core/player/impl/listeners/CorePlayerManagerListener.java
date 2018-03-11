@@ -67,6 +67,7 @@ public class CorePlayerManagerListener implements Listener {
     public void onPlayerQuit(PlayerQuitEvent event) {
         Core.getPlayerManager().playerLoggedOut(event.getPlayer());
         event.setQuitMessage("");
+        Core.getPermissionManager().logout(event.getPlayer().getUniqueId());
     }
 
     /**
@@ -78,6 +79,7 @@ public class CorePlayerManagerListener implements Listener {
     public void onPlayerKick(PlayerKickEvent event) {
         Core.getPlayerManager().playerLoggedOut(event.getPlayer());
         event.setLeaveMessage("");
+        Core.getPermissionManager().logout(event.getPlayer().getUniqueId());
     }
 
     /**

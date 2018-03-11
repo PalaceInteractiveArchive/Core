@@ -51,7 +51,7 @@ public class PacketRankChange extends BasePacket {
         try {
             obj.addProperty("id", this.id);
             obj.addProperty("uuid", this.uuid.toString());
-            obj.addProperty("rank", this.rank.getSqlName());
+            obj.addProperty("rank", this.rank.getDBName());
             obj.addProperty("source", this.source);
         } catch (Exception e) {
             return null;
