@@ -683,6 +683,20 @@ public class CorePlayer implements CPlayer {
     }
 
     @Override
+    public Vector getVelocity() {
+        if (!getStatus().equals(PlayerStatus.JOINED)) return new Vector();
+        if (getBukkitPlayer() == null) return new Vector();
+        return getBukkitPlayer().getVelocity();
+    }
+
+    @Override
+    public void setVelocity(Vector vector) {
+        if (!getStatus().equals(PlayerStatus.JOINED)) return;
+        if (getBukkitPlayer() == null) return;
+        getBukkitPlayer().setVelocity(vector);
+    }
+
+    @Override
     public void setExp(float exp) {
         if (!getStatus().equals(PlayerStatus.JOINED)) return;
         if (getBukkitPlayer() == null) return;

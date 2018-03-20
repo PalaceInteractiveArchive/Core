@@ -16,6 +16,7 @@ import org.bukkit.map.MapView;
 import org.bukkit.metadata.MetadataValue;
 import org.bukkit.potion.PotionEffect;
 import org.bukkit.potion.PotionEffectType;
+import org.bukkit.util.Vector;
 
 import java.util.Collection;
 import java.util.List;
@@ -828,6 +829,20 @@ public interface CPlayer {
      * @return the current level
      */
     int getLevel();
+
+    /**
+     * Get the player's current velocity vector
+     *
+     * @return the player's velocity as a vector
+     */
+    Vector getVelocity();
+
+    /**
+     * Set the player's current velocity
+     *
+     * @param vector the velocity as a vector
+     */
+    void setVelocity(Vector vector);
 
     /**
      * Set player's exp amount
