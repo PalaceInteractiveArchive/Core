@@ -1028,7 +1028,7 @@ public class MongoHandler {
                 case UUID:
                     return Filters.eq("uuid", s);
                 case USERNAME:
-                    return Filters.regex("username", s, "i");
+                    return Filters.regex("username", "^" + s + "$", "i");
                 case RANK:
                     return Filters.eq("rank", s);
             }

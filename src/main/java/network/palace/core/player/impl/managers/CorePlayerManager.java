@@ -6,11 +6,9 @@ import network.palace.core.Core;
 import network.palace.core.dashboard.packets.dashboard.PacketConfirmPlayer;
 import network.palace.core.dashboard.packets.dashboard.PacketGetPack;
 import network.palace.core.events.CorePlayerJoinedEvent;
-import network.palace.core.mongo.JoinReport;
 import network.palace.core.player.CPlayer;
 import network.palace.core.player.CPlayerManager;
 import network.palace.core.player.PlayerStatus;
-import network.palace.core.player.Rank;
 import network.palace.core.player.impl.CorePlayer;
 import network.palace.core.player.impl.CorePlayerDefaultScoreboard;
 import network.palace.core.player.impl.listeners.CorePlayerManagerListener;
@@ -65,9 +63,9 @@ public class CorePlayerManager implements CPlayerManager {
         // Set skin info
         corePlayer.setTextureValue(textureValue);
         corePlayer.setTextureSignature(textureSignature);
-        if (corePlayer.getRank().getRankId() >= Rank.CHARACTER.getRankId()) {
-            Core.runTaskAsynchronously(() -> Core.getMongoHandler().cacheSkin(corePlayer.getUuid(), corePlayer.getTextureValue(), corePlayer.getTextureSignature()));
-        }
+//        if (corePlayer.getRank().getRankId() >= Rank.CHARACTER.getRankId()) {
+        Core.runTaskAsynchronously(() -> Core.getMongoHandler().cacheSkin(corePlayer.getUuid(), corePlayer.getTextureValue(), corePlayer.getTextureSignature()));
+//        }
         // Setup permissions for player
         Core.getPermissionManager().login(corePlayer);
         // Achievements Task
@@ -77,6 +75,7 @@ public class CorePlayerManager implements CPlayerManager {
             Core.getCraftingMenu().update(corePlayer, 2, Core.getCraftingMenu().getAchievement(corePlayer));
             corePlayer.setHonor(Core.getMongoHandler().getHonor(corePlayer.getUniqueId()));
             corePlayer.setPreviousHonorLevel(Core.getHonorManager().getLevel(corePlayer.getHonor()).getLevel());
+            corePlayer.giveAchievement(0);
             Core.getHonorManager().displayHonor(corePlayer, true);
         });
         // Packets

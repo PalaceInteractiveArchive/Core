@@ -87,7 +87,7 @@ public class PlayerCommand extends CoreCommand {
                     }
                 }
                 String source = sender instanceof Player ? sender.getName() : "Console on " + Core.getInstanceName();
-                PacketRankChange packet = new PacketRankChange(uuid, rank, source);
+                PacketRankChange packet = new PacketRankChange(uuid, next, source);
                 Core.getDashboardConnection().send(packet);
                 sender.sendMessage(ChatColor.GREEN + name + " is now rank " + next.getFormattedName());
                 return;
