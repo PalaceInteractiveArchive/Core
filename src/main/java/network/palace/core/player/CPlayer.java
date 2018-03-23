@@ -969,4 +969,11 @@ public interface CPlayer {
      * @return true if the player is inside a vehicle
      */
     boolean isInsideVehicle();
+
+    /**
+     * Get the player's current windowId, the id of the inventory they're viewing
+     *
+     * @return the windowId
+     */
+    int getWindowId();
 }

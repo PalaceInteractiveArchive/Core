@@ -781,6 +781,27 @@ public class CorePlayer implements CPlayer {
     }
 
     @Override
+    public int getWindowId() {
+        try {
+            Object craftPlayer = Class.forName("org.bukkit.craftbukkit.v" + Core.getInstance().getMcVersion() +
+                    ".entity.CraftPlayer").cast(getBukkitPlayer());
+            Method m = craftPlayer.getClass().getDeclaredMethod("getHandle");
+            Object entityPlayer = m.invoke(craftPlayer);
+            Object entityHuman = Class.forName("net.minecraft.server.v" + Core.getInstance().getMcVersion() +
+                    ".EntityHuman").cast(entityPlayer);
+            Field field = entityHuman.getClass().getField("activeContainer");
+            field.setAccessible(true);
+            Object container = field.get(entityHuman);
+            Field windowIdField = container.getClass().getField("windowId");
+            return (int) windowIdField.get(container);
+        } catch (ClassNotFoundException | NoSuchMethodException | IllegalAccessException | InvocationTargetException |
+                NoSuchFieldException e) {
+            e.printStackTrace();
+            return 0;
+        }
+    }
+
+    @Override
     public boolean isInVehicle() {
         return getStatus().equals(PlayerStatus.JOINED) && getBukkitPlayer().isInsideVehicle();
     }

@@ -122,7 +122,7 @@ public class CraftingMenu implements Listener {
             if (view.getType().equals(InventoryType.CRAFTING)) {
                 boolean contains = refresh.remove(player.getUniqueId());
                 if (!contains) return;
-                player.updateInventory();
+//                player.updateInventory();
                 update(player);
             } else if (!refresh.contains(player.getUniqueId())) {
                 refresh.add(player.getUniqueId());

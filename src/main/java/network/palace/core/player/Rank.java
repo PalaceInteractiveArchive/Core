@@ -35,6 +35,7 @@ public enum Rank {
     @Getter private int rankId;
 
     public static Rank fromString(String name) {
+        if (name == null) return SETTLER;
         String rankName = name.toLowerCase().replaceAll(" ", "");
 
         for (Rank rank : Rank.values()) {
