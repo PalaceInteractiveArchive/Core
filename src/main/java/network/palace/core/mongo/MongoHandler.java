@@ -609,7 +609,7 @@ public class MongoHandler {
      * @return a document with monthly rewards data
      */
     public Document getMonthlyRewards(UUID uuid) {
-        return getPlayer(uuid, new Document("monthlyRewards", 1));
+        return (Document) getPlayer(uuid, new Document("monthlyRewards", 1)).get("monthlyRewards");
     }
 
     /**
@@ -619,7 +619,7 @@ public class MongoHandler {
      * @return a document with voting data
      */
     public Document getVoteData(UUID uuid) {
-        return getPlayer(uuid, new Document("vote", 1));
+        return (Document) getPlayer(uuid, new Document("vote", 1)).get("vote");
     }
 
     /**
@@ -706,12 +706,24 @@ public class MongoHandler {
     /**
      * Get data for a specific section of park data. If no limit is provided, the entire parks section is returned.
      *
-     * @param uuid  the uuid of the player
-     * @param limit a document specifying the limits of the search
+     * @param uuid the uuid of the player
      * @return a document with the requested data
      */
-    public Document getParkData(UUID uuid, Document limit) {
-        return getPlayer(uuid, new Document("parks", limit == null ? 1 : limit));
+    public Document getParkData(UUID uuid, String limit) {
+        if (limit == null || limit.isEmpty()) {
+            return (Document) getPlayer(uuid, new Document("parks", 1)).get("parks");
+        }
+        Document current = (Document) getPlayer(uuid, new Document("parks." + limit, 1)).get("parks");
+        String[] split;
+        if (limit.contains(".")) {
+            split = limit.split(".");
+        } else {
+            split = new String[]{limit};
+        }
+        for (String s : split) {
+            current = (Document) current.get(s);
+        }
+        return current;
     }
 
     /**
@@ -721,8 +733,9 @@ public class MongoHandler {
      * @param key  the string to search for
      * @return the value of that string
      */
-    public String getParkData(UUID uuid, String key) {
-        return getPlayer(uuid, new Document("parks", 1)).getString(key);
+    public String getParkValue(UUID uuid, String key) {
+        Document park = getParkData(uuid, null);
+        return park.getString(key);
     }
 
     /**
@@ -754,7 +767,9 @@ public class MongoHandler {
      * @return a document with MagicBand data
      */
     public Document getMagicBandData(UUID uuid) {
-        return getParkData(uuid, new Document("magicband", 1));
+//        Document park = getParkData(uuid);
+//        return (Document) park.get("magicband");
+        return getParkData(uuid, "magicband");
     }
 
     /**
@@ -764,8 +779,9 @@ public class MongoHandler {
      * @param setting the setting
      * @return the value of the setting
      */
-    public String getParkSetting(UUID uuid, String setting) {
-        return getParkData(uuid, new Document("settings", 1)).getString(setting);
+    public Object getParkSetting(UUID uuid, String setting) {
+        Document settings = getParkData(uuid, "settings");
+        return settings.get(setting);
     }
 
     /**
@@ -774,8 +790,10 @@ public class MongoHandler {
      * @param uuid the uuid of the player
      * @return a document with ride counter data
      */
-    public Document getRideCounterData(UUID uuid) {
-        return getParkData(uuid, new Document("rides", 1));
+    public ArrayList getRideCounterData(UUID uuid) {
+        Document park = getParkData(uuid, null);
+        return park.get("rides", ArrayList.class);
+//        return getParkData(uuid, new Document("parks.rides", 1));
     }
 
     /**
@@ -865,8 +883,10 @@ public class MongoHandler {
      * @param uuid the uuid of the player
      * @return a document with outfit purchases data
      */
-    public Document getOutfitPurchases(UUID uuid) {
-        return getParkData(uuid, new Document("outfitPurchases", 1));
+    public ArrayList getOutfitPurchases(UUID uuid) {
+        Document park = getParkData(uuid, null);
+        return park.get("outfitPurchases", ArrayList.class);
+//        return getParkData(uuid, new Document("parks.outfitPurchases", 1));
     }
 
     /**
