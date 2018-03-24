@@ -42,7 +42,6 @@ public class MongoHandler {
     private MongoCollection<Document> playerCollection = null;
     private MongoCollection<Document> friendsCollection = null;
     private MongoCollection<Document> permissionCollection = null;
-    private MongoCollection<Document> cosmeticsCollection = null;
     private MongoCollection<Document> resourcePackCollection = null;
     private MongoCollection<Document> honorMappingCollection = null;
     private MongoCollection<Document> outfitsCollection = null;
@@ -70,7 +69,6 @@ public class MongoHandler {
         playerCollection = database.getCollection("players");
         friendsCollection = database.getCollection("friends");
         permissionCollection = database.getCollection("permissions");
-        cosmeticsCollection = database.getCollection("cosmetics");
         resourcePackCollection = database.getCollection("resourcepacks");
         honorMappingCollection = database.getCollection("honormapping");
         outfitsCollection = database.getCollection("outfits");
@@ -276,7 +274,7 @@ public class MongoHandler {
      * @param id   the id of the cosmetic they earned
      */
     public void earnCosmetic(UUID uuid, int id) {
-
+        playerCollection.updateOne(MongoFilter.UUID.getFilter(uuid.toString()), Updates.push("cosmetics", id));
     }
 
     /**
@@ -298,8 +296,8 @@ public class MongoHandler {
      * @return if the player has the cosmetic
      */
     public boolean hasCosmetic(UUID uuid, int id) {
-        //TODO do this
-        return false;
+        Document doc = getPlayer(uuid, new Document("cosmetics", 1));
+        return doc != null && doc.get("cosmetics", ArrayList.class).contains(id);
     }
 
     /* Economy Methods */

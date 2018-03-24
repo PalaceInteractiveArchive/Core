@@ -107,7 +107,12 @@ public class CraftingMenu implements Listener {
                             break;
                         case 3:
                             event.setCancelled(true);
-                            openCosmeticsInventory(player);
+                            try {
+                                openCosmeticsInventory(player);
+                            } catch (Exception e) {
+                                player.sendMessage(ChatColor.RED + "There was a problem opening the cosmetics inventory, sorry!");
+                                player.closeInventory();
+                            }
                     }
                 }
             }
@@ -279,10 +284,10 @@ public class CraftingMenu implements Listener {
         player.openInventory(inv);
     }
 
-    private void openCosmeticsInventory(CPlayer player) {
-//        try {
-//            network.palace.cosmetics.Cosmetics.getInstance().openCosmeticsInventory(player);
-//        } catch (Exception ignored) {
-//        }
+    private void openCosmeticsInventory(CPlayer player) throws Exception {
+        Class<?> cosmetics = Class.forName("network.palace.cosmetics.Cosmetics");
+        Object instance = cosmetics.getMethod("getInstance").invoke(cosmetics);
+        Object inventory = instance.getClass().getMethod("getCosmeticsInventory").invoke(instance);
+        inventory.getClass().getDeclaredMethod("open", CPlayer.class).invoke(inventory, player);
     }
 }
