@@ -815,8 +815,9 @@ public class MongoHandler {
      * @param uuid the uuid of the player
      * @return an iterable of the player's autographs
      */
-    public FindIterable<Document> getAutographs(UUID uuid) {
-        return playerCollection.find(MongoFilter.UUID.getFilter(uuid.toString())).projection(new Document("autgraphs", 1));
+    public ArrayList getAutographs(UUID uuid) {
+        return playerCollection.find(MongoFilter.UUID.getFilter(uuid.toString()))
+                .projection(new Document("autographs", 1)).first().get("autographs", ArrayList.class);
     }
 
     /**
@@ -1010,8 +1011,8 @@ public class MongoHandler {
      * @param resort the resort
      */
     public void setInventorySize(UUID uuid, String type, int size, int resort) {
-        playerCollection.updateOne(Filters.and(MongoFilter.UUID.getFilter(uuid.toString()), Filters.eq("parks.inventories.resort", resort)),
-                new Document("parks.inventories." + type, size));
+        playerCollection.updateOne(new Document("uuid", uuid.toString()).append("parks.inventories.resort", resort),
+                Updates.set("parks.inventories.$." + type, size));
     }
 
     /**
