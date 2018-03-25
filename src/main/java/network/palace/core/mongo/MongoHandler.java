@@ -8,6 +8,7 @@ import com.mongodb.client.FindIterable;
 import com.mongodb.client.MongoCollection;
 import com.mongodb.client.MongoDatabase;
 import com.mongodb.client.model.Filters;
+import com.mongodb.client.model.FindOneAndUpdateOptions;
 import com.mongodb.client.model.Updates;
 import lombok.Getter;
 import network.palace.core.Core;
@@ -907,7 +908,8 @@ public class MongoHandler {
      * @param id   the id of the outfit
      */
     public void purchaseOutfit(UUID uuid, int id) {
-        playerCollection.updateOne(MongoFilter.UUID.getFilter(uuid.toString()), Updates.push("parks.outfitPurchases", new Document("id", id).append("time", System.currentTimeMillis() / 1000)));
+        playerCollection.updateOne(MongoFilter.UUID.getFilter(uuid.toString()),
+                Updates.push("parks.outfitPurchases", new Document("id", id).append("time", System.currentTimeMillis() / 1000)));
     }
 
     /**
@@ -944,6 +946,7 @@ public class MongoHandler {
         doc.append("bootsID", bid);
         doc.append("bootsData", bdata);
         doc.append("boots", boots);
+        doc.append("resort", resort);
         outfitsCollection.insertOne(doc);
     }
 
@@ -952,13 +955,17 @@ public class MongoHandler {
      *
      * @return the value of that field plus one
      */
-    private Object getNextSequence() {
+    private int getNextSequence() {
         BasicDBObject find = new BasicDBObject();
         find.put("_id", "userid");
         BasicDBObject update = new BasicDBObject();
         update.put("$inc", new BasicDBObject("seq", 1));
-        Document obj = outfitsCollection.findOneAndUpdate(find, update);
-        return obj.get("seq");
+        Document obj = outfitsCollection.findOneAndUpdate(find, update, new FindOneAndUpdateOptions().upsert(true));
+        int result = 1;
+        if (obj != null && obj.containsKey("seq")) {
+            result = obj.getInteger("seq") + 1;
+        }
+        return result;
     }
 
     /**
@@ -1000,6 +1007,18 @@ public class MongoHandler {
      */
     public void setBuildMode(UUID uuid, boolean value) {
         playerCollection.updateOne(MongoFilter.UUID.getFilter(uuid.toString()), Updates.set("parks.buildmode", value));
+    }
+
+    /**
+     * Get a player's build mode value
+     *
+     * @param uuid the uuid of the player
+     * @return the build mode value
+     */
+    public boolean getBuildMode(UUID uuid) {
+        Document doc = (Document) getPlayer(uuid, new Document("parks.buildmode", 1)).get("parks");
+        if (!doc.containsKey("buildmode")) return false;
+        return doc.getBoolean("buildmode");
     }
 
     /**
