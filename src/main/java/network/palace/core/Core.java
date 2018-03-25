@@ -36,6 +36,7 @@ import network.palace.core.plugin.PluginInfo;
 import network.palace.core.resource.ResourceManager;
 import network.palace.core.utils.Callback;
 import network.palace.core.utils.ItemUtil;
+import network.palace.core.utils.SqlUtil;
 import org.bukkit.Bukkit;
 import org.bukkit.ChatColor;
 import org.bukkit.World;
@@ -83,7 +84,7 @@ public class Core extends JavaPlugin {
     @Getter @Setter private String tabFooter = ChatColor.LIGHT_PURPLE + "You're on the " + ChatColor.GREEN + "Hub " +
             ChatColor.LIGHT_PURPLE + "server";
 
-    //    private SqlUtil sqlUtil;
+    private SqlUtil sqlUtil;
     private MongoHandler mongoHandler;
     private LanguageManager languageManager;
     private PermissionManager permissionManager;
@@ -148,7 +149,7 @@ public class Core extends JavaPlugin {
         getServer().getMessenger().registerOutgoingPluginChannel(this, "BungeeCord");
         getServer().getMessenger().registerIncomingPluginChannel(this, "WDL|INIT", new CorePlayerWorldDownloadProtect());
         // SQL Classes
-//        sqlUtil = new SqlUtil();
+        sqlUtil = new SqlUtil();
         // Mongo Classes
         mongoHandler = new MongoHandler();
         // Managers
@@ -434,15 +435,14 @@ public class Core extends JavaPlugin {
         return getInstance().softNPCManager;
     }
 
-    /*
     /**
      * Gets sql util.
      *
      * @return the sql util
      */
-//    public static SqlUtil getSqlUtil() {
-//        return getInstance().sqlUtil;
-//    }
+    public static SqlUtil getSqlUtil() {
+        return getInstance().sqlUtil;
+    }
 
     /**
      * Gets mongo handler
