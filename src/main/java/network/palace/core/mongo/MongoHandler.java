@@ -1051,6 +1051,50 @@ public class MongoHandler {
                         .append("moderateday", moderateday).append("thrillday", thrillday)));
     }
 
+    /*
+     * Creative Methods
+     */
+
+    /**
+     * Get the creative data for a player
+     *
+     * @param uuid the uuid of the player
+     * @return a document containing creative data
+     */
+    public Document getCreativeData(UUID uuid) {
+        return (Document) getPlayer(uuid, new Document("creative", 1)).get("creative");
+    }
+
+    /**
+     * Get a creative value for a player
+     *
+     * @param uuid the uuid of the player
+     * @param key  the name of the setting
+     */
+    public Object getCreativeValue(UUID uuid, String key) {
+        return ((Document) getPlayer(uuid, new Document("creative." + key, 1)).get("creative")).get("key");
+    }
+
+    /**
+     * Modify a creative value for a player
+     *
+     * @param uuid  the uuid of the player
+     * @param key   the name of the setting
+     * @param value the value to set
+     */
+    public void setCreativeValue(UUID uuid, String key, Object value) {
+        playerCollection.updateOne(MongoFilter.UUID.getFilter(uuid.toString()), Updates.set("creative." + key, value));
+    }
+
+    public List<String> getCreatorMembers() {
+        List<String> list = new ArrayList<>();
+        for (Document doc : playerCollection.find(Filters.eq("creative.creator", true))
+                .projection(new Document("username", 1))) {
+            list.add(doc.getString("username"));
+        }
+        return list;
+    }
+
     /**
      * Close the connection with the MongoDB database
      */
