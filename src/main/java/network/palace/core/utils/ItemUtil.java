@@ -25,8 +25,6 @@ import org.bukkit.inventory.meta.LeatherArmorMeta;
 import org.bukkit.inventory.meta.SkullMeta;
 import org.bukkit.material.MaterialData;
 
-import java.io.IOException;
-import java.lang.reflect.InvocationTargetException;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -149,7 +147,7 @@ public class ItemUtil implements Listener {
         String nbt = "";
         try {
             nbt = MethodUtils.invokeMethod(minecraftItemstack, "save", nbtCompoundClass.newInstance()).toString();
-        } catch (NoSuchMethodException | IllegalAccessException | InvocationTargetException | InstantiationException e) {
+        } catch (Exception e) {
             e.printStackTrace();
         }
         return nbt;
@@ -359,11 +357,11 @@ public class ItemUtil implements Listener {
             if (o.has("ta")) {
                 try {
                     NbtFactory.setItemTag(i, new NbtTextSerializer().deserializeCompound(o.get("ta").getAsString()));
-                } catch (IOException ex) {
+                } catch (Exception ex) {
                     ex.printStackTrace();
                 }
             }
-        } catch (IllegalArgumentException ignored) {
+        } catch (Exception ignored) {
             return new ItemStack(Material.AIR);
         }
         return i;

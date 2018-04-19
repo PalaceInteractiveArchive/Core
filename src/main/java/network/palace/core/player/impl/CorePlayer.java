@@ -18,6 +18,7 @@ import org.bukkit.*;
 import org.bukkit.block.Block;
 import org.bukkit.entity.Entity;
 import org.bukkit.entity.Player;
+import org.bukkit.event.player.PlayerTeleportEvent;
 import org.bukkit.inventory.Inventory;
 import org.bukkit.inventory.InventoryView;
 import org.bukkit.inventory.ItemStack;
@@ -184,6 +185,15 @@ public class CorePlayer implements CPlayer {
         if (location == null) return;
         if (location.getWorld() == null) return;
         getBukkitPlayer().teleport(location);
+    }
+
+    @Override
+    public void teleport(Location location, PlayerTeleportEvent.TeleportCause cause) {
+        if (getStatus() != PlayerStatus.JOINED) return;
+        if (getBukkitPlayer() == null) return;
+        if (location == null || cause == null) return;
+        if (location.getWorld() == null) return;
+        getBukkitPlayer().teleport(location, cause);
     }
 
     @Override
@@ -778,6 +788,11 @@ public class CorePlayer implements CPlayer {
     @Override
     public boolean isInsideVehicle() {
         return getStatus().equals(PlayerStatus.JOINED) && getBukkitPlayer() != null && getBukkitPlayer().isInsideVehicle();
+    }
+
+    @Override
+    public boolean eject() {
+        return getStatus().equals(PlayerStatus.JOINED) && getBukkitPlayer() != null && getBukkitPlayer().eject();
     }
 
     @Override

@@ -8,6 +8,7 @@ import org.bukkit.*;
 import org.bukkit.block.Block;
 import org.bukkit.entity.Entity;
 import org.bukkit.entity.Player;
+import org.bukkit.event.player.PlayerTeleportEvent;
 import org.bukkit.inventory.Inventory;
 import org.bukkit.inventory.InventoryView;
 import org.bukkit.inventory.ItemStack;
@@ -135,6 +136,14 @@ public interface CPlayer {
      * @param location the location
      */
     void teleport(Location location);
+
+    /**
+     * Teleport.
+     *
+     * @param location the location
+     * @param cause    the cause for the teleporting
+     */
+    void teleport(Location location, PlayerTeleportEvent.TeleportCause cause);
 
     /**
      * Teleport to a player
@@ -969,6 +978,13 @@ public interface CPlayer {
      * @return true if the player is inside a vehicle
      */
     boolean isInsideVehicle();
+
+    /**
+     * Eject the player from their vehicle
+     *
+     * @return true if the player was inside a vehicle
+     */
+    boolean eject();
 
     /**
      * Get the player's current windowId, the id of the inventory they're viewing
