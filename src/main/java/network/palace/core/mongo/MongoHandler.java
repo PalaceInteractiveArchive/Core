@@ -40,6 +40,7 @@ public class MongoHandler {
 
     private MongoClient client = null;
     @Getter private MongoDatabase database = null;
+    private MongoCollection<Document> activityCollection = null;
     private MongoCollection<Document> playerCollection = null;
     private MongoCollection<Document> friendsCollection = null;
     private MongoCollection<Document> permissionCollection = null;
@@ -67,6 +68,7 @@ public class MongoHandler {
         MongoClientURI connectionString = new MongoClientURI("mongodb://" + username + ":" + password + "@" + hostname);
         client = new MongoClient(connectionString);
         database = client.getDatabase("palace");
+        activityCollection = database.getCollection("activity");
         playerCollection = database.getCollection("players");
         friendsCollection = database.getCollection("friends");
         permissionCollection = database.getCollection("permissions");
@@ -1072,7 +1074,9 @@ public class MongoHandler {
      * @param key  the name of the setting
      */
     public Object getCreativeValue(UUID uuid, String key) {
-        return ((Document) getPlayer(uuid, new Document("creative." + key, 1)).get("creative")).get("key");
+        Document doc = getPlayer(uuid, new Document("creative." + key, 1));
+        if (doc == null || doc.isEmpty()) return null;
+        return ((Document) doc.get("creative")).get(key);
     }
 
     /**
@@ -1093,6 +1097,12 @@ public class MongoHandler {
             list.add(doc.getString("username"));
         }
         return list;
+    }
+
+    public void logActivity(UUID uuid, String action, String description) {
+        activityCollection.insertOne(new Document("uuid", uuid.toString())
+                .append("action", action)
+                .append("description", description));
     }
 
     /**
