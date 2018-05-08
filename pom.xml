@@ -5,7 +5,7 @@
 
     <groupId>network.palace</groupId>
     <artifactId>Core</artifactId>
-    <version>2.1-mongo</version>
+    <version>2.2-mongo</version>
 
     <distributionManagement>
         <repository>

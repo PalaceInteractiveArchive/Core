@@ -808,7 +808,7 @@ public class MongoHandler {
     public void logRideCounter(UUID uuid, String name) {
         playerCollection.updateOne(MongoFilter.UUID.getFilter(uuid.toString()),
                 Updates.push("parks.rides", new Document("name", name)
-                        .append("server", Core.getInstanceName())
+                        .append("server", Core.getServerType())
                         .append("time", System.currentTimeMillis() / 1000)));
     }
 
