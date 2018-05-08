@@ -1049,8 +1049,8 @@ public class MongoHandler {
      */
     public void updateFPData(UUID uuid, int slow, int moderate, int thrill, int slowday, int moderateday, int thrillday) {
         playerCollection.updateOne(MongoFilter.UUID.getFilter(uuid.toString()), Updates.set("parks.fastpass",
-                new Document("slow", slow).append("moderate", moderate).append("thrill", thrill).append("slowday", slowday)
-                        .append("moderateday", moderateday).append("thrillday", thrillday)));
+                new Document("slow", slow).append("moderate", moderate).append("thrill", thrill).append("sday", slowday)
+                        .append("mday", moderateday).append("tday", thrillday)));
     }
 
     /*
