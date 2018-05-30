@@ -5,6 +5,7 @@ import com.google.gson.JsonParser;
 import network.palace.core.Core;
 import network.palace.core.dashboard.packets.BasePacket;
 import network.palace.core.dashboard.packets.dashboard.*;
+import network.palace.core.economy.CurrencyType;
 import network.palace.core.events.*;
 import network.palace.core.player.CPlayer;
 import network.palace.core.player.Rank;
@@ -95,10 +96,10 @@ public class DashboardConnection {
                             if (player == null) {
                                 return;
                             }
-                            int bal = Core.getEconomy().getBalance(player.getUniqueId());
-                            int tok = Core.getEconomy().getTokens(player.getUniqueId());
-                            new EconomyUpdateEvent(player.getUniqueId(), bal, true).call();
-                            new EconomyUpdateEvent(player.getUniqueId(), tok, false).call();
+                            int bal = Core.getMongoHandler().getCurrency(player.getUniqueId(), CurrencyType.BALANCE);
+                            int tok = Core.getMongoHandler().getCurrency(player.getUniqueId(), CurrencyType.TOKENS);
+                            new EconomyUpdateEvent(player.getUniqueId(), bal, CurrencyType.BALANCE).call();
+                            new EconomyUpdateEvent(player.getUniqueId(), tok, CurrencyType.TOKENS).call();
                             break;
                         }
                         case 68: {

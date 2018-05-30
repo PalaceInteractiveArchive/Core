@@ -19,11 +19,11 @@ import network.palace.core.config.LanguageManager;
 import network.palace.core.config.YAMLConfigurationFile;
 import network.palace.core.crafting.CraftingMenu;
 import network.palace.core.dashboard.DashboardConnection;
-import network.palace.core.economy.EconomyManager;
 import network.palace.core.errors.EnvironmentType;
 import network.palace.core.errors.RollbarHandler;
 import network.palace.core.honor.HonorManager;
 import network.palace.core.library.LibraryHandler;
+import network.palace.core.mongo.MongoHandler;
 import network.palace.core.npc.SoftNPCManager;
 import network.palace.core.packets.adapters.PlayerInfoAdapter;
 import network.palace.core.packets.adapters.SettingsAdapter;
@@ -59,11 +59,12 @@ import java.util.concurrent.Future;
  * <p>
  * You can access instances of other modules by depending on Core in your pom.xml, and then executing Core.get
  */
-@PluginInfo(name = "Core", version = "2.0.7", depend = {"ProtocolLib"})
+@PluginInfo(name = "Core", version = "2.2-mongo", depend = {"ProtocolLib"})
 public class Core extends JavaPlugin {
 
     private boolean starting = true;
-    @Getter private final long startTime = System.currentTimeMillis();
+    @Getter
+    private final long startTime = System.currentTimeMillis();
     private YAMLConfigurationFile configFile;
     private String serverType = "Hub";
     private String instanceName = "";
@@ -71,7 +72,6 @@ public class Core extends JavaPlugin {
     private boolean dashboardAndSqlDisabled = false;
     @Getter private String mcVersion = Bukkit.getBukkitVersion();
     private boolean gameMode = false;
-
     @Getter private boolean showTitleOnLogin = false;
     @Getter private String loginTitle = "";
     @Getter private String loginSubTitle = "";
@@ -81,12 +81,14 @@ public class Core extends JavaPlugin {
     @Getter private int loginTitleFadeOut = 10;
 
     @Getter @Setter private String tabHeader = ChatColor.GOLD + "Palace Network - A Family of Servers";
-    @Getter @Setter private String tabFooter = ChatColor.LIGHT_PURPLE + "You're on the " + ChatColor.GREEN + "Hub " + ChatColor.LIGHT_PURPLE + "server";
+    @Getter @Setter private String tabFooter = ChatColor.LIGHT_PURPLE + "You're on the " + ChatColor.GREEN + "Hub " +
+            ChatColor.LIGHT_PURPLE + "server";
 
     private SqlUtil sqlUtil;
+    private MongoHandler mongoHandler;
     private LanguageManager languageManager;
     private PermissionManager permissionManager;
-    private EconomyManager economyManager;
+    //    private EconomyManager economyManager;
     private ResourceManager resourceManager;
     private AchievementManager achievementManager;
     private SoftNPCManager softNPCManager;
@@ -148,17 +150,19 @@ public class Core extends JavaPlugin {
         getServer().getMessenger().registerIncomingPluginChannel(this, "WDL|INIT", new CorePlayerWorldDownloadProtect());
         // SQL Classes
         sqlUtil = new SqlUtil();
+        // Mongo Classes
+        mongoHandler = new MongoHandler();
         // Managers
         languageManager = new LanguageManager();
         playerManager = new CorePlayerManager();
         permissionManager = new PermissionManager();
         resourceManager = new ResourceManager();
-        economyManager = new EconomyManager();
+//        economyManager = new EconomyManager();
         achievementManager = new AchievementManager();
         softNPCManager = new SoftNPCManager();
         // Setup the honor manager
         honorManager = new HonorManager();
-        honorManager.provideMappings(sqlUtil.getHonorMappings());
+        honorManager.provideMappings(mongoHandler.getHonorMappings());
         // Core command map
         commandMap = new CoreCommandMap(this);
         // Dashboard
@@ -177,10 +181,11 @@ public class Core extends JavaPlugin {
 
         // If we're running in game-mode, set starting to false immediately.
         // Otherwise, we'll wait the 7 seconds.
-        if (isGameMode()) {
-            logMessage("Core", ChatColor.BLUE + "" + ChatColor.BOLD + "Running in game mode, skipping startup phase!");
-            setStarting(false);
-        } else runTaskLater(() -> setStarting(false), 20 * 7);
+        setStarting(false);
+//        if (isGameMode()) {
+//            logMessage("Core", ChatColor.BLUE + "" + ChatColor.BOLD + "Running in game mode, skipping startup phase!");
+//            setStarting(false);
+//        } else runTaskLater(() -> setStarting(false), 20 * 7);
 //        Bukkit.getServer().clearRecipes();
     }
 
@@ -213,7 +218,7 @@ public class Core extends JavaPlugin {
         registerCommand(new ListCommand());
         registerCommand(new MyHonorCommand());
         registerCommand(new OnlineCommand());
-        registerCommand(new PermCommand());
+        registerCommand(new PermissionCommand());
         registerCommand(new PingCommand());
         registerCommand(new PluginsCommand());
         registerCommand(new ReloadCommand());
@@ -394,14 +399,14 @@ public class Core extends JavaPlugin {
         return getInstance().permissionManager;
     }
 
-    /**
-     * Gets economy.
-     *
-     * @return the economy
-     */
-    public static EconomyManager getEconomy() {
-        return getInstance().economyManager;
-    }
+//    /**
+//     * Gets economy.
+//     *
+//     * @return the economy
+//     */
+//    public static EconomyManager getEconomy() {
+//        return getInstance().economyManager;
+//    }
 
     /**
      * Gets resource manager.
@@ -437,6 +442,15 @@ public class Core extends JavaPlugin {
      */
     public static SqlUtil getSqlUtil() {
         return getInstance().sqlUtil;
+    }
+
+    /**
+     * Gets mongo handler
+     *
+     * @return the mongo handler
+     */
+    public static MongoHandler getMongoHandler() {
+        return getInstance().mongoHandler;
     }
 
     /**
@@ -643,9 +657,12 @@ public class Core extends JavaPlugin {
      * @param callback the callbacks for the actions
      */
     public static void sendAllPlayers(String server, Callback callback) {
-        for (CPlayer player : Core.getPlayerManager().getOnlinePlayers()) {
-            player.sendToServer(server);
-        }
-        Core.runTaskLater(callback::finished, 40L);
+        runTaskAsynchronously(() -> {
+            do {
+                CPlayer player = Core.getPlayerManager().getOnlinePlayers().get(0);
+                player.sendToServer(server);
+            } while (Core.getPlayerManager().getOnlinePlayers().size() > 0);
+            callback.finished();
+        });
     }
 }

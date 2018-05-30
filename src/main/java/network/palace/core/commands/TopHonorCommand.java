@@ -7,6 +7,7 @@ import network.palace.core.command.CommandPermission;
 import network.palace.core.command.CoreCommand;
 import network.palace.core.honor.TopHonorReport;
 import network.palace.core.player.Rank;
+import network.palace.core.utils.MiscUtil;
 import org.bukkit.ChatColor;
 import org.bukkit.command.CommandSender;
 
@@ -28,10 +29,10 @@ public class TopHonorCommand extends CoreCommand {
         sender.sendMessage(ChatColor.GREEN + "Gathering leaderboard data...");
         Core.runTaskAsynchronously(() -> {
             int limit = 10;
-            if (args.length > 0 && isInt(args[0]) && (limit = Integer.parseInt(args[0])) > 10) {
+            if (args.length > 0 && MiscUtil.checkIfInt(args[0]) && (limit = Integer.parseInt(args[0])) > 10) {
                 limit = 10;
             }
-            HashMap<Integer, TopHonorReport> map = Core.getSqlUtil().getTopHonor(limit);
+            HashMap<Integer, TopHonorReport> map = Core.getMongoHandler().getTopHonor(limit);
             StringBuilder msg = new StringBuilder(ChatColor.GOLD + "Honor Leaderboard: Top " + limit + " Players\n");
             ArrayList<TopHonorReport> list = new ArrayList<>(map.values());
             for (int i = 0; i < map.size(); i++) {
@@ -48,15 +49,5 @@ public class TopHonorCommand extends CoreCommand {
     private String format(int i) {
         return this.format.format(i);
     }
-
-    private boolean isInt(String s) {
-        try {
-            Integer.parseInt(s);
-            return true;
-        } catch (NumberFormatException e) {
-            return false;
-        }
-    }
-
 }
 

@@ -6,6 +6,7 @@ import lombok.Getter;
 import lombok.Setter;
 import network.palace.core.Core;
 import network.palace.core.config.LanguageManager;
+import network.palace.core.economy.CurrencyType;
 import network.palace.core.events.GameStatisticChangeEvent;
 import network.palace.core.packets.AbstractPacket;
 import network.palace.core.player.*;
@@ -17,6 +18,7 @@ import org.bukkit.*;
 import org.bukkit.block.Block;
 import org.bukkit.entity.Entity;
 import org.bukkit.entity.Player;
+import org.bukkit.event.player.PlayerTeleportEvent;
 import org.bukkit.inventory.Inventory;
 import org.bukkit.inventory.InventoryView;
 import org.bukkit.inventory.ItemStack;
@@ -39,7 +41,6 @@ import java.util.*;
  */
 public class CorePlayer implements CPlayer {
 
-    @Getter private final int sqlId;
     @Getter private final UUID uuid;
     private final String name;
     @Getter @Setter private Rank rank;
@@ -65,14 +66,11 @@ public class CorePlayer implements CPlayer {
     /**
      * Instantiates a new Core player.
      *
-     * @param sqlId  the sqlid
-     * @param uuid   the uuid
-     * @param name   the name
-     * @param rank   the rank
-     * @param locale the locale
+     * @param uuid the uuid
+     * @param name the name
+     * @param rank the rank
      */
-    public CorePlayer(int sqlId, UUID uuid, String name, Rank rank, String locale) {
-        this.sqlId = sqlId;
+    public CorePlayer(UUID uuid, String name, Rank rank, String locale) {
         this.uuid = uuid;
         this.name = name;
         this.rank = rank;
@@ -190,6 +188,24 @@ public class CorePlayer implements CPlayer {
     }
 
     @Override
+    public void teleport(Location location, PlayerTeleportEvent.TeleportCause cause) {
+        if (getStatus() != PlayerStatus.JOINED) return;
+        if (getBukkitPlayer() == null) return;
+        if (location == null || cause == null) return;
+        if (location.getWorld() == null) return;
+        getBukkitPlayer().teleport(location, cause);
+    }
+
+    @Override
+    public void teleport(CPlayer tp) {
+        if (getStatus() != PlayerStatus.JOINED) return;
+        if (getBukkitPlayer() == null) return;
+        if (tp == null) return;
+        Location location = tp.getLocation();
+        teleport(location);
+    }
+
+    @Override
     public void sendMessage(String message) {
         if (getStatus() != PlayerStatus.JOINED) return;
         if (getBukkitPlayer() == null) return;
@@ -198,15 +214,26 @@ public class CorePlayer implements CPlayer {
     }
 
     @Override
-    public void sendFormatMessage(String key) {
-        if (getStatus() != PlayerStatus.JOINED) return;
-        if (getBukkitPlayer() == null) return;
+    public String getFormattedMessage(String key) {
+        if (getStatus() != PlayerStatus.JOINED) return "";
         LanguageManager languageManager = Core.getLanguageFormatter();
         if (languageManager == null) {
             Core.logMessage("Language Formatter", "PROBLEM GETTING LANGUAGE FORMATTER for key: " + key);
-            return;
+            return "";
         }
         String message = languageManager.getFormat(getLocale(), key);
+        if (message.isEmpty()) {
+            Core.logMessage("Language Formatter", "MESSAGE NULL for key: " + key);
+            return "";
+        }
+        return message;
+    }
+
+    @Override
+    public void sendFormatMessage(String key) {
+        if (getStatus() != PlayerStatus.JOINED) return;
+        if (getBukkitPlayer() == null) return;
+        String message = getFormattedMessage(key);
         if (message.isEmpty()) {
             Core.logMessage("Language Formatter", "MESSAGE NULL for key: " + key);
             return;
@@ -429,6 +456,11 @@ public class CorePlayer implements CPlayer {
     }
 
     @Override
+    public boolean hasPermission(String node) {
+        return getStatus() == PlayerStatus.JOINED && getBukkitPlayer() != null && getBukkitPlayer().hasPermission(node);
+    }
+
+    @Override
     public void respawn() {
         if (getStatus() != PlayerStatus.JOINED) return;
         if (getBukkitPlayer() == null) return;
@@ -587,55 +619,53 @@ public class CorePlayer implements CPlayer {
 
     @Override
     public int getTokens() {
-        return Core.getEconomy().getTokens(getUuid());
+        return Core.getMongoHandler().getCurrency(getUuid(), CurrencyType.TOKENS);
     }
 
     @Override
     public int getBalance() {
-        return Core.getEconomy().getBalance(getUuid());
+        return Core.getMongoHandler().getCurrency(getUuid(), CurrencyType.BALANCE);
     }
 
     @Override
     public void addTokens(int amount) {
-        Core.getEconomy().addTokens(getUuid(), amount);
+        Core.getMongoHandler().changeAmount(getUuid(), amount, "plugin", CurrencyType.TOKENS, false);
     }
 
     @Override
     public void addBalance(int amount) {
-        Core.getEconomy().addBalance(getUuid(), amount);
+        Core.getMongoHandler().changeAmount(getUuid(), amount, "plugin", CurrencyType.BALANCE, false);
     }
 
     @Override
     public void setTokens(int amount) {
-        Core.getEconomy().setTokens(getUuid(), amount, "Core", true);
+        Core.getMongoHandler().changeAmount(getUuid(), amount, "Core", CurrencyType.TOKENS, true);
     }
 
     @Override
     public void setBalance(int amount) {
-        Core.getEconomy().setBalance(getUuid(), amount, "Core", true);
+        Core.getMongoHandler().changeAmount(getUuid(), amount, "Core", CurrencyType.BALANCE, true);
     }
 
     @Override
     public void removeTokens(int amount) {
-        int current = Core.getEconomy().getTokens(getUuid());
-        Core.getEconomy().setTokens(getUuid(), current - amount, "Core", false);
+        Core.getMongoHandler().changeAmount(getUuid(), -amount, "Core", CurrencyType.TOKENS, false);
     }
 
     @Override
     public void removeBalance(int amount) {
-        int current = Core.getEconomy().getBalance(getUuid());
-        Core.getEconomy().setBalance(getUuid(), current - amount, "Core", false);
+        Core.getMongoHandler().changeAmount(getUuid(), -amount, "Core", CurrencyType.BALANCE, false);
     }
 
     @Override
     public void addStatistic(GameType gameType, StatisticType statisticType, int amount) {
-        Core.getSqlUtil().addGameStat(gameType, statisticType, amount, this);
+        Core.getMongoHandler().addGameStat(gameType, statisticType, amount, this);
         new GameStatisticChangeEvent(this, gameType, statisticType, amount).call();
     }
 
     @Override
     public int getStatistic(GameType gameType, StatisticType statisticType) {
-        return Core.getSqlUtil().getGameStat(gameType, statisticType, this);
+        return Core.getMongoHandler().getGameStat(gameType, statisticType, this);
     }
 
     @Override
@@ -663,6 +693,20 @@ public class CorePlayer implements CPlayer {
     }
 
     @Override
+    public Vector getVelocity() {
+        if (!getStatus().equals(PlayerStatus.JOINED)) return new Vector();
+        if (getBukkitPlayer() == null) return new Vector();
+        return getBukkitPlayer().getVelocity();
+    }
+
+    @Override
+    public void setVelocity(Vector vector) {
+        if (!getStatus().equals(PlayerStatus.JOINED)) return;
+        if (getBukkitPlayer() == null) return;
+        getBukkitPlayer().setVelocity(vector);
+    }
+
+    @Override
     public void setExp(float exp) {
         if (!getStatus().equals(PlayerStatus.JOINED)) return;
         if (getBukkitPlayer() == null) return;
@@ -681,7 +725,7 @@ public class CorePlayer implements CPlayer {
         honor += amount;
         Core.getHonorManager().displayHonor(this);
         getActionBar().show(ChatColor.LIGHT_PURPLE + "+" + amount + " Honor");
-        Core.getSqlUtil().addHonor(sqlId, amount);
+        Core.getMongoHandler().addHonor(getUuid(), amount);
     }
 
     @Override
@@ -689,7 +733,7 @@ public class CorePlayer implements CPlayer {
         honor -= amount;
         Core.getHonorManager().displayHonor(this);
         getActionBar().show(ChatColor.DARK_PURPLE + "-" + amount + " Honor");
-        Core.getSqlUtil().addHonor(sqlId, -amount);
+        Core.getMongoHandler().addHonor(getUuid(), -amount);
     }
 
     @Override
@@ -739,6 +783,37 @@ public class CorePlayer implements CPlayer {
         if (!getStatus().equals(PlayerStatus.JOINED)) return null;
         if (getBukkitPlayer() == null) return null;
         return getBukkitPlayer().getPotionEffect(type);
+    }
+
+    @Override
+    public boolean isInsideVehicle() {
+        return getStatus().equals(PlayerStatus.JOINED) && getBukkitPlayer() != null && getBukkitPlayer().isInsideVehicle();
+    }
+
+    @Override
+    public boolean eject() {
+        return getStatus().equals(PlayerStatus.JOINED) && getBukkitPlayer() != null && getBukkitPlayer().eject();
+    }
+
+    @Override
+    public int getWindowId() {
+        try {
+            Object craftPlayer = Class.forName("org.bukkit.craftbukkit.v" + Core.getInstance().getMcVersion() +
+                    ".entity.CraftPlayer").cast(getBukkitPlayer());
+            Method m = craftPlayer.getClass().getDeclaredMethod("getHandle");
+            Object entityPlayer = m.invoke(craftPlayer);
+            Object entityHuman = Class.forName("net.minecraft.server.v" + Core.getInstance().getMcVersion() +
+                    ".EntityHuman").cast(entityPlayer);
+            Field field = entityHuman.getClass().getField("activeContainer");
+            field.setAccessible(true);
+            Object container = field.get(entityHuman);
+            Field windowIdField = container.getClass().getField("windowId");
+            return (int) windowIdField.get(container);
+        } catch (ClassNotFoundException | NoSuchMethodException | IllegalAccessException | InvocationTargetException |
+                NoSuchFieldException e) {
+            e.printStackTrace();
+            return 0;
+        }
     }
 
     @Override

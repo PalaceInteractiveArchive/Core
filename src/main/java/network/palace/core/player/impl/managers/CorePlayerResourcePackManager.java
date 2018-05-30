@@ -1,9 +1,9 @@
 package network.palace.core.player.impl.managers;
 
+import lombok.AllArgsConstructor;
 import network.palace.core.packets.server.resourcepack.WrapperPlayServerResourcePackSend;
 import network.palace.core.player.CPlayer;
 import network.palace.core.player.CPlayerResourcePackManager;
-import lombok.AllArgsConstructor;
 
 /**
  * The type Core player resource pack manager.

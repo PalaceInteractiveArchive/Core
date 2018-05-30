@@ -3,8 +3,6 @@ package network.palace.core.permissions;
 import network.palace.core.Core;
 import network.palace.core.player.CPlayer;
 import network.palace.core.player.Rank;
-import org.bukkit.ChatColor;
-import org.bukkit.command.CommandSender;
 import org.bukkit.entity.Player;
 import org.bukkit.permissions.PermissionAttachment;
 
@@ -38,11 +36,10 @@ public class PermissionManager {
         permissions.clear();
         Rank[] ranks = Rank.values();
         Collection<CPlayer> players = Core.getPlayerManager().getOnlinePlayers();
-        boolean empty = players.isEmpty();
         Rank previous = null;
         for (int i = ranks.length - 1; i >= 0; i--) {
             Rank r = ranks[i];
-            Map<String, Boolean> perms = Core.getSqlUtil().getPermissions(r);
+            Map<String, Boolean> perms = Core.getMongoHandler().getPermissions(r);
             if (previous != null) {
                 for (Map.Entry<String, Boolean> perm : getPermissions(previous).entrySet()) {
                     if (perms.containsKey(perm.getKey())) {
@@ -54,7 +51,7 @@ public class PermissionManager {
                 }
             }
             permissions.put(r, perms);
-            if (!empty) {
+            if (!players.isEmpty()) {
                 for (CPlayer p : players) {
                     if (p.getRank().equals(r)) {
                         setPermissions(p.getBukkitPlayer(), perms);
@@ -74,6 +71,15 @@ public class PermissionManager {
         setPermissions(player.getBukkitPlayer(), getPermissions(player.getRank()));
     }
 
+    /**
+     * Remove permission attachments
+     *
+     * @param uuid the uuid
+     */
+    public void logout(UUID uuid) {
+        attachments.remove(uuid);
+    }
+
     private void setPermissions(Player player, Map<String, Boolean> perms) {
         PermissionAttachment attachment;
         if (attachments.containsKey(player.getUniqueId())) {
@@ -84,7 +90,6 @@ public class PermissionManager {
         for (Map.Entry<String, Boolean> entry : attachment.getPermissions().entrySet()) {
             attachment.unsetPermission(entry.getKey());
         }
-        attachment.remove();
         for (Map.Entry<String, Boolean> entry : perms.entrySet()) {
             attachment.setPermission(entry.getKey(), entry.getValue());
         }
@@ -103,15 +108,9 @@ public class PermissionManager {
 
     /**
      * Refresh permissions.
-     *
-     * @param sender the sender
      */
-    public void refresh(CommandSender sender) {
-        Core.runTaskAsynchronously(() -> {
-            sender.sendMessage(ChatColor.YELLOW + "Refreshing permissions...");
-            initialize();
-            sender.sendMessage(ChatColor.YELLOW + "Permissions refreshed!");
-        });
+    public void refresh() {
+        initialize();
     }
 
     /**

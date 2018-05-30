@@ -5,7 +5,7 @@
 
     <groupId>network.palace</groupId>
     <artifactId>Core</artifactId>
-    <version>2.0.7</version>
+    <version>2.2-mongo</version>
 
     <distributionManagement>
         <repository>
@@ -26,6 +26,11 @@
             <url>https://repo.palace.network/nexus/content/repositories/releases/</url>
         </repository>
         <repository>
+            <id>maven</id>
+            <name>Central Maven Repository</name>
+            <url>http://central.maven.org/maven2/</url>
+        </repository>
+        <repository>
             <id>spigot-repo</id>
             <url>https://hub.spigotmc.org/nexus/content/repositories/snapshots/</url>
         </repository>
@@ -36,6 +41,21 @@
     </repositories>
 
     <dependencies>
+        <dependency>
+            <groupId>org.mongodb</groupId>
+            <artifactId>mongodb-driver-core</artifactId>
+            <version>3.5.0</version>
+        </dependency>
+        <dependency>
+            <groupId>org.mongodb</groupId>
+            <artifactId>mongodb-driver</artifactId>
+            <version>3.5.0</version>
+        </dependency>
+        <dependency>
+            <groupId>org.mongodb</groupId>
+            <artifactId>bson</artifactId>
+            <version>3.5.0</version>
+        </dependency>
         <dependency>
             <groupId>org.projectlombok</groupId>
             <artifactId>lombok</artifactId>
@@ -50,6 +70,12 @@
             <groupId>org.spigotmc</groupId>
             <artifactId>spigot-api</artifactId>
             <version>1.11.2-R0.1-SNAPSHOT</version>
+        </dependency>
+        <dependency>
+            <groupId>org.spigotmc</groupId>
+            <artifactId>spigot-api</artifactId>
+            <version>1.11.2-R0.1-SNAPSHOT</version>
+            <classifier>sources</classifier>
         </dependency>
         <dependency>
             <groupId>com.comphenix.protocol</groupId>
@@ -71,11 +97,11 @@
             <artifactId>jackson-databind</artifactId>
             <version>2.6.0</version>
         </dependency>
-        <dependency>
-            <groupId>network.palace</groupId>
-            <artifactId>Cosmetics</artifactId>
-            <version>1.0.1</version>
-        </dependency>
+        <!--<dependency>-->
+            <!--<groupId>network.palace</groupId>-->
+            <!--<artifactId>Cosmetics</artifactId>-->
+            <!--<version>2.0</version>-->
+        <!--</dependency>-->
 
     </dependencies>
 

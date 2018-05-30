@@ -13,6 +13,7 @@ import org.bukkit.command.CommandSender;
 import org.bukkit.entity.Player;
 
 import java.text.DecimalFormat;
+import java.util.UUID;
 
 /**
  * @author Marc
@@ -42,24 +43,24 @@ public class HonorCommand extends CoreCommand {
                     sender.sendMessage(ChatColor.RED + "Invalid number " + args[1]);
                     return;
                 }
-                int id;
+                UUID uuid;
                 String name;
                 if (args.length > 2) {
-                    id = Core.getSqlUtil().getIdFromName(args[2]);
+                    uuid = Core.getMongoHandler().usernameToUUID(args[2]);
                     name = args[2];
                 } else {
-                    id = Core.getPlayerManager().getPlayer(((Player) sender).getUniqueId()).getSqlId();
+                    uuid = ((Player) sender).getUniqueId();
                     name = sender.getName();
                 }
-                if (id == 0) {
+                if (uuid == null) {
                     sender.sendMessage(ChatColor.RED + "Player not found!");
                     return;
                 }
-                CPlayer player = Core.getPlayerManager().getPlayer(id);
+                CPlayer player = Core.getPlayerManager().getPlayer(uuid);
                 switch (args[0]) {
                     case "add":
                         if (player == null) {
-                            Core.getSqlUtil().addHonor(id, amount);
+                            Core.getMongoHandler().addHonor(player.getUniqueId(), amount);
                         } else {
                             player.giveHonor(amount);
                         }
@@ -67,14 +68,14 @@ public class HonorCommand extends CoreCommand {
                         return;
                     case "minus":
                         if (player == null) {
-                            Core.getSqlUtil().addHonor(id, -amount);
+                            Core.getMongoHandler().addHonor(player.getUniqueId(), -amount);
                         } else {
                             player.removeHonor(amount);
                         }
                         sender.sendMessage(ChatColor.GREEN + "Removed " + amount + " from " + name + "'s Honor");
                         return;
                     case "set":
-                        Core.getSqlUtil().setHonor(id, amount);
+                        Core.getMongoHandler().setHonor(uuid, amount);
                         if (player != null) {
                             player.setHonor(amount);
                             player.getActionBar().show(ChatColor.LIGHT_PURPLE + "Your Honor was set to " + amount);
@@ -86,12 +87,12 @@ public class HonorCommand extends CoreCommand {
                 helpMenu(sender);
                 return;
             }
-            int id = Core.getSqlUtil().getIdFromName(args[0]);
-            if (id == 0) {
+            UUID uuid = Core.getMongoHandler().usernameToUUID(args[0]);
+            if (uuid == null) {
                 sender.sendMessage(ChatColor.RED + "Player not found!");
                 return;
             }
-            int honor = Core.getSqlUtil().getHonor(id);
+            int honor = Core.getMongoHandler().getHonor(uuid);
             int level = Core.getHonorManager().getLevel(honor).getLevel();
             HonorMapping nextLevel = Core.getHonorManager().getNextLevel(honor);
             float progress = Core.getHonorManager().progressToNextLevel(honor);

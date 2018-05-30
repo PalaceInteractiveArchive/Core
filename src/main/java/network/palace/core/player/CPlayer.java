@@ -8,6 +8,7 @@ import org.bukkit.*;
 import org.bukkit.block.Block;
 import org.bukkit.entity.Entity;
 import org.bukkit.entity.Player;
+import org.bukkit.event.player.PlayerTeleportEvent;
 import org.bukkit.inventory.Inventory;
 import org.bukkit.inventory.InventoryView;
 import org.bukkit.inventory.ItemStack;
@@ -16,6 +17,7 @@ import org.bukkit.map.MapView;
 import org.bukkit.metadata.MetadataValue;
 import org.bukkit.potion.PotionEffect;
 import org.bukkit.potion.PotionEffectType;
+import org.bukkit.util.Vector;
 
 import java.util.Collection;
 import java.util.List;
@@ -26,13 +28,6 @@ import java.util.UUID;
  * The interface CPlayer.
  */
 public interface CPlayer {
-    /**
-     * Gets the sql id of the player
-     *
-     * @return sql id
-     * @implNote used to make sql calls much quicker
-     */
-    int getSqlId();
 
     /**
      * Gets player name.
@@ -143,11 +138,34 @@ public interface CPlayer {
     void teleport(Location location);
 
     /**
+     * Teleport.
+     *
+     * @param location the location
+     * @param cause    the cause for the teleporting
+     */
+    void teleport(Location location, PlayerTeleportEvent.TeleportCause cause);
+
+    /**
+     * Teleport to a player
+     *
+     * @param tp the player to teleport to
+     */
+    void teleport(CPlayer tp);
+
+    /**
      * Send message.
      *
      * @param message the message
      */
     void sendMessage(String message);
+
+    /**
+     * Gets the string formatted in the player's locale
+     *
+     * @param key the string to format
+     * @return the formatted string
+     */
+    String getFormattedMessage(String key);
 
     /**
      * Send format message.
@@ -232,6 +250,14 @@ public interface CPlayer {
      * Close inventory.
      */
     void closeInventory();
+
+    /**
+     * Check if a player has a permission node
+     *
+     * @param node the node
+     * @return whether or not the player has a permission node
+     */
+    boolean hasPermission(String node);
 
     /**
      * Sets inventory slot.
@@ -814,6 +840,20 @@ public interface CPlayer {
     int getLevel();
 
     /**
+     * Get the player's current velocity vector
+     *
+     * @return the player's velocity as a vector
+     */
+    Vector getVelocity();
+
+    /**
+     * Set the player's current velocity
+     *
+     * @param vector the velocity as a vector
+     */
+    void setVelocity(Vector vector);
+
+    /**
      * Set player's exp amount
      *
      * @param exp amount
@@ -931,4 +971,25 @@ public interface CPlayer {
      * @return the effect active on this player, or null if not active.
      */
     PotionEffect getPotionEffect(PotionEffectType type);
+
+    /**
+     * Returns whether or not the player is inside a vehicle
+     *
+     * @return true if the player is inside a vehicle
+     */
+    boolean isInsideVehicle();
+
+    /**
+     * Eject the player from their vehicle
+     *
+     * @return true if the player was inside a vehicle
+     */
+    boolean eject();
+
+    /**
+     * Get the player's current windowId, the id of the inventory they're viewing
+     *
+     * @return the windowId
+     */
+    int getWindowId();
 }
