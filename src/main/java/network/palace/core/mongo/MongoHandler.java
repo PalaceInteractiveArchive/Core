@@ -831,7 +831,7 @@ public class MongoHandler {
      * @param message the message
      */
     public void signBook(UUID player, String sender, String message) {
-        Document doc = new Document("author", sender).append("message", message).append("time", System.currentTimeMillis() / 1000);
+        Document doc = new Document("author", sender).append("message", message).append("time", System.currentTimeMillis());
         playerCollection.updateOne(MongoFilter.UUID.getFilter(player.toString()), Updates.push("autographs", doc));
     }
 
