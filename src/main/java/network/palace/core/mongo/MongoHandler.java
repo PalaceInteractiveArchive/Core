@@ -844,7 +844,7 @@ public class MongoHandler {
      */
     public void deleteAutograph(UUID uuid, String sender, long time) {
         playerCollection.updateOne(MongoFilter.UUID.getFilter(uuid.toString()), Updates.pull("autographs",
-                new Document("sender", sender).append("time", time)));
+                new Document("author", sender).append("time", time)));
     }
 
     /**
