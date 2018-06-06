@@ -102,7 +102,7 @@ public class PluginsCommand extends CoreCommand {
             String spigotVersion = ChatColor.GOLD + "Spigot version: " + ChatColor.GREEN + Bukkit.getVersion();
             String apiVersion = ChatColor.GOLD + "API Version: " + ChatColor.GREEN + Bukkit.getBukkitVersion();
             String versionInfo = ChatColor.GOLD + "Version Info: " + ChatColor.GREEN + versionsBehind;
-            FormattedMessage spigot = new FormattedMessage("Running ").color(ChatColor.GOLD).then("Spigot ").color(ChatColor.GREEN).then("version ").color(ChatColor.GOLD).then(currentVersion).multilineTooltip(currentVersion, spigotVersion, apiVersion, versionInfo);
+            FormattedMessage spigot = new FormattedMessage("Running ").color(ChatColor.GOLD).then("Spigot ").color(ChatColor.GREEN).then("version ").color(ChatColor.GOLD).then(currentVersion).tooltip(currentVersion, spigotVersion, apiVersion, versionInfo);
             spigot.send((Player) sender);
         } else {
             sender.sendMessage(ChatColor.GOLD + "Running " + ChatColor.GREEN + "Spigot " + ChatColor.GOLD + "version " + ChatColor.DARK_GREEN + Bukkit.getVersion() + " (API version " + Bukkit.getBukkitVersion() + ") " + ChatColor.YELLOW + "(" + versionsBehind + ")");
@@ -173,7 +173,7 @@ public class PluginsCommand extends CoreCommand {
     private static int getDistance(String repo, String hash) {
         try {
             try (BufferedReader reader = Resources.asCharSource(new URL("https://hub.spigotmc.org/stash/rest/api/1.0/projects/SPIGOT/repos/"
-                            + repo + "/commits?since=" + URLEncoder.encode(hash, "UTF-8") + "&withCounts=true"), Charsets.UTF_8
+                    + repo + "/commits?since=" + URLEncoder.encode(hash, "UTF-8") + "&withCounts=true"), Charsets.UTF_8
             ).openBufferedStream()) {
                 JSONObject obj = (JSONObject) new JSONParser().parse(reader);
                 return ((Number) obj.get("totalCount")).intValue();

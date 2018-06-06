@@ -7,7 +7,6 @@ import com.comphenix.protocol.wrappers.WrappedChatComponent;
 import network.palace.core.player.CPlayer;
 import network.palace.core.utils.ItemUtil;
 import org.bukkit.ChatColor;
-import org.bukkit.Material;
 import org.bukkit.entity.Player;
 import org.bukkit.inventory.ItemStack;
 import org.json.simple.JSONArray;
@@ -15,7 +14,6 @@ import org.json.simple.JSONObject;
 
 import java.lang.reflect.InvocationTargetException;
 import java.util.ArrayList;
-import java.util.Arrays;
 import java.util.List;
 
 public class FormattedMessage {
@@ -75,9 +73,20 @@ public class FormattedMessage {
         return this;
     }
 
-    public FormattedMessage multilineTooltip(final String name, final String... lines) {
-        ItemStack stack = ItemUtil.create(Material.BOOK, 1, name, Arrays.asList(lines));
-        return itemTooltip(stack);
+    public FormattedMessage tooltip(final List<String> lines) {
+        return tooltip((String[]) lines.toArray());
+    }
+
+    public FormattedMessage tooltip(final String... lines) {
+        StringBuilder builder = new StringBuilder();
+        for (int i = 0; i < lines.length; i++) {
+            builder.append(lines[i]);
+            if (i < lines.length - 1) {
+                builder.append('\n');
+            }
+        }
+        tooltip(builder.toString());
+        return this;
     }
 
     public FormattedMessage itemTooltip(final ItemStack itemStack) {
