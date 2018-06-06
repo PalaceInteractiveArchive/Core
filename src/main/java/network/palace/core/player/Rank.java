@@ -10,12 +10,12 @@ import java.util.Map;
 @AllArgsConstructor
 public enum Rank {
 
-    MANAGER("Manager", "a", ChatColor.RED + "Manager ", ChatColor.RED, ChatColor.YELLOW, true, 11),
-    ADMIN("Admin", "b", ChatColor.RED + "Admin ", ChatColor.RED, ChatColor.YELLOW, true, 11),
-    DEVELOPER("Developer", "c", ChatColor.GOLD + "Developer ", ChatColor.GOLD, ChatColor.YELLOW, true, 11),
-    SRMOD("Sr Mod", "d", ChatColor.YELLOW + "Sr Mod ", ChatColor.YELLOW, ChatColor.GREEN, true, 10),
-    MOD("Mod", "e", ChatColor.GREEN + "Mod ", ChatColor.GREEN, ChatColor.GREEN, true, 9),
-    TRAINEEBUILD("Trainee", "f", ChatColor.DARK_GREEN + "Trainee ", ChatColor.DARK_GREEN, ChatColor.DARK_GREEN, false, 8),
+    MANAGER("Manager", "a", ChatColor.RED + "Manager ", ChatColor.RED, ChatColor.YELLOW, true, 12),
+    ADMIN("Admin", "b", ChatColor.RED + "Admin ", ChatColor.RED, ChatColor.YELLOW, true, 12),
+    DEVELOPER("Developer", "c", ChatColor.GOLD + "Developer ", ChatColor.GOLD, ChatColor.YELLOW, true, 12),
+    SRMOD("Sr Mod", "d", ChatColor.YELLOW + "Sr Mod ", ChatColor.YELLOW, ChatColor.GREEN, true, 11),
+    MOD("Mod", "e", ChatColor.GREEN + "Mod ", ChatColor.GREEN, ChatColor.GREEN, true, 10),
+    TRAINEEBUILD("Trainee", "f", ChatColor.DARK_GREEN + "Trainee ", ChatColor.DARK_GREEN, ChatColor.DARK_GREEN, false, 9),
     TRAINEE("Trainee", "f", ChatColor.DARK_GREEN + "Trainee ", ChatColor.DARK_GREEN, ChatColor.DARK_GREEN, false, 8),
     CHARACTER("Character", "g", ChatColor.BLUE + "Character ", ChatColor.BLUE, ChatColor.BLUE, false, 7),
     SPECIALGUEST("Special Guest", "h", ChatColor.DARK_PURPLE + "SG ", ChatColor.DARK_PURPLE, ChatColor.WHITE, false, 6),
