@@ -15,6 +15,7 @@ public enum Rank {
     DEVELOPER("Developer", "c", ChatColor.GOLD + "Developer ", ChatColor.GOLD, ChatColor.YELLOW, true, 11),
     SRMOD("Sr Mod", "d", ChatColor.YELLOW + "Sr Mod ", ChatColor.YELLOW, ChatColor.GREEN, true, 10),
     MOD("Mod", "e", ChatColor.GREEN + "Mod ", ChatColor.GREEN, ChatColor.GREEN, true, 9),
+    TRAINEEBUILD("Trainee", "f", ChatColor.DARK_GREEN + "Trainee ", ChatColor.DARK_GREEN, ChatColor.DARK_GREEN, false, 8),
     TRAINEE("Trainee", "f", ChatColor.DARK_GREEN + "Trainee ", ChatColor.DARK_GREEN, ChatColor.DARK_GREEN, false, 8),
     CHARACTER("Character", "g", ChatColor.BLUE + "Character ", ChatColor.BLUE, ChatColor.BLUE, false, 7),
     SPECIALGUEST("Special Guest", "h", ChatColor.DARK_PURPLE + "SG ", ChatColor.DARK_PURPLE, ChatColor.WHITE, false, 6),
@@ -36,10 +37,10 @@ public enum Rank {
 
     public static Rank fromString(String name) {
         if (name == null) return SETTLER;
-        String rankName = name.toLowerCase().replaceAll(" ", "");
+        String rankName = name.replaceAll(" ", "");
 
         for (Rank rank : Rank.values()) {
-            if (rank.getName().replaceAll(" ", "").equalsIgnoreCase(rankName)) return rank;
+            if (rank.getDBName().equalsIgnoreCase(rankName)) return rank;
         }
         return SETTLER;
     }
@@ -50,6 +51,9 @@ public enum Rank {
     }
 
     public String getDBName() {
+        if (this.equals(TRAINEEBUILD)) {
+            return "traineebuild";
+        }
         return name.toLowerCase().replaceAll(" ", "");
     }
 
