@@ -47,10 +47,10 @@ public class CorePlayer implements CPlayer {
     @Getter @Setter private String locale;
     @Getter @Setter private PlayerStatus status = PlayerStatus.LOGIN;
     @Getter private CPlayerAchievementManager achievementManager;
+    @Getter @Setter private CPlayerScoreboardManager scoreboard = new CorePlayerScoreboardManager(this);
     @Getter private CPlayerActionBarManager actionBar = new CorePlayerActionBarManager(this);
     @Getter private CPlayerBossBarManager bossBar = new CorePlayerBossBarManager(this);
     @Getter private CPlayerHeaderFooterManager headerFooter = new CorePlayerHeaderFooterManager(this);
-    @Getter @Setter private CPlayerScoreboardManager scoreboard = new CorePlayerScoreboardManager(this);
     @Getter private CPlayerTitleManager title = new CorePlayerTitleManager(this);
     @Getter private CPlayerParticlesManager particles = new CorePlayerParticlesManager(this);
     @Getter private CPlayerResourcePackManager resourcePack = new CorePlayerResourcePackManager(this);

@@ -159,10 +159,12 @@ public class CorePlayerManager implements CPlayerManager {
         }
 
         player.getScoreboard().setupPlayerTags();
-        for (CPlayer otherPlayer : Core.getPlayerManager().getOnlinePlayers()) {
-            if (player.getScoreboard() != null) player.getScoreboard().addPlayerTag(otherPlayer);
-            if (otherPlayer.getScoreboard() != null) otherPlayer.getScoreboard().addPlayerTag(player);
-        }
         defaultScoreboard.setup(player);
+        Core.runTaskLater(() -> {
+            for (CPlayer otherPlayer : Core.getPlayerManager().getOnlinePlayers()) {
+                if (player.getScoreboard() != null) player.getScoreboard().addPlayerTag(otherPlayer);
+                if (otherPlayer.getScoreboard() != null) otherPlayer.getScoreboard().addPlayerTag(player);
+            }
+        }, 20L);
     }
 }
