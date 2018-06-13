@@ -475,19 +475,19 @@ public class MongoHandler {
      * @param limit amount to get (max 10)
      * @return leaderboard map
      */
-    public HashMap<Integer, TopHonorReport> getTopHonor(int limit) {
-        HashMap<Integer, TopHonorReport> map = new HashMap<>();
+    public List<TopHonorReport> getTopHonor(int limit) {
+        List<TopHonorReport> list = new ArrayList<>();
         if (limit > 10) {
             limit = 10;
         }
-        FindIterable<Document> list = playerCollection.find().projection(new Document("uuid", 1).append("username", 1)
+        FindIterable<Document> iterable = playerCollection.find().projection(new Document("uuid", 1).append("username", 1)
                 .append("rank", 1).append("honor", 1)).sort(new Document("honor", -1)).limit(limit);
         int place = 1;
-        for (Document doc : list) {
-            map.put(doc.getInteger("honor"), new TopHonorReport(UUID.fromString(doc.getString("uuid")),
+        for (Document doc : iterable) {
+            list.add(new TopHonorReport(UUID.fromString(doc.getString("uuid")),
                     doc.getString("username"), place++, doc.getInteger("honor")));
         }
-        return map;
+        return list;
     }
 
     /* Resource Pack Methods */
@@ -558,14 +558,8 @@ public class MongoHandler {
                 String s = (String) o;
                 map.put(MongoUtil.commaToPeriod(s), true);
             }
-//            ArrayList list = (ArrayList) main.get(rank.getDBName());
-//            for (Object o : list) {
-//                Document doc = (Document) o;
-//                if (doc == null || doc.isEmpty() || doc.getString("node") == null || doc.getBoolean("value") == null)
-//                    continue;
-//                map.put(MongoUtil.commaToPeriod(doc.getString("node")), doc.getBoolean("value"));
-//            }
         }
+        map.put("palace.core.rank." + rank.getDBName(), true);
         return map;
     }
 

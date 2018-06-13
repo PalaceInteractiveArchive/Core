@@ -3,7 +3,6 @@ package network.palace.core.commands;
 import network.palace.core.Core;
 import network.palace.core.command.CommandException;
 import network.palace.core.command.CommandMeta;
-import network.palace.core.command.CommandPermission;
 import network.palace.core.command.CoreCommand;
 import network.palace.core.player.CPlayer;
 import network.palace.core.player.Rank;
@@ -16,8 +15,7 @@ import org.bukkit.command.ConsoleCommandSender;
 /**
  * The type Helpop command.
  */
-@CommandMeta(aliases = "ac", description = "Staff Chat command")
-@CommandPermission(rank = Rank.TRAINEE)
+@CommandMeta(aliases = "ac", description = "Staff Chat command", rank = Rank.TRAINEE)
 public class HelpopCommand extends CoreCommand {
 
     /**

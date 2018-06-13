@@ -4,7 +4,6 @@ import network.palace.core.Core;
 import network.palace.core.achievements.CoreAchievement;
 import network.palace.core.command.CommandException;
 import network.palace.core.command.CommandMeta;
-import network.palace.core.command.CommandPermission;
 import network.palace.core.command.CoreCommand;
 import network.palace.core.player.CPlayer;
 import network.palace.core.player.Rank;
@@ -12,8 +11,7 @@ import network.palace.core.utils.MiscUtil;
 import org.bukkit.ChatColor;
 import org.bukkit.command.CommandSender;
 
-@CommandMeta(description = "Award an achievement to a player")
-@CommandPermission(rank = Rank.MOD)
+@CommandMeta(description = "Award an achievement to a player", rank = Rank.MOD)
 public class AchievementCommand extends CoreCommand {
 
     public AchievementCommand() {

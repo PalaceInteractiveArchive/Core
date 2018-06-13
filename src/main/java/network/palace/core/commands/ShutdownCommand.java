@@ -3,7 +3,6 @@ package network.palace.core.commands;
 import network.palace.core.Core;
 import network.palace.core.command.CommandException;
 import network.palace.core.command.CommandMeta;
-import network.palace.core.command.CommandPermission;
 import network.palace.core.command.CoreCommand;
 import network.palace.core.dashboard.packets.dashboard.PacketEmptyServer;
 import network.palace.core.player.CPlayer;
@@ -16,8 +15,7 @@ import org.bukkit.command.CommandSender;
 /**
  * Server shutdown command.
  */
-@CommandMeta(description = "Safely stop the server.", aliases = "sd")
-@CommandPermission(rank = Rank.DEVELOPER)
+@CommandMeta(description = "Safely stop the server.", aliases = "sd", rank = Rank.DEVELOPER)
 public class ShutdownCommand extends CoreCommand {
     private int taskID = 0;
 

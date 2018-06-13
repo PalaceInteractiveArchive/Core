@@ -111,14 +111,14 @@ public abstract class CoreCommand implements CommandExecutor, TabCompleter {
             @Override
             public void handleCommandUnspecific(CommandSender sender, String[] args) {
                 String name = CoreCommand.this.getFormattedName();
-                String msg = ChatColor.GREEN + MiscUtil.capitalizeFirstLetter(name) + " Commands:";
+                StringBuilder msg = new StringBuilder(ChatColor.GREEN + MiscUtil.capitalizeFirstLetter(name) + " Commands:");
                 if (!isUsingSubCommandsOnly()) {
-                    msg += "\n" + ChatColor.GREEN + "/" + name.toLowerCase() + " " + ChatColor.AQUA + "- " + CoreCommand.this.getDescription();
+                    msg.append("\n").append(ChatColor.GREEN).append("/").append(name.toLowerCase()).append(" ").append(ChatColor.AQUA).append("- ").append(CoreCommand.this.getDescription());
                 }
                 for (Map.Entry<String, CoreCommand> entry : subCommands.entrySet()) {
-                    msg += "\n" + ChatColor.GREEN + "/" + entry.getValue().getFormattedName() + " " + ChatColor.AQUA + "- " + entry.getValue().getDescription();
+                    msg.append("\n").append(ChatColor.GREEN).append("/").append(entry.getValue().getFormattedName()).append(" ").append(ChatColor.AQUA).append("- ").append(entry.getValue().getDescription());
                 }
-                sender.sendMessage(msg);
+                sender.sendMessage(msg.toString());
 //                StringBuilder builder = new StringBuilder();
 //                for (Map.Entry<String, CoreCommand> stringModuleCommandEntry : CoreCommand.this.subCommands.entrySet()) {
 //                    builder.append(stringModuleCommandEntry.getKey()).append("|");
@@ -143,11 +143,17 @@ public abstract class CoreCommand implements CommandExecutor, TabCompleter {
             CoreCommand subCommand = null;
             if (sender instanceof Player) {
                 CPlayer player = Core.getPlayerManager().getPlayer(((Player) sender).getUniqueId());
+                Rank requiredRank = Rank.SETTLER;
+                if (getClass().isAnnotationPresent(CommandMeta.class)) {
+                    CommandMeta annotation = getClass().getAnnotation(CommandMeta.class);
+                    requiredRank = annotation.rank();
+                }
                 if (getClass().isAnnotationPresent(CommandPermission.class)) {
                     CommandPermission annotation = getClass().getAnnotation(CommandPermission.class);
-                    if (player.getRank().getRankId() < annotation.rank().getRankId())
-                        throw new PermissionException();
+                    requiredRank = annotation.rank();
                 }
+                if (player.getRank().getRankId() < requiredRank.getRankId())
+                    throw new PermissionException();
             }
             // Check if we HAVE to use sub-commands (a behavior this class provides)
             if (isUsingSubCommandsOnly()) {
@@ -200,11 +206,17 @@ public abstract class CoreCommand implements CommandExecutor, TabCompleter {
         // Security for tab complete
         if (sender instanceof Player) {
             CPlayer player = Core.getPlayerManager().getPlayer(((Player) sender).getUniqueId());
+            Rank requiredRank = Rank.SETTLER;
+            if (getClass().isAnnotationPresent(CommandMeta.class)) {
+                CommandMeta annotation = getClass().getAnnotation(CommandMeta.class);
+                requiredRank = annotation.rank();
+            }
             if (getClass().isAnnotationPresent(CommandPermission.class)) {
                 CommandPermission annotation = getClass().getAnnotation(CommandPermission.class);
-                if (player.getRank().getRankId() < annotation.rank().getRankId())
-                    return Collections.emptyList();
+                requiredRank = annotation.rank();
             }
+            if (player.getRank().getRankId() < requiredRank.getRankId())
+                return Collections.emptyList();
         }
         // Step one, check if we have to go a level deeper in the sub command system:
         if (args.length > 1) {

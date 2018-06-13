@@ -3,14 +3,12 @@ package network.palace.core.commands;
 import network.palace.core.Core;
 import network.palace.core.command.CommandException;
 import network.palace.core.command.CommandMeta;
-import network.palace.core.command.CommandPermission;
 import network.palace.core.command.CoreCommand;
 import network.palace.core.player.CPlayer;
 import network.palace.core.player.Rank;
 import org.bukkit.ChatColor;
 
-@CommandMeta(description = "Toggles player flight")
-@CommandPermission(rank = Rank.TRAINEE)
+@CommandMeta(description = "Toggles player flight", rank = Rank.TRAINEE)
 public class FlyCommand extends CoreCommand {
 
     public FlyCommand() {

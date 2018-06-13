@@ -82,6 +82,17 @@ public class CorePlayerManagerListener implements Listener {
         Core.getPermissionManager().logout(event.getPlayer().getUniqueId());
     }
 
+    /*@EventHandler
+    public void onPlayerTabComplete(PlayerChatTabCompleteEvent event) {
+        CPlayer player = Core.getPlayerManager().getPlayer(event.getPlayer());
+        if (player == null) {
+            event.getTabCompletions().clear();
+            return;
+        }
+        Rank rank = player.getRank();
+        Bukkit.broadcastMessage(event.getChatMessage() + " | " + event.getLastToken() + " | " + Arrays.asList(event.getTabCompletions()));
+    }*/
+
     /**
      * On player achievement awarded.
      *

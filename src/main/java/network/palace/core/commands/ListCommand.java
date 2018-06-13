@@ -4,7 +4,6 @@ import com.google.common.base.Joiner;
 import network.palace.core.Core;
 import network.palace.core.command.CommandException;
 import network.palace.core.command.CommandMeta;
-import network.palace.core.command.CommandPermission;
 import network.palace.core.command.CoreCommand;
 import network.palace.core.player.CPlayer;
 import network.palace.core.player.Rank;
@@ -16,8 +15,7 @@ import java.util.stream.Collectors;
 /**
  * The type List command.
  */
-@CommandMeta(aliases = {"who"}, description = "Lists all players on the server.")
-@CommandPermission(rank = Rank.TRAINEE)
+@CommandMeta(aliases = {"who"}, description = "Lists all players on the server.", rank = Rank.TRAINEE)
 public class ListCommand extends CoreCommand {
 
     /**

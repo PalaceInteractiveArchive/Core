@@ -1,7 +1,6 @@
 package network.palace.core.commands;
 
 import network.palace.core.command.CommandMeta;
-import network.palace.core.command.CommandPermission;
 import network.palace.core.command.CoreCommand;
 import network.palace.core.commands.permissions.ListCommand;
 import network.palace.core.commands.permissions.PlayerCommand;
@@ -12,8 +11,7 @@ import network.palace.core.player.Rank;
 /**
  * The type Perm command.
  */
-@CommandMeta(description = "Permissions command")
-@CommandPermission(rank = Rank.SRMOD)
+@CommandMeta(description = "Permissions command", rank = Rank.SRMOD)
 public class PermissionCommand extends CoreCommand {
 
     /**

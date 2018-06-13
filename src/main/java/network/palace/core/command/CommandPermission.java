@@ -10,6 +10,7 @@ import java.lang.annotation.Target;
 /**
  * The interface Command permission.
  */
+@Deprecated
 @Target(ElementType.TYPE)
 @Retention(RetentionPolicy.RUNTIME)
 public @interface CommandPermission {

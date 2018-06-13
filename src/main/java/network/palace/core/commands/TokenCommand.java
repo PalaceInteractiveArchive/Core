@@ -3,7 +3,6 @@ package network.palace.core.commands;
 import network.palace.core.Core;
 import network.palace.core.command.CommandException;
 import network.palace.core.command.CommandMeta;
-import network.palace.core.command.CommandPermission;
 import network.palace.core.command.CoreCommand;
 import network.palace.core.economy.CurrencyType;
 import network.palace.core.player.Rank;
@@ -20,8 +19,7 @@ import java.util.UUID;
 /**
  * The type Token command.
  */
-@CommandMeta(description = "Manage economy tokens")
-@CommandPermission(rank = Rank.MOD)
+@CommandMeta(description = "Manage economy tokens", rank = Rank.MOD)
 public class TokenCommand extends CoreCommand {
 
     /**

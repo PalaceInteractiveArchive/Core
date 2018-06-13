@@ -7,7 +7,6 @@ import lombok.Getter;
 import network.palace.core.Core;
 import network.palace.core.command.CommandException;
 import network.palace.core.command.CommandMeta;
-import network.palace.core.command.CommandPermission;
 import network.palace.core.command.CoreCommand;
 import network.palace.core.message.FormattedMessage;
 import network.palace.core.player.Rank;
@@ -32,8 +31,7 @@ import java.util.List;
 /**
  * The type Plugins command.
  */
-@CommandMeta(aliases = {"about", "pl", "ver", "version", "help", "?"}, description = "Lists the plugins for the server.")
-@CommandPermission(rank = Rank.DEVELOPER)
+@CommandMeta(aliases = {"about", "pl", "ver", "version", "help", "?"}, description = "Lists the plugins for the server.", rank = Rank.DEVELOPER)
 public class PluginsCommand extends CoreCommand {
 
     private String versionsBehind = "Loading version...";

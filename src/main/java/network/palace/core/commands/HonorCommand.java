@@ -3,7 +3,6 @@ package network.palace.core.commands;
 import network.palace.core.Core;
 import network.palace.core.command.CommandException;
 import network.palace.core.command.CommandMeta;
-import network.palace.core.command.CommandPermission;
 import network.palace.core.command.CoreCommand;
 import network.palace.core.honor.HonorMapping;
 import network.palace.core.player.CPlayer;
@@ -19,8 +18,7 @@ import java.util.UUID;
  * @author Marc
  * @since 6/18/17
  */
-@CommandMeta(description = "Get your current honor count and level")
-@CommandPermission(rank = Rank.DEVELOPER)
+@CommandMeta(description = "Get your current honor count and level", rank = Rank.DEVELOPER)
 public class HonorCommand extends CoreCommand {
     private final DecimalFormat format = new DecimalFormat("#,###");
 

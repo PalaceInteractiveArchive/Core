@@ -3,7 +3,6 @@ package network.palace.core.commands;
 import network.palace.core.Core;
 import network.palace.core.command.CommandException;
 import network.palace.core.command.CommandMeta;
-import network.palace.core.command.CommandPermission;
 import network.palace.core.command.CoreCommand;
 import network.palace.core.player.Rank;
 import org.bukkit.Bukkit;
@@ -23,8 +22,7 @@ import java.util.List;
 /**
  * The type Reload command.
  */
-@CommandMeta(aliases = {"rl"}, description = "Reload individual Core plugins.")
-@CommandPermission(rank = Rank.DEVELOPER)
+@CommandMeta(aliases = {"rl"}, description = "Reload individual Core plugins.", rank = Rank.DEVELOPER)
 public class ReloadCommand extends CoreCommand {
 
     /**
