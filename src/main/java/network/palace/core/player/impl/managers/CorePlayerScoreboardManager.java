@@ -30,6 +30,7 @@ public class CorePlayerScoreboardManager implements CPlayerScoreboardManager {
     private Objective scoreboardObjective;
     private String title = "";
     @Getter private boolean isSetup = false;
+    private boolean tagsVisible = true;
 
     /**
      * Instantiates a new Core player scoreboard manager.
@@ -186,5 +187,25 @@ public class CorePlayerScoreboardManager implements CPlayerScoreboardManager {
     @Override
     public void clear() {
         Core.runTask(this::setup);
+    }
+
+    @Override
+    public void toggleTags() {
+        tagsVisible = !tagsVisible;
+        if (scoreboard == null || scoreboard.getTeams() == null) return;
+        if (tagsVisible) {
+            for (Team team : scoreboard.getTeams()) {
+                team.setOption(Team.Option.NAME_TAG_VISIBILITY, Team.OptionStatus.ALWAYS);
+            }
+        } else {
+            for (Team team : scoreboard.getTeams()) {
+                team.setOption(Team.Option.NAME_TAG_VISIBILITY, Team.OptionStatus.NEVER);
+            }
+        }
+    }
+
+    @Override
+    public boolean getTagsVisible() {
+        return tagsVisible;
     }
 }

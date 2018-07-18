@@ -68,4 +68,16 @@ public interface CPlayerScoreboardManager {
      * Clear the scoreboard
      */
     void clear();
+
+    /**
+     * Hide username tags
+     */
+    void toggleTags();
+
+    /**
+     * Get whether tags are visible
+     *
+     * @return whether tags are visible
+     */
+    boolean getTagsVisible();
 }
