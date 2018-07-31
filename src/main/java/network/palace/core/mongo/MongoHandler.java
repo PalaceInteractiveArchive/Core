@@ -223,9 +223,13 @@ public class MongoHandler {
         warpsCollection.deleteOne(Filters.eq("name", name));
     }
 
-    public void createWarp(String name, String server, double x, double y, double z, float yaw, float pitch, String world) {
-        warpsCollection.insertOne(new Document("name", name).append("server", server).append("x", x).append("y", y)
-                .append("z", z).append("yaw", (int) yaw).append("pitch", (int) pitch).append("world", world));
+    public void createWarp(String name, String server, double x, double y, double z, float yaw, float pitch, String world, Rank rank) {
+        Document doc = new Document("name", name).append("server", server).append("x", x).append("y", y)
+                .append("z", z).append("yaw", (int) yaw).append("pitch", (int) pitch).append("world", world);
+        if (rank != null) {
+            doc.append("rank", rank.getDBName());
+        }
+        warpsCollection.insertOne(doc);
     }
 
     /* Achievement Methods */
@@ -651,13 +655,13 @@ public class MongoHandler {
         List<String> prelist = new ArrayList<>();
         friendsCollection.find(Filters.eq(new Document("sender", uuid.toString()))).projection(new Document("receiver", 1).append("started", 1))
                 .forEach((Block<Document>) d -> {
-                    if (friends ? d.getLong("started") > 0 : d.getLong("started") <= 0) {
+                    if (friends == (d.getLong("started") > 0)) {
                         prelist.add(d.getString("receiver"));
                     }
                 });
         friendsCollection.find(Filters.eq(new Document("receiver", uuid.toString()))).projection(new Document("sender", 1).append("started", 1))
                 .forEach((Block<Document>) d -> {
-                    if (friends ? d.getLong("started") > 0 : d.getLong("started") <= 0) {
+                    if (friends == (d.getLong("started") > 0)) {
                         prelist.add(d.getString("sender"));
                     }
                 });

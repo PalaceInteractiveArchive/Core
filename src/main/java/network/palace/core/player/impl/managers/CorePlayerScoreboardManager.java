@@ -205,6 +205,12 @@ public class CorePlayerScoreboardManager implements CPlayerScoreboardManager {
     }
 
     @Override
+    public void toggleTags(boolean hidden) {
+        if (tagsVisible == !hidden) return;
+        toggleTags();
+    }
+
+    @Override
     public boolean getTagsVisible() {
         return tagsVisible;
     }

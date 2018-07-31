@@ -8,13 +8,13 @@ import network.palace.core.player.Rank;
 import org.bukkit.ChatColor;
 
 @CommandMeta(description = "Hide username tags", rank = Rank.MOD)
-public class ToggleTagCommand extends CoreCommand {
+public class TagToggleCommand extends CoreCommand {
 
     /**
      * Instantiates a new Token command.
      */
-    public ToggleTagCommand() {
-        super("toggletag");
+    public TagToggleCommand() {
+        super("tagtoggle");
     }
 
     @Override

@@ -224,7 +224,7 @@ public class Core extends JavaPlugin {
         registerCommand(new ReloadCommand());
         registerCommand(new ShutdownCommand());
         registerCommand(new SpawnCommand());
-        registerCommand(new ToggleTagCommand());
+        registerCommand(new TagToggleCommand());
         registerCommand(new TokenCommand());
         registerCommand(new TopHonorCommand());
         runTask(() -> {

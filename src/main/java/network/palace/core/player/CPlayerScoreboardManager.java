@@ -75,6 +75,13 @@ public interface CPlayerScoreboardManager {
     void toggleTags();
 
     /**
+     * Hide username tags
+     *
+     * @param hidden whether or not tags should be hidden
+     */
+    void toggleTags(boolean hidden);
+
+    /**
      * Get whether tags are visible
      *
      * @return whether tags are visible
