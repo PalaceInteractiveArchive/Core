@@ -45,6 +45,7 @@ public class MongoHandler {
     private MongoCollection<Document> friendsCollection = null;
     private MongoCollection<Document> permissionCollection = null;
     private MongoCollection<Document> resourcePackCollection = null;
+    private MongoCollection<Document> rideCounterCollection = null;
     private MongoCollection<Document> honorMappingCollection = null;
     private MongoCollection<Document> outfitsCollection = null;
     private MongoCollection<Document> hotelCollection = null;
@@ -73,6 +74,7 @@ public class MongoHandler {
         friendsCollection = database.getCollection("friends");
         permissionCollection = database.getCollection("permissions");
         resourcePackCollection = database.getCollection("resourcepacks");
+        rideCounterCollection = database.getCollection("ridecounters");
         honorMappingCollection = database.getCollection("honormapping");
         outfitsCollection = database.getCollection("outfits");
         hotelCollection = database.getCollection("hotels");
@@ -792,9 +794,13 @@ public class MongoHandler {
      * @return a document with ride counter data
      */
     public ArrayList getRideCounterData(UUID uuid) {
-        Document park = getParkData(uuid, null);
-        return park.get("rides", ArrayList.class);
-//        return getParkData(uuid, new Document("parks.rides", 1));
+        ArrayList<Document> list = new ArrayList<>();
+        for (Document d : rideCounterCollection.find(MongoFilter.UUID.getFilter(uuid.toString()))) {
+            list.add(d);
+        }
+        return list;
+//        Document park = getParkData(uuid, null);
+//        return park.get("rides", ArrayList.class);
     }
 
     /**
@@ -804,10 +810,10 @@ public class MongoHandler {
      * @param name the name of the ride
      */
     public void logRideCounter(UUID uuid, String name) {
-        playerCollection.updateOne(MongoFilter.UUID.getFilter(uuid.toString()),
-                Updates.push("parks.rides", new Document("name", name)
-                        .append("server", Core.getServerType())
-                        .append("time", System.currentTimeMillis() / 1000)));
+        if (uuid == null || name == null) return;
+        Document doc = new Document("uuid", uuid.toString()).append("name", name.trim()).append("server", Core.getServerType())
+                .append("time", System.currentTimeMillis() / 1000);
+        rideCounterCollection.insertOne(doc);
     }
 
     /**

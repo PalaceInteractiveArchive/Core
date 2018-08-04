@@ -5,6 +5,7 @@ import network.palace.core.command.CommandException;
 import network.palace.core.command.CommandMeta;
 import network.palace.core.command.CoreCommand;
 import network.palace.core.economy.CurrencyType;
+import network.palace.core.player.CPlayer;
 import network.palace.core.player.Rank;
 import network.palace.core.utils.MiscUtil;
 import org.bukkit.Bukkit;
@@ -60,30 +61,38 @@ public class BalanceCommand extends CoreCommand {
                 helpMenu(sender);
             } else {
                 String action = args[0];
-                Player tp = (Player) sender;
+                CPlayer tp = Core.getPlayerManager().getPlayer(((Player) sender).getUniqueId());
+                if (tp == null) {
+                    sender.sendMessage(ChatColor.RED + "Player not found!");
+                    return;
+                }
                 if (!MiscUtil.checkIfInt(args[1])) {
                     helpMenu(sender);
                     return;
                 }
                 String source = tp.getName();
                 int amount = Integer.parseInt(args[1]);
-                switch (action.toLowerCase()) {
-                    case "set":
-                        Core.getMongoHandler().changeAmount(tp.getUniqueId(), amount, source, CurrencyType.BALANCE, true);
-                        break;
-                    case "add":
-                        Core.getMongoHandler().changeAmount(tp.getUniqueId(), amount, source, CurrencyType.BALANCE, false);
-                        break;
-                    case "minus":
-                        Core.getMongoHandler().changeAmount(tp.getUniqueId(), -amount, source, CurrencyType.BALANCE, false);
-                        break;
-                }
+                Core.runTaskAsynchronously(() -> {
+                    switch (action.toLowerCase()) {
+                        case "set":
+                            Core.getMongoHandler().changeAmount(tp.getUniqueId(), amount, source, CurrencyType.BALANCE, true);
+                            break;
+                        case "add":
+                            tp.getActionBar().show(ChatColor.GREEN + "+" + CurrencyType.BALANCE.getIcon() + amount);
+                            Core.getMongoHandler().changeAmount(tp.getUniqueId(), amount, source, CurrencyType.BALANCE, false);
+                            break;
+                        case "minus":
+                            tp.getActionBar().show(ChatColor.GREEN + "-" + CurrencyType.BALANCE.getIcon() + amount);
+                            Core.getMongoHandler().changeAmount(tp.getUniqueId(), -amount, source, CurrencyType.BALANCE, false);
+                            break;
+                    }
+                });
             }
             return;
         }
         if (args.length == 3) {
             String action = args[0];
-            Player tp = Bukkit.getPlayer(args[2]);
+            CPlayer tp = Core.getPlayerManager().getPlayer(Bukkit.getPlayer(args[2]));
             if (tp == null) {
                 sender.sendMessage(ChatColor.GREEN + args[2] + ChatColor.RED + " is not online!");
                 return;
@@ -101,17 +110,21 @@ public class BalanceCommand extends CoreCommand {
                 source = sender instanceof Player ? sender.getName() : "Console";
             }
             int amount = Integer.parseInt(args[1]);
-            switch (action.toLowerCase()) {
-                case "set":
-                    Core.getMongoHandler().changeAmount(tp.getUniqueId(), amount, source, CurrencyType.BALANCE, true);
-                    break;
-                case "add":
-                    Core.getMongoHandler().changeAmount(tp.getUniqueId(), amount, source, CurrencyType.BALANCE, false);
-                    break;
-                case "minus":
-                    Core.getMongoHandler().changeAmount(tp.getUniqueId(), -amount, source, CurrencyType.BALANCE, false);
-                    break;
-            }
+            Core.runTaskAsynchronously(() -> {
+                switch (action.toLowerCase()) {
+                    case "set":
+                        Core.getMongoHandler().changeAmount(tp.getUniqueId(), amount, source, CurrencyType.BALANCE, true);
+                        break;
+                    case "add":
+                        tp.getActionBar().show(ChatColor.GREEN + "+" + CurrencyType.BALANCE.getIcon() + amount);
+                        Core.getMongoHandler().changeAmount(tp.getUniqueId(), amount, source, CurrencyType.BALANCE, false);
+                        break;
+                    case "minus":
+                        tp.getActionBar().show(ChatColor.GREEN + "-" + CurrencyType.BALANCE.getIcon() + amount);
+                        Core.getMongoHandler().changeAmount(tp.getUniqueId(), -amount, source, CurrencyType.BALANCE, false);
+                        break;
+                }
+            });
             return;
         }
         helpMenu(sender);

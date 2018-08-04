@@ -2,12 +2,14 @@ package network.palace.core.economy;
 
 import lombok.AllArgsConstructor;
 import lombok.Getter;
+import org.bukkit.ChatColor;
 
 @AllArgsConstructor
 public enum CurrencyType {
-    BALANCE("$"), TOKENS("✪ ");
+    BALANCE("$", ChatColor.GREEN), TOKENS("✪ ", ChatColor.YELLOW);
 
     @Getter private String icon;
+    @Getter private ChatColor color;
 
     public String getName() {
         return name().toLowerCase();

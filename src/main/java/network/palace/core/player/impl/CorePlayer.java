@@ -629,32 +629,56 @@ public class CorePlayer implements CPlayer {
 
     @Override
     public void addTokens(int amount) {
-        Core.getMongoHandler().changeAmount(getUuid(), amount, "plugin", CurrencyType.TOKENS, false);
+        if (amount == 0) return;
+        if (amount > 0) {
+            getActionBar().show(ChatColor.YELLOW + "+" + CurrencyType.TOKENS.getIcon() + amount);
+        } else {
+            getActionBar().show(ChatColor.YELLOW + "-" + CurrencyType.TOKENS.getIcon() + amount);
+        }
+        Core.runTaskAsynchronously(() -> Core.getMongoHandler().changeAmount(getUuid(), amount, "plugin", CurrencyType.TOKENS, false));
     }
 
     @Override
     public void addBalance(int amount) {
-        Core.getMongoHandler().changeAmount(getUuid(), amount, "plugin", CurrencyType.BALANCE, false);
+        if (amount == 0) return;
+        if (amount > 0) {
+            getActionBar().show(ChatColor.GREEN + "+" + CurrencyType.BALANCE.getIcon() + amount);
+        } else {
+            getActionBar().show(ChatColor.GREEN + "-" + CurrencyType.BALANCE.getIcon() + amount);
+        }
+        Core.runTaskAsynchronously(() -> Core.getMongoHandler().changeAmount(getUuid(), amount, "plugin", CurrencyType.BALANCE, false));
     }
 
     @Override
     public void setTokens(int amount) {
-        Core.getMongoHandler().changeAmount(getUuid(), amount, "Core", CurrencyType.TOKENS, true);
+        Core.runTaskAsynchronously(() -> Core.getMongoHandler().changeAmount(getUuid(), amount, "Core", CurrencyType.TOKENS, true));
     }
 
     @Override
     public void setBalance(int amount) {
-        Core.getMongoHandler().changeAmount(getUuid(), amount, "Core", CurrencyType.BALANCE, true);
+        Core.runTaskAsynchronously(() -> Core.getMongoHandler().changeAmount(getUuid(), amount, "Core", CurrencyType.BALANCE, true));
     }
 
     @Override
     public void removeTokens(int amount) {
-        Core.getMongoHandler().changeAmount(getUuid(), -amount, "Core", CurrencyType.TOKENS, false);
+        if (amount == 0) return;
+        if (amount > 0) {
+            getActionBar().show(ChatColor.YELLOW + "-" + CurrencyType.TOKENS.getIcon() + amount);
+        } else {
+            getActionBar().show(ChatColor.YELLOW + "+" + CurrencyType.TOKENS.getIcon() + amount);
+        }
+        Core.runTaskAsynchronously(() -> Core.getMongoHandler().changeAmount(getUuid(), -amount, "Core", CurrencyType.TOKENS, false));
     }
 
     @Override
     public void removeBalance(int amount) {
-        Core.getMongoHandler().changeAmount(getUuid(), -amount, "Core", CurrencyType.BALANCE, false);
+        if (amount == 0) return;
+        if (amount > 0) {
+            getActionBar().show(ChatColor.GREEN + "-" + CurrencyType.BALANCE.getIcon() + amount);
+        } else {
+            getActionBar().show(ChatColor.GREEN + "+" + CurrencyType.BALANCE.getIcon() + amount);
+        }
+        Core.runTaskAsynchronously(() -> Core.getMongoHandler().changeAmount(getUuid(), -amount, "Core", CurrencyType.BALANCE, false));
     }
 
     @Override
