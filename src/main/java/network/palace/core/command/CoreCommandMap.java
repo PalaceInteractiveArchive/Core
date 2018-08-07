@@ -44,12 +44,6 @@ public final class CoreCommandMap {
             command1.setDescription(annotation.description());
             command1.setUsage(annotation.usage());
             command.setDescription(annotation.description());
-            CommandPermission perm = command.getClass().getAnnotation(CommandPermission.class);
-            if (perm != null) {
-                command1.setPermission("palace.core.rank." + perm.rank().getDBName());
-            } else {
-                command1.setPermission("palace.core.rank." + annotation.rank().getDBName());
-            }
         }
         // Remove old commands before register
         List<String> tempList = new ArrayList<>(Collections.singletonList(command.getName()));

@@ -3,8 +3,12 @@ package network.palace.core.permissions;
 import network.palace.core.Core;
 import network.palace.core.player.CPlayer;
 import network.palace.core.player.Rank;
+import org.bukkit.Bukkit;
+import org.bukkit.command.ConsoleCommandSender;
 import org.bukkit.entity.Player;
+import org.bukkit.permissions.Permission;
 import org.bukkit.permissions.PermissionAttachment;
+import org.bukkit.permissions.PermissionDefault;
 
 import java.util.Collection;
 import java.util.HashMap;
@@ -21,6 +25,7 @@ public class PermissionManager {
      */
     public Map<UUID, PermissionAttachment> attachments = new HashMap<>();
     private Map<Rank, Map<String, Boolean>> permissions = new HashMap<>();
+    private PermissionAttachment consoleAttachment = null;
 
     /**
      * Instantiates a new Permission manager.
@@ -35,10 +40,19 @@ public class PermissionManager {
     private void initialize() {
         permissions.clear();
         Rank[] ranks = Rank.values();
+
+        ConsoleCommandSender console = Bukkit.getConsoleSender();
+        if (consoleAttachment != null) console.removeAttachment(consoleAttachment);
+        consoleAttachment = console.addAttachment(Core.getInstance());
+        for (Rank rank : ranks) {
+            consoleAttachment.setPermission("palace.core.rank." + rank.getDBName(), true);
+        }
+
         Collection<CPlayer> players = Core.getPlayerManager().getOnlinePlayers();
         Rank previous = null;
         for (int i = ranks.length - 1; i >= 0; i--) {
             Rank r = ranks[i];
+            Bukkit.getPluginManager().addPermission(new Permission("palace.core.rank." + r.getDBName(), PermissionDefault.OP));
             Map<String, Boolean> perms = Core.getMongoHandler().getPermissions(r);
             if (previous != null) {
                 for (Map.Entry<String, Boolean> perm : getPermissions(previous).entrySet()) {
