@@ -598,6 +598,18 @@ public class CorePlayer implements CPlayer {
     }
 
     @Override
+    public void setSneaking(boolean sneaking) {
+        if (getStatus() != PlayerStatus.JOINED) return;
+        if (getBukkitPlayer() == null) return;
+        getBukkitPlayer().setSneaking(sneaking);
+    }
+
+    @Override
+    public boolean isSneaking() {
+        return getStatus() == PlayerStatus.JOINED && getBukkitPlayer() != null && getBukkitPlayer().isSneaking();
+    }
+
+    @Override
     public void setFlying(boolean fly) {
         if (getStatus() != PlayerStatus.JOINED) return;
         if (getBukkitPlayer() == null) return;
@@ -842,7 +854,12 @@ public class CorePlayer implements CPlayer {
 
     @Override
     public boolean isInVehicle() {
-        return getStatus().equals(PlayerStatus.JOINED) && getBukkitPlayer().isInsideVehicle();
+        return getStatus().equals(PlayerStatus.JOINED) && getBukkitPlayer() != null && getBukkitPlayer().isInsideVehicle();
+    }
+
+    @Override
+    public boolean leaveVehicle() {
+        return getStatus().equals(PlayerStatus.JOINED) && getBukkitPlayer() != null && getBukkitPlayer().leaveVehicle();
     }
 
     @Override

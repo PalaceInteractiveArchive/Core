@@ -665,6 +665,20 @@ public interface CPlayer {
     boolean isFlying();
 
     /**
+     * Set whether a player is sneaking
+     *
+     * @param sneaking sneaking value
+     */
+    void setSneaking(boolean sneaking);
+
+    /**
+     * Get whether a player is sneaking
+     *
+     * @return sneaking value
+     */
+    boolean isSneaking();
+
+    /**
      * Set whether a player is flying
      *
      * @param fly flying value
@@ -780,6 +794,13 @@ public interface CPlayer {
      * @return if the player is in a vehicle
      */
     boolean isInVehicle();
+
+    /**
+     * Leave the current vehicle.
+     *
+     * @return True if the entity was in a vehicle.
+     */
+    boolean leaveVehicle();
 
     /**
      * Set metadata of a player
