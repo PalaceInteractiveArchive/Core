@@ -654,22 +654,20 @@ public class MongoHandler {
      */
     public List<UUID> getList(UUID uuid, boolean friends) {
         List<UUID> list = new ArrayList<>();
-        List<String> prelist = new ArrayList<>();
-        friendsCollection.find(Filters.eq(new Document("sender", uuid.toString()))).projection(new Document("receiver", 1).append("started", 1))
-                .forEach((Block<Document>) d -> {
-                    if (friends == (d.getLong("started") > 0)) {
-                        prelist.add(d.getString("receiver"));
-                    }
-                });
-        friendsCollection.find(Filters.eq(new Document("receiver", uuid.toString()))).projection(new Document("sender", 1).append("started", 1))
-                .forEach((Block<Document>) d -> {
-                    if (friends == (d.getLong("started") > 0)) {
-                        prelist.add(d.getString("sender"));
-                    }
-                });
-        for (String s : prelist) {
-            if (s.equals(uuid.toString())) continue;
-            list.add(UUID.fromString(s));
+        for (Document doc : friendsCollection.find(Filters.or(Filters.eq("sender", uuid.toString()),
+                Filters.eq("receiver", uuid.toString())))) {
+            UUID sender = UUID.fromString(doc.getString("sender"));
+            UUID receiver = UUID.fromString(doc.getString("receiver"));
+            boolean friend = doc.getLong("started") > 0;
+            if (!friends && !friend && receiver.equals(uuid)) {
+                list.add(sender);
+            } else if (friends && friend) {
+                if (uuid.equals(sender)) {
+                    list.add(receiver);
+                } else {
+                    list.add(sender);
+                }
+            }
         }
         return list;
     }
