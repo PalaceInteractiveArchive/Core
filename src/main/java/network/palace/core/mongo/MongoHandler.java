@@ -163,6 +163,18 @@ public class MongoHandler {
     }
 
     /**
+     * Get username from player's UUID
+     *
+     * @param uuid the uuid
+     * @return their username or null if no player is found
+     */
+    public String uuidToUsername(UUID uuid) {
+        FindIterable<Document> list = playerCollection.find(MongoFilter.UUID.getFilter(uuid.toString()));
+        if (list.first() == null) return null;
+        return list.first().getString("username");
+    }
+
+    /**
      * Get UUID from player's username
      *
      * @param username the username
