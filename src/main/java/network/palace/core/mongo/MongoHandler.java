@@ -7,9 +7,7 @@ import com.mongodb.MongoClientURI;
 import com.mongodb.client.FindIterable;
 import com.mongodb.client.MongoCollection;
 import com.mongodb.client.MongoDatabase;
-import com.mongodb.client.model.Filters;
-import com.mongodb.client.model.FindOneAndUpdateOptions;
-import com.mongodb.client.model.Updates;
+import com.mongodb.client.model.*;
 import lombok.Getter;
 import network.palace.core.Core;
 import network.palace.core.economy.CurrencyType;
@@ -34,9 +32,6 @@ import java.util.*;
  * @since 9/23/17
  */
 public class MongoHandler {
-    private String username;
-    private String password;
-    private String hostname;
 
     private MongoClient client = null;
     @Getter private MongoDatabase database = null;
@@ -59,9 +54,9 @@ public class MongoHandler {
      * Connect to the MongoDB database
      */
     public void connect() {
-        username = Core.getCoreConfig().getString("db.user");
-        password = Core.getCoreConfig().getString("db.password");
-        hostname = Core.getCoreConfig().getString("db.hostname");
+        String username = Core.getCoreConfig().getString("db.user");
+        String password = Core.getCoreConfig().getString("db.password");
+        String hostname = Core.getCoreConfig().getString("db.hostname");
         if (username == null || password == null || hostname == null) {
             Core.logMessage("Mongo Handler", ChatColor.RED + "" + ChatColor.BOLD + "Error with mongo config!");
             Bukkit.shutdown();
@@ -165,6 +160,18 @@ public class MongoHandler {
      */
     public Rank getRank(String username) {
         return Rank.fromString(playerCollection.find(MongoFilter.USERNAME.getFilter(username)).first().getString("rank"));
+    }
+
+    /**
+     * Get username from player's UUID
+     *
+     * @param uuid the uuid
+     * @return their username or null if no player is found
+     */
+    public String uuidToUsername(UUID uuid) {
+        FindIterable<Document> list = playerCollection.find(MongoFilter.UUID.getFilter(uuid.toString()));
+        if (list.first() == null) return null;
+        return list.first().getString("username");
     }
 
     /**
@@ -1053,6 +1060,35 @@ public class MongoHandler {
         playerCollection.updateOne(MongoFilter.UUID.getFilter(uuid.toString()), Updates.set("parks.fastpass",
                 new Document("slow", slow).append("moderate", moderate).append("thrill", thrill).append("sday", slowday)
                         .append("mday", moderateday).append("tday", thrillday)));
+    }
+
+    /**
+     * Get the top ride counters for a specific ride
+     *
+     * @param name   the name of the ride
+     * @param amount the amount of top entries to return, i.e. top 10 (max value of 20)
+     * @return An ArrayList of documents containing the player's UUID (as 'uuid') mapped to their ride count (as 'total'), i.e. Legobuilder0813 -> 100
+     * @implNote The returned ArrayList is sorted with the top entry first and the lowest entry last
+     */
+    public List<Document> getRideCounterLeaderboard(String name, int amount) {
+        if (amount > 20) {
+            amount = 10;
+        }
+        List<Document> list = new ArrayList<>();
+        rideCounterCollection.aggregate(
+                Arrays.asList(
+                        Aggregates.match(Filters.eq("name", name)),
+                        Aggregates.group("$uuid", Accumulators.sum("total", 1)),
+                        Aggregates.sort(new Document("total", -1)),
+                        Aggregates.limit(amount)
+                )
+        ).forEach((Block<Document>) document -> {
+            String uuid = document.getString("_id");
+            int total = document.getInteger("total");
+            list.add(new Document("uuid", uuid).append("total", total));
+        });
+        list.sort((o1, o2) -> o2.getInteger("total") - o1.getInteger("total"));
+        return list;
     }
 
     /*
