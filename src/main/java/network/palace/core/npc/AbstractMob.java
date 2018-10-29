@@ -4,6 +4,7 @@ import com.comphenix.protocol.PacketType;
 import com.comphenix.protocol.ProtocolLibrary;
 import com.comphenix.protocol.events.PacketAdapter;
 import com.comphenix.protocol.events.PacketEvent;
+import com.comphenix.protocol.utility.MinecraftReflection;
 import com.comphenix.protocol.wrappers.WrappedDataWatcher;
 import com.comphenix.protocol.wrappers.WrappedWatchableObject;
 import com.google.common.collect.ImmutableSet;
@@ -30,6 +31,7 @@ public abstract class AbstractMob implements Observable<NPCObserver> {
     private final Set<NPCObserver> observers;
     @Getter private final WrappedDataWatcher dataWatcher;
     private WrappedDataWatcher lastDataWatcher;
+    //    private List<WrappedWatchableObject> lastDataWatcherObjects;
     @Getter boolean spawned;
     @Getter protected final int id;
     private InteractWatcher listener;
@@ -40,9 +42,14 @@ public abstract class AbstractMob implements Observable<NPCObserver> {
     @Getter @Setter private UUID uuid;
 
     protected abstract EntityType getEntityType();
+
     public abstract float getMaximumHealth();
-    protected void onUpdate() {}
-    protected void onDataWatcherUpdate() {}
+
+    protected void onUpdate() {
+    }
+
+    protected void onDataWatcherUpdate() {
+    }
 
     {
         Core.getSoftNPCManager().getMobRefs().add(new WeakReference<>(this));
@@ -110,7 +117,7 @@ public abstract class AbstractMob implements Observable<NPCObserver> {
             players[x] = player;
             x++;
         }
-        return x == 0 ? new CPlayer[]{} :  Arrays.copyOfRange(players, 0, x);
+        return x == 0 ? new CPlayer[]{} : Arrays.copyOfRange(players, 0, x);
     }
 
     public void spawn() {
@@ -188,6 +195,7 @@ public abstract class AbstractMob implements Observable<NPCObserver> {
     public final void playHurtAnimation() {
         playStatus(Status.ENTITY_HURT);
     }
+
     public final void playDeadAnimation() {
         playStatus(Status.ENTITY_DEAD);
     }
@@ -195,6 +203,7 @@ public abstract class AbstractMob implements Observable<NPCObserver> {
     public final void playHurtAnimation(Set<CPlayer> players) {
         playStatus(players, Status.ENTITY_HURT);
     }
+
     public final void playDeadAnimation(Set<CPlayer> players) {
         playStatus(players, Status.ENTITY_DEAD);
     }
@@ -216,13 +225,23 @@ public abstract class AbstractMob implements Observable<NPCObserver> {
         }
         for (WrappedWatchableObject watchableObject : watchableObjects) {
             Core.debugLog("Sending update on " + watchableObject.getIndex() + " for #" + id + " (" +
-                    getClass().getSimpleName() + " ) =" + watchableObject.getValue() + " (" + watchableObject.getHandleType().getName() + ")");
+                    getClass().getSimpleName() + ") =" + watchableObject.getValue() + " (" + watchableObject.getHandleType().getName() + ")");
         }
         packet.setMetadata(watchableObjects);
         packet.setEntityID(id);
         Arrays.asList(getTargets()).forEach(packet::sendPacket);
-        lastDataWatcher = dataWatcher.deepClone();
+        lastDataWatcher = deepClone(dataWatcher);
         onUpdate();
+    }
+
+    private WrappedDataWatcher deepClone(WrappedDataWatcher dataWatcher) {
+        WrappedDataWatcher clone = new WrappedDataWatcher();
+        if (MinecraftReflection.watcherObjectExists()) {
+            dataWatcher.getWatchableObjects().forEach(object -> clone.setObject(object.getWatcherObject(), object));
+        } else {
+            dataWatcher.getWatchableObjects().forEach(object -> clone.setObject(object.getIndex(), object));
+        }
+        return clone;
     }
 
     public final void move(Point point) {
@@ -263,7 +282,8 @@ public abstract class AbstractMob implements Observable<NPCObserver> {
     }
 
     public final void setHeadYaw(Location location) {
-        if (!spawned) throw new IllegalStateException("You cannot modify the rotation of the head of a non-spawned entity!");
+        if (!spawned)
+            throw new IllegalStateException("You cannot modify the rotation of the head of a non-spawned entity!");
         headYaw = (int) location.getYaw();
         WrapperPlayServerEntityHeadRotation packet = new WrapperPlayServerEntityHeadRotation();
         packet.setEntityID(id);

@@ -9,8 +9,7 @@ import lombok.Getter;
  */
 @AllArgsConstructor
 public enum GameType {
-    OUTPOST(1, "Outpost", "outpost"), SPLEEF(2, "Spleef", "spleef"), PIXIE_DUST_SHOOTOUT(3, "Pixie Dust Shootout",
-            "pixiedustshootout"), ONESHOT(4, "One Shot", "oneshot"), FREEZETAG(5, "Freeze Tag", "freezetag");
+    DEATHRUN(1, "Deathrun", "deathrun"), PIXIE_DUST_SHOOTOUT(2, "Pixie Dust Shootout", "pixie");
     @Getter int id;
     @Getter String name;
     @Getter String dbName;

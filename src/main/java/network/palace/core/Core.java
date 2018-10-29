@@ -59,7 +59,7 @@ import java.util.concurrent.Future;
  * <p>
  * You can access instances of other modules by depending on Core in your pom.xml, and then executing Core.get
  */
-@PluginInfo(name = "Core", version = "2.3.7", depend = {"ProtocolLib"})
+@PluginInfo(name = "Core", version = "2.3.8", depend = {"ProtocolLib"})
 public class Core extends JavaPlugin {
 
     private boolean starting = true;
@@ -659,10 +659,9 @@ public class Core extends JavaPlugin {
      */
     public static void sendAllPlayers(String server, Callback callback) {
         runTaskAsynchronously(() -> {
-            do {
-                CPlayer player = Core.getPlayerManager().getOnlinePlayers().get(0);
+            for (CPlayer player : Core.getPlayerManager().getOnlinePlayers()) {
                 player.sendToServer(server);
-            } while (Core.getPlayerManager().getOnlinePlayers().size() > 0);
+            }
             callback.finished();
         });
     }
