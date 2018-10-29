@@ -11,8 +11,8 @@ import java.util.Optional;
  * @since 4/29/2017
  */
 public class Hologram {
-
     private Optional<MobArmorStand> armorStand;
+    private String text = "";
 
     public Hologram(Point point, String text) {
         MobArmorStand mobArmorStand = new MobArmorStand(point, null, text);
@@ -26,6 +26,7 @@ public class Hologram {
 
     public void create() {
         this.armorStand.ifPresent(AbstractMob::spawn);
+        setText(text);
     }
 
     public void destroy() {
@@ -39,13 +40,14 @@ public class Hologram {
     }
 
     public void setText(String text) {
+        this.text = text;
         this.armorStand.ifPresent(mobArmorStand -> {
             mobArmorStand.setCustomName(text);
             if (mobArmorStand.isSpawned()) mobArmorStand.update();
         });
     }
 
-    public Optional<String> getText() {
-        return armorStand.map(AbstractMob::getCustomName);
+    public String getText() {
+        return text;
     }
 }
