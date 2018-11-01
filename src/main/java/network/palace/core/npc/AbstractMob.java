@@ -123,8 +123,10 @@ public abstract class AbstractMob implements Observable<NPCObserver> {
     public void spawn() {
         if (spawned) return;
         ProtocolLibrary.getProtocolManager().addPacketListener(createNewInteractWatcher());
-        Arrays.asList(getTargets()).forEach(getSpawnPacket()::sendPacket);
         spawned = true;
+        CPlayer[] targets = getTargets();
+        Arrays.asList(targets).forEach(getSpawnPacket()::sendPacket);
+        update(targets);
     }
 
     private WrapperPlayServerEntityDestroy getDespawnPacket() {
@@ -135,10 +137,10 @@ public abstract class AbstractMob implements Observable<NPCObserver> {
 
     public void despawn() {
         if (!spawned) return;
-        Arrays.asList(getTargets()).forEach(getDespawnPacket()::sendPacket);
         ProtocolLibrary.getProtocolManager().removePacketListener(listener);
         listener = null;
         spawned = false;
+        Arrays.asList(getTargets()).forEach(getDespawnPacket()::sendPacket);
     }
 
     public final void forceDespawn(CPlayer player) {

@@ -1,10 +1,7 @@
 package network.palace.core.holograms;
 
-import network.palace.core.npc.AbstractMob;
 import network.palace.core.npc.mob.MobArmorStand;
 import network.palace.core.pathfinding.Point;
-
-import java.util.Optional;
 
 /**
  * @author Clutch
@@ -12,44 +9,45 @@ import java.util.Optional;
  */
 public class Hologram {
     private static final double adjustHeight = 1.6888;
-    private Optional<MobArmorStand> armorStand;
+    private MobArmorStand armorStand;
     private String text = "";
 
     public Hologram(Point point, String text) {
-        point.add(0.0, -adjustHeight, 0.0);
-        MobArmorStand hologram = new MobArmorStand(point, null, text);
-        hologram.setVisible(false);
-        hologram.setArms(false);
-        hologram.setBasePlate(false);
-        hologram.setGravity(false);
-        hologram.setCustomNameVisible(true);
-        this.armorStand = Optional.of(hologram);
+        adjust(point);
+        armorStand = new MobArmorStand(point, null, text);
+        armorStand.setVisible(false);
+        armorStand.setArms(false);
+        armorStand.setBasePlate(false);
+        armorStand.setGravity(false);
+        armorStand.setCustomNameVisible(true);
     }
 
     public void create() {
-        this.armorStand.ifPresent(AbstractMob::spawn);
-        setText(text);
+        armorStand.spawn();
     }
 
     public void destroy() {
-        this.armorStand.ifPresent(AbstractMob::despawn);
+        armorStand.despawn();
     }
 
     public void move(Point point) {
-        this.armorStand.ifPresent(mobArmorStand -> {
-            if (mobArmorStand.isSpawned()) mobArmorStand.move(point);
-        });
+        adjust(point);
+        if (armorStand.isSpawned())
+            armorStand.move(point);
     }
 
     public void setText(String text) {
         this.text = text;
-        this.armorStand.ifPresent(mobArmorStand -> {
-            mobArmorStand.setCustomName(text);
-            if (mobArmorStand.isSpawned()) mobArmorStand.update();
-        });
+        armorStand.setCustomName(text);
+        if (armorStand.isSpawned())
+            armorStand.update();
     }
 
     public String getText() {
         return text;
+    }
+
+    private void adjust(Point p) {
+        p.add(0.0, -adjustHeight, 0.0);
     }
 }
