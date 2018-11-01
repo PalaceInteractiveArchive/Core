@@ -33,12 +33,12 @@ public abstract class AbstractMob implements Observable<NPCObserver> {
     private WrappedDataWatcher lastDataWatcher;
     //    private List<WrappedWatchableObject> lastDataWatcherObjects;
     @Getter boolean spawned;
-    @Getter protected final int id;
+    @Getter protected final int entityId;
     private InteractWatcher listener;
 
     @Getter @Setter private String customName;
     @Setter private float health = 0;
-    @Getter @Setter private boolean onFire, crouched, sprinting, invisible, showingNametag = true;
+    @Getter @Setter private boolean onFire, crouched, sprinting, visible, customNameVisible, gravity = true;
     @Getter @Setter private UUID uuid;
 
     protected abstract EntityType getEntityType();
@@ -63,7 +63,7 @@ public abstract class AbstractMob implements Observable<NPCObserver> {
         this.observers = new HashSet<>();
         this.spawned = false;
         this.customName = title;
-        this.id = Core.getSoftNPCManager().getIDManager().getNextID();
+        this.entityId = Core.getSoftNPCManager().getIDManager().getNextID();
     }
 
     private InteractWatcher createNewInteractWatcher() {
@@ -121,7 +121,7 @@ public abstract class AbstractMob implements Observable<NPCObserver> {
     }
 
     public void spawn() {
-        if (spawned) throw new IllegalStateException("This NPC is already spawned!");
+        if (spawned) return;
         ProtocolLibrary.getProtocolManager().addPacketListener(createNewInteractWatcher());
         Arrays.asList(getTargets()).forEach(getSpawnPacket()::sendPacket);
         spawned = true;
@@ -129,12 +129,12 @@ public abstract class AbstractMob implements Observable<NPCObserver> {
 
     private WrapperPlayServerEntityDestroy getDespawnPacket() {
         WrapperPlayServerEntityDestroy packet = new WrapperPlayServerEntityDestroy();
-        packet.setEntityIds(new int[]{id});
+        packet.setEntityIds(new int[]{entityId});
         return packet;
     }
 
     public void despawn() {
-        if (!spawned) throw new IllegalStateException("You cannot despawn something that you have not spawned!");
+        if (!spawned) return;
         Arrays.asList(getTargets()).forEach(getDespawnPacket()::sendPacket);
         ProtocolLibrary.getProtocolManager().removePacketListener(listener);
         listener = null;
@@ -147,12 +147,13 @@ public abstract class AbstractMob implements Observable<NPCObserver> {
 
     public final void forceSpawn(CPlayer player) {
         getSpawnPacket().sendPacket(player);
+        update(new CPlayer[]{player});
     }
 
     protected final AbstractPacket getSpawnPacket() {
         if (getEntityType() == EntityType.PLAYER) {
             WrapperPlayServerNamedEntitySpawn packet = new WrapperPlayServerNamedEntitySpawn();
-            packet.setEntityID(id);
+            packet.setEntityID(entityId);
             packet.setPlayerUUID(uuid);
             packet.setX(location.getX());
             packet.setY(location.getY());
@@ -164,7 +165,7 @@ public abstract class AbstractMob implements Observable<NPCObserver> {
             return packet;
         } else {
             WrapperPlayServerSpawnEntityLiving packet = new WrapperPlayServerSpawnEntityLiving();
-            packet.setEntityID(id);
+            packet.setEntityID(entityId);
             packet.setX(location.getX());
             packet.setY(location.getY());
             packet.setZ(location.getZ());
@@ -179,7 +180,7 @@ public abstract class AbstractMob implements Observable<NPCObserver> {
 
     private WrapperPlayServerEntityStatus getStatusPacket(int status) {
         WrapperPlayServerEntityStatus packet = new WrapperPlayServerEntityStatus();
-        packet.setEntityID(id);
+        packet.setEntityID(entityId);
         packet.setEntityStatus(status);
         return packet;
     }
@@ -209,6 +210,10 @@ public abstract class AbstractMob implements Observable<NPCObserver> {
     }
 
     public final void update() {
+        update(getTargets());
+    }
+
+    public final void update(CPlayer[] targets) {
         if (!spawned) spawn();
         updateDataWatcher();
         WrapperPlayServerEntityMetadata packet = new WrapperPlayServerEntityMetadata();
@@ -224,12 +229,12 @@ public abstract class AbstractMob implements Observable<NPCObserver> {
             }
         }
         for (WrappedWatchableObject watchableObject : watchableObjects) {
-            Core.debugLog("Sending update on " + watchableObject.getIndex() + " for #" + id + " (" +
+            Core.debugLog("Sending update on " + watchableObject.getIndex() + " for #" + entityId + " (" +
                     getClass().getSimpleName() + ") =" + watchableObject.getValue() + " (" + watchableObject.getHandleType().getName() + ")");
         }
         packet.setMetadata(watchableObjects);
-        packet.setEntityID(id);
-        Arrays.asList(getTargets()).forEach(packet::sendPacket);
+        packet.setEntityID(entityId);
+        Arrays.asList(targets).forEach(packet::sendPacket);
         lastDataWatcher = deepClone(dataWatcher);
         onUpdate();
     }
@@ -251,7 +256,7 @@ public abstract class AbstractMob implements Observable<NPCObserver> {
         AbstractPacket packet;
         if (location.distanceSquared(point) <= 16) {
             WrapperPlayServerRelEntityMoveLook moveLookPacket = new WrapperPlayServerRelEntityMoveLook();
-            moveLookPacket.setEntityID(id);
+            moveLookPacket.setEntityID(entityId);
             moveLookPacket.setDx(point.getX() - location.getX());
             moveLookPacket.setDy(point.getY() - location.getY());
             moveLookPacket.setDz(point.getZ() - location.getZ());
@@ -261,7 +266,7 @@ public abstract class AbstractMob implements Observable<NPCObserver> {
             packet = moveLookPacket;
         } else {
             WrapperPlayServerEntityTeleport packet1 = new WrapperPlayServerEntityTeleport();
-            packet1.setEntityID(id);
+            packet1.setEntityID(entityId);
             packet1.setX(point.getX());
             packet1.setY(point.getY());
             packet1.setZ(point.getZ());
@@ -274,7 +279,7 @@ public abstract class AbstractMob implements Observable<NPCObserver> {
 
     public final void addVelocity(Vector vector) {
         WrapperPlayServerEntityVelocity packet = new WrapperPlayServerEntityVelocity();
-        packet.setEntityID(id);
+        packet.setEntityID(entityId);
         packet.setVelocityX(vector.getX());
         packet.setVelocityY(vector.getY());
         packet.setVelocityZ(vector.getZ());
@@ -286,32 +291,38 @@ public abstract class AbstractMob implements Observable<NPCObserver> {
             throw new IllegalStateException("You cannot modify the rotation of the head of a non-spawned entity!");
         headYaw = (int) location.getYaw();
         WrapperPlayServerEntityHeadRotation packet = new WrapperPlayServerEntityHeadRotation();
-        packet.setEntityID(id);
+        packet.setEntityID(entityId);
         packet.setHeadYaw(headYaw);
         Arrays.asList(getTargets()).forEach(packet::sendPacket);
     }
 
     protected final void updateDataWatcher() {
-        int healthIndex = 7;
-        int showNameTagIndex = 3;
-        int customNameIndex = 2;
         int metadataIndex = 0;
+        int customNameIndex = 2;
+        int showNameTagIndex = 3;
+        int noGravityIndex = 5;
+        int healthIndex = 7;
         dataWatcher.setObject(ProtocolLibSerializers.getFloat(healthIndex), getHealth());
-        if (showingNametag) {
+        if (customNameVisible) {
             dataWatcher.setObject(ProtocolLibSerializers.getBoolean(showNameTagIndex), true);
-        } else if (dataWatcher.getObject(3) != null) {
-            dataWatcher.remove(3);
+        } else if (dataWatcher.getObject(showNameTagIndex) != null) {
+            dataWatcher.remove(showNameTagIndex);
         }
         if (customName != null) {
             dataWatcher.setObject(ProtocolLibSerializers.getString(customNameIndex), customName.substring(0, Math.min(customName.length(), 64)));
-        } else if (dataWatcher.getObject(2) != null) {
-            dataWatcher.remove(2);
+        } else if (dataWatcher.getObject(customNameIndex) != null) {
+            dataWatcher.remove(customNameIndex);
+        }
+        if (gravity) {
+            dataWatcher.setObject(ProtocolLibSerializers.getBoolean(noGravityIndex), true);
+        } else if (dataWatcher.getObject(noGravityIndex) != null) {
+            dataWatcher.remove(noGravityIndex);
         }
         byte zeroByte = 0;
         if (onFire) zeroByte |= 0x01;
         if (crouched) zeroByte |= 0x02;
         if (sprinting) zeroByte |= 0x08;
-        if (invisible) zeroByte |= 0x20;
+        if (!visible) zeroByte |= 0x20;
         dataWatcher.setObject(ProtocolLibSerializers.getByte(metadataIndex), zeroByte);
         onDataWatcherUpdate();
     }
@@ -332,7 +343,7 @@ public abstract class AbstractMob implements Observable<NPCObserver> {
         @Override
         public void onPacketReceiving(PacketEvent event) {
             WrapperPlayClientUseEntity packet = new WrapperPlayClientUseEntity(event.getPacket());
-            if (packet.getTargetID() != watchingFor.getId()) return;
+            if (packet.getTargetID() != watchingFor.getEntityId()) return;
             CPlayer onlinePlayer = Core.getPlayerManager().getPlayer(event.getPlayer());
             ClickAction clickAction = ClickAction.from(packet.getType().name());
             if (clickAction != null) {

@@ -66,7 +66,7 @@ public abstract class AbstractGearMob extends AbstractMob {
     public void updateSlot(ItemSlot slot, ItemStack itemStack) {
         if (itemStack == null) return;
         WrapperPlayServerEntityEquipment wrapper = new WrapperPlayServerEntityEquipment();
-        wrapper.setEntityID(getId());
+        wrapper.setEntityID(getEntityId());
         wrapper.setSlot(slot);
         wrapper.setItem(itemStack);
         for (CPlayer player : getTargets()) {

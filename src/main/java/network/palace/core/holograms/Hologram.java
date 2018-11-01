@@ -11,17 +11,19 @@ import java.util.Optional;
  * @since 4/29/2017
  */
 public class Hologram {
+    private static final double adjustHeight = 1.6888;
     private Optional<MobArmorStand> armorStand;
     private String text = "";
 
     public Hologram(Point point, String text) {
-        MobArmorStand mobArmorStand = new MobArmorStand(point, null, text);
-        mobArmorStand.setInvisible(true);
-        mobArmorStand.setSmall(true);
-        mobArmorStand.setHasArms(false);
-        mobArmorStand.setHasNoBaseplate(false);
-        mobArmorStand.setMarker(true);
-        this.armorStand = Optional.of(mobArmorStand);
+        point.add(0.0, -adjustHeight, 0.0);
+        MobArmorStand hologram = new MobArmorStand(point, null, text);
+        hologram.setVisible(false);
+        hologram.setArms(false);
+        hologram.setBasePlate(false);
+        hologram.setGravity(false);
+        hologram.setCustomNameVisible(true);
+        this.armorStand = Optional.of(hologram);
     }
 
     public void create() {

@@ -14,8 +14,8 @@ import java.util.Set;
 public class MobArmorStand extends AbstractGearMob {
 
     @Getter @Setter private boolean isSmall = false;
-    @Getter @Setter private boolean hasArms = true;
-    @Getter @Setter private boolean hasNoBaseplate = true;
+    @Getter @Setter private boolean arms = true;
+    @Getter @Setter private boolean basePlate = true;
     @Getter @Setter private boolean isMarker = false;
     @Getter @Setter private Vector3F headPose, bodyPost, leftArmPose, rightArmPose, leftLegPose, rightLegPose;
 
@@ -28,8 +28,8 @@ public class MobArmorStand extends AbstractGearMob {
         int metadataIndex = 11;
         byte value = 0;
         if (isSmall) value |= 0x01;
-        if (hasArms) value |= 0x04;
-        if (hasNoBaseplate) value |= 0x08;
+        if (arms) value |= 0x04;
+        if (!basePlate) value |= 0x08;
         if (isMarker) value |= 0x10;
         getDataWatcher().setObject(ProtocolLibSerializers.getByte(metadataIndex), value);
         updatePose(12, headPose);
@@ -47,7 +47,7 @@ public class MobArmorStand extends AbstractGearMob {
         }
     }
 
-    public Vector3F radToDegress(Vector3F angle){
+    public Vector3F radToDegress(Vector3F angle) {
         return new Vector3F((float) (angle.getX() * 180 / Math.PI), (float) (angle.getY() * 180 / Math.PI), (float) (angle.getZ() * 180 / Math.PI));
     }
 
