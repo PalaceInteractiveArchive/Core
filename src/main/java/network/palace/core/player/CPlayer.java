@@ -835,7 +835,7 @@ public interface CPlayer {
     /**
      * Get online time
      *
-     * @return time spent online
+     * @return time spent online in milliseconds
      */
     long getOnlineTime();
 

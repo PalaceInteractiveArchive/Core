@@ -27,8 +27,9 @@ public abstract class AbstractMob implements Observable<NPCObserver> {
 
     @Getter private Point location;
     @Getter private int headYaw;
-    private final Set<CPlayer> viewers;
+    private final Set<CPlayer> visibleTo;
     private final Set<NPCObserver> observers;
+    protected final Set<CPlayer> viewers;
     @Getter private final WrappedDataWatcher dataWatcher;
     private WrappedDataWatcher lastDataWatcher;
     //    private List<WrappedWatchableObject> lastDataWatcherObjects;
@@ -36,10 +37,11 @@ public abstract class AbstractMob implements Observable<NPCObserver> {
     @Getter protected final int entityId;
     private InteractWatcher listener;
 
-    @Getter @Setter private String customName;
+    private ConditionalName conditionalName;
+    @Setter private String customName;
     @Setter private float health = 0;
-    @Getter @Setter private boolean onFire, crouched, sprinting, visible, customNameVisible, gravity = true;
-    @Getter @Setter private UUID uuid;
+    @Getter @Setter private boolean onFire, crouched, sprinting, visible = true, customNameVisible, gravity = true;
+    @Getter @Setter protected UUID uuid;
 
     protected abstract EntityType getEntityType();
 
@@ -57,18 +59,22 @@ public abstract class AbstractMob implements Observable<NPCObserver> {
 
     public AbstractMob(Point location, Set<CPlayer> observers, String title) {
         this.location = location.deepCopy();
-        this.viewers = new HashSet<>();
-        if (observers != null) this.viewers.addAll(observers);
+        this.visibleTo = new HashSet<>();
+        if (observers != null) this.visibleTo.addAll(observers);
         this.dataWatcher = new WrappedDataWatcher();
         this.observers = new HashSet<>();
+        this.viewers = new HashSet<>();
         this.spawned = false;
-        this.customName = title;
+        if (title == null) {
+            this.customName = "";
+        } else {
+            this.customName = title;
+        }
         this.entityId = Core.getSoftNPCManager().getIDManager().getNextID();
     }
 
     private InteractWatcher createNewInteractWatcher() {
-        listener = new InteractWatcher(this);
-        return listener;
+        return listener = new InteractWatcher(this);
     }
 
     @Override
@@ -86,18 +92,30 @@ public abstract class AbstractMob implements Observable<NPCObserver> {
         return ImmutableSet.copyOf(observers);
     }
 
-    public final void addViewer(CPlayer player) {
-        this.viewers.add(player);
+    public final void addVisibleTo(CPlayer player) {
+        this.visibleTo.add(player);
         if (this.isSpawned()) forceSpawn(player);
     }
 
-    public final void removeViewer(CPlayer player) {
-        this.viewers.remove(player);
+    public final void removeVisibleTo(CPlayer player) {
+        this.visibleTo.remove(player);
         if (this.isSpawned()) forceDespawn(player);
     }
 
+    protected void addViewer(CPlayer player) {
+        this.viewers.add(player);
+    }
+
+    protected void removeViewer(CPlayer player) {
+        this.viewers.remove(player);
+    }
+
+    protected boolean isViewer(CPlayer player) {
+        return this.viewers.contains(player);
+    }
+
     public final void makeGlobal() {
-        this.viewers.clear();
+        this.visibleTo.clear();
     }
 
     public final Float getHealth() {
@@ -105,7 +123,7 @@ public abstract class AbstractMob implements Observable<NPCObserver> {
     }
 
     protected final CPlayer[] getTargets() {
-        CPlayer[] cPlayers = (this.viewers.size() == 0 ? Core.getPlayerManager().getOnlinePlayers() : this.viewers).toArray(new CPlayer[this.viewers.size()]);
+        CPlayer[] cPlayers = (this.visibleTo.size() == 0 ? Core.getPlayerManager().getOnlinePlayers() : this.visibleTo).toArray(new CPlayer[this.visibleTo.size()]);
         CPlayer[] players = new CPlayer[cPlayers.length];
         int x = 0;
 
@@ -125,8 +143,8 @@ public abstract class AbstractMob implements Observable<NPCObserver> {
         ProtocolLibrary.getProtocolManager().addPacketListener(createNewInteractWatcher());
         spawned = true;
         CPlayer[] targets = getTargets();
-        Arrays.asList(targets).forEach(getSpawnPacket()::sendPacket);
-        update(targets);
+        Arrays.asList(targets).forEach(t -> this.forceSpawn(t, false));
+        update(targets, true);
     }
 
     private WrapperPlayServerEntityDestroy getDespawnPacket() {
@@ -140,16 +158,28 @@ public abstract class AbstractMob implements Observable<NPCObserver> {
         ProtocolLibrary.getProtocolManager().removePacketListener(listener);
         listener = null;
         spawned = false;
-        Arrays.asList(getTargets()).forEach(getDespawnPacket()::sendPacket);
+        Arrays.asList(getTargets()).forEach(this::forceDespawn);
     }
 
     public final void forceDespawn(CPlayer player) {
+        if (!isViewer(player)) {
+            return;
+        }
         getDespawnPacket().sendPacket(player);
+        removeViewer(player);
     }
 
     public final void forceSpawn(CPlayer player) {
-        getSpawnPacket().sendPacket(player);
-        update(new CPlayer[]{player});
+        forceSpawn(player, true);
+    }
+
+    public void forceSpawn(CPlayer player, boolean update) {
+        if (!isViewer(player)) {
+            getSpawnPacket().sendPacket(player);
+            addViewer(player);
+        }
+
+        if (update) update(new CPlayer[]{player}, true);
     }
 
     protected final AbstractPacket getSpawnPacket() {
@@ -160,8 +190,8 @@ public abstract class AbstractMob implements Observable<NPCObserver> {
             packet.setX(location.getX());
             packet.setY(location.getY());
             packet.setZ(location.getZ());
-            packet.setPitch(location.getPitch());
             packet.setYaw(location.getYaw());
+            packet.setPitch(location.getPitch());
             updateDataWatcher();
             packet.setMetadata(dataWatcher);
             return packet;
@@ -212,33 +242,61 @@ public abstract class AbstractMob implements Observable<NPCObserver> {
     }
 
     public final void update() {
-        update(getTargets());
+        update(false);
     }
 
-    public final void update(CPlayer[] targets) {
-        if (!spawned) spawn();
-        updateDataWatcher();
-        WrapperPlayServerEntityMetadata packet = new WrapperPlayServerEntityMetadata();
-        List<WrappedWatchableObject> watchableObjects = new ArrayList<>();
-        if (lastDataWatcher == null) {
-            watchableObjects.addAll(dataWatcher.getWatchableObjects());
-        } else {
-            for (WrappedWatchableObject watchableObject : dataWatcher.getWatchableObjects()) {
-                Object object = lastDataWatcher.getObject(watchableObject.getIndex());
-                if (object == null || !object.equals(watchableObject.getValue())) {
-                    watchableObjects.add(watchableObject);
+    public final void update(boolean spawn) {
+        update(getTargets(), spawn);
+    }
+
+    public final void update(CPlayer[] targets, boolean spawn) {
+        try {
+            if (!spawned) spawn();
+            updateDataWatcher();
+            List<WrappedWatchableObject> watchableObjects = new ArrayList<>();
+            if (spawn) {
+                watchableObjects.addAll(dataWatcher.getWatchableObjects());
+            } else {
+                if (lastDataWatcher == null) {
+                    watchableObjects.addAll(dataWatcher.getWatchableObjects());
+                } else {
+                    for (WrappedWatchableObject watchableObject : dataWatcher.getWatchableObjects()) {
+                        Object object = lastDataWatcher.getObject(watchableObject.getIndex());
+                        if (object == null || !object.equals(watchableObject.getValue())) {
+                            watchableObjects.add(watchableObject);
+                        }
+                    }
                 }
             }
+            if (hasConditionalName()) {
+                for (CPlayer target : targets) {
+                    WrapperPlayServerEntityMetadata localPacket = new WrapperPlayServerEntityMetadata();
+                    for (WrappedWatchableObject watchableObject : watchableObjects) {
+                        if (watchableObject.getIndex() == 2) {
+                            watchableObject.setValue(conditionalName.getCustomName(target));
+                        }
+                        Core.debugLog("Sending update on " + watchableObject.getIndex() + " for #" + entityId + " (" +
+                                getClass().getSimpleName() + ") =" + watchableObject.getValue() + " (" + watchableObject.getHandleType().getName() + ")");
+                    }
+                    localPacket.setMetadata(watchableObjects);
+                    localPacket.setEntityID(entityId);
+                    localPacket.sendPacket(target);
+                }
+            } else {
+                for (WrappedWatchableObject watchableObject : watchableObjects) {
+                    Core.debugLog("Sending update on " + watchableObject.getIndex() + " for #" + entityId + " (" +
+                            getClass().getSimpleName() + ") =" + watchableObject.getValue() + " (" + watchableObject.getHandleType().getName() + ")");
+                }
+                WrapperPlayServerEntityMetadata packet = new WrapperPlayServerEntityMetadata();
+                packet.setMetadata(watchableObjects);
+                packet.setEntityID(entityId);
+                Arrays.asList(targets).forEach(packet::sendPacket);
+                lastDataWatcher = deepClone(dataWatcher);
+            }
+            onUpdate();
+        } catch (Exception e) {
+            e.printStackTrace();
         }
-        for (WrappedWatchableObject watchableObject : watchableObjects) {
-            Core.debugLog("Sending update on " + watchableObject.getIndex() + " for #" + entityId + " (" +
-                    getClass().getSimpleName() + ") =" + watchableObject.getValue() + " (" + watchableObject.getHandleType().getName() + ")");
-        }
-        packet.setMetadata(watchableObjects);
-        packet.setEntityID(entityId);
-        Arrays.asList(targets).forEach(packet::sendPacket);
-        lastDataWatcher = deepClone(dataWatcher);
-        onUpdate();
     }
 
     private WrappedDataWatcher deepClone(WrappedDataWatcher dataWatcher) {
@@ -292,10 +350,14 @@ public abstract class AbstractMob implements Observable<NPCObserver> {
         if (!spawned)
             throw new IllegalStateException("You cannot modify the rotation of the head of a non-spawned entity!");
         headYaw = (int) location.getYaw();
+        sendYaw(getTargets());
+    }
+
+    public final void sendYaw(CPlayer[] players) {
         WrapperPlayServerEntityHeadRotation packet = new WrapperPlayServerEntityHeadRotation();
         packet.setEntityID(entityId);
         packet.setHeadYaw(headYaw);
-        Arrays.asList(getTargets()).forEach(packet::sendPacket);
+        Arrays.asList(players).forEach(packet::sendPacket);
     }
 
     protected final void updateDataWatcher() {
@@ -315,7 +377,7 @@ public abstract class AbstractMob implements Observable<NPCObserver> {
         } else if (dataWatcher.getObject(customNameIndex) != null) {
             dataWatcher.remove(customNameIndex);
         }
-        if (gravity) {
+        if (!gravity) {
             dataWatcher.setObject(ProtocolLibSerializers.getBoolean(noGravityIndex), true);
         } else if (dataWatcher.getObject(noGravityIndex) != null) {
             dataWatcher.remove(noGravityIndex);
@@ -329,8 +391,19 @@ public abstract class AbstractMob implements Observable<NPCObserver> {
         onDataWatcherUpdate();
     }
 
-    public final ImmutableSet<CPlayer> getViewers() {
-        return ImmutableSet.copyOf(viewers);
+    public final ImmutableSet<CPlayer> getVisibleTo() {
+        return ImmutableSet.copyOf(visibleTo);
+    }
+
+    public boolean canSee(CPlayer player) {
+        if (visibleTo.isEmpty()) {
+            return true;
+        }
+        return visibleTo.contains(player);
+    }
+
+    public boolean sameWorld(CPlayer player) {
+        return location.getWorld().equals(player.getWorld());
     }
 
     private static class InteractWatcher extends PacketAdapter {
@@ -359,5 +432,25 @@ public abstract class AbstractMob implements Observable<NPCObserver> {
             }
             event.setCancelled(true);
         }
+    }
+
+    public String getCustomName() {
+        return getCustomName(null);
+    }
+
+    public String getCustomName(CPlayer player) {
+        if (player == null || this.conditionalName == null || conditionalName.getCustomName(player) == null) {
+            return customName;
+        } else {
+            return conditionalName.getCustomName(player);
+        }
+    }
+
+    public void setConditionalName(ConditionalName conditionalName) {
+        this.conditionalName = conditionalName;
+    }
+
+    public boolean hasConditionalName() {
+        return this.conditionalName != null;
     }
 }

@@ -15,8 +15,8 @@ public class Point implements Cloneable {
     @Getter private double y;
     @Getter private double z;
 
-    @Getter private float pitch;
     @Getter private float yaw;
+    @Getter private float pitch;
     @Getter private World world;
 
     public boolean isBlock() {
@@ -43,42 +43,42 @@ public class Point implements Cloneable {
         return of(entity.getLocation());
     }
 
-    public static Point of(Double x, Double y, Double z, World world) {
+    public static Point of(double x, double y, double z, World world) {
         return new Point(x, y, z, 0F, 0F, world);
     }
 
     public static Point of(Location location) {
-        return new Point(location.getX(), location.getY(), location.getZ(), location.getPitch(), location.getYaw(), location.getWorld());
+        return new Point(location.getX(), location.getY(), location.getZ(), location.getYaw(), location.getPitch(), location.getWorld());
     }
 
     public static Point of(Block block) {
         return of(block.getLocation());
     }
 
-    public Double distanceSquared(Point point) {
-        Double x = Math.pow((this.x-point.getX()), 2);
-        Double y = Math.pow((this.y-point.getY()), 2);
-        Double z = Math.pow((this.z-point.getZ()), 2);
+    public double distanceSquared(Point point) {
+        double x = Math.pow((this.x - point.getX()), 2);
+        double y = Math.pow((this.y - point.getY()), 2);
+        double z = Math.pow((this.z - point.getZ()), 2);
         return x + y + z;
     }
 
-    public Double distance(Point point) {
+    public double distance(Point point) {
         return Math.sqrt(distanceSquared(point));
     }
 
     public Point deepCopy() {
-        return new Point(x, y, z, pitch, yaw, world);
+        return new Point(x, y, z, yaw, pitch, world);
     }
 
-    public Point add(Double x, Double y, Double z) {
+    public Point add(double x, double y, double z) {
         this.x += x;
         this.y += y;
         this.z += z;
         return this;
     }
 
-    public Point subtract(Double x, Double y, Double z) {
-        return add(-1*x, -1*y, -1*z);
+    public Point subtract(double x, double y, double z) {
+        return add(-1 * x, -1 * y, -1 * z);
     }
 
     public Point add(Point point) {

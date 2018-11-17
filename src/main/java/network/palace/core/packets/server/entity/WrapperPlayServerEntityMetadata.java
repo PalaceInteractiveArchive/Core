@@ -18,16 +18,15 @@
  */
 package network.palace.core.packets.server.entity;
 
-import java.util.List;
-
-import network.palace.core.packets.AbstractPacket;
-import org.bukkit.World;
-import org.bukkit.entity.Entity;
-
 import com.comphenix.protocol.PacketType;
 import com.comphenix.protocol.events.PacketContainer;
 import com.comphenix.protocol.events.PacketEvent;
 import com.comphenix.protocol.wrappers.WrappedWatchableObject;
+import network.palace.core.packets.AbstractPacket;
+import org.bukkit.World;
+import org.bukkit.entity.Entity;
+
+import java.util.List;
 
 public class WrapperPlayServerEntityMetadata extends AbstractPacket {
 

@@ -1,5 +1,6 @@
 package network.palace.core.holograms;
 
+import network.palace.core.npc.ConditionalName;
 import network.palace.core.npc.mob.MobArmorStand;
 import network.palace.core.pathfinding.Point;
 
@@ -40,11 +41,19 @@ public class Hologram {
         this.text = text;
         armorStand.setCustomName(text);
         if (armorStand.isSpawned())
-            armorStand.update();
+            armorStand.update(false);
     }
 
     public String getText() {
         return text;
+    }
+
+    public boolean hasConditionalName() {
+        return armorStand.hasConditionalName();
+    }
+
+    public void setConditionalName(ConditionalName conditionalName) {
+        armorStand.setConditionalName(conditionalName);
     }
 
     private void adjust(Point p) {
