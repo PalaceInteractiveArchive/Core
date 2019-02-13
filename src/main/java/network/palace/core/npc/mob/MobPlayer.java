@@ -4,15 +4,22 @@ import com.comphenix.protocol.wrappers.*;
 import lombok.Getter;
 import lombok.Setter;
 import network.palace.core.Core;
-import network.palace.core.npc.AbstractMob;
+import network.palace.core.npc.AbstractGearMob;
 import network.palace.core.npc.ProtocolLibSerializers;
 import network.palace.core.packets.server.entity.WrapperPlayServerBed;
+import network.palace.core.packets.server.entity.WrapperPlayServerEntityDestroy;
 import network.palace.core.packets.server.entity.WrapperPlayServerPlayerInfo;
+import network.palace.core.packets.server.entity.WrapperPlayServerSpawnEntity;
 import network.palace.core.pathfinding.Point;
 import network.palace.core.player.CPlayer;
+import network.palace.core.utils.MiscUtil;
 import org.bukkit.ChatColor;
 import org.bukkit.Location;
+import org.bukkit.Material;
+import org.bukkit.block.Block;
 import org.bukkit.entity.EntityType;
+import org.bukkit.inventory.ItemStack;
+import org.bukkit.material.Stairs;
 
 import java.util.*;
 
@@ -20,7 +27,7 @@ import java.util.*;
  * @author Innectic
  * @since 3/29/2017
  */
-public class MobPlayer extends AbstractMob {
+public class MobPlayer extends AbstractGearMob {
 
     @Getter @Setter private boolean capeEnabled = true;
     @Getter @Setter private boolean jacketEnabled = true;
@@ -33,6 +40,11 @@ public class MobPlayer extends AbstractMob {
 
     private List<UUID> needTabListRemoved = new ArrayList<>();
     private Location bed = null;
+    private Location bobber = null;
+    private int bobberEntityId;
+    private boolean sitting;
+    private MobArmorStand seat;
+    private boolean sneaking;
 
     public MobPlayer(Point location, Set<CPlayer> observers, String title, MobPlayerTexture textureInfo) {
         super(location, observers, title);
@@ -74,6 +86,7 @@ public class MobPlayer extends AbstractMob {
                 removeViewer(p);
             });
         }
+        if (isFishing()) setFishing(null);
     }
 
     @Override
@@ -103,10 +116,16 @@ public class MobPlayer extends AbstractMob {
 
         getSpawnPacket().sendPacket(player);
 
-        if (bed != null) {
+        if (bed != null || bobber != null) {
             Core.runTaskLater(() -> {
-                WrapperPlayServerBed bedPacket = getBedPacket();
-                viewers.forEach(bedPacket::sendPacket);
+                if (bed != null) {
+                    WrapperPlayServerBed bedPacket = getBedPacket();
+                    viewers.forEach(bedPacket::sendPacket);
+                }
+                if (bobber != null) {
+                    WrapperPlayServerSpawnEntity bobberPacket = getFishingPacket();
+                    viewers.forEach(bobberPacket::sendPacket);
+                }
             }, 10L);
         }
 
@@ -148,6 +167,27 @@ public class MobPlayer extends AbstractMob {
         return ChatColor.DARK_GRAY + "[NPC] " + getPrivateUsername();
     }
 
+    @Override
+    public void setCustomNameVisible(boolean b) {
+        if (b) {
+            Core.getSoftNPCManager().untrackHiddenPlayerMob(this);
+        } else {
+            Core.getSoftNPCManager().trackHiddenPlayerMob(this);
+        }
+    }
+
+    public void removedFromTabList(UUID uuid) {
+        needTabListRemoved.remove(uuid);
+    }
+
+    public boolean needsRemoveFromTabList(CPlayer player) {
+        return needTabListRemoved.contains(player.getUniqueId());
+    }
+
+    public int getNeedsRemoved() {
+        return needTabListRemoved.size();
+    }
+
     public void setSleeping(Location bed) {
         this.bed = bed;
         WrapperPlayServerBed bedPacket = getBedPacket();
@@ -169,24 +209,81 @@ public class MobPlayer extends AbstractMob {
         return bedPacket;
     }
 
-    @Override
-    public void setCustomNameVisible(boolean b) {
-        if (b) {
-            Core.getSoftNPCManager().untrackHiddenPlayerMob(this);
+    public void setFishing(Location bobber) {
+        this.bobber = bobber;
+        if (bobber == null) {
+            setMainHand(new ItemStack(Material.AIR));
+            if (bobberEntityId != 0) {
+                WrapperPlayServerEntityDestroy wrapper = new WrapperPlayServerEntityDestroy();
+                wrapper.setEntityIds(new int[]{bobberEntityId});
+                Arrays.asList(getTargets()).forEach(wrapper::sendPacket);
+            }
         } else {
-            Core.getSoftNPCManager().trackHiddenPlayerMob(this);
+            setMainHand(new ItemStack(Material.FISHING_ROD));
+            this.bobberEntityId = Core.getSoftNPCManager().getIDManager().getNextID();
+            WrapperPlayServerSpawnEntity bobberPacket = getFishingPacket();
+            viewers.forEach(bobberPacket::sendPacket);
         }
     }
 
-    public void removedFromTabList(UUID uuid) {
-        needTabListRemoved.remove(uuid);
+    public boolean isFishing() {
+        return bobber != null;
     }
 
-    public boolean needsRemoveFromTabList(CPlayer player) {
-        return needTabListRemoved.contains(player.getUniqueId());
+    private WrapperPlayServerSpawnEntity getFishingPacket() {
+        if (bobber == null) return null;
+        WrapperPlayServerSpawnEntity wrapper = new WrapperPlayServerSpawnEntity();
+        wrapper.setType(WrapperPlayServerSpawnEntity.ObjectTypes.FISHING_FLOAT);
+        wrapper.setEntityID(bobberEntityId);
+        wrapper.setUniqueId(UUID.randomUUID());
+        wrapper.setX(bobber.getX());
+        wrapper.setY(bobber.getY());
+        wrapper.setZ(bobber.getZ());
+        wrapper.setObjectData(getEntityId());
+        return wrapper;
     }
 
-    public int getNeedsRemoved() {
-        return needTabListRemoved.size();
+    public void setSitting(boolean sitting) {
+        if (this.sitting == sitting) return;
+        this.sitting = sitting;
+        if (sitting) {
+            Block block = getLocation().getLocation().getBlock();
+            System.out.println(block == null);
+            System.out.println(block.getType().name());
+            System.out.println(block.getLocation().toString());
+            if (block == null || block.getType().equals(Material.AIR)) {
+                this.sitting = false;
+                return;
+            }
+            Stairs stairs = null;
+            if (block.getState().getData() instanceof Stairs) {
+                stairs = (Stairs) block.getState().getData();
+            }
+            Location location = block.getLocation();
+            location.add(0.5, -1.18888, 0.5);
+            if (stairs != null && MiscUtil.DIRECTIONAL_YAW.containsKey(stairs.getDescendingDirection())) {
+                location.setYaw(MiscUtil.DIRECTIONAL_YAW.get(stairs.getDescendingDirection()));
+            }
+
+            seat = new MobArmorStand(Point.of(location), null, "");
+//            seat.setVisible(false);
+            seat.setGravity(false);
+            seat.setCustomNameVisible(false);
+            seat.spawn();
+            seat.addPassenger(this);
+        } else if (seat != null) {
+            seat.despawn();
+            seat = null;
+        }
+    }
+
+    public boolean isSitting() {
+        return this.sitting;
+    }
+
+    @Override
+    public void setCrouched(boolean crouched) {
+        super.setCrouched(crouched);
+        update(getTargets(), false);
     }
 }

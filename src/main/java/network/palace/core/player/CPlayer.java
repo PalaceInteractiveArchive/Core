@@ -385,13 +385,13 @@ public interface CPlayer {
      */
     void showPlayer(CPlayer player);
 
-//    /**
-//     * Show player.
-//     *
-//     * @param player the player
-//     * @param plugin the plugin making this call
-//     */
-//    void showPlayer(org.bukkit.plugin.Plugin plugin, CPlayer player);
+    /**
+     * Show player.
+     *
+     * @param player the player
+     * @param plugin the plugin making this call
+     */
+    void showPlayer(org.bukkit.plugin.Plugin plugin, CPlayer player);
 
     /**
      * Hide player.
@@ -400,13 +400,13 @@ public interface CPlayer {
      */
     void hidePlayer(CPlayer player);
 
-//    /**
-//     * Hide player.
-//     *
-//     * @param player the player
-//     * @param plugin the plugin making this call
-//     */
-//    void hidePlayer(org.bukkit.plugin.Plugin plugin, CPlayer player);
+    /**
+     * Hide player.
+     *
+     * @param player the player
+     * @param plugin the plugin making this call
+     */
+    void hidePlayer(org.bukkit.plugin.Plugin plugin, CPlayer player);
 
     /**
      * Can see boolean.
@@ -663,6 +663,34 @@ public interface CPlayer {
      * @return flying value
      */
     boolean isFlying();
+
+    /**
+     * Get a player's walking speed
+     *
+     * @return the speed
+     */
+    float getWalkSpeed();
+
+    /**
+     * Set a player's walking speed
+     *
+     * @param speed the speed
+     */
+    void setWalkSpeed(float speed);
+
+    /**
+     * Get a player's flight speed
+     *
+     * @return the speed
+     */
+    float getFlySpeed();
+
+    /**
+     * Set a player's flight speed
+     *
+     * @param speed the speed
+     */
+    void setFlySpeed(float speed);
 
     /**
      * Set whether a player is sneaking

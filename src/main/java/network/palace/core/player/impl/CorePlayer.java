@@ -250,7 +250,6 @@ public class CorePlayer implements CPlayer {
         player.setItemOnCursor(null);
         player.getInventory().clear();
         player.getInventory().setArmorContents(new ItemStack[4]);
-        player.getInventory().setHeldItemSlot(0);
         player.getInventory().setItemInMainHand(null);
         player.getInventory().setItemInOffHand(null);
         player.setFoodLevel(20);
@@ -469,35 +468,37 @@ public class CorePlayer implements CPlayer {
     }
 
     @Override
+    @Deprecated
     public void showPlayer(CPlayer player) {
-//        showPlayer(null, player);
-//    }
-//
-//    @Override
-//    public void showPlayer(org.bukkit.plugin.Plugin plugin, CPlayer player) {
-        if (getStatus() != PlayerStatus.JOINED) return;
-        if (player == null) return;
-        if (player.getStatus() != PlayerStatus.JOINED) return;
-        if (getBukkitPlayer() == null) return;
-//        if (plugin == null) plugin = Core.getInstance();
-//        getBukkitPlayer().showPlayer(plugin, player.getBukkitPlayer());
-        getBukkitPlayer().showPlayer(player.getBukkitPlayer());
+        showPlayer(null, player);
     }
 
     @Override
-    public void hidePlayer(CPlayer player) {
-//        hidePlayer(null, player);
-//    }
-//
-//    @Override
-//    public void hidePlayer(org.bukkit.plugin.Plugin plugin, CPlayer player) {
+    public void showPlayer(org.bukkit.plugin.Plugin plugin, CPlayer player) {
         if (getStatus() != PlayerStatus.JOINED) return;
         if (player == null) return;
         if (player.getStatus() != PlayerStatus.JOINED) return;
         if (getBukkitPlayer() == null) return;
-//        if (plugin == null) plugin = Core.getInstance();
-//        getBukkitPlayer().hidePlayer(plugin, player.getBukkitPlayer());
-        getBukkitPlayer().hidePlayer(player.getBukkitPlayer());
+        if (plugin == null) plugin = Core.getInstance();
+        getBukkitPlayer().showPlayer(plugin, player.getBukkitPlayer());
+//        getBukkitPlayer().showPlayer(player.getBukkitPlayer());
+    }
+
+    @Override
+    @Deprecated
+    public void hidePlayer(CPlayer player) {
+        hidePlayer(null, player);
+    }
+
+    @Override
+    public void hidePlayer(org.bukkit.plugin.Plugin plugin, CPlayer player) {
+        if (getStatus() != PlayerStatus.JOINED) return;
+        if (player == null) return;
+        if (player.getStatus() != PlayerStatus.JOINED) return;
+        if (getBukkitPlayer() == null) return;
+        if (plugin == null) plugin = Core.getInstance();
+        getBukkitPlayer().hidePlayer(plugin, player.getBukkitPlayer());
+//        getBukkitPlayer().hidePlayer(player.getBukkitPlayer());
     }
 
     @Override
@@ -559,7 +560,7 @@ public class CorePlayer implements CPlayer {
     @Override
     public Block getTargetBlock(int range) {
         if (getBukkitPlayer() == null) return null;
-        return getBukkitPlayer().getTargetBlock((Set<Material>) null, range);
+        return getBukkitPlayer().getTargetBlock(null, range);
     }
 
     @Override
@@ -595,6 +596,34 @@ public class CorePlayer implements CPlayer {
     @Override
     public boolean isFlying() {
         return getStatus() == PlayerStatus.JOINED && getBukkitPlayer() != null && getBukkitPlayer().isFlying();
+    }
+
+    @Override
+    public float getWalkSpeed() {
+        if (getStatus() != PlayerStatus.JOINED) return 0;
+        if (getBukkitPlayer() == null) return 0;
+        return getBukkitPlayer().getWalkSpeed();
+    }
+
+    @Override
+    public void setWalkSpeed(float speed) {
+        if (getStatus() != PlayerStatus.JOINED) return;
+        if (getBukkitPlayer() == null) return;
+        getBukkitPlayer().setWalkSpeed(speed);
+    }
+
+    @Override
+    public float getFlySpeed() {
+        if (getStatus() != PlayerStatus.JOINED) return 0;
+        if (getBukkitPlayer() == null) return 0;
+        return getBukkitPlayer().getFlySpeed();
+    }
+
+    @Override
+    public void setFlySpeed(float speed) {
+        if (getStatus() != PlayerStatus.JOINED) return;
+        if (getBukkitPlayer() == null) return;
+        getBukkitPlayer().setFlySpeed(speed);
     }
 
     @Override

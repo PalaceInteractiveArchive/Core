@@ -66,9 +66,22 @@ public final class SoftNPCManager implements Listener {
     public void onPlayerMove(PlayerMoveEvent event) {
         CPlayer player = Core.getPlayerManager().getPlayer(event.getPlayer());
         if (player == null) return;
-        Location from = event.getFrom();
+        Location from = event.getFrom().clone();
         Location to = event.getTo().clone();
         to.setYaw(to.getYaw() % 360);
+        updatePosition(player, from, to);
+    }
+
+    @EventHandler(priority = EventPriority.MONITOR)
+    public void onPlayerTeleport(PlayerTeleportEvent event) {
+        CPlayer player = Core.getPlayerManager().getPlayer(event.getPlayer());
+        if (player == null) return;
+        Location from = event.getFrom().clone();
+        Location to = event.getTo().clone();
+        updatePosition(player, from, to);
+    }
+
+    private void updatePosition(CPlayer player, Location from, Location to) {
         boolean changedView = from.getYaw() != to.getYaw() || from.getPitch() != to.getPitch();
         boolean changedPosition = from.getBlockX() != to.getBlockX() || from.getBlockY() != to.getBlockY() || from.getBlockZ() != to.getBlockZ();
         updateMobs(player, to, changedPosition, changedView);
@@ -134,7 +147,7 @@ public final class SoftNPCManager implements Listener {
             if (npcMob.isSpawned() && npcMob.canSee(player) && npcMob.sameWorld(player)) {
                 if (spawn) {
                     boolean viewer = npcMob.isViewer(player);
-                    double distance = player.getLocation().distance(npcMob.getLocation().getLocation());
+                    double distance = loc.distance(npcMob.getLocation().getLocation());
                     if (distance <= RENDER_DISTANCE && !viewer) {
                         npcMob.forceSpawn(player);
                     } else if (distance > RENDER_DISTANCE && viewer) {

@@ -23,9 +23,7 @@ import com.comphenix.protocol.ProtocolLibrary;
 import com.comphenix.protocol.events.PacketContainer;
 import com.google.common.base.Objects;
 import lombok.Getter;
-import network.palace.core.Core;
 import network.palace.core.player.CPlayer;
-import org.bukkit.ChatColor;
 
 import java.lang.reflect.InvocationTargetException;
 
@@ -63,7 +61,6 @@ public abstract class AbstractPacket {
      * @throws RuntimeException If the packet cannot be sent.
      */
     public void sendPacket(CPlayer player) {
-        Core.debugLog("Sending packet to " + player.getName() + ": " + getHandle().getType().name());
         if (player == null) return;
         if (player.getBukkitPlayer() == null) return;
         try {

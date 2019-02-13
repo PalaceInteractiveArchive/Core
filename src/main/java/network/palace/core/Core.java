@@ -30,7 +30,6 @@ import network.palace.core.packets.adapters.SettingsAdapter;
 import network.palace.core.permissions.PermissionManager;
 import network.palace.core.player.CPlayer;
 import network.palace.core.player.CPlayerManager;
-import network.palace.core.player.impl.CorePlayerWorldDownloadProtect;
 import network.palace.core.player.impl.managers.CorePlayerManager;
 import network.palace.core.plugin.PluginInfo;
 import network.palace.core.resource.ResourceManager;
@@ -147,7 +146,8 @@ public class Core extends JavaPlugin {
         });
         // Register plugin channel
         getServer().getMessenger().registerOutgoingPluginChannel(this, "BungeeCord");
-        getServer().getMessenger().registerIncomingPluginChannel(this, "WDL|INIT", new CorePlayerWorldDownloadProtect());
+        //TODO Find a different way to do this if possible
+        //getServer().getMessenger().registerIncomingPluginChannel(this, "WDL|INIT", new CorePlayerWorldDownloadProtect());
         // SQL Classes
         sqlUtil = new SqlUtil();
         // Mongo Classes

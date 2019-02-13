@@ -1,5 +1,6 @@
 package network.palace.core.utils;
 
+import org.bukkit.block.BlockFace;
 import org.json.simple.JSONObject;
 import org.json.simple.parser.JSONParser;
 
@@ -7,12 +8,19 @@ import java.io.*;
 import java.net.URL;
 import java.nio.charset.Charset;
 import java.text.NumberFormat;
+import java.util.HashMap;
 import java.util.Locale;
 
 /**
  * The type Misc util.
  */
 public class MiscUtil {
+    public static final HashMap<BlockFace, Float> DIRECTIONAL_YAW = new HashMap<BlockFace, Float>() {{
+        put(BlockFace.NORTH, 180F);
+        put(BlockFace.EAST, -90F);
+        put(BlockFace.SOUTH, 0F);
+        put(BlockFace.WEST, 90F);
+    }};
 
     /**
      * Check if is integer.

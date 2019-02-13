@@ -69,7 +69,7 @@ public abstract class AbstractGearMob extends AbstractMob {
         wrapper.setEntityID(getEntityId());
         wrapper.setSlot(slot);
         wrapper.setItem(itemStack);
-        for (CPlayer player : getTargets()) {
+        for (CPlayer player : viewers) {
             wrapper.sendPacket(player);
         }
     }
