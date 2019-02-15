@@ -22,7 +22,7 @@ public class CorePlayerResourcePackManager implements CPlayerResourcePackManager
     public void send(String url, String hash) {
         WrapperPlayServerResourcePackSend packet = new WrapperPlayServerResourcePackSend();
         packet.setUrl(url);
-        packet.setHash(hash);
+        packet.setHash(hash.trim().equals("") ? "null" : hash);
         player.sendPacket(packet);
     }
 }

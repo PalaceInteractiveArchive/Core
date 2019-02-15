@@ -1,5 +1,6 @@
 package network.palace.core.player.impl.managers;
 
+import com.comphenix.protocol.ProtocolLibrary;
 import com.comphenix.protocol.wrappers.WrappedGameProfile;
 import com.comphenix.protocol.wrappers.WrappedSignedProperty;
 import network.palace.core.Core;
@@ -13,6 +14,7 @@ import network.palace.core.player.impl.CorePlayer;
 import network.palace.core.player.impl.CorePlayerDefaultScoreboard;
 import network.palace.core.player.impl.listeners.CorePlayerManagerListener;
 import network.palace.core.player.impl.listeners.CorePlayerStaffLoginListener;
+import network.palace.core.utils.ProtocolUtil;
 import org.bukkit.Bukkit;
 import org.bukkit.entity.Player;
 
@@ -37,9 +39,6 @@ public class CorePlayerManager implements CPlayerManager {
 
     @Override
     public void playerLoggedIn(UUID uuid, String name) {
-        //TODO Make mongo
-//        SqlUtil.JoinReport report = Core.getSqlUtil().getJoinReport(uuid);
-//        onlinePlayers.put(uuid, new CorePlayer(report.getSqlId(), uuid, name, report.getRank(), report.getLocale()));
         onlinePlayers.put(uuid, new CorePlayer(uuid, name, Core.getMongoHandler().getRank(uuid), Core.getMongoHandler().getLanguage(uuid)));
     }
 
@@ -58,6 +57,7 @@ public class CorePlayerManager implements CPlayerManager {
         // Get core player
         CPlayer corePlayer = getPlayer(player);
         if (corePlayer == null) return;
+        corePlayer.setProtocolId(ProtocolUtil.getProtocolVersion(player));
         // Joined
         corePlayer.setStatus(PlayerStatus.JOINED);
         // Set skin info

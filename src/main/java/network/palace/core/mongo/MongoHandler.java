@@ -512,8 +512,25 @@ public class MongoHandler {
      */
     public List<ResourcePack> getResourcePacks() {
         List<ResourcePack> list = new ArrayList<>();
-        resourcePackCollection.find().forEach((Block<? super Document>) doc ->
-                list.add(new ResourcePack(doc.getString("name"), doc.getString("url"), doc.getString("hash"))));
+
+        for (Document doc : resourcePackCollection.find()) {
+            String name = doc.getString("name");
+            ResourcePack pack = new ResourcePack(name);
+            List<ResourcePack.Version> versions = new ArrayList<>();
+
+            if (doc.containsKey("versions")) {
+                for (Object o : doc.get("versions", ArrayList.class)) {
+                    Document version = (Document) o;
+                    int protocolId = version.getInteger("id");
+                    versions.add(pack.generateVersion(protocolId, version.getString("url"), version.containsKey("hash") ? version.getString("hash") : ""));
+                }
+            } else {
+                versions.add(pack.generateVersion(-1, doc.getString("url"), doc.containsKey("hash") ? doc.getString("hash") : ""));
+            }
+            pack.setVersions(versions);
+            list.add(pack);
+        }
+
         return list;
     }
 

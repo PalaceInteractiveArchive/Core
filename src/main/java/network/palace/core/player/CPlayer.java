@@ -37,6 +37,20 @@ public interface CPlayer {
     String getName();
 
     /**
+     * Get the player's protocol id
+     *
+     * @return the protocol id of the version of Minecraft the player is using
+     */
+    int getProtocolId();
+
+    /**
+     * Set the player's protocol id
+     *
+     * @param id the protocol id of the version of Minecraft the player is using
+     */
+    void setProtocolId(int id);
+
+    /**
      * Is online boolean.
      *
      * @return the boolean

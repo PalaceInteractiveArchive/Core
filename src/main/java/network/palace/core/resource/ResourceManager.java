@@ -4,13 +4,8 @@ import com.comphenix.protocol.PacketType;
 import network.palace.core.Core;
 import network.palace.core.dashboard.packets.dashboard.PacketSetPack;
 import network.palace.core.player.CPlayer;
-import org.bukkit.Bukkit;
 import org.bukkit.ChatColor;
 
-import java.sql.Connection;
-import java.sql.PreparedStatement;
-import java.sql.ResultSet;
-import java.sql.SQLException;
 import java.util.*;
 
 /**
@@ -56,10 +51,11 @@ public class ResourceManager {
         if (pack == null) {
             return;
         }
+        CPlayer player = Core.getPlayerManager().getPlayer(uuid);
+        player.getTitle().show("", "");
         if (status != null) {
             switch (status) {
                 case LOADED: {
-                    CPlayer player = Core.getPlayerManager().getPlayer(uuid);
                     if (pack.equalsIgnoreCase("blank")) {
                         pack = "none";
                     }
@@ -68,7 +64,6 @@ public class ResourceManager {
                 }
                 case FAILED:
                 case DECLINED: {
-                    CPlayer player = Core.getPlayerManager().getPlayer(uuid);
                     if (pack.equalsIgnoreCase("blank")) {
                         setCurrentPack(player, "none");
                     }
@@ -105,18 +100,19 @@ public class ResourceManager {
      */
     public void sendPack(CPlayer player, ResourcePack pack) {
         if (player.getOnlineTime() < 2000) {
-            Bukkit.getScheduler().runTaskLater(Core.getInstance(), () -> {
-                player.sendMessage(ChatColor.GREEN + "Attempting to send you the " + ChatColor.YELLOW + pack.getName() +
-                        ChatColor.GREEN + " Resource Pack!");
-                downloading.put(player.getUniqueId(), pack.getName());
-                player.getResourcePack().send(pack.getUrl(), pack.getHash().trim().equals("") ? "null" : pack.getHash());
-            }, 20L);
+            Core.runTaskLater(() -> sendPackNoDelay(player, pack), 40L);
             return;
         }
+        sendPackNoDelay(player, pack);
+    }
+
+    private void sendPackNoDelay(CPlayer player, ResourcePack pack) {
         player.sendMessage(ChatColor.GREEN + "Attempting to send you the " + ChatColor.YELLOW + pack.getName() +
                 ChatColor.GREEN + " Resource Pack!");
+        player.getTitle().show("Sending Resource Pack", "This might take up to 30 seconds...", 0, 1200, 0);
         downloading.put(player.getUniqueId(), pack.getName());
-        player.getResourcePack().send(pack.getUrl(), pack.getHash().trim().equals("") ? "null" : pack.getHash());
+
+        pack.sendTo(player);
     }
 
     /**

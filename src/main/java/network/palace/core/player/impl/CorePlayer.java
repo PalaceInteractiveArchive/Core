@@ -43,6 +43,7 @@ public class CorePlayer implements CPlayer {
 
     @Getter private final UUID uuid;
     private final String name;
+    @Getter @Setter private int protocolId = -1;
     @Getter @Setter private Rank rank;
     @Getter @Setter private String locale;
     @Getter @Setter private PlayerStatus status = PlayerStatus.LOGIN;
