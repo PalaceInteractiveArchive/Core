@@ -109,7 +109,7 @@ public class ResourceManager {
     private void sendPackNoDelay(CPlayer player, ResourcePack pack) {
         player.sendMessage(ChatColor.GREEN + "Attempting to send you the " + ChatColor.YELLOW + pack.getName() +
                 ChatColor.GREEN + " Resource Pack!");
-        player.getTitle().show("Sending Resource Pack", "This might take up to 30 seconds...", 0, 1200, 0);
+        player.getTitle().show("Sending Resource Pack", "This might take up to 30 seconds...", 0, 120, 0);
         downloading.put(player.getUniqueId(), pack.getName());
         Core.runTaskLater(() -> pack.sendTo(player), 2L);
     }
