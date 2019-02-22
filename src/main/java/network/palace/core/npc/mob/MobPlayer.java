@@ -39,7 +39,7 @@ public class MobPlayer extends AbstractGearMob {
     private MobPlayerTexture textureInfo;
 
     private List<UUID> needTabListRemoved = new ArrayList<>();
-    private Location bed = null;
+    @Getter private Location bed = null;
     private Location bobber = null;
     private int bobberEntityId;
     private boolean sitting;

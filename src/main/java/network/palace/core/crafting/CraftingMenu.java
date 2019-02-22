@@ -8,6 +8,7 @@ import com.comphenix.protocol.events.PacketEvent;
 import com.comphenix.protocol.reflect.StructureModifier;
 import network.palace.core.Core;
 import network.palace.core.achievements.CoreAchievement;
+import network.palace.core.events.OpenCosmeticsEvent;
 import network.palace.core.player.CPlayer;
 import network.palace.core.utils.HeadUtil;
 import network.palace.core.utils.ItemUtil;
@@ -17,6 +18,7 @@ import org.bukkit.ChatColor;
 import org.bukkit.GameMode;
 import org.bukkit.Material;
 import org.bukkit.event.EventHandler;
+import org.bukkit.event.EventPriority;
 import org.bukkit.event.Listener;
 import org.bukkit.event.inventory.InventoryClickEvent;
 import org.bukkit.event.inventory.InventoryCloseEvent;
@@ -98,21 +100,18 @@ public class CraftingMenu implements Listener {
                         case 4:
                         case 45:
                             event.setCancelled(true);
-                            player.updateInventory();
-                            if (slot <= 4) update(player, slot, getMenuItems(player)[slot]);
+                            Core.runTask(() -> {
+                                player.updateInventory();
+                                if (slot <= 4) update(player, slot, getMenuItems(player)[slot]);
+                            });
                             break;
                         case 2:
                             event.setCancelled(true);
-                            openAchievementPage(player, 1);
+                            Core.runTask(() -> openAchievementPage(player, 1));
                             break;
                         case 3:
                             event.setCancelled(true);
-                            try {
-                                openCosmeticsInventory(player);
-                            } catch (Exception e) {
-                                player.sendMessage(ChatColor.RED + "There was a problem opening the cosmetics inventory, sorry!");
-                                player.closeInventory();
-                            }
+                            Core.runTask(() -> openCosmeticsInventory(player));
                     }
                 }
             }
@@ -284,10 +283,15 @@ public class CraftingMenu implements Listener {
         player.openInventory(inv);
     }
 
-    private void openCosmeticsInventory(CPlayer player) throws Exception {
-        Class<?> cosmetics = Class.forName("network.palace.cosmetics.Cosmetics");
-        Object instance = cosmetics.getMethod("getInstance").invoke(cosmetics);
-        Object inventory = instance.getClass().getMethod("getCosmeticsInventory").invoke(instance);
-        inventory.getClass().getDeclaredMethod("open", CPlayer.class).invoke(inventory, player);
+    private void openCosmeticsInventory(CPlayer player) {
+        new OpenCosmeticsEvent(player).call();
+    }
+
+    @EventHandler(priority = EventPriority.MONITOR)
+    public void onOpenCosmetics(OpenCosmeticsEvent event) {
+        if (event.isCancelled()) {
+            event.getPlayer().sendMessage(ChatColor.RED + "Sorry, there was an error opening the Cosmetics inventory!");
+            event.getPlayer().closeInventory();
+        }
     }
 }
