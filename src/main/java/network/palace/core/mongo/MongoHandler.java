@@ -316,6 +316,35 @@ public class MongoHandler {
         return doc != null && doc.get("cosmetics", ArrayList.class).contains(id);
     }
 
+    public List<Integer> getCosmetics(UUID uuid) {
+        Document doc = getPlayer(uuid, new Document("cosmetics", 1));
+        List<Integer> list = new ArrayList<>();
+        if (doc == null) return list;
+        try {
+            return doc.get("cosmetics", ArrayList.class);
+        } catch (Exception e) {
+            e.printStackTrace();
+            return list;
+        }
+    }
+
+    public int getActiveHat(UUID uuid) {
+        return 0;
+    }
+
+    public int getActiveParticle(UUID uuid) {
+        return 0;
+    }
+
+    public void setActiveHat(UUID uuid, int id) {
+    }
+
+    public void setActiveParticle(UUID uuid, int id) {
+    }
+
+    public void setActiveToy(UUID uuid, int id) {
+    }
+
     /* Economy Methods */
 
     /**
