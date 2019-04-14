@@ -81,12 +81,44 @@ public class Point implements Cloneable {
         return add(-1 * x, -1 * y, -1 * z);
     }
 
+    public Point multiply(double x, double y, double z) {
+        this.x *= x;
+        this.y *= y;
+        this.z *= z;
+        return this;
+    }
+
     public Point add(Point point) {
         return add(point.getX(), point.getY(), point.getZ());
     }
 
     public Point subtract(Point point) {
         return subtract(point.getX(), point.getY(), point.getZ());
+    }
+
+    public Point setX(double x) {
+        this.x = x;
+        return this;
+    }
+
+    public Point setY(double y) {
+        this.y = y;
+        return this;
+    }
+
+    public Point setZ(double z) {
+        this.z = z;
+        return this;
+    }
+
+    public Point setYaw(float yaw) {
+        this.yaw = yaw;
+        return this;
+    }
+
+    public Point setPitch(float pitch) {
+        this.pitch = pitch;
+        return this;
     }
 
     @Override
