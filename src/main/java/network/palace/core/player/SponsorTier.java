@@ -37,7 +37,7 @@ public enum SponsorTier {
 
     public String getScoreboardTag() {
         if (this.equals(NONE)) return "";
-        return color + " [S]";
+        return " " + ChatColor.WHITE + "[" + color + "S" + ChatColor.WHITE + "]";
     }
 
     /**
