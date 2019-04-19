@@ -210,7 +210,7 @@ public class CraftingMenu implements Listener {
         ItemStack head = HeadUtil.getPlayerHead(player);
         SkullMeta meta = (SkullMeta) head.getItemMeta();
         meta.setDisplayName(ChatColor.GREEN + "Player Info");
-        meta.setLore(Arrays.asList(ChatColor.GRAY + "Rank: " + player.getRank().getFormattedName(),
+        meta.setLore(Arrays.asList(ChatColor.GRAY + "Rank: " + player.getRank().getFormattedName() + player.getSponsorTier().getScoreboardTag(),
                 ChatColor.GRAY + "Level: " + ChatColor.YELLOW + MiscUtil.formatNumber(Core.getHonorManager().getLevel(player.getHonor()).getLevel()),
                 ChatColor.GRAY + "Honor Points: " + ChatColor.YELLOW + MiscUtil.formatNumber(player.getHonor()),
                 ChatColor.GRAY + "Points to Next Level: " + ChatColor.YELLOW + MiscUtil.formatNumber(Core.getHonorManager().getNextLevel(player.getHonor()).getHonor() - player.getHonor())));

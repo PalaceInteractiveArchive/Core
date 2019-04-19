@@ -17,6 +17,7 @@ import network.palace.core.honor.TopHonorReport;
 import network.palace.core.npc.mob.MobPlayerTexture;
 import network.palace.core.player.CPlayer;
 import network.palace.core.player.Rank;
+import network.palace.core.player.SponsorTier;
 import network.palace.core.resource.ResourcePack;
 import network.palace.core.tracking.GameType;
 import network.palace.core.tracking.StatisticType;
@@ -160,6 +161,13 @@ public class MongoHandler {
      */
     public Rank getRank(String username) {
         return Rank.fromString(playerCollection.find(MongoFilter.USERNAME.getFilter(username)).first().getString("rank"));
+    }
+
+    public SponsorTier getSponsorTier(UUID uuid) {
+        if (uuid == null) return SponsorTier.NONE;
+        Document result = playerCollection.find(MongoFilter.UUID.getFilter(uuid.toString())).projection(new Document("sponsor", 1)).first();
+        if (result == null || !result.containsKey("sponsor")) return SponsorTier.NONE;
+        return SponsorTier.fromString(result.getString("sponsor"));
     }
 
     /**
@@ -579,6 +587,19 @@ public class MongoHandler {
     }
 
     /**
+     * Gets members.
+     *
+     * @param tier the rank
+     * @return the members
+     */
+    public List<String> getMembers(SponsorTier tier) {
+        List<String> list = new ArrayList<>();
+        playerCollection.find(MongoFilter.SPONSOR.getFilter(tier.getDBName())).projection(new Document("username", 1))
+                .forEach((Block<Document>) d -> list.add(d.getString("username")));
+        return list;
+    }
+
+    /**
      * Sets rank.
      *
      * @param uuid the uuid
@@ -586,6 +607,17 @@ public class MongoHandler {
      */
     public void setRank(UUID uuid, Rank rank) {
         playerCollection.updateOne(MongoFilter.UUID.getFilter(uuid.toString()), Updates.set("rank", rank.getDBName()));
+    }
+
+    /**
+     * Sets the player's sponsor tier
+     *
+     * @param uuid the uuid
+     * @param tier the tier
+     */
+    public void setSponsorTier(UUID uuid, SponsorTier tier) {
+        if (uuid == null || tier == null) return;
+        playerCollection.updateOne(MongoFilter.UUID.getFilter(uuid.toString()), tier.equals(SponsorTier.NONE) ? Updates.unset("sponsor") : Updates.set("sponsor", tier.getDBName()));
     }
 
     /**
@@ -1197,7 +1229,7 @@ public class MongoHandler {
     }
 
     public enum MongoFilter {
-        UUID, USERNAME, RANK;
+        UUID, USERNAME, RANK, SPONSOR;
 
         public Bson getFilter(String s) {
             switch (this) {
@@ -1207,6 +1239,8 @@ public class MongoHandler {
                     return Filters.regex("username", "^" + s + "$", "i");
                 case RANK:
                     return Filters.eq("rank", s);
+                case SPONSOR:
+                    return Filters.eq("sponsor", s);
             }
             return null;
         }

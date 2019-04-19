@@ -5,6 +5,7 @@ import network.palace.core.Core;
 import network.palace.core.player.CPlayer;
 import network.palace.core.player.CPlayerScoreboardManager;
 import network.palace.core.player.Rank;
+import network.palace.core.player.SponsorTier;
 import org.bukkit.Bukkit;
 import org.bukkit.ChatColor;
 import org.bukkit.scoreboard.DisplaySlot;
@@ -159,11 +160,21 @@ public class CorePlayerScoreboardManager implements CPlayerScoreboardManager {
     @Override
     public void addPlayerTag(CPlayer otherPlayer) {
         if (scoreboard == null) setup();
-        if (otherPlayer == null || otherPlayer.getRank() == null) return;
+        if (otherPlayer == null || otherPlayer.getRank() == null || otherPlayer.getSponsorTier() == null) return;
         Rank r = otherPlayer.getRank();
-        if (scoreboard.getTeam(r.getScoreboardPrefix() + r.getName()) == null) return;
-        if (scoreboard.getTeam(r.getScoreboardPrefix() + r.getName()).hasEntry(otherPlayer.getName())) return;
-        scoreboard.getTeam(r.getScoreboardPrefix() + r.getName()).addEntry(otherPlayer.getName());
+        SponsorTier t = otherPlayer.getSponsorTier();
+        String teamName = r.getScoreboardPrefix() + r.getDBName() + (t.equals(SponsorTier.NONE) ? "" : t.getDBName().substring(0, 4));
+        Team team = scoreboard.getTeam(teamName);
+
+        if (team == null) {
+            team = scoreboard.registerNewTeam(teamName);
+            team.setPrefix(r.getFormattedName() + " ");
+            team.setSuffix(t.getScoreboardTag());
+            team.setOption(Team.Option.COLLISION_RULE, Team.OptionStatus.NEVER);
+            team.addEntry(otherPlayer.getName());
+        } else if (!team.hasEntry(otherPlayer.getName())) {
+            team.addEntry(otherPlayer.getName());
+        }
     }
 
     /**
@@ -176,9 +187,12 @@ public class CorePlayerScoreboardManager implements CPlayerScoreboardManager {
         if (scoreboard == null) setup();
         if (otherPlayer == null || otherPlayer.getRank() == null) return;
         Rank r = otherPlayer.getRank();
-        if (scoreboard.getTeam(r.getScoreboardPrefix() + r.getName()) == null) return;
-        if (!scoreboard.getTeam(r.getScoreboardPrefix() + r.getName()).hasEntry(otherPlayer.getName())) return;
-        scoreboard.getTeam(r.getScoreboardPrefix() + r.getName()).removeEntry(otherPlayer.getName());
+        SponsorTier t = otherPlayer.getSponsorTier();
+        String teamName = r.getScoreboardPrefix() + r.getDBName() + (t.equals(SponsorTier.NONE) ? "" : t.getDBName().substring(0, 4));
+        Team team = scoreboard.getTeam(teamName);
+
+        if (team == null) return;
+        team.removeEntry(otherPlayer.getName());
     }
 
     /**

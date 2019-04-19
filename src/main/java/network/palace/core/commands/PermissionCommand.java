@@ -3,9 +3,7 @@ package network.palace.core.commands;
 import network.palace.core.command.CommandMeta;
 import network.palace.core.command.CoreCommand;
 import network.palace.core.commands.permissions.ListCommand;
-import network.palace.core.commands.permissions.PlayerCommand;
-import network.palace.core.commands.permissions.RankCommand;
-import network.palace.core.commands.permissions.RefreshCommand;
+import network.palace.core.commands.permissions.*;
 import network.palace.core.player.Rank;
 
 /**
@@ -20,9 +18,10 @@ public class PermissionCommand extends CoreCommand {
     public PermissionCommand() {
         super("perm");
         registerSubCommand(new ListCommand());
+        registerSubCommand(new PlayerCommand());
         registerSubCommand(new RankCommand());
         registerSubCommand(new RefreshCommand());
-        registerSubCommand(new PlayerCommand());
+        registerSubCommand(new SponsorCommand());
     }
 
     @Override

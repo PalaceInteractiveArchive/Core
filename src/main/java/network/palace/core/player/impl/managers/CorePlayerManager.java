@@ -1,6 +1,5 @@
 package network.palace.core.player.impl.managers;
 
-import com.comphenix.protocol.ProtocolLibrary;
 import com.comphenix.protocol.wrappers.WrappedGameProfile;
 import com.comphenix.protocol.wrappers.WrappedSignedProperty;
 import network.palace.core.Core;
@@ -39,7 +38,7 @@ public class CorePlayerManager implements CPlayerManager {
 
     @Override
     public void playerLoggedIn(UUID uuid, String name) {
-        onlinePlayers.put(uuid, new CorePlayer(uuid, name, Core.getMongoHandler().getRank(uuid), Core.getMongoHandler().getLanguage(uuid)));
+        onlinePlayers.put(uuid, new CorePlayer(uuid, name, Core.getMongoHandler().getRank(uuid), Core.getMongoHandler().getSponsorTier(uuid), Core.getMongoHandler().getLanguage(uuid)));
     }
 
     @Override

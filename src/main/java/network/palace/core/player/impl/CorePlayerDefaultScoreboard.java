@@ -48,7 +48,7 @@ public class CorePlayerDefaultScoreboard implements Listener {
         // Blank space
         scoreboard.setBlank(6);
         // Rank
-        scoreboard.set(5, ChatColor.GREEN + "Rank: " + player.getRank().getTagColor() + player.getRank().getName());
+        scoreboard.set(5, ChatColor.GREEN + "Rank: " + player.getRank().getTagColor() + player.getRank().getName() + player.getSponsorTier().getScoreboardTag());
         // Blank space
         scoreboard.setBlank(4);
         // Players number

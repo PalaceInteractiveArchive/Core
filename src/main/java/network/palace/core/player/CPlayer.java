@@ -579,6 +579,20 @@ public interface CPlayer {
     void setRank(Rank rank);
 
     /**
+     * Get the player's sponsor tier
+     *
+     * @return the sponsor tier
+     */
+    SponsorTier getSponsorTier();
+
+    /**
+     * Set the player's sponsor tier
+     *
+     * @param tier the sponsor tier
+     */
+    void setSponsorTier(SponsorTier tier);
+
+    /**
      * Sets texture value.
      *
      * @param textureValue the texture value

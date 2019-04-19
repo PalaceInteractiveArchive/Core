@@ -45,6 +45,7 @@ public class CorePlayer implements CPlayer {
     private final String name;
     @Getter @Setter private int protocolId = -1;
     @Getter @Setter private Rank rank;
+    @Getter @Setter private SponsorTier sponsorTier;
     @Getter @Setter private String locale;
     @Getter @Setter private PlayerStatus status = PlayerStatus.LOGIN;
     @Getter private CPlayerAchievementManager achievementManager;
@@ -71,10 +72,11 @@ public class CorePlayer implements CPlayer {
      * @param name the name
      * @param rank the rank
      */
-    public CorePlayer(UUID uuid, String name, Rank rank, String locale) {
+    public CorePlayer(UUID uuid, String name, Rank rank, SponsorTier sponsorTier, String locale) {
         this.uuid = uuid;
         this.name = name;
         this.rank = rank;
+        this.sponsorTier = sponsorTier;
         this.locale = locale;
     }
 

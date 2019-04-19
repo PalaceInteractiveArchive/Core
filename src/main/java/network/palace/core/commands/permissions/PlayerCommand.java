@@ -7,6 +7,7 @@ import network.palace.core.command.CoreCommand;
 import network.palace.core.dashboard.packets.dashboard.PacketRankChange;
 import network.palace.core.player.CPlayer;
 import network.palace.core.player.Rank;
+import network.palace.core.player.SponsorTier;
 import org.bukkit.ChatColor;
 import org.bukkit.command.CommandSender;
 import org.bukkit.entity.Player;
@@ -30,15 +31,18 @@ public class PlayerCommand extends CoreCommand {
         UUID uuid;
         String name;
         Rank rank;
+        SponsorTier tier;
         CPlayer player = Core.getPlayerManager().getPlayer(args[0]);
         if (player == null) {
             uuid = Core.getMongoHandler().usernameToUUID(args[0]);
             name = args[0];
             rank = Core.getMongoHandler().getRank(uuid);
+            tier = Core.getMongoHandler().getSponsorTier(uuid);
         } else {
             uuid = player.getUniqueId();
             name = player.getName();
             rank = player.getRank();
+            tier = player.getSponsorTier();
         }
         if (uuid == null) {
             sender.sendMessage(ChatColor.RED + "Player not found!");
@@ -82,14 +86,36 @@ public class PlayerCommand extends CoreCommand {
                 if (player != null) {
                     player.setRank(next);
                     for (CPlayer tp : Core.getPlayerManager().getOnlinePlayers()) {
-                        tp.getScoreboard();
                         Core.getPlayerManager().displayRank(player);
                     }
                 }
                 String source = sender instanceof Player ? sender.getName() : "Console on " + Core.getInstanceName();
-                PacketRankChange packet = new PacketRankChange(uuid, next, source);
+                PacketRankChange packet = new PacketRankChange(uuid, next, tier, source);
                 Core.getDashboardConnection().send(packet);
                 sender.sendMessage(ChatColor.GREEN + name + " is now rank " + next.getFormattedName());
+                return;
+            }
+            case "setsponsor": {
+                if (args.length < 3) {
+                    helpMenu(sender);
+                    return;
+                }
+                SponsorTier next = SponsorTier.fromString(args[2]);
+                if (next == null) {
+                    sender.sendMessage(ChatColor.RED + args[2] + " isn't a valid sponsor tier!");
+                    return;
+                }
+                Core.getMongoHandler().setSponsorTier(uuid, next);
+                if (player != null) {
+                    player.setSponsorTier(next);
+                    for (CPlayer tp : Core.getPlayerManager().getOnlinePlayers()) {
+                        Core.getPlayerManager().displayRank(player);
+                    }
+                }
+                String source = sender instanceof Player ? sender.getName() : "Console on " + Core.getInstanceName();
+                PacketRankChange packet = new PacketRankChange(uuid, rank, next, source);
+                Core.getDashboardConnection().send(packet);
+                sender.sendMessage(ChatColor.GREEN + name + " is now sponsor tier " + next.getChatTag(false));
                 return;
             }
         }
@@ -100,5 +126,6 @@ public class PlayerCommand extends CoreCommand {
         sender.sendMessage(ChatColor.GREEN + "/perm player [player] get [permission] " + ChatColor.AQUA + "- Get the value of a permission for a player");
         sender.sendMessage(ChatColor.GREEN + "/perm player [player] rank " + ChatColor.AQUA + "- Get the player's rank.");
         sender.sendMessage(ChatColor.GREEN + "/perm player [player] setrank [rank] " + ChatColor.AQUA + "- Set a player's rank");
+        sender.sendMessage(ChatColor.GREEN + "/perm player [player] setsponsor [tier] " + ChatColor.AQUA + "- Set a player's sponsor tier");
     }
 }
