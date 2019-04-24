@@ -23,7 +23,6 @@ import org.bukkit.inventory.ItemStack;
 import org.bukkit.inventory.meta.ItemMeta;
 import org.bukkit.inventory.meta.LeatherArmorMeta;
 import org.bukkit.inventory.meta.SkullMeta;
-import org.bukkit.material.MaterialData;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -266,6 +265,7 @@ public class ItemUtil implements Listener {
      * @param lore        the lore
      * @return the item stack
      */
+    @SuppressWarnings("deprecation")
     public static ItemStack create(String owner, String displayName, List<String> lore) {
         ItemStack item = create(Material.PLAYER_HEAD, 1);
         SkullMeta sm = (SkullMeta) item.getItemMeta();
@@ -281,36 +281,32 @@ public class ItemUtil implements Listener {
         if (i == null) {
             return o;
         }
-        o.addProperty("t", i.getTypeId());
-        o.addProperty("a", i.getAmount());
-        o.addProperty("da", i.getData().getData());
-        o.addProperty("du", i.getDurability());
-        String t = new NbtTextSerializer().serialize(NbtFactory.fromItemTag(i));
-        if (!t.equals("")) {
-            o.addProperty("ta", t);
+        o.addProperty("type", i.getType().getKey().toString());
+        o.addProperty("amount", i.getAmount());
+        String nbtTag = new NbtTextSerializer().serialize(NbtFactory.fromItemTag(i));
+        if (!nbtTag.isEmpty()) {
+            o.addProperty("tag", nbtTag);
         }
         return o;
     }
 
     public static ItemStack getItemFromJson(String json) {
         JsonObject o = new JsonParser().parse(json).getAsJsonObject();
-        if (!o.has("t")) {
+        if (!o.has("tag")) {
             return new ItemStack(Material.AIR);
         }
         ItemStack i;
         try {
-            i = MinecraftReflection.getBukkitItemStack(new ItemStack(o.get("t").getAsInt()));
-            i.setData(new MaterialData(o.get("t").getAsInt(), (byte) o.get("da").getAsInt()));
-            i.setAmount(o.get("a").getAsInt());
-            i.setDurability(o.get("du").getAsShort());
-            if (o.has("ta")) {
+            i = MinecraftReflection.getBukkitItemStack(new ItemStack(Material.matchMaterial(o.get("type").getAsString()), o.get("amount").getAsInt()));
+            if (o.has("tag")) {
                 try {
-                    NbtFactory.setItemTag(i, new NbtTextSerializer().deserializeCompound(o.get("ta").getAsString()));
+                    NbtFactory.setItemTag(i, new NbtTextSerializer().deserializeCompound(o.get("tag").getAsString()));
                 } catch (Exception ex) {
                     ex.printStackTrace();
                 }
             }
-        } catch (Exception ignored) {
+        } catch (Exception e) {
+            e.printStackTrace();
             return new ItemStack(Material.AIR);
         }
         return i;

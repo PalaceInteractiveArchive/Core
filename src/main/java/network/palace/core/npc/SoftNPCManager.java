@@ -93,7 +93,7 @@ public final class SoftNPCManager implements Listener {
         CPlayer player = event.getPlayer();
         //Create team for hidden players
         WrapperPlayServerScoreboardTeam wrapper = new WrapperPlayServerScoreboardTeam();
-        wrapper.setMode(0);
+        wrapper.setMode(WrapperPlayServerScoreboardTeam.Mode.TEAM_CREATED);
         wrapper.setName(HIDDEN_TEAM);
         wrapper.setNameTagVisibility("never");
         wrapper.setPlayers(hiddenPlayerMobs);
@@ -190,7 +190,7 @@ public final class SoftNPCManager implements Listener {
 
         WrapperPlayServerScoreboardTeam wrapper = new WrapperPlayServerScoreboardTeam();
         wrapper.setName(HIDDEN_TEAM);
-        wrapper.setMode(3);
+        wrapper.setMode(WrapperPlayServerScoreboardTeam.Mode.PLAYERS_ADDED);
         wrapper.setPlayers(Collections.singletonList(mob.getCustomName()));
 
         Arrays.asList(mob.getTargets()).forEach(wrapper::sendPacket);
@@ -201,7 +201,7 @@ public final class SoftNPCManager implements Listener {
 
         WrapperPlayServerScoreboardTeam wrapper = new WrapperPlayServerScoreboardTeam();
         wrapper.setName(HIDDEN_TEAM);
-        wrapper.setMode(4);
+        wrapper.setMode(WrapperPlayServerScoreboardTeam.Mode.PLAYERS_REMOVED);
         wrapper.setPlayers(Collections.singletonList(mob.getCustomName()));
 
         Arrays.asList(mob.getTargets()).forEach(wrapper::sendPacket);

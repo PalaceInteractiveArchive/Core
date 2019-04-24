@@ -80,7 +80,7 @@ public class PluginInfoProcessor extends AbstractProcessor {
             Writer writer = file.openWriter();
             try {
                 Yaml yaml = new Yaml(processedPluginInfo.getRepresenter(), new DumperOptions());
-                yaml.dump(processedPluginInfo, writer);
+                yaml.dump(processedPluginInfo.toYamlMap(), writer);
             } finally {
                 writer.flush();
                 writer.close();
@@ -107,7 +107,7 @@ public class PluginInfoProcessor extends AbstractProcessor {
             result = defaultVal;
         } else {
             try {
-                Method value = annotationType.getMethod(valueName);
+                Method value = annotationType.getMethod(valueName.replaceAll("-", ""));
                 Object res = value.invoke(ann);
                 result = (R) (returnType == String.class ? res.toString() : returnType.cast(res));
             } catch (Exception e) {

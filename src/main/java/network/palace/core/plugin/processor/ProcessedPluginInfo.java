@@ -6,8 +6,7 @@ import org.yaml.snakeyaml.introspector.PropertyUtils;
 import org.yaml.snakeyaml.nodes.*;
 import org.yaml.snakeyaml.representer.Representer;
 
-import java.util.LinkedHashSet;
-import java.util.Set;
+import java.util.*;
 
 public class ProcessedPluginInfo {
 
@@ -36,6 +35,18 @@ public class ProcessedPluginInfo {
         return representer;
     }
 
+    public Map<String, Object> toYamlMap() {
+        return new LinkedHashMap<String, Object>() {{
+            put("name", name);
+            put("author", author);
+            put("version", version);
+            if (!apiVersion.isEmpty()) put("api-version", apiVersion);
+            put("depend", depend);
+            put("softdepend", softdepend);
+            put("main", main);
+        }};
+    }
+
     private class UnsortedPropertyUtils extends PropertyUtils {
         @Override
         protected Set<Property> createPropertySet(Class<?> type, BeanAccess bAccess) {
@@ -61,5 +72,10 @@ public class ProcessedPluginInfo {
             }
             return tuple;
         }
+    }
+
+    @Override
+    public String toString() {
+        return name + " " + author + " " + version + " " + apiVersion + " " + Arrays.toString(depend) + " " + Arrays.toString(softdepend) + " " + main;
     }
 }
