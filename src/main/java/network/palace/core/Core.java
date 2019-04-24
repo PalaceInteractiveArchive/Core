@@ -69,7 +69,7 @@ public class Core extends JavaPlugin {
     private String instanceName = "";
     private boolean debug = false;
     private boolean dashboardAndSqlDisabled = false;
-    @Getter private String mcVersion = Bukkit.getBukkitVersion();
+    @Getter private static String minecraftVersion = Bukkit.getBukkitVersion();
     private boolean gameMode = false;
     @Getter private boolean showTitleOnLogin = false;
     @Getter private String loginTitle = "";
@@ -109,6 +109,8 @@ public class Core extends JavaPlugin {
         for (Player player : Bukkit.getOnlinePlayers()) {
             player.kickPlayer(ChatColor.RED + "Server is reloading!");
         }
+        minecraftVersion = Bukkit.getServer().getClass().getPackage().getName();
+        minecraftVersion = minecraftVersion.substring(minecraftVersion.lastIndexOf(".") + 1);
         // Load needed libraries for Core
         LibraryHandler.loadLibraries(this);
         // Configurations
@@ -174,8 +176,6 @@ public class Core extends JavaPlugin {
         // Register Commands
         registerCommands();
         registerDisabledCommands();
-        mcVersion = mcVersion.replace("-SNAPSHOT", "").replace("R0.", "R")
-                .replace(".", "_").replaceAll("_[0-9]-R", "_R").replace("-", "_");
         // Log
         logMessage("Core", ChatColor.DARK_GREEN + "Enabled");
 

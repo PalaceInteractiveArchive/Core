@@ -571,7 +571,7 @@ public class CorePlayer implements CPlayer {
         if (getStatus() != PlayerStatus.JOINED) return 0;
         if (getBukkitPlayer() == null) return 0;
         try {
-            Object craftPlayer = Class.forName("org.bukkit.craftbukkit.v" + Core.getInstance().getMcVersion() +
+            Object craftPlayer = Class.forName("org.bukkit.craftbukkit." + Core.getMinecraftVersion() +
                     ".entity.CraftPlayer").cast(getBukkitPlayer());
             Method m = craftPlayer.getClass().getDeclaredMethod("getHandle");
             Object entityPlayer = m.invoke(craftPlayer);
@@ -866,11 +866,11 @@ public class CorePlayer implements CPlayer {
     @Override
     public int getWindowId() {
         try {
-            Object craftPlayer = Class.forName("org.bukkit.craftbukkit.v" + Core.getInstance().getMcVersion() +
+            Object craftPlayer = Class.forName("org.bukkit.craftbukkit." + Core.getMinecraftVersion() +
                     ".entity.CraftPlayer").cast(getBukkitPlayer());
             Method m = craftPlayer.getClass().getDeclaredMethod("getHandle");
             Object entityPlayer = m.invoke(craftPlayer);
-            Object entityHuman = Class.forName("net.minecraft.server.v" + Core.getInstance().getMcVersion() +
+            Object entityHuman = Class.forName("net.minecraft.server." + Core.getMinecraftVersion() +
                     ".EntityHuman").cast(entityPlayer);
             Field field = entityHuman.getClass().getField("activeContainer");
             field.setAccessible(true);
