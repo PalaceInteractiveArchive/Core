@@ -138,8 +138,8 @@ public class CraftingMenu implements Listener {
     public void onInventoryClick(InventoryClickEvent event) {
         CPlayer player = Core.getPlayerManager().getPlayer(event.getWhoClicked().getUniqueId());
         if (player == null) return;
-        Inventory inv = event.getClickedInventory();
-        if (inv == null || !inv.getName().startsWith(ChatColor.BLUE + "Achievements Page ")) return;
+        InventoryView view = event.getView();
+        if (view == null || !view.getTitle().startsWith(ChatColor.BLUE + "Achievements Page ")) return;
         event.setCancelled(true);
         String name;
         try {
@@ -147,7 +147,7 @@ public class CraftingMenu implements Listener {
         } catch (Exception ignored) {
             return;
         }
-        int page = Integer.parseInt(ChatColor.stripColor(inv.getName()).replaceAll("Achievements Page ", ""));
+        int page = Integer.parseInt(ChatColor.stripColor(view.getTitle()).replaceAll("Achievements Page ", ""));
         switch (name) {
             case "Next Page":
                 openAchievementPage(player, page + 1);
@@ -165,8 +165,8 @@ public class CraftingMenu implements Listener {
     public void onInventoryClose(InventoryCloseEvent event) {
         CPlayer player = Core.getPlayerManager().getPlayer(event.getPlayer().getUniqueId());
         if (player == null) return;
-        Inventory inv = event.getInventory();
-        String name = inv.getName();
+        InventoryView view = event.getView();
+        String name = view.getTitle();
         if (name.startsWith(ChatColor.BLUE + "Achievements Page ") || name.startsWith(ChatColor.BLUE + "Cosmetics") ||
                 name.startsWith(ChatColor.BLUE + "Particles") || name.startsWith(ChatColor.BLUE + "Hats") ||
                 name.startsWith(ChatColor.BLUE + "Pets")) {
@@ -202,7 +202,7 @@ public class CraftingMenu implements Listener {
         return new ItemStack[]{air, getPlayerHead(player), getAchievement(player),
                 ItemUtil.create(Material.ENDER_CHEST, ChatColor.GREEN + "Cosmetics",
                         Collections.singletonList(ChatColor.GRAY + "Open Cosmetics Menu")),
-                ItemUtil.create(Material.STORAGE_MINECART, ChatColor.GREEN + "Leveling Rewards",
+                ItemUtil.create(Material.CHEST_MINECART, ChatColor.GREEN + "Leveling Rewards",
                         Collections.singletonList(ChatColor.GRAY + "" + ChatColor.ITALIC + "Coming soon!"))};
     }
 
@@ -256,11 +256,11 @@ public class CraftingMenu implements Listener {
                 break;
             }
             if (player.hasAchievement(ach.getId())) {
-                inv.setItem(place, ItemUtil.create(Material.STAINED_CLAY, 1, (byte) 5, ChatColor.GREEN +
-                        ach.getDisplayName(), Collections.singletonList(ChatColor.GRAY + "" + ChatColor.ITALIC + ach.getDescription())));
+                inv.setItem(place, ItemUtil.create(Material.GREEN_TERRACOTTA, ChatColor.GREEN + ach.getDisplayName(),
+                        Collections.singletonList(ChatColor.GRAY + "" + ChatColor.ITALIC + ach.getDescription())));
             } else {
-                inv.setItem(place, ItemUtil.create(Material.STAINED_CLAY, 1, (byte) 4, ChatColor.RED +
-                        ach.getDisplayName(), Collections.singletonList(ChatColor.GRAY + "" + ChatColor.ITALIC + "?")));
+                inv.setItem(place, ItemUtil.create(Material.RED_TERRACOTTA, ChatColor.RED + ach.getDisplayName(),
+                        Collections.singletonList(ChatColor.GRAY + "" + ChatColor.ITALIC + "?")));
             }
             place++;
         }

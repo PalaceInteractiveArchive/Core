@@ -171,19 +171,7 @@ public class ItemUtil implements Listener {
      * @return the item stack
      */
     public static ItemStack create(Material type, int amount) {
-        return create(type, amount, (byte) 0);
-    }
-
-    /**
-     * Create item stack.
-     *
-     * @param type   the type
-     * @param amount the amount
-     * @param data   the data
-     * @return the item stack
-     */
-    public static ItemStack create(Material type, int amount, byte data) {
-        return new ItemStack(type, amount, data);
+        return new ItemStack(type, amount);
     }
 
     /**
@@ -194,32 +182,7 @@ public class ItemUtil implements Listener {
      * @return the item stack
      */
     public static ItemStack create(Material type, String name) {
-        return create(type, name, (byte) 0);
-    }
-
-    /**
-     * Create item stack.
-     *
-     * @param type the type
-     * @param name the name
-     * @param data the data
-     * @return the item stack
-     */
-    public static ItemStack create(Material type, String name, byte data) {
-        return create(type, name, data, new ArrayList<>());
-    }
-
-    /**
-     * Create item stack
-     *
-     * @param type the type
-     * @param name the name
-     * @param data the data
-     * @param lore the lore
-     * @return the item stack
-     */
-    public static ItemStack create(Material type, String name, byte data, List<String> lore) {
-        return create(type, 1, data, name, lore);
+        return create(type, name, new ArrayList<>());
     }
 
     /**
@@ -244,21 +207,7 @@ public class ItemUtil implements Listener {
      * @return the item stack
      */
     public static ItemStack create(Material type, int amount, String name, List<String> lore) {
-        return create(type, amount, (byte) 0, name, lore);
-    }
-
-    /**
-     * Create item stack.
-     *
-     * @param type   the type
-     * @param amount the amount
-     * @param data   the data
-     * @param name   the name
-     * @param lore   the lore
-     * @return the item stack
-     */
-    public static ItemStack create(Material type, int amount, byte data, String name, List<String> lore) {
-        ItemStack item = create(type, amount, data);
+        ItemStack item = create(type, amount);
         ItemMeta meta = item.getItemMeta();
         meta.setDisplayName(name);
         meta.setLore(lore);
@@ -318,7 +267,7 @@ public class ItemUtil implements Listener {
      * @return the item stack
      */
     public static ItemStack create(String owner, String displayName, List<String> lore) {
-        ItemStack item = create(Material.SKULL_ITEM, 1, (byte) 3);
+        ItemStack item = create(Material.PLAYER_HEAD, 1);
         SkullMeta sm = (SkullMeta) item.getItemMeta();
         sm.setOwner(owner);
         sm.setDisplayName(displayName);

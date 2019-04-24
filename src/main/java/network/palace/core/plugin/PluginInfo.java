@@ -46,4 +46,11 @@ public @interface PluginInfo {
      * @return can this plugin be reloaded?
      */
     boolean canReload() default false;
+
+    /**
+     * Spigot api version string
+     *
+     * @return the api version
+     */
+    String apiVersion() default "";
 }
