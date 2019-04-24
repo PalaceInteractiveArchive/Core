@@ -2,6 +2,8 @@ package network.palace.core.pathfinding;
 
 import lombok.Getter;
 import org.bukkit.block.Block;
+import org.bukkit.material.Door;
+import org.bukkit.material.Gate;
 
 import java.util.*;
 
@@ -80,17 +82,26 @@ public class Pathfinder {
         switch (b.getType()) {
             case AIR:
             case LAVA:
-            case STATIONARY_LAVA:
-            case STATIONARY_WATER:
             case WATER:
-            case PORTAL:
+            case NETHER_PORTAL:
                 return true;
             case IRON_DOOR:
-            case WOODEN_DOOR:
-            case WOOD_DOOR:
-            case FENCE_GATE:
-                if ((b.getData() & 16) != 16)
-                    return true;
+            case DARK_OAK_DOOR:
+            case ACACIA_DOOR:
+            case BIRCH_DOOR:
+            case JUNGLE_DOOR:
+            case OAK_DOOR:
+            case SPRUCE_DOOR:
+                Door door = (Door) b.getState();
+                return door.isOpen();
+            case ACACIA_FENCE_GATE:
+            case BIRCH_FENCE_GATE:
+            case DARK_OAK_FENCE_GATE:
+            case JUNGLE_FENCE_GATE:
+            case OAK_FENCE_GATE:
+            case SPRUCE_FENCE_GATE:
+                Gate gate = (Gate) b.getState();
+                return gate.isOpen();
             default:
                 return false;
         }
@@ -102,17 +113,32 @@ public class Pathfinder {
         switch (b.getType()) {
             case LADDER:
             case WHEAT:
-            case LONG_GRASS:
-            case RAILS:
+            case TALL_GRASS:
+            case RAIL:
             case ACTIVATOR_RAIL:
             case DETECTOR_RAIL:
             case POWERED_RAIL:
             case CAULDRON:
-            case YELLOW_FLOWER:
+            case SUNFLOWER:
             case FLOWER_POT:
-            case RED_ROSE:
-            case CAKE_BLOCK:
-            case CARPET:
+            case ROSE_RED:
+            case CAKE:
+            case BLACK_CARPET:
+            case BLUE_CARPET:
+            case CYAN_CARPET:
+            case BROWN_CARPET:
+            case GRAY_CARPET:
+            case GREEN_CARPET:
+            case LIGHT_BLUE_CARPET:
+            case LIGHT_GRAY_CARPET:
+            case LIME_CARPET:
+            case MAGENTA_CARPET:
+            case ORANGE_CARPET:
+            case PINK_CARPET:
+            case PURPLE_CARPET:
+            case RED_CARPET:
+            case WHITE_CARPET:
+            case YELLOW_CARPET:
                 return false;
             default:
                 return true;
