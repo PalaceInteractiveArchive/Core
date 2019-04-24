@@ -52,5 +52,5 @@ public @interface PluginInfo {
      *
      * @return the api version
      */
-    String apiVersion() default "";
+    String apiversion() default "";
 }

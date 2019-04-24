@@ -265,7 +265,7 @@ public class CorePlayer implements CPlayer {
         player.setExp(0);
         player.setTotalExperience(0);
         player.setLevel(0);
-        player.setRemainingAir(20);
+        player.setRemainingAir(300);
         player.setAllowFlight(false);
         player.setFlying(false);
         player.setSneaking(false);

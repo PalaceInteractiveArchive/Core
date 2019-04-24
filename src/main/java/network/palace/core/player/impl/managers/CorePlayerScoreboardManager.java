@@ -126,7 +126,7 @@ public class CorePlayerScoreboardManager implements CPlayerScoreboardManager {
         if (scoreboard == null) return;
         if (player.getBukkitPlayer() == null) return;
         player.getBukkitPlayer().setScoreboard(scoreboard);
-        scoreboardObjective = scoreboard.registerNewObjective(player.getName(), "dummy");
+        scoreboardObjective = scoreboard.registerNewObjective(player.getName(), "dummy", "Sidebar Objective");
         scoreboardObjective.setDisplaySlot(DisplaySlot.SIDEBAR);
         isSetup = true;
     }
@@ -147,6 +147,7 @@ public class CorePlayerScoreboardManager implements CPlayerScoreboardManager {
             if (scoreboard.getTeam(rank.getScoreboardPrefix() + rank.getName()) != null) continue;
             Team team = scoreboard.registerNewTeam(rank.getScoreboardPrefix() + rank.getName());
             team.setPrefix(rank.getFormattedName() + " ");
+            team.setColor(rank.getTagColor());
             team.setOption(Team.Option.COLLISION_RULE, Team.OptionStatus.NEVER);
             team.setSuffix("");
         }
@@ -168,6 +169,7 @@ public class CorePlayerScoreboardManager implements CPlayerScoreboardManager {
             team = scoreboard.registerNewTeam(teamName);
             team.setPrefix(otherPlayer.getRank().getFormattedName() + " ");
             team.setSuffix(otherPlayer.getSponsorTier().getScoreboardTag());
+            team.setColor(otherPlayer.getRank().getTagColor());
             team.setOption(Team.Option.COLLISION_RULE, Team.OptionStatus.NEVER);
             team.addEntry(otherPlayer.getName());
         } else if (!team.hasEntry(otherPlayer.getName())) {

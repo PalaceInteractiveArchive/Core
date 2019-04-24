@@ -8,11 +8,11 @@ import org.bukkit.Server;
 import org.bukkit.command.Command;
 import org.bukkit.command.CommandMap;
 import org.bukkit.command.PluginCommand;
-import org.bukkit.command.SimpleCommandMap;
 import org.bukkit.plugin.java.JavaPlugin;
 
 import java.lang.reflect.Constructor;
 import java.lang.reflect.Field;
+import java.lang.reflect.Method;
 import java.util.*;
 
 /**
@@ -102,13 +102,12 @@ public final class CoreCommandMap {
      *
      * @return A hashmap of the known commands from the command map
      */
-    @SuppressWarnings("unchecked")
     private Map<String, Command> getKnownCommands(CommandMap commandMap) {
         Map<String, Command> knownCommands = new HashMap<>();
         try {
-            Field knownCommandsField = ((SimpleCommandMap) commandMap).getClass().getDeclaredField("knownCommands");
-            knownCommandsField.setAccessible(true);
-            knownCommands = (Map<String, Command>) knownCommandsField.get(commandMap);
+            Method knownCommandsMethod = commandMap.getClass().getMethod("getKnownCommands");
+            knownCommandsMethod.setAccessible(true);
+            knownCommands = (Map<String, Command>) knownCommandsMethod.invoke(commandMap);
         } catch (Exception ex) {
             ex.printStackTrace();
         }
