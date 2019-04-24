@@ -161,15 +161,13 @@ public class CorePlayerScoreboardManager implements CPlayerScoreboardManager {
     public void addPlayerTag(CPlayer otherPlayer) {
         if (scoreboard == null) setup();
         if (otherPlayer == null || otherPlayer.getRank() == null || otherPlayer.getSponsorTier() == null) return;
-        Rank r = otherPlayer.getRank();
-        SponsorTier t = otherPlayer.getSponsorTier();
-        String teamName = r.getScoreboardPrefix() + r.getDBName() + (t.equals(SponsorTier.NONE) ? "" : t.getDBName().substring(0, 4));
+        String teamName = teamName(otherPlayer.getRank(), otherPlayer.getSponsorTier());
         Team team = scoreboard.getTeam(teamName);
 
         if (team == null) {
             team = scoreboard.registerNewTeam(teamName);
-            team.setPrefix(r.getFormattedName() + " ");
-            team.setSuffix(t.getScoreboardTag());
+            team.setPrefix(otherPlayer.getRank().getFormattedName() + " ");
+            team.setSuffix(otherPlayer.getSponsorTier().getScoreboardTag());
             team.setOption(Team.Option.COLLISION_RULE, Team.OptionStatus.NEVER);
             team.addEntry(otherPlayer.getName());
         } else if (!team.hasEntry(otherPlayer.getName())) {
@@ -186,13 +184,15 @@ public class CorePlayerScoreboardManager implements CPlayerScoreboardManager {
     public void removePlayerTag(CPlayer otherPlayer) {
         if (scoreboard == null) setup();
         if (otherPlayer == null || otherPlayer.getRank() == null) return;
-        Rank r = otherPlayer.getRank();
-        SponsorTier t = otherPlayer.getSponsorTier();
-        String teamName = r.getScoreboardPrefix() + r.getDBName() + (t.equals(SponsorTier.NONE) ? "" : t.getDBName().substring(0, 4));
+        String teamName = teamName(otherPlayer.getRank(), otherPlayer.getSponsorTier());
         Team team = scoreboard.getTeam(teamName);
 
         if (team == null) return;
         team.removeEntry(otherPlayer.getName());
+    }
+
+    private String teamName(Rank rank, SponsorTier tier) {
+        return rank.getScoreboardPrefix() + (rank.equals(Rank.SPECIALGUEST) ? "sg" : rank.getDBName()) + (tier.equals(SponsorTier.NONE) ? "" : tier.getDBName().substring(0, 4));
     }
 
     /**
