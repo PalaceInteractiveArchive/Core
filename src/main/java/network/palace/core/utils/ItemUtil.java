@@ -298,7 +298,7 @@ public class ItemUtil implements Listener {
         ItemStack i;
         try {
             i = MinecraftReflection.getBukkitItemStack(new ItemStack(Material.matchMaterial(o.get("type").getAsString()), o.get("amount").getAsInt()));
-            if (o.has("tag")) {
+            if (o.has("tag") && !o.get("tag").getAsString().isEmpty()) {
                 try {
                     NbtFactory.setItemTag(i, new NbtTextSerializer().deserializeCompound(o.get("tag").getAsString()));
                 } catch (Exception ex) {

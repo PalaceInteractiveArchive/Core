@@ -488,6 +488,13 @@ public interface CPlayer {
     CPlayerScoreboardManager getScoreboard();
 
     /**
+     * Gets registry
+     *
+     * @return the registry
+     */
+    CPlayerRegistry getRegistry();
+
+    /**
      * Sets the scoreboard.
      *
      * @param manager the scoreboard manager
