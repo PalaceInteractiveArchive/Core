@@ -278,7 +278,7 @@ public class ItemUtil implements Listener {
 
     public static JsonObject getJsonFromItem(ItemStack i) {
         JsonObject o = new JsonObject();
-        if (i == null) {
+        if (i == null || i.getType().equals(Material.AIR)) {
             return o;
         }
         o.addProperty("type", i.getType().getKey().toString());
