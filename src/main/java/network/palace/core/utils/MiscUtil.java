@@ -1,8 +1,8 @@
 package network.palace.core.utils;
 
+import com.google.gson.JsonObject;
+import com.google.gson.JsonParser;
 import org.bukkit.block.BlockFace;
-import org.json.simple.JSONObject;
-import org.json.simple.parser.JSONParser;
 
 import java.io.*;
 import java.net.URL;
@@ -102,12 +102,12 @@ public class MiscUtil {
      * @param url the url
      * @return JSON objects with the content of the URL
      */
-    public static JSONObject readJsonFromUrl(String url) {
+    public static JsonObject readJsonFromUrl(String url) {
         try (InputStream is = new URL(url).openStream()) {
             BufferedReader rd = new BufferedReader(new InputStreamReader(is, Charset.forName("UTF-8")));
             String jsonText = readAll(rd);
-            JSONParser parser = new JSONParser();
-            return (JSONObject) parser.parse(jsonText);
+            JsonParser parser = new JsonParser();
+            return (JsonObject) parser.parse(jsonText);
         } catch (Exception e) {
             e.printStackTrace();
             return null;

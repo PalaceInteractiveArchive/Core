@@ -1,13 +1,13 @@
 package network.palace.core.config;
 
+import com.google.gson.JsonArray;
+import com.google.gson.JsonObject;
 import network.palace.core.Core;
 import network.palace.core.player.CPlayer;
 import network.palace.core.utils.MiscUtil;
 import org.bukkit.ChatColor;
 import org.bukkit.command.CommandSender;
 import org.bukkit.entity.Player;
-import org.json.simple.JSONArray;
-import org.json.simple.JSONObject;
 
 import java.util.HashMap;
 
@@ -15,7 +15,7 @@ import java.util.HashMap;
  * The type Language manager.
  */
 public class LanguageManager {
-    private final String url = "https://spreadsheets.google.com/feeds/cells/1Sy0BswfWXjGybjchn6YGj68fN19cl4P4wtrEF8EkPhw/od6/public/basic?alt=json";
+    private static final String url = "https://spreadsheets.google.com/feeds/cells/1Sy0BswfWXjGybjchn6YGj68fN19cl4P4wtrEF8EkPhw/od6/public/basic?alt=json";
     public static final String DEFAULT_LANG = "en_us";
 
     private final HashMap<String, HashMap<String, String>> languages = new HashMap<>();
@@ -28,21 +28,21 @@ public class LanguageManager {
     }
 
     public void reload() {
-        JSONObject obj = MiscUtil.readJsonFromUrl(url);
+        JsonObject obj = MiscUtil.readJsonFromUrl(url);
         if (obj == null) return;
 
-        JSONArray array = (JSONArray) ((JSONObject) obj.get("feed")).get("entry");
+        JsonArray array = (JsonArray) ((JsonObject) obj.get("feed")).get("entry");
         languages.clear();
         HashMap<Integer, String> langs = new HashMap<>();
         String key = "";
-        for (Object objectArray : array) {
-            JSONObject object = (JSONObject) objectArray;
-            JSONObject content = (JSONObject) object.get("content");
-            JSONObject id = (JSONObject) object.get("title");
-            String column = (String) id.get("$t");
+        for (Object elementArray : array) {
+            JsonObject object = (JsonObject) elementArray;
+            JsonObject content = object.getAsJsonObject("content");
+            JsonObject id = object.getAsJsonObject("title");
+            String column = id.get("$t").getAsString();
             String letter = column.substring(0, 1).toLowerCase();
             int row = Integer.parseInt(column.substring(1));
-            String text = (String) content.get("$t");
+            String text = content.get("$t").getAsString();
             if (text == null || text.isEmpty()) continue;
             if (row == 1) {
                 if (!text.equals("node")) {
