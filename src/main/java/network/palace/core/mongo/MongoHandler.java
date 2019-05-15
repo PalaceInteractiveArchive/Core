@@ -790,6 +790,26 @@ public class MongoHandler {
      */
 
     /**
+     * Get a document containing the following data:
+     * - build mode
+     *
+     * @param uuid        the uuid
+     * @param parkEntries the database entries to collect from the database
+     * @return a document with park join data
+     */
+    public Document getParkJoinData(UUID uuid, String... parkEntries) {
+        Document projection = null;
+        for (String s : parkEntries) {
+            if (projection == null) {
+                projection = new Document("parks." + s, 1);
+            } else {
+                projection.append("parks." + s, 1);
+            }
+        }
+        return (Document) playerCollection.find(MongoFilter.UUID.getFilter(uuid.toString())).projection(projection).first().get("parks");
+    }
+
+    /**
      * Get data for a specific section of park data. If no limit is provided, the entire parks section is returned.
      *
      * @param uuid the uuid of the player
