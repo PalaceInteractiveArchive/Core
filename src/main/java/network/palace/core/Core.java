@@ -62,8 +62,7 @@ import java.util.concurrent.Future;
 public class Core extends JavaPlugin {
 
     private boolean starting = true;
-    @Getter
-    private final long startTime = System.currentTimeMillis();
+    @Getter private final long startTime = System.currentTimeMillis();
     private YAMLConfigurationFile configFile;
     private String serverType = "Hub";
     private String instanceName = "";
@@ -179,14 +178,9 @@ public class Core extends JavaPlugin {
         // Log
         logMessage("Core", ChatColor.DARK_GREEN + "Enabled");
 
-        // If we're running in game-mode, set starting to false immediately.
-        // Otherwise, we'll wait the 7 seconds.
-        setStarting(false);
-//        if (isGameMode()) {
-//            logMessage("Core", ChatColor.BLUE + "" + ChatColor.BOLD + "Running in game mode, skipping startup phase!");
-//            setStarting(false);
-//        } else runTaskLater(() -> setStarting(false), 20 * 7);
-//        Bukkit.getServer().clearRecipes();
+        // Always keep players off the server until it's been finished loading for 1 second
+        // This prevents issues with not loading player data when they join before plugins are loaded
+        runTaskLater(() -> setStarting(false), 20);
     }
 
     /**

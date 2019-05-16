@@ -6,6 +6,7 @@ import org.bukkit.entity.Player;
 import org.bukkit.event.EventHandler;
 import org.bukkit.event.EventPriority;
 import org.bukkit.event.Listener;
+import org.bukkit.event.entity.EntityPickupItemEvent;
 import org.bukkit.event.player.*;
 
 /**
@@ -21,13 +22,13 @@ public class CorePlayerManagerListener implements Listener {
     @EventHandler(ignoreCancelled = true, priority = EventPriority.LOW)
     public void onPlayerLogin(AsyncPlayerPreLoginEvent event) {
         if (Core.isStarting()) {
-            event.setKickMessage(ChatColor.AQUA + "Players can not join right now. Try again in a few seconds!");
+            event.setKickMessage(ChatColor.AQUA + "This server is still starting up. Try again in a few seconds!");
             event.setLoginResult(AsyncPlayerPreLoginEvent.Result.KICK_OTHER);
             return;
         }
         if (!Core.isDashboardAndSqlDisabled()) {
             if (Core.getDashboardConnection() == null || !Core.getDashboardConnection().isConnected() || Core.getMongoHandler() == null) {
-                event.setKickMessage(ChatColor.AQUA + "Players can not join right now. Try again in a few seconds!");
+                event.setKickMessage(ChatColor.AQUA + "This server is still starting up. Try again in a few seconds!");
                 event.setLoginResult(AsyncPlayerPreLoginEvent.Result.KICK_OTHER);
                 return;
             }
@@ -41,6 +42,17 @@ public class CorePlayerManagerListener implements Listener {
     public void onPlayerLoginMonitor(AsyncPlayerPreLoginEvent event) {
         if (!event.getLoginResult().equals(AsyncPlayerPreLoginEvent.Result.ALLOWED)) {
             Core.getPlayerManager().removePlayer(event.getUniqueId());
+        }
+    }
+
+    @EventHandler(ignoreCancelled = true, priority = EventPriority.HIGHEST)
+    public void onPlayerLogin(PlayerLoginEvent event) {
+        if (Core.isStarting()) {
+            event.setKickMessage(ChatColor.AQUA + "This server is still starting up. Try again in a few seconds!");
+            event.setResult(PlayerLoginEvent.Result.KICK_OTHER);
+        }
+        if (!event.getResult().equals(PlayerLoginEvent.Result.ALLOWED)) {
+            Core.getPlayerManager().removePlayer(event.getPlayer().getUniqueId());
         }
     }
 
@@ -82,17 +94,6 @@ public class CorePlayerManagerListener implements Listener {
         Core.getPermissionManager().logout(event.getPlayer().getUniqueId());
     }
 
-    /*@EventHandler
-    public void onPlayerTabComplete(PlayerChatTabCompleteEvent event) {
-        CPlayer player = Core.getPlayerManager().getPlayer(event.getPlayer());
-        if (player == null) {
-            event.getTabCompletions().clear();
-            return;
-        }
-        Rank rank = player.getRank();
-        Bukkit.broadcastMessage(event.getChatMessage() + " | " + event.getLastToken() + " | " + Arrays.asList(event.getTabCompletions()));
-    }*/
-
     /**
      * On player achievement awarded.
      *
@@ -109,7 +110,7 @@ public class CorePlayerManagerListener implements Listener {
      * @param event the event
      */
     @EventHandler
-    public void onPlayerPickupItem(PlayerPickupItemEvent event) {
+    public void onPlayerPickupItem(EntityPickupItemEvent event) {
         if (event.getItem().hasMetadata("special")) {
             if (event.getItem().getMetadata("special").get(0).asBoolean()) {
                 event.setCancelled(true);
