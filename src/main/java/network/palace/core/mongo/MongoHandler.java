@@ -621,6 +621,25 @@ public class MongoHandler {
     }
 
     /**
+     * Get a document with the specified data fields
+     *
+     * @param uuid        the uuid
+     * @param parkEntries the database entries to collect from the database
+     * @return a document with join data
+     */
+    public Document getJoinData(UUID uuid, String... parkEntries) {
+        Document projection = null;
+        for (String s : parkEntries) {
+            if (projection == null) {
+                projection = new Document(s, 1);
+            } else {
+                projection.append(s, 1);
+            }
+        }
+        return playerCollection.find(MongoFilter.UUID.getFilter(uuid.toString())).projection(projection).first();
+    }
+
+    /**
      * Gets permissions.
      *
      * @param player the player
@@ -790,8 +809,7 @@ public class MongoHandler {
      */
 
     /**
-     * Get a document containing the following data:
-     * - build mode
+     * Get a document with the specified park fields
      *
      * @param uuid        the uuid
      * @param parkEntries the database entries to collect from the database

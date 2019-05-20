@@ -6,14 +6,13 @@ import network.palace.core.Core;
 import network.palace.core.dashboard.packets.dashboard.PacketConfirmPlayer;
 import network.palace.core.dashboard.packets.dashboard.PacketGetPack;
 import network.palace.core.events.CorePlayerJoinedEvent;
-import network.palace.core.player.CPlayer;
-import network.palace.core.player.CPlayerManager;
-import network.palace.core.player.PlayerStatus;
+import network.palace.core.player.*;
 import network.palace.core.player.impl.CorePlayer;
 import network.palace.core.player.impl.CorePlayerDefaultScoreboard;
 import network.palace.core.player.impl.listeners.CorePlayerManagerListener;
 import network.palace.core.player.impl.listeners.CorePlayerStaffLoginListener;
 import network.palace.core.utils.ProtocolUtil;
+import org.bson.Document;
 import org.bukkit.Bukkit;
 import org.bukkit.entity.Player;
 
@@ -38,37 +37,35 @@ public class CorePlayerManager implements CPlayerManager {
 
     @Override
     public void playerLoggedIn(UUID uuid, String name) {
-        onlinePlayers.put(uuid, new CorePlayer(uuid, name, Core.getMongoHandler().getRank(uuid), Core.getMongoHandler().getSponsorTier(uuid), Core.getMongoHandler().getLanguage(uuid)));
+        Document joinData = Core.getMongoHandler().getJoinData(uuid, "rank", "sponsor");
+        onlinePlayers.put(uuid, new CorePlayer(uuid, name,
+                joinData.containsKey("rank") ? Rank.fromString(joinData.getString("rank")) : Rank.SETTLER,
+                joinData.containsKey("sponsor") ? SponsorTier.fromString(joinData.getString("sponsor")) : SponsorTier.NONE,
+                "en_us"));
     }
 
     @Override
     public void playerJoined(Player player) {
-        // Player skins
-        WrappedGameProfile wrappedGameProfile = WrappedGameProfile.fromPlayer(player);
-        String textureValue = "";
-        String textureSignature = "";
-        Optional<WrappedSignedProperty> propertyOptional = wrappedGameProfile.getProperties().get("textures").stream().findFirst();
-        if (propertyOptional.isPresent()) {
-            WrappedSignedProperty property = propertyOptional.get();
-            textureValue = property.getValue();
-            textureSignature = property.getSignature();
-        }
         // Get core player
         CPlayer corePlayer = getPlayer(player);
         if (corePlayer == null) return;
         corePlayer.setProtocolId(ProtocolUtil.getProtocolVersion(player));
         // Joined
         corePlayer.setStatus(PlayerStatus.JOINED);
-        // Set skin info
-        corePlayer.setTextureValue(textureValue);
-        corePlayer.setTextureSignature(textureSignature);
-//        if (corePlayer.getRank().getRankId() >= Rank.CHARACTER.getRankId()) {
-        Core.runTaskAsynchronously(() -> Core.getMongoHandler().cacheSkin(corePlayer.getUuid(), corePlayer.getTextureValue(), corePlayer.getTextureSignature()));
-//        }
-        // Setup permissions for player
-        Core.getPermissionManager().login(corePlayer);
-        // Achievements Task
+
+        // Async Task
         Core.runTaskAsynchronously(() -> {
+            // Cache Skin
+            WrappedGameProfile wrappedGameProfile = WrappedGameProfile.fromPlayer(player);
+            Optional<WrappedSignedProperty> propertyOptional = wrappedGameProfile.getProperties().get("textures").stream().findFirst();
+            if (propertyOptional.isPresent()) {
+                WrappedSignedProperty property = propertyOptional.get();
+                corePlayer.setTextureValue(property.getValue());
+                corePlayer.setTextureSignature(property.getSignature());
+            }
+            Core.getMongoHandler().cacheSkin(corePlayer.getUniqueId(), corePlayer.getTextureValue(), corePlayer.getTextureSignature());
+
+            // Achievements
             List<Integer> ids = Core.getMongoHandler().getAchievements(corePlayer.getUniqueId());
             corePlayer.setAchievementManager(new CorePlayerAchievementManager(corePlayer, ids));
             Core.getCraftingMenu().update(corePlayer, 2, Core.getCraftingMenu().getAchievement(corePlayer));
@@ -76,10 +73,14 @@ public class CorePlayerManager implements CPlayerManager {
             corePlayer.setPreviousHonorLevel(Core.getHonorManager().getLevel(corePlayer.getHonor()).getLevel());
             corePlayer.giveAchievement(0);
             Core.getHonorManager().displayHonor(corePlayer, true);
+
+            // Packets
+            Core.getDashboardConnection().send(new PacketGetPack(corePlayer.getUniqueId(), ""));
+            Core.getDashboardConnection().send(new PacketConfirmPlayer(corePlayer.getUniqueId(), false));
         });
-        // Packets
-        Core.getDashboardConnection().send(new PacketGetPack(corePlayer.getUniqueId(), ""));
-        Core.getDashboardConnection().send(new PacketConfirmPlayer(corePlayer.getUniqueId(), false));
+
+        // Setup permissions for player
+        Core.getPermissionManager().login(corePlayer);
         // Display the scoreboard
         displayRank(corePlayer);
         // Tab header and footer
