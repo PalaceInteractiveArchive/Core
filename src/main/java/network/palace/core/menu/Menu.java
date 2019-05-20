@@ -21,9 +21,9 @@ public class Menu implements Listener {
     private final List<MenuButton> menuButtons;
     private final Inventory inventory;
     private final String title;
-    private final Player player;
+    private final CPlayer player;
 
-    public Menu(Inventory inventory, String title, Player player, List<MenuButton> buttons) {
+    public Menu(Inventory inventory, String title, CPlayer player, List<MenuButton> buttons) {
         this.inventory = inventory;
         this.title = title;
         this.player = player;
