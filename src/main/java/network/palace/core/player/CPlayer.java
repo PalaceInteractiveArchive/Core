@@ -5,6 +5,8 @@ import network.palace.core.plugin.Plugin;
 import network.palace.core.tracking.GameType;
 import network.palace.core.tracking.StatisticType;
 import org.bukkit.*;
+import org.bukkit.attribute.Attribute;
+import org.bukkit.attribute.AttributeInstance;
 import org.bukkit.block.Block;
 import org.bukkit.entity.Entity;
 import org.bukkit.entity.Player;
@@ -114,7 +116,53 @@ public interface CPlayer {
      *
      * @return the current max health
      */
+    @Deprecated
     double getMaxHealth();
+
+    /**
+     * Get the player's food level
+     *
+     * @return the current food level
+     */
+    int getFoodLevel();
+
+    /**
+     * Set the player's food level
+     *
+     * @param level the food level
+     */
+    void setFoodLevel(int level);
+
+    /**
+     * Returns the entity's current fire ticks (ticks before the entity stops
+     * being on fire).
+     *
+     * @return int fireTicks
+     */
+    int getFireTicks();
+
+    /**
+     * Returns the entity's maximum fire ticks.
+     *
+     * @return int maxFireTicks
+     */
+    int getMaxFireTicks();
+
+    /**
+     * Sets the entity's current fire ticks (ticks before the entity stops
+     * being on fire).
+     *
+     * @param ticks Current ticks remaining
+     */
+    void setFireTicks(int ticks);
+
+    /**
+     * Gets the specified attribute instance from the player object
+     *
+     * @param attribute the type of attribute
+     * @return the attribute instance
+     */
+    AttributeInstance getAttribute(Attribute attribute);
 
     /**
      * Gets gamemode.
