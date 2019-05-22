@@ -15,6 +15,8 @@ import network.palace.core.plugin.Plugin;
 import network.palace.core.tracking.GameType;
 import network.palace.core.tracking.StatisticType;
 import org.bukkit.*;
+import org.bukkit.attribute.Attribute;
+import org.bukkit.attribute.AttributeInstance;
 import org.bukkit.block.Block;
 import org.bukkit.entity.Entity;
 import org.bukkit.entity.Player;
@@ -144,13 +146,61 @@ public class CorePlayer implements CPlayer {
         return getBukkitPlayer().getHealth();
     }
 
-    @SuppressWarnings("deprecation")
+    @Deprecated
     @Override
     public double getMaxHealth() {
         if (getStatus() != PlayerStatus.JOINED) return 20;
         if (getBukkitPlayer() == null) return 20;
 
         return getBukkitPlayer().getMaxHealth();
+    }
+
+    @Override
+    public int getFoodLevel() {
+        if (getStatus() != PlayerStatus.JOINED) return 20;
+        if (getBukkitPlayer() == null) return 20;
+
+        return getBukkitPlayer().getFoodLevel();
+    }
+
+    @Override
+    public void setFoodLevel(int level) {
+        if (getStatus() != PlayerStatus.JOINED) return;
+        if (getBukkitPlayer() == null) return;
+
+        getBukkitPlayer().setFoodLevel(level);
+    }
+
+    @Override
+    public int getFireTicks() {
+        if (getStatus() != PlayerStatus.JOINED) return 0;
+        if (getBukkitPlayer() == null) return 0;
+
+        return getBukkitPlayer().getFireTicks();
+    }
+
+    @Override
+    public int getMaxFireTicks() {
+        if (getStatus() != PlayerStatus.JOINED) return 20;
+        if (getBukkitPlayer() == null) return 20;
+
+        return getBukkitPlayer().getMaxFireTicks();
+    }
+
+    @Override
+    public void setFireTicks(int ticks) {
+        if (getStatus() != PlayerStatus.JOINED) return;
+        if (getBukkitPlayer() == null) return;
+
+        getBukkitPlayer().setFireTicks(ticks);
+    }
+
+    @Override
+    public AttributeInstance getAttribute(Attribute attribute) {
+        if (getStatus() != PlayerStatus.JOINED) return null;
+        if (getBukkitPlayer() == null) return null;
+
+        return getBukkitPlayer().getAttribute(attribute);
     }
 
     @Override
