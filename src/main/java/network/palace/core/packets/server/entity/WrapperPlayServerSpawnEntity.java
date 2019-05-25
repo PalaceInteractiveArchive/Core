@@ -19,6 +19,8 @@ public class WrapperPlayServerSpawnEntity extends AbstractPacket {
 
     /**
      * Represents the different object types.
+     *
+     * @author Kristian
      */
     public static class ObjectTypes extends IntEnum {
         public static final int BOAT = 1;

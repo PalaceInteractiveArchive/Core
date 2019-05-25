@@ -18,19 +18,18 @@
  */
 package network.palace.core.packets.server.entity;
 
-import java.util.UUID;
-
-import network.palace.core.packets.AbstractPacket;
-import org.bukkit.World;
-import org.bukkit.entity.Entity;
-import org.bukkit.entity.EntityType;
-
 import com.comphenix.protocol.PacketType;
 import com.comphenix.protocol.ProtocolLibrary;
 import com.comphenix.protocol.events.PacketContainer;
 import com.comphenix.protocol.events.PacketEvent;
 import com.comphenix.protocol.injector.PacketConstructor;
 import com.comphenix.protocol.wrappers.WrappedDataWatcher;
+import network.palace.core.packets.AbstractPacket;
+import org.bukkit.World;
+import org.bukkit.entity.Entity;
+import org.bukkit.entity.EntityType;
+
+import java.util.UUID;
 
 public class WrapperPlayServerSpawnEntityLiving extends AbstractPacket {
 

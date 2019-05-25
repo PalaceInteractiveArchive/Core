@@ -6,10 +6,8 @@ import lombok.Setter;
 import network.palace.core.Core;
 import network.palace.core.npc.AbstractGearMob;
 import network.palace.core.npc.ProtocolLibSerializers;
-import network.palace.core.packets.server.entity.WrapperPlayServerBed;
-import network.palace.core.packets.server.entity.WrapperPlayServerEntityDestroy;
-import network.palace.core.packets.server.entity.WrapperPlayServerPlayerInfo;
-import network.palace.core.packets.server.entity.WrapperPlayServerSpawnEntity;
+import network.palace.core.packets.AbstractPacket;
+import network.palace.core.packets.server.entity.*;
 import network.palace.core.pathfinding.Point;
 import network.palace.core.player.CPlayer;
 import network.palace.core.utils.MiscUtil;
@@ -87,6 +85,21 @@ public class MobPlayer extends AbstractGearMob {
             });
         }
         if (isFishing()) setFishing(null);
+    }
+
+    @Override
+    protected AbstractPacket getSpawnPacket() {
+        WrapperPlayServerNamedEntitySpawn packet = new WrapperPlayServerNamedEntitySpawn();
+        packet.setEntityID(entityId);
+        packet.setPlayerUUID(uuid);
+        packet.setX(location.getX());
+        packet.setY(location.getY());
+        packet.setZ(location.getZ());
+        packet.setYaw(location.getYaw());
+        packet.setPitch(location.getPitch());
+        updateDataWatcher();
+        packet.setMetadata(dataWatcher);
+        return packet;
     }
 
     @Override

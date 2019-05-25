@@ -27,7 +27,7 @@ public final class SoftNPCManager implements Listener {
     private static final int RENDER_DISTANCE = 60;
     private static final int TELEPORT_MIN_DISTANCE = 15;
     @Getter private IDManager iDManager;
-    @Getter private final Set<WeakReference<AbstractMob>> mobRefs = new HashSet<>();
+    @Getter private final Set<WeakReference<AbstractEntity>> entityRefs = new HashSet<>();
     private List<String> hiddenPlayerMobs = new ArrayList<>();
     private HashMap<UUID, List<MobPlayer>> removeFromTabList = new HashMap<>();
 
@@ -59,7 +59,7 @@ public final class SoftNPCManager implements Listener {
     }
 
     private void ensureAllValid() {
-        mobRefs.removeIf(mob -> mob.get() == null);
+        entityRefs.removeIf(mob -> mob.get() == null);
     }
 
     @EventHandler(priority = EventPriority.MONITOR)
@@ -123,8 +123,8 @@ public final class SoftNPCManager implements Listener {
     public void onPlayerWorldChange(PlayerChangedWorldEvent event) {
         ensureAllValid();
         CPlayer player = Core.getPlayerManager().getPlayer(event.getPlayer());
-        for (WeakReference<AbstractMob> mobRef : mobRefs) {
-            AbstractMob mobNPC = mobRef.get();
+        for (WeakReference<AbstractEntity> mobRef : entityRefs) {
+            AbstractEntity mobNPC = mobRef.get();
             if (mobNPC == null || mobNPC.getVisibleTo().size() != 0 && MiscUtil.contains(mobNPC.getTargets(), event.getPlayer()))
                 continue;
             if (mobNPC.getLocation().getWorld() == null) {
@@ -141,8 +141,8 @@ public final class SoftNPCManager implements Listener {
         if (loc == null) {
             loc = player.getLocation();
         }
-        for (WeakReference<AbstractMob> mobRef : mobRefs) {
-            final AbstractMob npcMob = mobRef.get();
+        for (WeakReference<AbstractEntity> mobRef : entityRefs) {
+            final AbstractEntity npcMob = mobRef.get();
             if (npcMob == null) continue;
             if (npcMob.isSpawned() && npcMob.canSee(player) && npcMob.sameWorld(player)) {
                 if (spawn) {
@@ -177,8 +177,8 @@ public final class SoftNPCManager implements Listener {
     }
 
     private void playerLogout(CPlayer player) {
-        for (WeakReference<AbstractMob> mobRef : mobRefs) {
-            final AbstractMob npcMob = mobRef.get();
+        for (WeakReference<AbstractEntity> mobRef : entityRefs) {
+            final AbstractEntity npcMob = mobRef.get();
             if (npcMob != null && npcMob.isSpawned() && npcMob.isViewer(player)) {
                 npcMob.removeViewer(player);
             }
