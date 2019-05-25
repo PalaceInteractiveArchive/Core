@@ -61,7 +61,9 @@ public class Menu implements Listener {
         InventoryView view = event.getView();
         if (isSameInventory(view)) {
             event.setCancelled(true);
-            menuButtons.stream().filter(button -> button.getSlot() == event.getRawSlot() && button.getActions().containsKey(event.getClick())).findFirst().map(menuButton -> menuButton.getActions().get(event.getClick())).ifPresent(action -> action.accept((Player) event.getWhoClicked()));
+            menuButtons.stream().filter(button -> button.getSlot() == event.getRawSlot() && button.getActions().containsKey(event.getClick()))
+                    .findFirst().map(menuButton -> menuButton.getActions().get(event.getClick()))
+                    .ifPresent(action -> action.accept(Core.getPlayerManager().getPlayer((Player) event.getWhoClicked())));
 
             long t2 = System.currentTimeMillis();
             long diff = t2 - t;
