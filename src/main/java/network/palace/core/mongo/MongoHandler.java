@@ -44,6 +44,7 @@ public class MongoHandler {
     private MongoCollection<Document> rideCounterCollection = null;
     private MongoCollection<Document> honorMappingCollection = null;
     private MongoCollection<Document> outfitsCollection = null;
+    private MongoCollection<Document> showScheduleCollection = null;
     private MongoCollection<Document> hotelCollection = null;
     private MongoCollection<Document> warpsCollection = null;
 
@@ -73,6 +74,7 @@ public class MongoHandler {
         rideCounterCollection = database.getCollection("ridecounters");
         honorMappingCollection = database.getCollection("honormapping");
         outfitsCollection = database.getCollection("outfits");
+        showScheduleCollection = database.getCollection("showschedule");
         hotelCollection = database.getCollection("hotels");
         warpsCollection = database.getCollection("warps");
     }
@@ -1205,6 +1207,27 @@ public class MongoHandler {
         });
         list.sort((o1, o2) -> o2.getInteger("total") - o1.getInteger("total"));
         return list;
+    }
+
+    /**
+     * Get all Show schedule Documents
+     *
+     * @return all Show schedule Documents
+     */
+    public FindIterable<Document> getScheduledShows() {
+        return showScheduleCollection.find();
+    }
+
+    /**
+     * Update the list of scheduled shows
+     *
+     * @param shows a list of Documents formatted for show timetable entries
+     * @implNote This method deletes ALL existing documents in the 'showschedule' collection
+     * @implNote Only call this method if the list contains <b>all</b> show entries
+     */
+    public void updateScheduledShows(List<Document> shows) {
+        showScheduleCollection.deleteMany(new Document());
+        showScheduleCollection.insertMany(shows);
     }
 
     /*

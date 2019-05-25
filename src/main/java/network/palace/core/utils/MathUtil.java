@@ -39,6 +39,8 @@ public class MathUtil {
         loc.setX(Double.parseDouble(df.format(loc.getX())));
         loc.setY(Double.parseDouble(df.format(loc.getY())));
         loc.setZ(Double.parseDouble(df.format(loc.getZ())));
+        loc.setYaw(Float.parseFloat(df.format(loc.getYaw())));
+        loc.setPitch(Float.parseFloat(df.format(loc.getPitch())));
         return loc;
     }
 }

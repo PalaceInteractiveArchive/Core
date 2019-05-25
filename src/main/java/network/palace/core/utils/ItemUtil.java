@@ -107,11 +107,12 @@ public class ItemUtil implements Listener {
      * @return the boolean
      */
     public static boolean hasNBT(ItemStack stack, String tag) {
-        if (stack.getType() == Material.AIR) return false;
+        if (stack.getType().equals(Material.AIR)) return false;
         ItemStack craftStack = stack;
         if (!MinecraftReflection.isCraftItemStack(stack)) {
             craftStack = MinecraftReflection.getBukkitItemStack(stack);
         }
+        if (craftStack.getType().equals(Material.AIR)) return false;
         NbtCompound nbt = NbtFactory.asCompound(NbtFactory.fromItemTag(craftStack));
         return nbt.containsKey(tag) && nbt.getInteger(tag) == 1;
     }
