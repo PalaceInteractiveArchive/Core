@@ -247,18 +247,12 @@ public abstract class AbstractEntity implements Observable<NPCObserver> {
                         if (watchableObject.getIndex() == 2) {
                             watchableObject.setValue(conditionalName.getCustomName(target));
                         }
-//                        Core.debugLog("Sending update on " + watchableObject.getIndex() + " for #" + entityId + " (" +
-//                                getClass().getSimpleName() + ") =" + watchableObject.getValue() + " (" + watchableObject.getHandleType().getName() + ")");
                     }
                     localPacket.setMetadata(watchableObjects);
                     localPacket.setEntityID(entityId);
                     localPacket.sendPacket(target);
                 }
             } else {
-//                for (WrappedWatchableObject watchableObject : watchableObjects) {
-//                    Core.debugLog("Sending update on " + watchableObject.getIndex() + " for #" + entityId + " (" +
-//                            getClass().getSimpleName() + ") =" + watchableObject.getValue() + " (" + watchableObject.getHandleType().getName() + ")");
-//                }
                 WrapperPlayServerEntityMetadata packet = new WrapperPlayServerEntityMetadata();
                 packet.setMetadata(watchableObjects);
                 packet.setEntityID(entityId);
@@ -292,31 +286,36 @@ public abstract class AbstractEntity implements Observable<NPCObserver> {
     }
 
     public final void move(Point point) {
+        move(point, false);
+    }
+
+    public final void move(Point point, boolean relative) {
         if (!spawned) throw new IllegalStateException("You cannot teleport something that hasn't spawned yet!");
-        final Point location = this.location;
-        this.location = point;
+        final Point oldLocation = this.location;
+        final Point newLocation = relative ? this.location.deepCopy().add(point) : point;
         AbstractPacket packet;
-        if (location.distanceSquared(point) <= 16) {
+        if (oldLocation.distanceSquared(newLocation) <= 16) {
             WrapperPlayServerRelEntityMoveLook moveLookPacket = new WrapperPlayServerRelEntityMoveLook();
             moveLookPacket.setEntityID(entityId);
-            moveLookPacket.setDx(point.getX() - location.getX());
-            moveLookPacket.setDy(point.getY() - location.getY());
-            moveLookPacket.setDz(point.getZ() - location.getZ());
-            moveLookPacket.setPitch(point.getPitch());
-            moveLookPacket.setYaw(point.getYaw());
+            moveLookPacket.setDx(newLocation.getX() - oldLocation.getX());
+            moveLookPacket.setDy(newLocation.getY() - oldLocation.getY());
+            moveLookPacket.setDz(newLocation.getZ() - oldLocation.getZ());
+            moveLookPacket.setPitch(newLocation.getPitch());
+            moveLookPacket.setYaw(newLocation.getYaw());
             moveLookPacket.setOnGround(true);
             packet = moveLookPacket;
         } else {
             WrapperPlayServerEntityTeleport packet1 = new WrapperPlayServerEntityTeleport();
             packet1.setEntityID(entityId);
-            packet1.setX(point.getX());
-            packet1.setY(point.getY());
-            packet1.setZ(point.getZ());
-            packet1.setPitch(point.getPitch());
-            packet1.setYaw(point.getYaw());
+            packet1.setX(newLocation.getX());
+            packet1.setY(newLocation.getY());
+            packet1.setZ(newLocation.getZ());
+            packet1.setPitch(newLocation.getPitch());
+            packet1.setYaw(newLocation.getYaw());
             packet = packet1;
         }
         Arrays.asList(getTargets()).forEach(packet::sendPacket);
+        this.location = newLocation;
     }
 
     public final void addVelocity(Vector vector) {

@@ -6,18 +6,19 @@ import network.palace.core.packets.AbstractPacket;
 import network.palace.core.packets.server.entity.WrapperPlayServerSpawnEntity;
 import network.palace.core.pathfinding.Point;
 import network.palace.core.player.CPlayer;
-import org.bukkit.Material;
 import org.bukkit.entity.EntityType;
 
 import java.util.Set;
 import java.util.UUID;
 
 public class EntityFallingBlock extends AbstractEntity {
-    @Getter private final Material material;
+    @Getter private final int typeId;
+    @Getter private final byte data;
 
-    public EntityFallingBlock(Point location, Set<CPlayer> observers, String title, Material material) {
+    public EntityFallingBlock(Point location, Set<CPlayer> observers, String title, int typeId, byte data) {
         super(location, observers, title);
-        this.material = material;
+        this.typeId = typeId;
+        this.data = data;
     }
 
     @Override
@@ -26,7 +27,6 @@ public class EntityFallingBlock extends AbstractEntity {
     }
 
     @Override
-    @SuppressWarnings("deprecation")
     protected AbstractPacket getSpawnPacket() {
         WrapperPlayServerSpawnEntity wrapper = new WrapperPlayServerSpawnEntity();
         wrapper.setType(WrapperPlayServerSpawnEntity.ObjectTypes.FALLING_BLOCK);
@@ -35,7 +35,7 @@ public class EntityFallingBlock extends AbstractEntity {
         wrapper.setX(location.getX());
         wrapper.setY(location.getY());
         wrapper.setZ(location.getZ());
-        wrapper.setObjectData(material.getId());
+        wrapper.setObjectData(typeId | data << 12);
         return wrapper;
     }
 }
