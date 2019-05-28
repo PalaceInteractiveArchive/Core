@@ -12,7 +12,7 @@ cache:
 build:
   stage: build
   script:
-    - "mvn -Dsettings.security=maven-settings/settings-security.xml -s maven-settings/settings.xml -B clean package"
+    - mvn $MAVEN_CLI_OPTS clean package
   artifacts:
     paths:
       - target/*.jar
