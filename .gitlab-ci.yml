@@ -1,0 +1,18 @@
+image: maven:latest
+
+variables:
+  MAVEN_CLI_OPTS: "-s .m2/settings.xml --batch-mode"
+  MAVEN_OPTS: "-Dmaven.repo.local=.m2/repository"
+
+cache:
+  paths:
+    - .m2/repository/
+    - target/
+
+build:
+  stage: build
+  script:
+    - "mvn -Dsettings.security=maven-settings/settings-security.xml -s maven-settings/settings.xml -B clean package"
+  artifacts:
+    paths:
+      - target/*.jar
