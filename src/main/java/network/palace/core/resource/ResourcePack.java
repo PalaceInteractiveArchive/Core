@@ -54,6 +54,7 @@ public class ResourcePack {
         }
         if (url.isEmpty()) return;
 
+        player.getRegistry().addEntry("packDownloadURL", url);
         player.getResourcePack().send(url, hash);
     }
 
