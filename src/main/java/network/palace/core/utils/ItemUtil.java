@@ -113,8 +113,12 @@ public class ItemUtil implements Listener {
             craftStack = MinecraftReflection.getBukkitItemStack(stack);
         }
         if (craftStack.getType().equals(Material.AIR)) return false;
-        NbtCompound nbt = NbtFactory.asCompound(NbtFactory.fromItemTag(craftStack));
-        return nbt.containsKey(tag) && nbt.getInteger(tag) == 1;
+        try {
+            NbtCompound nbt = NbtFactory.asCompound(NbtFactory.fromItemTag(craftStack));
+            return nbt.containsKey(tag) && nbt.getInteger(tag) == 1;
+        } catch (Exception ignored) {
+            return false;
+        }
     }
 
     /**
