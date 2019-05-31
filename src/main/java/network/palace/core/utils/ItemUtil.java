@@ -288,9 +288,12 @@ public class ItemUtil implements Listener {
         }
         o.addProperty("type", i.getType().getKey().toString());
         o.addProperty("amount", i.getAmount());
-        String nbtTag = new NbtTextSerializer().serialize(NbtFactory.fromItemTag(i));
-        if (!nbtTag.isEmpty()) {
-            o.addProperty("tag", nbtTag);
+        try {
+            String nbtTag = new NbtTextSerializer().serialize(NbtFactory.fromItemTag(i));
+            if (!nbtTag.isEmpty()) {
+                o.addProperty("tag", nbtTag);
+            }
+        } catch (Exception ignored) {
         }
         return o;
     }
