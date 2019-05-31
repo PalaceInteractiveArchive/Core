@@ -839,6 +839,22 @@ public interface CPlayer {
     void addBalance(int amount);
 
     /**
+     * Add tokens to the player
+     *
+     * @param amount the amount to give to the player
+     * @param reason the reason for the transaction
+     */
+    void addTokens(int amount, String reason);
+
+    /**
+     * Add balance to the player
+     *
+     * @param amount the amount to add
+     * @param reason the reason for the transaction
+     */
+    void addBalance(int amount, String reason);
+
+    /**
      * Set the players tokens
      *
      * @param amount the amount to set it to
@@ -853,6 +869,22 @@ public interface CPlayer {
     void setBalance(int amount);
 
     /**
+     * Set the players tokens
+     *
+     * @param amount the amount to set it to
+     * @param reason the reason for the transaction
+     */
+    void setTokens(int amount, String reason);
+
+    /**
+     * Set the balance of the player
+     *
+     * @param amount the amount to set it to
+     * @param reason the reason for the transaction
+     */
+    void setBalance(int amount, String reason);
+
+    /**
      * Remove tokens from a player
      *
      * @param amount the amount to remove
@@ -865,6 +897,22 @@ public interface CPlayer {
      * @param amount the amount to remove
      */
     void removeBalance(int amount);
+
+    /**
+     * Remove tokens from a player
+     *
+     * @param amount the amount to remove
+     * @param reason the reason for the transaction
+     */
+    void removeTokens(int amount, String reason);
+
+    /**
+     * Remove balance from a player
+     *
+     * @param amount the amount to remove
+     * @param reason the reason for the transaction
+     */
+    void removeBalance(int amount, String reason);
 
     /**
      * Add a game statistic to a player

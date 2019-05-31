@@ -23,12 +23,11 @@ public class Menu implements Listener {
     private final String title;
     private final CPlayer player;
 
-    public Menu(Inventory inventory, String title, CPlayer player, List<MenuButton> buttons) {
-        this.inventory = inventory;
+    public Menu(int size, String title, CPlayer player, List<MenuButton> buttons) {
+        this.inventory = Core.createInventory(size, title);
         this.title = title;
         this.player = player;
         this.menuButtons = buttons;
-        open();
     }
 
     public Optional<MenuButton> getButton(int slot) {
