@@ -1,5 +1,7 @@
 package network.palace.core.utils;
 
+import java.text.DecimalFormat;
+
 public class TextUtil {
 
     /**
@@ -19,5 +21,13 @@ public class TextUtil {
         } else {
             return "s";
         }
+    }
+
+    public static String addCommas(int number) {
+        return new DecimalFormat("#,###").format(number);
+    }
+
+    public static String addCommas(double number) {
+        return new DecimalFormat("#,###.00").format(number);
     }
 }
