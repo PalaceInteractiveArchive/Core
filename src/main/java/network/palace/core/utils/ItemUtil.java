@@ -300,7 +300,7 @@ public class ItemUtil implements Listener {
 
     public static ItemStack getItemFromJson(String json) {
         JsonObject o = new JsonParser().parse(json).getAsJsonObject();
-        if (!o.has("tag")) {
+        if (!o.has("type")) {
             return new ItemStack(Material.AIR);
         }
         ItemStack i;
