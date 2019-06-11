@@ -215,6 +215,7 @@ public class ItemUtil implements Listener {
         ItemMeta meta = item.getItemMeta();
         meta.setDisplayName(name);
         meta.setLore(lore);
+        meta.addItemFlags(ItemFlag.HIDE_ATTRIBUTES, ItemFlag.HIDE_DESTROYS);
         item.setItemMeta(meta);
         return item;
     }
