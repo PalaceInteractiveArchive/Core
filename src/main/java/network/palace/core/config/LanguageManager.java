@@ -24,7 +24,7 @@ public class LanguageManager {
      * Instantiates a new Language manager.
      */
     public LanguageManager() {
-        Core.runTaskTimerAsynchronously(this::reload, 0L, 6000L);
+        Core.runTaskTimerAsynchronously(Core.getInstance(), this::reload, 0L, 6000L);
     }
 
     public void reload() {

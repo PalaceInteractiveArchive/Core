@@ -740,7 +740,7 @@ public class CorePlayer implements CPlayer {
         } else {
             getActionBar().show(ChatColor.YELLOW + "-" + CurrencyType.TOKENS.getIcon() + amount);
         }
-        Core.runTaskAsynchronously(() -> Core.getMongoHandler().changeAmount(getUuid(), amount, reason, CurrencyType.TOKENS, false));
+        Core.runTaskAsynchronously(Core.getInstance(), () -> Core.getMongoHandler().changeAmount(getUuid(), amount, reason, CurrencyType.TOKENS, false));
     }
 
     @Override
@@ -751,7 +751,7 @@ public class CorePlayer implements CPlayer {
         } else {
             getActionBar().show(ChatColor.GREEN + "-" + CurrencyType.BALANCE.getIcon() + Math.abs(amount));
         }
-        Core.runTaskAsynchronously(() -> Core.getMongoHandler().changeAmount(getUuid(), amount, reason, CurrencyType.BALANCE, false));
+        Core.runTaskAsynchronously(Core.getInstance(), () -> Core.getMongoHandler().changeAmount(getUuid(), amount, reason, CurrencyType.BALANCE, false));
     }
 
     @Override
@@ -766,12 +766,12 @@ public class CorePlayer implements CPlayer {
 
     @Override
     public void setTokens(int amount, String reason) {
-        Core.runTaskAsynchronously(() -> Core.getMongoHandler().changeAmount(getUuid(), amount, reason, CurrencyType.TOKENS, true));
+        Core.runTaskAsynchronously(Core.getInstance(), () -> Core.getMongoHandler().changeAmount(getUuid(), amount, reason, CurrencyType.TOKENS, true));
     }
 
     @Override
     public void setBalance(int amount, String reason) {
-        Core.runTaskAsynchronously(() -> Core.getMongoHandler().changeAmount(getUuid(), amount, reason, CurrencyType.BALANCE, true));
+        Core.runTaskAsynchronously(Core.getInstance(), () -> Core.getMongoHandler().changeAmount(getUuid(), amount, reason, CurrencyType.BALANCE, true));
     }
 
     @Override
@@ -792,7 +792,7 @@ public class CorePlayer implements CPlayer {
         } else {
             getActionBar().show(ChatColor.YELLOW + "+" + CurrencyType.TOKENS.getIcon() + amount);
         }
-        Core.runTaskAsynchronously(() -> Core.getMongoHandler().changeAmount(getUuid(), -amount, reason, CurrencyType.TOKENS, false));
+        Core.runTaskAsynchronously(Core.getInstance(), () -> Core.getMongoHandler().changeAmount(getUuid(), -amount, reason, CurrencyType.TOKENS, false));
     }
 
     @Override
@@ -803,7 +803,7 @@ public class CorePlayer implements CPlayer {
         } else {
             getActionBar().show(ChatColor.GREEN + "+" + CurrencyType.BALANCE.getIcon() + amount);
         }
-        Core.runTaskAsynchronously(() -> Core.getMongoHandler().changeAmount(getUuid(), -amount, reason, CurrencyType.BALANCE, false));
+        Core.runTaskAsynchronously(Core.getInstance(), () -> Core.getMongoHandler().changeAmount(getUuid(), -amount, reason, CurrencyType.BALANCE, false));
     }
 
     @Override

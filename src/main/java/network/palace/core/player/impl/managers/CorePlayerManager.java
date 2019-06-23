@@ -54,7 +54,7 @@ public class CorePlayerManager implements CPlayerManager {
         corePlayer.setStatus(PlayerStatus.JOINED);
 
         // Async Task
-        Core.runTaskAsynchronously(() -> {
+        Core.runTaskAsynchronously(Core.getInstance(), () -> {
             // Cache Skin
             WrappedGameProfile wrappedGameProfile = WrappedGameProfile.fromPlayer(player);
             Optional<WrappedSignedProperty> propertyOptional = wrappedGameProfile.getProperties().get("textures").stream().findFirst();
@@ -105,7 +105,7 @@ public class CorePlayerManager implements CPlayerManager {
         if (uuid == null) return;
         CPlayer cPlayer = getPlayer(uuid);
         if (cPlayer == null) return;
-        Core.runTask(() -> {
+        Core.runTask(Core.getInstance(), () -> {
             for (CPlayer otherPlayer : Core.getPlayerManager().getOnlinePlayers()) {
                 cPlayer.getScoreboard().removePlayerTag(otherPlayer);
                 otherPlayer.getScoreboard().removePlayerTag(cPlayer);
@@ -160,7 +160,7 @@ public class CorePlayerManager implements CPlayerManager {
 
         player.getScoreboard().setupPlayerTags();
         defaultScoreboard.setup(player);
-        Core.runTaskLater(() -> {
+        Core.runTaskLater(Core.getInstance(), () -> {
             for (CPlayer otherPlayer : Core.getPlayerManager().getOnlinePlayers()) {
                 if (player.getScoreboard() != null) player.getScoreboard().addPlayerTag(otherPlayer);
                 if (otherPlayer.getScoreboard() != null) otherPlayer.getScoreboard().addPlayerTag(player);

@@ -202,7 +202,7 @@ public class CorePlayerScoreboardManager implements CPlayerScoreboardManager {
      */
     @Override
     public void clear() {
-        Core.runTask(this::setup);
+        Core.runTask(Core.getInstance(), this::setup);
     }
 
     @Override

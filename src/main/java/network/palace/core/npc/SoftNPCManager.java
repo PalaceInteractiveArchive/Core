@@ -34,7 +34,7 @@ public final class SoftNPCManager implements Listener {
     public SoftNPCManager() {
         iDManager = new IDManager();
         Core.registerListener(this);
-        Core.runTaskTimer(() -> {
+        Core.runTaskTimer(Core.getInstance(), () -> {
             HashMap<UUID, List<MobPlayer>> localMap = (HashMap<UUID, List<MobPlayer>>) removeFromTabList.clone();
             removeFromTabList.clear();
             for (Map.Entry<UUID, List<MobPlayer>> entry : localMap.entrySet()) {

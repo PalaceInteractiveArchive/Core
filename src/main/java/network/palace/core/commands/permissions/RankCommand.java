@@ -59,7 +59,7 @@ public class RankCommand extends CoreCommand {
                 }
                 perms.put(node, val);
                 boolean finalVal = val;
-                Core.runTaskAsynchronously(() -> {
+                Core.runTaskAsynchronously(Core.getInstance(), () -> {
                     Core.getMongoHandler().setPermission(node, rank, finalVal);
                     Core.getPermissionManager().setPermission(rank, node, finalVal);
                     Core.getPermissionManager().refresh();
@@ -82,7 +82,7 @@ public class RankCommand extends CoreCommand {
                     sender.sendMessage(ChatColor.YELLOW + "Rank " + rank.getFormattedName() + ChatColor.YELLOW + " doesn't set " + ChatColor.AQUA + node);
                 } else {
                     perms.remove(node);
-                    Core.runTaskAsynchronously(() -> {
+                    Core.runTaskAsynchronously(Core.getInstance(), () -> {
                         Core.getPermissionManager().unsetPermission(rank, node);
                         Core.getMongoHandler().unsetPermission(node, rank);
                         Core.getPermissionManager().refresh();

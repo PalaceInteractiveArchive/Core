@@ -55,7 +55,7 @@ public class ShutdownCommand extends CoreCommand {
             return;
         }
         sender.sendMessage(ChatColor.RED + "Shutting the server down in " + delay + " seconds...");
-        taskID = Core.runTaskTimer(new Runnable() {
+        taskID = Core.runTaskTimer(Core.getInstance(), new Runnable() {
             int i = delay;
 
             @Override
@@ -68,7 +68,7 @@ public class ShutdownCommand extends CoreCommand {
                 Core.setStarting(true);
                 Bukkit.getWorlds().forEach(World::save);
                 Core.getDashboardConnection().send(new PacketEmptyServer(Core.getInstanceName()));
-                Core.runTaskTimer(() -> {
+                Core.runTaskTimer(Core.getInstance(), () -> {
                     if (Bukkit.getOnlinePlayers().size() <= 0) {
                         Core.getDashboardConnection().stop();
                         Bukkit.shutdown();

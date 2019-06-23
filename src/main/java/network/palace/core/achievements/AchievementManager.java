@@ -29,9 +29,9 @@ public class AchievementManager {
      * Initialize the achievement manager
      */
     private void init() {
-        Core.runTaskTimerAsynchronously(this::reload, 0L, 6000L);
+        Core.runTaskTimerAsynchronously(Core.getInstance(), this::reload, 0L, 6000L);
 
-        Core.runTaskTimerAsynchronously(() -> {
+        Core.runTaskTimerAsynchronously(Core.getInstance(), () -> {
             MongoHandler handler = Core.getMongoHandler();
             new HashSet<>(earned.entrySet()).forEach(entry -> entry.getValue().forEach(i -> {
                 handler.addAchievement(entry.getKey(), i);

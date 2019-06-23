@@ -130,7 +130,7 @@ public class MobPlayer extends AbstractGearMob {
         getSpawnPacket().sendPacket(player);
 
         if (bed != null || bobber != null) {
-            Core.runTaskLater(() -> {
+            Core.runTaskLater(Core.getInstance(), () -> {
                 if (bed != null) {
                     WrapperPlayServerBed bedPacket = getBedPacket();
                     viewers.forEach(bedPacket::sendPacket);

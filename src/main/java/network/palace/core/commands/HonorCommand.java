@@ -28,7 +28,7 @@ public class HonorCommand extends CoreCommand {
 
     @Override
     protected void handleCommandUnspecific(CommandSender sender, String[] args) throws CommandException {
-        Core.runTaskAsynchronously(() -> {
+        Core.runTaskAsynchronously(Core.getInstance(), () -> {
             if (args.length == 0 || args[0].equalsIgnoreCase("help")) {
                 helpMenu(sender);
                 return;

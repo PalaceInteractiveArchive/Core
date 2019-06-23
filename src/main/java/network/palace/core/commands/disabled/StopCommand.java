@@ -27,7 +27,7 @@ public class StopCommand extends CoreCommand {
         Bukkit.getWorlds().forEach(World::save);
         PacketEmptyServer packet = new PacketEmptyServer(Core.getInstanceName());
         Core.getDashboardConnection().send(packet);
-        Core.runTaskTimer(() -> {
+        Core.runTaskTimer(Core.getInstance(), () -> {
             if (timesTried >= 5) {
                 Bukkit.getOnlinePlayers().forEach(player -> player.kickPlayer(ChatColor.RED + "Server is stopping. Please rejoin in a few!"));
             }

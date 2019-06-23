@@ -1,5 +1,6 @@
 package network.palace.core.menu;
 
+import lombok.Getter;
 import network.palace.core.Core;
 import network.palace.core.player.CPlayer;
 import network.palace.core.player.Rank;
@@ -17,13 +18,14 @@ import java.util.List;
 import java.util.Optional;
 
 public class Menu implements Listener {
-
+    @Getter private final int size;
     private final List<MenuButton> menuButtons;
     private final Inventory inventory;
     private final String title;
     private final CPlayer player;
 
     public Menu(int size, String title, CPlayer player, List<MenuButton> buttons) {
+        this.size = size;
         this.inventory = Core.createInventory(size, title);
         this.title = title;
         this.player = player;
@@ -35,7 +37,7 @@ public class Menu implements Listener {
     }
 
     public void open() {
-        Core.runTask(() -> {
+        Core.runTask(Core.getInstance(), () -> {
             inventory.clear();
             menuButtons.forEach(button -> inventory.setItem(button.getSlot(), button.getItemStack()));
             player.openInventory(inventory);

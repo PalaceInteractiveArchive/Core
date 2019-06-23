@@ -100,23 +100,23 @@ public class CraftingMenu implements Listener {
                         case 4:
                         case 45:
                             event.setCancelled(true);
-                            Core.runTask(() -> {
+                            Core.runTask(Core.getInstance(), () -> {
                                 player.updateInventory();
                                 if (slot <= 4) update(player, slot, getMenuItems(player)[slot]);
                             });
                             break;
                         case 2:
                             event.setCancelled(true);
-                            Core.runTask(() -> openAchievementPage(player, 1));
+                            Core.runTask(Core.getInstance(), () -> openAchievementPage(player, 1));
                             break;
                         case 3:
                             event.setCancelled(true);
-                            Core.runTask(() -> openCosmeticsInventory(player));
+                            Core.runTask(Core.getInstance(), () -> openCosmeticsInventory(player));
                     }
                 }
             }
         });
-        Core.runTaskTimer(() -> Core.getPlayerManager().getOnlinePlayers().forEach(player -> {
+        Core.runTaskTimer(Core.getInstance(), () -> Core.getPlayerManager().getOnlinePlayers().forEach(player -> {
             Optional<InventoryView> optional = player.getOpenInventory();
             if (!optional.isPresent() || player.getGamemode().equals(GameMode.CREATIVE) || player.getGamemode().equals(GameMode.SPECTATOR)) {
                 refresh.remove(player.getUniqueId());

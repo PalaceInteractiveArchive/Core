@@ -41,7 +41,7 @@ public class PluginsCommand extends CoreCommand {
      */
     public PluginsCommand() {
         super("plugins");
-        Core.runTaskAsynchronously(this::obtainVersion);
+        Core.runTaskAsynchronously(Core.getInstance(), this::obtainVersion);
     }
 
     @Override

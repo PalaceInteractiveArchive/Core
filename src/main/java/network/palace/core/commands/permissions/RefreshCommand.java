@@ -16,7 +16,7 @@ public class RefreshCommand extends CoreCommand {
 
     @Override
     protected void handleCommandUnspecific(CommandSender sender, String[] args) throws CommandException {
-        Core.runTaskAsynchronously(() -> {
+        Core.runTaskAsynchronously(Core.getInstance(), () -> {
             sender.sendMessage(ChatColor.YELLOW + "Refreshing permissions...");
             Core.getPermissionManager().refresh();
             sender.sendMessage(ChatColor.YELLOW + "Permissions refreshed.");

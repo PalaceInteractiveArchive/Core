@@ -3,7 +3,6 @@ package network.palace.core.utils;
 import network.palace.core.Core;
 import network.palace.core.message.FormattedMessage;
 import network.palace.core.player.Rank;
-import network.palace.core.plugin.Plugin;
 import org.bukkit.ChatColor;
 import org.bukkit.plugin.java.JavaPlugin;
 
@@ -18,7 +17,7 @@ public class ErrorUtil {
     /**
      * Display a runtime error to all Wizard+ on that server
      *
-     * @param e the exception thrown
+     * @param e      the exception thrown
      * @param plugin the plugin the error occurred on
      */
     public static void displayError(Exception e, JavaPlugin plugin) {
@@ -33,8 +32,8 @@ public class ErrorUtil {
         FormattedMessage message = new FormattedMessage(exceptionMessage).color(ChatColor.RED);
         message.multilineTooltip(ChatColor.RED + "Details (" + plugin.getName() + ")", Arrays.toString(errorInfo.toArray()));
         Core.getPlayerManager().getOnlinePlayers().stream().filter(player -> player.getRank().getRankId() >= Rank.DEVELOPER.getRankId()).forEach(message::send);
-        if (plugin instanceof Plugin) ((Plugin) plugin).getRollbarHandler().error(e);
-        else Core.getInstance().getRollbarHandler().error(e);
+//        if (plugin instanceof Plugin) ((Plugin) plugin).getRollbarHandler().error(e);
+//        else Core.getInstance().getRollbarHandler().error(e);
     }
 
     public static void displayError(Exception e) {
@@ -49,7 +48,7 @@ public class ErrorUtil {
         FormattedMessage message = new FormattedMessage(exceptionMessage).color(ChatColor.RED);
         message.multilineTooltip(ChatColor.RED + "Details (Core)", Arrays.toString(errorInfo.toArray()));
         Core.getPlayerManager().getOnlinePlayers().stream().filter(player -> player.getRank().getRankId() >= Rank.DEVELOPER.getRankId()).forEach(message::send);
-        Core.getInstance().getRollbarHandler().error(e);
+//        Core.getInstance().getRollbarHandler().error(e);
     }
 
     public static void displayError(String error) {
@@ -57,7 +56,7 @@ public class ErrorUtil {
         FormattedMessage message = new FormattedMessage(error).color(ChatColor.RED);
         message.multilineTooltip(ChatColor.RED + "Details (Core)");
         Core.getPlayerManager().getOnlinePlayers().stream().filter(player -> player.getRank().getRankId() >= Rank.DEVELOPER.getRankId()).forEach(message::send);
-        Core.getInstance().getRollbarHandler().error(error);
+//        Core.getInstance().getRollbarHandler().error(error);
     }
 
     public static void displayError(String error, JavaPlugin plugin) {
@@ -65,7 +64,7 @@ public class ErrorUtil {
         FormattedMessage message = new FormattedMessage(error).color(ChatColor.RED);
         message.multilineTooltip(ChatColor.RED + "Details (" + plugin.getName() + ")");
         Core.getPlayerManager().getOnlinePlayers().stream().filter(player -> player.getRank().getRankId() >= Rank.DEVELOPER.getRankId()).forEach(message::send);
-        Core.getInstance().getRollbarHandler().error(error);
+//        Core.getInstance().getRollbarHandler().error(error);
     }
 
     /**

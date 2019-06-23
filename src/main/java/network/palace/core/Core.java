@@ -19,7 +19,6 @@ import network.palace.core.config.LanguageManager;
 import network.palace.core.config.YAMLConfigurationFile;
 import network.palace.core.crafting.CraftingMenu;
 import network.palace.core.dashboard.DashboardConnection;
-import network.palace.core.errors.EnvironmentType;
 import network.palace.core.errors.RollbarHandler;
 import network.palace.core.honor.HonorManager;
 import network.palace.core.library.LibraryHandler;
@@ -58,7 +57,7 @@ import java.util.concurrent.Future;
  * <p>
  * You can access instances of other modules by depending on Core in your pom.xml, and then executing Core.get
  */
-@PluginInfo(name = "Core", version = "2.4.2-1.13", depend = {"ProtocolLib"}, softdepend = {"ViaVersion"})
+@PluginInfo(name = "Core", version = "2.4.2-1.13", depend = {"ProtocolLib"}, softdepend = {"ViaVersion"}, apiversion = "1.13")
 public class Core extends JavaPlugin {
 
     private boolean starting = true;
@@ -114,8 +113,8 @@ public class Core extends JavaPlugin {
         LibraryHandler.loadLibraries(this);
         // Configurations
         configFile = new YAMLConfigurationFile(this, "config.yml");
-        rollbarHandler = new RollbarHandler(getCoreConfig().getString("accessToken", ""), EnvironmentType.fromString(getCoreConfig().getString("environment", "local")));
-        rollbarHandler.watch();
+//        rollbarHandler = new RollbarHandler(getCoreConfig().getString("accessToken", ""), EnvironmentType.fromString(getCoreConfig().getString("environment", "local")));
+//        rollbarHandler.watch();
         // Get info from config
         serverType = getCoreConfig().getString("server-type", "Unknown");
         instanceName = getCoreConfig().getString("instance-name", "ServerName");
@@ -180,7 +179,7 @@ public class Core extends JavaPlugin {
 
         // Always keep players off the server until it's been finished loading for 1 second
         // This prevents issues with not loading player data when they join before plugins are loaded
-        runTaskLater(() -> setStarting(false), 20);
+        runTaskLater(this, () -> setStarting(false), 20);
     }
 
     /**
@@ -221,7 +220,7 @@ public class Core extends JavaPlugin {
         registerCommand(new TagToggleCommand());
         registerCommand(new TokenCommand());
         registerCommand(new TopHonorCommand());
-        runTask(() -> {
+        runTask(this, () -> {
             boolean park = false;
             for (Plugin p : Bukkit.getPluginManager().getPlugins()) {
                 if (p.getName().equals("ParkManager")) {
@@ -536,8 +535,8 @@ public class Core extends JavaPlugin {
      * @param callable the callable
      * @return future
      */
-    public static <T> Future<T> callSyncMethod(Callable<T> callable) {
-        return Bukkit.getScheduler().callSyncMethod(getInstance(), callable);
+    public static <T> Future<T> callSyncMethod(Plugin plugin, Callable<T> callable) {
+        return Bukkit.getScheduler().callSyncMethod(plugin, callable);
     }
 
     /**
@@ -546,8 +545,8 @@ public class Core extends JavaPlugin {
      * @param task the task
      * @return the task id
      */
-    public static int runTaskAsynchronously(Runnable task) {
-        return Bukkit.getScheduler().runTaskAsynchronously(getInstance(), task).getTaskId();
+    public static int runTaskAsynchronously(Plugin plugin, Runnable task) {
+        return Bukkit.getScheduler().runTaskAsynchronously(plugin, task).getTaskId();
     }
 
     /**
@@ -557,8 +556,8 @@ public class Core extends JavaPlugin {
      * @param delay the delay
      * @return the task id
      */
-    public static int runTaskLaterAsynchronously(Runnable task, long delay) {
-        return Bukkit.getScheduler().runTaskLaterAsynchronously(getInstance(), task, delay).getTaskId();
+    public static int runTaskLaterAsynchronously(Plugin plugin, Runnable task, long delay) {
+        return Bukkit.getScheduler().runTaskLaterAsynchronously(plugin, task, delay).getTaskId();
     }
 
     /**
@@ -568,8 +567,8 @@ public class Core extends JavaPlugin {
      * @param delay the delay
      * @return the task id
      */
-    public static int runTaskLater(Runnable task, long delay) {
-        return Bukkit.getScheduler().runTaskLater(getInstance(), task, delay).getTaskId();
+    public static int runTaskLater(Plugin plugin, Runnable task, long delay) {
+        return Bukkit.getScheduler().runTaskLater(plugin, task, delay).getTaskId();
     }
 
     /**
@@ -580,8 +579,8 @@ public class Core extends JavaPlugin {
      * @param period the period
      * @return the task id
      */
-    public static int runTaskTimerAsynchronously(Runnable task, long delay, long period) {
-        return Bukkit.getScheduler().runTaskTimerAsynchronously(getInstance(), task, delay, period).getTaskId();
+    public static int runTaskTimerAsynchronously(Plugin plugin, Runnable task, long delay, long period) {
+        return Bukkit.getScheduler().runTaskTimerAsynchronously(plugin, task, delay, period).getTaskId();
     }
 
     /**
@@ -592,8 +591,8 @@ public class Core extends JavaPlugin {
      * @param period the period
      * @return the task id
      */
-    public static int runTaskTimer(Runnable task, long delay, long period) {
-        return Bukkit.getScheduler().runTaskTimer(getInstance(), task, delay, period).getTaskId();
+    public static int runTaskTimer(Plugin plugin, Runnable task, long delay, long period) {
+        return Bukkit.getScheduler().runTaskTimer(plugin, task, delay, period).getTaskId();
     }
 
     /**
@@ -602,8 +601,8 @@ public class Core extends JavaPlugin {
      * @param task the task
      * @return the task id
      */
-    public static int runTask(Runnable task) {
-        return Bukkit.getScheduler().runTask(getInstance(), task).getTaskId();
+    public static int runTask(Plugin plugin, Runnable task) {
+        return Bukkit.getScheduler().runTask(plugin, task).getTaskId();
     }
 
     /**
@@ -652,7 +651,7 @@ public class Core extends JavaPlugin {
      * @param callback the callbacks for the actions
      */
     public static void sendAllPlayers(String server, Callback callback) {
-        runTaskAsynchronously(() -> {
+        runTaskAsynchronously(getInstance(), () -> {
             for (CPlayer player : Core.getPlayerManager().getOnlinePlayers()) {
                 player.sendToServer(server);
             }
