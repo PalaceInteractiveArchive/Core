@@ -386,6 +386,14 @@ public abstract class AbstractEntity implements Observable<NPCObserver> {
         return location.getWorld().equals(player.getWorld());
     }
 
+    public boolean hasPassengers() {
+        return passengers.length > 0;
+    }
+
+    public int getPassengerCount() {
+        return passengers.length;
+    }
+
     public void addPassenger(AbstractEntity entity) {
         int[] newArray = new int[passengers.length + 1];
         int i = 0;
