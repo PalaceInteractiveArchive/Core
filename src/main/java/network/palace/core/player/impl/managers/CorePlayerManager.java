@@ -22,8 +22,7 @@ import java.util.*;
  * The type Core player manager.
  */
 public class CorePlayerManager implements CPlayerManager {
-
-    private final CorePlayerDefaultScoreboard defaultScoreboard;
+    private CorePlayerDefaultScoreboard defaultScoreboard;
     private final Map<UUID, CPlayer> onlinePlayers = new HashMap<>();
 
     /**
@@ -166,5 +165,10 @@ public class CorePlayerManager implements CPlayerManager {
                 if (otherPlayer.getScoreboard() != null) otherPlayer.getScoreboard().addPlayerTag(player);
             }
         }, 20L);
+    }
+
+    public void setDefaultScoreboard(CorePlayerDefaultScoreboard defaultScoreboard) {
+        this.defaultScoreboard = defaultScoreboard;
+        getOnlinePlayers().forEach(defaultScoreboard::setup);
     }
 }

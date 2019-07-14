@@ -23,6 +23,7 @@ public class Menu implements Listener {
     private final Inventory inventory;
     private final String title;
     private final CPlayer player;
+    private Optional<Runnable> onClose = Optional.empty();
 
     public Menu(int size, String title, CPlayer player, List<MenuButton> buttons) {
         this.size = size;
@@ -81,10 +82,15 @@ public class Menu implements Listener {
         }
     }
 
+    public void setOnClose(Runnable onClose) {
+        this.onClose = Optional.ofNullable(onClose);
+    }
+
     @EventHandler
     public void close(InventoryCloseEvent event) {
         if (isSameInventory(event.getView())) {
             HandlerList.unregisterAll(this);
+            onClose.ifPresent(Runnable::run);
         }
     }
 

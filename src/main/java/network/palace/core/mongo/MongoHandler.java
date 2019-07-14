@@ -794,6 +794,22 @@ public class MongoHandler {
                         .append("majestic", majestic).append("honorable", honorable)));
     }
 
+    /**
+     * Update the FastPass data for a specific UUID
+     *
+     * @param uuid     the uuid of the player
+     * @param fastPass the timestamp a fastpass was last claimed
+     */
+    public void updateFastPassData(UUID uuid, long fastPass) {
+        playerCollection.updateOne(MongoFilter.UUID.getFilter(uuid.toString()),
+                Updates.set("parks.fastpass.lastClaimed", fastPass));
+    }
+
+    public void addFastPass(UUID uuid, int count) {
+        playerCollection.updateOne(MongoFilter.UUID.getFilter(uuid.toString()),
+                Updates.inc("parks.fastpass.count", 1), new UpdateOptions().upsert(true));
+    }
+
     public Document getHotels() {
         return hotelCollection.find().projection(new Document("hotels", 1)).first();
     }
@@ -1161,23 +1177,6 @@ public class MongoHandler {
     public void setInventorySize(UUID uuid, String type, int size, int resort) {
         playerCollection.updateOne(new Document("uuid", uuid.toString()).append("parks.inventories.resort", resort),
                 Updates.set("parks.inventories.$." + type, size));
-    }
-
-    /**
-     * Update the FastPass data for a specific UUID
-     *
-     * @param uuid        the uuid of the player
-     * @param slow        the amount of slow FPs
-     * @param moderate    the amount of moderate FPs
-     * @param thrill      the amount of thrill FPs
-     * @param slowday     the day of the year a slow FP was last claimed
-     * @param moderateday the day of the year a moderate FP was last claimed
-     * @param thrillday   the day of the year a thrill FP was last claimed
-     */
-    public void updateFPData(UUID uuid, int slow, int moderate, int thrill, int slowday, int moderateday, int thrillday) {
-        playerCollection.updateOne(MongoFilter.UUID.getFilter(uuid.toString()), Updates.set("parks.fastpass",
-                new Document("slow", slow).append("moderate", moderate).append("thrill", thrill).append("sday", slowday)
-                        .append("mday", moderateday).append("tday", thrillday)));
     }
 
     /**

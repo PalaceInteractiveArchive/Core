@@ -20,6 +20,7 @@ import org.bukkit.event.player.PlayerDropItemEvent;
 import org.bukkit.inventory.Inventory;
 import org.bukkit.inventory.ItemFlag;
 import org.bukkit.inventory.ItemStack;
+import org.bukkit.inventory.meta.Damageable;
 import org.bukkit.inventory.meta.ItemMeta;
 import org.bukkit.inventory.meta.LeatherArmorMeta;
 import org.bukkit.inventory.meta.SkullMeta;
@@ -181,12 +182,44 @@ public class ItemUtil implements Listener {
     /**
      * Create item stack.
      *
+     * @param type   the type
+     * @param amount the amount
+     * @param damage the damage
+     * @return the item stack
+     */
+    public static ItemStack create(Material type, int amount, int damage) {
+        ItemStack item = create(type, amount);
+        ItemMeta meta = item.getItemMeta();
+        ((Damageable) meta).setDamage(damage);
+        item.setItemMeta(meta);
+        return item;
+    }
+
+    /**
+     * Create item stack.
+     *
      * @param type the type
      * @param name the name
      * @return the item stack
      */
     public static ItemStack create(Material type, String name) {
         return create(type, name, new ArrayList<>());
+    }
+
+    /**
+     * Create item stack.
+     *
+     * @param type   the type
+     * @param name   the name
+     * @param damage the damage
+     * @return the item stack
+     */
+    public static ItemStack create(Material type, String name, int damage) {
+        ItemStack item = create(type, name);
+        ItemMeta meta = item.getItemMeta();
+        ((Damageable) meta).setDamage(damage);
+        item.setItemMeta(meta);
+        return item;
     }
 
     /**
@@ -213,6 +246,27 @@ public class ItemUtil implements Listener {
     public static ItemStack create(Material type, int amount, String name, List<String> lore) {
         ItemStack item = create(type, amount);
         ItemMeta meta = item.getItemMeta();
+        meta.setDisplayName(name);
+        meta.setLore(lore);
+        meta.addItemFlags(ItemFlag.HIDE_ATTRIBUTES, ItemFlag.HIDE_DESTROYS);
+        item.setItemMeta(meta);
+        return item;
+    }
+
+    /**
+     * Create item stack.
+     *
+     * @param type   the type
+     * @param amount the amount
+     * @param damage the damage
+     * @param name   the name
+     * @param lore   the lore
+     * @return the item stack
+     */
+    public static ItemStack create(Material type, int amount, int damage, String name, List<String> lore) {
+        ItemStack item = create(type, amount);
+        ItemMeta meta = item.getItemMeta();
+        ((Damageable) meta).setDamage(damage);
         meta.setDisplayName(name);
         meta.setLore(lore);
         meta.addItemFlags(ItemFlag.HIDE_ATTRIBUTES, ItemFlag.HIDE_DESTROYS);
