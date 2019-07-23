@@ -59,7 +59,7 @@ public class HeadUtil {
      * @return ItemStack player head
      */
     private static ItemStack getHead(String hash) {
-        ItemStack item = new ItemStack(Material.PLAYER_HEAD, 1);
+        ItemStack item = new ItemStack(Material.SKULL_ITEM, 1);
         item = MinecraftReflection.getBukkitItemStack(item);
         NbtCompound nbt = NbtFactory.asCompound(NbtFactory.fromItemTag(item));
         NbtCompound texture = NbtFactory.ofCompound("");

@@ -126,7 +126,7 @@ public class CorePlayerScoreboardManager implements CPlayerScoreboardManager {
         if (scoreboard == null) return;
         if (player.getBukkitPlayer() == null) return;
         player.getBukkitPlayer().setScoreboard(scoreboard);
-        scoreboardObjective = scoreboard.registerNewObjective(player.getName(), "dummy", "Sidebar Objective");
+        scoreboardObjective = scoreboard.registerNewObjective(player.getName(), "dummy");
         scoreboardObjective.setDisplaySlot(DisplaySlot.SIDEBAR);
         isSetup = true;
     }

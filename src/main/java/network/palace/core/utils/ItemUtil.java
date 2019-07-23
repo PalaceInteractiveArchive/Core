@@ -20,7 +20,6 @@ import org.bukkit.event.player.PlayerDropItemEvent;
 import org.bukkit.inventory.Inventory;
 import org.bukkit.inventory.ItemFlag;
 import org.bukkit.inventory.ItemStack;
-import org.bukkit.inventory.meta.Damageable;
 import org.bukkit.inventory.meta.ItemMeta;
 import org.bukkit.inventory.meta.LeatherArmorMeta;
 import org.bukkit.inventory.meta.SkullMeta;
@@ -189,9 +188,10 @@ public class ItemUtil implements Listener {
      */
     public static ItemStack create(Material type, int amount, int damage) {
         ItemStack item = create(type, amount);
-        ItemMeta meta = item.getItemMeta();
-        ((Damageable) meta).setDamage(damage);
-        item.setItemMeta(meta);
+        item.setDurability((short) damage);
+//        ItemMeta meta = item.getItemMeta();
+//        ((Damageable) meta).setDamage(damage);
+//        item.setItemMeta(meta);
         return item;
     }
 
@@ -216,9 +216,10 @@ public class ItemUtil implements Listener {
      */
     public static ItemStack create(Material type, String name, int damage) {
         ItemStack item = create(type, name);
-        ItemMeta meta = item.getItemMeta();
-        ((Damageable) meta).setDamage(damage);
-        item.setItemMeta(meta);
+        item.setDurability((short) damage);
+//        ItemMeta meta = item.getItemMeta();
+//        ((Damageable) meta).setDamage(damage);
+//        item.setItemMeta(meta);
         return item;
     }
 
@@ -265,8 +266,9 @@ public class ItemUtil implements Listener {
      */
     public static ItemStack create(Material type, int amount, int damage, String name, List<String> lore) {
         ItemStack item = create(type, amount);
+        item.setDurability((short) damage);
         ItemMeta meta = item.getItemMeta();
-        ((Damageable) meta).setDamage(damage);
+//        ((Damageable) meta).setDamage(damage);
         meta.setDisplayName(name);
         meta.setLore(lore);
         meta.addItemFlags(ItemFlag.HIDE_ATTRIBUTES, ItemFlag.HIDE_DESTROYS);
@@ -327,7 +329,7 @@ public class ItemUtil implements Listener {
      */
     @SuppressWarnings("deprecation")
     public static ItemStack create(String owner, String displayName, List<String> lore) {
-        ItemStack item = create(Material.PLAYER_HEAD, 1);
+        ItemStack item = create(Material.SKULL_ITEM, 1);
         SkullMeta sm = (SkullMeta) item.getItemMeta();
         sm.setOwner(owner);
         sm.setDisplayName(displayName);
@@ -341,7 +343,7 @@ public class ItemUtil implements Listener {
         if (i == null || i.getType().equals(Material.AIR)) {
             return o;
         }
-        o.addProperty("type", i.getType().getKey().toString());
+        o.addProperty("type", i.getType().name());
         o.addProperty("amount", i.getAmount());
         try {
             String nbtTag = new NbtTextSerializer().serialize(NbtFactory.fromItemTag(i));
