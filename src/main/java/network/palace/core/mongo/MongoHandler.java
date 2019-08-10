@@ -805,6 +805,23 @@ public class MongoHandler {
                 Updates.set("parks.fastpass.lastClaimed", fastPass));
     }
 
+    /**
+     * Update the FastPass data for a specific UUID
+     *
+     * @param uuid        the uuid of the player
+     * @param slow        the amount of slow FPs
+     * @param moderate    the amount of moderate FPs
+     * @param thrill      the amount of thrill FPs
+     * @param slowday     the day of the year a slow FP was last claimed
+     * @param moderateday the day of the year a moderate FP was last claimed
+     * @param thrillday   the day of the year a thrill FP was last claimed
+     */
+    public void updateFPData(UUID uuid, int slow, int moderate, int thrill, int slowday, int moderateday, int thrillday) {
+        playerCollection.updateOne(MongoFilter.UUID.getFilter(uuid.toString()), Updates.set("parks.fastpass",
+                new Document("slow", slow).append("moderate", moderate).append("thrill", thrill).append("sday", slowday)
+                        .append("mday", moderateday).append("tday", thrillday)));
+    }
+
     public void addFastPass(UUID uuid, int count) {
         playerCollection.updateOne(MongoFilter.UUID.getFilter(uuid.toString()),
                 Updates.inc("parks.fastpass.count", 1), new UpdateOptions().upsert(true));

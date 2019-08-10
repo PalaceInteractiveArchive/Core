@@ -605,6 +605,90 @@ public class Core extends JavaPlugin {
         return Bukkit.getScheduler().runTask(plugin, task).getTaskId();
     }
 
+    /*
+    OLD METHODS END
+     */
+
+    /**
+     * Call sync method
+     *
+     * @param callable the callable
+     * @return future
+     */
+    public static <T> Future<T> callSyncMethod(Callable<T> callable) {
+        return Bukkit.getScheduler().callSyncMethod(getInstance(), callable);
+    }
+
+    /**
+     * Run task asynchronously int.
+     *
+     * @param task the task
+     * @return the task id
+     */
+    public static int runTaskAsynchronously(Runnable task) {
+        return Bukkit.getScheduler().runTaskAsynchronously(getInstance(), task).getTaskId();
+    }
+
+    /**
+     * Run task later async int.
+     *
+     * @param task  the task
+     * @param delay the delay
+     * @return the task id
+     */
+    public static int runTaskLaterAsynchronously(Runnable task, long delay) {
+        return Bukkit.getScheduler().runTaskLaterAsynchronously(getInstance(), task, delay).getTaskId();
+    }
+
+    /**
+     * Run task later int.
+     *
+     * @param task  the task
+     * @param delay the delay
+     * @return the task id
+     */
+    public static int runTaskLater(Runnable task, long delay) {
+        return Bukkit.getScheduler().runTaskLater(getInstance(), task, delay).getTaskId();
+    }
+
+    /**
+     * Run task timer asynchronously int.
+     *
+     * @param task   the task
+     * @param delay  the delay
+     * @param period the period
+     * @return the task id
+     */
+    public static int runTaskTimerAsynchronously(Runnable task, long delay, long period) {
+        return Bukkit.getScheduler().runTaskTimerAsynchronously(getInstance(), task, delay, period).getTaskId();
+    }
+
+    /**
+     * Run task timer int.
+     *
+     * @param task   the task
+     * @param delay  the delay
+     * @param period the period
+     * @return the task id
+     */
+    public static int runTaskTimer(Runnable task, long delay, long period) {
+        return Bukkit.getScheduler().runTaskTimer(getInstance(), task, delay, period).getTaskId();
+    }
+
+    /**
+     * Run task int.
+     *
+     * @param task the task
+     * @return the task id
+     */
+    public static int runTask(Runnable task) {
+        return Bukkit.getScheduler().runTask(getInstance(), task).getTaskId();
+    }
+
+    /*
+    OLD METHODS START
+     */
+
     /**
      * Log message.
      *
