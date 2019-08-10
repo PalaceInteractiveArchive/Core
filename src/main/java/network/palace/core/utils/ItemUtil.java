@@ -23,6 +23,7 @@ import org.bukkit.inventory.ItemStack;
 import org.bukkit.inventory.meta.ItemMeta;
 import org.bukkit.inventory.meta.LeatherArmorMeta;
 import org.bukkit.inventory.meta.SkullMeta;
+import org.bukkit.material.MaterialData;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -30,6 +31,7 @@ import java.util.List;
 /**
  * The type Item util.
  */
+@SuppressWarnings({"Duplicates", "deprecation"})
 public class ItemUtil implements Listener {
 
     private static final String UNABLE_TO_MOVE = "unableToMove";
@@ -338,40 +340,45 @@ public class ItemUtil implements Listener {
         return item;
     }
 
+    /*
+    OLD METHODS START
+     */
+
     public static JsonObject getJsonFromItem(ItemStack i) {
         JsonObject o = new JsonObject();
-        if (i == null || i.getType().equals(Material.AIR)) {
+        if (i == null) {
             return o;
         }
-        o.addProperty("type", i.getType().name());
-        o.addProperty("amount", i.getAmount());
-        try {
-            String nbtTag = new NbtTextSerializer().serialize(NbtFactory.fromItemTag(i));
-            if (!nbtTag.isEmpty()) {
-                o.addProperty("tag", nbtTag);
-            }
-        } catch (Exception ignored) {
+        o.addProperty("t", i.getTypeId());
+        o.addProperty("a", i.getAmount());
+        o.addProperty("da", i.getData().getData());
+        o.addProperty("du", i.getDurability());
+        String t = new NbtTextSerializer().serialize(NbtFactory.fromItemTag(i));
+        if (!t.equals("")) {
+            o.addProperty("ta", t);
         }
         return o;
     }
 
     public static ItemStack getItemFromJson(String json) {
         JsonObject o = new JsonParser().parse(json).getAsJsonObject();
-        if (!o.has("type")) {
+        if (!o.has("t")) {
             return new ItemStack(Material.AIR);
         }
         ItemStack i;
         try {
-            i = MinecraftReflection.getBukkitItemStack(new ItemStack(Material.matchMaterial(o.get("type").getAsString()), o.get("amount").getAsInt()));
-            if (o.has("tag") && !o.get("tag").getAsString().isEmpty()) {
+            i = MinecraftReflection.getBukkitItemStack(new ItemStack(o.get("t").getAsInt()));
+            i.setData(new MaterialData(o.get("t").getAsInt(), (byte) o.get("da").getAsInt()));
+            i.setAmount(o.get("a").getAsInt());
+            i.setDurability(o.get("du").getAsShort());
+            if (o.has("ta")) {
                 try {
-                    NbtFactory.setItemTag(i, new NbtTextSerializer().deserializeCompound(o.get("tag").getAsString()));
+                    NbtFactory.setItemTag(i, new NbtTextSerializer().deserializeCompound(o.get("ta").getAsString()));
                 } catch (Exception ex) {
                     ex.printStackTrace();
                 }
             }
-        } catch (Exception e) {
-            e.printStackTrace();
+        } catch (Exception ignored) {
             return new ItemStack(Material.AIR);
         }
         return i;
@@ -404,4 +411,84 @@ public class ItemUtil implements Listener {
         }
         return a;
     }
+
+    /*
+    OLD METHODS END
+     */
+
+    /*
+    NEW METHODS START
+     */
+
+    public static JsonObject getJsonFromItemNew(ItemStack i) {
+        JsonObject o = new JsonObject();
+        if (i == null) {
+            return o;
+        }
+        o.addProperty("t", i.getTypeId());
+        o.addProperty("a", i.getAmount());
+        o.addProperty("da", i.getData().getData());
+        o.addProperty("du", i.getDurability());
+        String t = new NbtTextSerializer().serialize(NbtFactory.fromItemTag(i));
+        if (!t.equals("")) {
+            o.addProperty("ta", t);
+        }
+        return o;
+    }
+
+    public static ItemStack getItemFromJsonNew(String json) {
+        JsonObject o = new JsonParser().parse(json).getAsJsonObject();
+        if (!o.has("t")) {
+            return new ItemStack(Material.AIR);
+        }
+        ItemStack i;
+        try {
+            i = MinecraftReflection.getBukkitItemStack(new ItemStack(o.get("t").getAsInt()));
+            i.setData(new MaterialData(o.get("t").getAsInt(), (byte) o.get("da").getAsInt()));
+            i.setAmount(o.get("a").getAsInt());
+            i.setDurability(o.get("du").getAsShort());
+            if (o.has("ta")) {
+                try {
+                    NbtFactory.setItemTag(i, new NbtTextSerializer().deserializeCompound(o.get("ta").getAsString()));
+                } catch (Exception ex) {
+                    ex.printStackTrace();
+                }
+            }
+        } catch (Exception ignored) {
+            return new ItemStack(Material.AIR);
+        }
+        return i;
+    }
+
+    public static JsonArray getJsonFromInventoryNew(Inventory inv) {
+        return getJsonFromArrayNew(inv.getContents());
+    }
+
+    public static JsonArray getJsonFromArrayNew(ItemStack[] arr) {
+        JsonArray a = new JsonArray();
+        for (ItemStack i : arr) {
+            a.add(getJsonFromItemNew(i));
+        }
+        return a;
+    }
+
+    public static ItemStack[] getInventoryFromJsonNew(String json) {
+        JsonElement e = new JsonParser().parse(json);
+        if (!e.isJsonArray()) {
+            return new ItemStack[0];
+        }
+        JsonArray ja = e.getAsJsonArray();
+        ItemStack[] a = new ItemStack[ja.size()];
+        int i = 0;
+        for (JsonElement e2 : ja) {
+            JsonObject o = e2.getAsJsonObject();
+            a[i] = getItemFromJsonNew(o.toString());
+            i++;
+        }
+        return a;
+    }
+
+    /*
+    NEW METHODS END
+     */
 }
