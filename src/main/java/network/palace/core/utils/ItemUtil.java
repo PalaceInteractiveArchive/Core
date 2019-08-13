@@ -344,6 +344,63 @@ public class ItemUtil implements Listener {
     OLD METHODS START
      */
 
+    /**
+     * Create item stack.
+     *
+     * @param type   the type
+     * @param amount the amount
+     * @param data   the data
+     * @return the item stack
+     */
+    public static ItemStack create(Material type, int amount, byte data) {
+        return new ItemStack(type, amount, data);
+    }
+
+    /**
+     * Create item stack.
+     *
+     * @param type the type
+     * @param name the name
+     * @param data the data
+     * @return the item stack
+     */
+    public static ItemStack create(Material type, String name, byte data) {
+        return create(type, name, data, new ArrayList<>());
+    }
+
+    /**
+     * Create item stack
+     *
+     * @param type the type
+     * @param name the name
+     * @param data the data
+     * @param lore the lore
+     * @return the item stack
+     */
+    public static ItemStack create(Material type, String name, byte data, List<String> lore) {
+        return create(type, 1, data, name, lore);
+    }
+
+    /**
+     * Create item stack.
+     *
+     * @param type   the type
+     * @param amount the amount
+     * @param data   the data
+     * @param name   the name
+     * @param lore   the lore
+     * @return the item stack
+     */
+    public static ItemStack create(Material type, int amount, byte data, String name, List<String> lore) {
+        ItemStack item = create(type, amount, data);
+        ItemMeta meta = item.getItemMeta();
+        meta.setDisplayName(name);
+        meta.setLore(lore);
+        item.setItemMeta(meta);
+        return item;
+    }
+
+
     public static JsonObject getJsonFromItem(ItemStack i) {
         JsonObject o = new JsonObject();
         if (i == null) {
