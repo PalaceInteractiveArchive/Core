@@ -25,19 +25,20 @@ public class StatUtil {
                 Object serverInstance = minecraftServer.getDeclaredMethod("getServer").invoke(minecraftServer);
                 double[] recentTps = (double[]) serverInstance.getClass().getField("recentTps").get(serverInstance);
 
+                HashMap<String, Object> tags = new HashMap<>();
+                tags.put("server_name", Core.getInstanceName());
+                tags.put("production", production);
+
                 HashMap<String, Object> values = new HashMap<>();
-                values.put("server_name", Core.getInstanceName());
                 values.put("tps", (float) Math.min(Math.round(recentTps[0] * 100.0) / 100.0, 20.0));
-                values.put("time", System.currentTimeMillis() / 1000);
-                values.put("production", production);
-                logStatistic("ticks_per_second", values);
+                logStatistic("ticks_per_second", tags, values);
             } catch (IllegalAccessException | InvocationTargetException | NoSuchMethodException | NoSuchFieldException e) {
                 e.printStackTrace();
             }
-        }, 40L, 1200L);
+        }, 40L, 600L);
     }
 
-    public void logStatistic(String tableName, HashMap<String, Object> values) {
-        Core.getDashboardConnection().send(new PacketLogStatistic(tableName, values));
+    public void logStatistic(String tableName, HashMap<String, Object> tags, HashMap<String, Object> values) {
+        Core.getDashboardConnection().send(new PacketLogStatistic(tableName, tags, values));
     }
 }

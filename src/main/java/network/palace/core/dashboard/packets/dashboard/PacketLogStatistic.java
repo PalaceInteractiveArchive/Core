@@ -12,25 +12,32 @@ import java.util.Map;
 
 @Getter
 public class PacketLogStatistic extends BasePacket {
-    private String tableName;
-    private HashMap<String, Object> values;
+    private String measurement;
+    private HashMap<String, Object> tags;
+    private HashMap<String, Object> fields;
 
     public PacketLogStatistic() {
-        this(null, new HashMap<>());
+        this(null, new HashMap<>(), new HashMap<>());
     }
 
-    public PacketLogStatistic(String tableName, HashMap<String, Object> values) {
+    public PacketLogStatistic(String measurement, HashMap<String, Object> tags, HashMap<String, Object> fields) {
         super(PacketID.Dashboard.LOG_STATISTIC.getID());
-        this.tableName = tableName;
-        this.values = values;
+        this.measurement = measurement;
+        this.tags = tags;
+        this.fields = fields;
     }
 
     public PacketLogStatistic fromJSON(JsonObject obj) {
-        this.tableName = obj.get("table-name").getAsString();
-        JsonArray values = obj.getAsJsonArray("values");
-        for (JsonElement e : values) {
+        this.measurement = obj.get("measurement").getAsString();
+        JsonArray tags = obj.getAsJsonArray("tags");
+        for (JsonElement e : tags) {
             JsonObject o = (JsonObject) e;
-            this.values.put(o.get("field-name").getAsString(), o.get("value").getAsString());
+            this.tags.put(o.get("key").getAsString(), o.get("value").getAsString());
+        }
+        JsonArray fields = obj.getAsJsonArray("fields");
+        for (JsonElement e : fields) {
+            JsonObject o = (JsonObject) e;
+            this.fields.put(o.get("key").getAsString(), o.get("value").getAsString());
         }
         return this;
     }
@@ -39,11 +46,11 @@ public class PacketLogStatistic extends BasePacket {
         JsonObject obj = new JsonObject();
         try {
             obj.addProperty("id", this.id);
-            obj.addProperty("table-name", tableName);
-            JsonArray values = new JsonArray();
-            for (Map.Entry<String, Object> entry : this.values.entrySet()) {
+            obj.addProperty("measurement", measurement);
+            JsonArray tags = new JsonArray();
+            for (Map.Entry<String, Object> entry : this.tags.entrySet()) {
                 JsonObject object = new JsonObject();
-                object.addProperty("field-name", entry.getKey());
+                object.addProperty("key", entry.getKey());
                 Object value = entry.getValue();
                 if (value instanceof Number) {
                     object.addProperty("value", (Number) value);
@@ -52,9 +59,24 @@ public class PacketLogStatistic extends BasePacket {
                 } else if (value instanceof String) {
                     object.addProperty("value", (String) value);
                 }
-                values.add(object);
+                tags.add(object);
             }
-            obj.add("values", values);
+            obj.add("tags", tags);
+            JsonArray fields = new JsonArray();
+            for (Map.Entry<String, Object> entry : this.fields.entrySet()) {
+                JsonObject object = new JsonObject();
+                object.addProperty("key", entry.getKey());
+                Object value = entry.getValue();
+                if (value instanceof Number) {
+                    object.addProperty("value", (Number) value);
+                } else if (value instanceof Boolean) {
+                    object.addProperty("value", (Boolean) value);
+                } else if (value instanceof String) {
+                    object.addProperty("value", (String) value);
+                }
+                fields.add(object);
+            }
+            obj.add("fields", fields);
         } catch (Exception e) {
             return null;
         }
