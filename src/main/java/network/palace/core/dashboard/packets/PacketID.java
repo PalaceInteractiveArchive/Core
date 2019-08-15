@@ -239,7 +239,8 @@ public enum PacketID {
          * Emptyserver dashboard.
          */
         EMPTYSERVER(57), PARTYREQUEST(58), LOBBYDATA(59),
-        TITLE(60), PLAYERLIST(63), UPDATEECONOMY(67), CONFIRMPLAYER(68), DISABLEPLAYER(69);
+        TITLE(60), PLAYERLIST(63), UPDATEECONOMY(67), CONFIRMPLAYER(68), DISABLEPLAYER(69),
+        IGNORELIST(72), LOG_STATISTIC(75);
 
         /**
          * The Id.

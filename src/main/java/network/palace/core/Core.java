@@ -35,6 +35,7 @@ import network.palace.core.resource.ResourceManager;
 import network.palace.core.utils.Callback;
 import network.palace.core.utils.ItemUtil;
 import network.palace.core.utils.SqlUtil;
+import network.palace.core.utils.StatUtil;
 import org.bukkit.Bukkit;
 import org.bukkit.ChatColor;
 import org.bukkit.World;
@@ -46,6 +47,7 @@ import org.bukkit.inventory.Inventory;
 import org.bukkit.plugin.Plugin;
 import org.bukkit.plugin.java.JavaPlugin;
 
+import java.io.IOException;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.UUID;
@@ -94,6 +96,8 @@ public class Core extends JavaPlugin {
     private DashboardConnection dashboardConnection;
     private HonorManager honorManager;
     private CraftingMenu craftingMenu;
+
+    @Getter private StatUtil statUtil;
 
     @Getter private RollbarHandler rollbarHandler;
 
@@ -150,6 +154,11 @@ public class Core extends JavaPlugin {
         //getServer().getMessenger().registerIncomingPluginChannel(this, "WDL|INIT", new CorePlayerWorldDownloadProtect());
         // SQL Classes
         sqlUtil = new SqlUtil();
+        try {
+            statUtil = new StatUtil();
+        } catch (IOException e) {
+            e.printStackTrace();
+        }
         // Mongo Classes
         mongoHandler = new MongoHandler();
         // Managers
