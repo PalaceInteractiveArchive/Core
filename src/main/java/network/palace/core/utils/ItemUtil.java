@@ -520,13 +520,13 @@ public class ItemUtil implements Listener {
     }
 
     public static JsonArray getJsonFromInventoryNew(Inventory inv) {
-        return getJsonFromArray(inv.getContents());
+        return getJsonFromArrayNew(inv.getContents());
     }
 
     public static JsonArray getJsonFromArrayNew(ItemStack[] arr) {
         JsonArray a = new JsonArray();
         for (ItemStack i : arr) {
-            a.add(getJsonFromItem(i));
+            a.add(getJsonFromItemNew(i));
         }
         return a;
     }
@@ -541,7 +541,7 @@ public class ItemUtil implements Listener {
         int i = 0;
         for (JsonElement e2 : ja) {
             JsonObject o = e2.getAsJsonObject();
-            a[i] = getItemFromJson(o.toString());
+            a[i] = getItemFromJsonNew(o.toString());
             i++;
         }
         return a;
