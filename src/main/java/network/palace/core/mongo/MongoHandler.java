@@ -1094,7 +1094,7 @@ public class MongoHandler {
      */
     public void createOutfit(String name, int hid, byte hdata, String head, int cid, byte cdata, String chestplate,
                              int lid, byte ldata, String leggings, int bid, byte bdata, String boots, int resort) {
-        Document doc = new Document("id", getNextSequence());
+        Document doc = new Document("id", getNextOutfitId());
         doc.append("name", name);
         doc.append("headID", hid);
         doc.append("headData", hdata);
@@ -1112,12 +1112,22 @@ public class MongoHandler {
         outfitsCollection.insertOne(doc);
     }
 
+    public void createOutfitNew(String name, String head, String shirt, String pants, String boots, int resort) {
+        Document doc = new Document("id", getNextOutfitId());
+        doc.append("name", name);
+        doc.append("head", head);
+        doc.append("shirt", shirt);
+        doc.append("pants", pants);
+        doc.append("boots", boots);
+        outfitsCollection.insertOne(doc);
+    }
+
     /**
      * Used for creating new outfits
      *
      * @return the value of that field plus one
      */
-    private int getNextSequence() {
+    private int getNextOutfitId() {
         BasicDBObject find = new BasicDBObject();
         find.put("_id", "userid");
         BasicDBObject update = new BasicDBObject();
