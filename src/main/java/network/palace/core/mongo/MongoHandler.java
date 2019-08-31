@@ -326,6 +326,7 @@ public class MongoHandler {
         return doc != null && doc.get("cosmetics", ArrayList.class).contains(id);
     }
 
+    @SuppressWarnings("unchecked")
     public List<Integer> getCosmetics(UUID uuid) {
         Document doc = getPlayer(uuid, new Document("cosmetics", 1));
         List<Integer> list = new ArrayList<>();
@@ -1115,10 +1116,11 @@ public class MongoHandler {
     public void createOutfitNew(String name, String head, String shirt, String pants, String boots, int resort) {
         Document doc = new Document("id", getNextOutfitId());
         doc.append("name", name);
-        doc.append("head", head);
-        doc.append("shirt", shirt);
-        doc.append("pants", pants);
-        doc.append("boots", boots);
+        doc.append("headJSON", head);
+        doc.append("shirtJSON", shirt);
+        doc.append("pantsJSON", pants);
+        doc.append("bootsJSON", boots);
+        doc.append("resort", resort);
         outfitsCollection.insertOne(doc);
     }
 
