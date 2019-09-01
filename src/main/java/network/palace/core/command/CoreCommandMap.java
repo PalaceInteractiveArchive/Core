@@ -20,7 +20,8 @@ import java.util.*;
  */
 public final class CoreCommandMap {
 
-    @Getter private final Map<String, CoreCommand> topLevelCommands = new HashMap<>();
+    @Getter
+    private final Map<String, CoreCommand> topLevelCommands = new HashMap<>();
     private final JavaPlugin plugin;
 
     public CoreCommandMap(JavaPlugin plugin) {

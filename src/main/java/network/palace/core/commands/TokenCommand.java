@@ -35,7 +35,7 @@ public class TokenCommand extends CoreCommand {
         boolean isPlayer = sender instanceof Player;
         if (args.length == 0) {
             if (isPlayer) {
-                Core.runTaskAsynchronously(() -> sender.sendMessage(ChatColor.YELLOW + "" + ChatColor.BOLD +
+                Core.runTaskAsynchronously(Core.getInstance(), () -> sender.sendMessage(ChatColor.YELLOW + "" + ChatColor.BOLD +
                         "Your Tokens: " + ChatColor.GREEN + "✪ " +
                         Core.getMongoHandler().getCurrency(((Player) sender).getUniqueId(), CurrencyType.TOKENS)));
             } else {
@@ -45,7 +45,7 @@ public class TokenCommand extends CoreCommand {
         }
         if (args.length == 1) {
             final String user = args[0];
-            Core.runTaskAsynchronously(() -> {
+            Core.runTaskAsynchronously(Core.getInstance(), () -> {
                 UUID uuid = Core.getMongoHandler().usernameToUUID(user);
                 if (uuid != null) {
                     sender.sendMessage(ChatColor.YELLOW + "" + ChatColor.BOLD + "Tokens for " + user + ": " +
@@ -72,7 +72,7 @@ public class TokenCommand extends CoreCommand {
                 }
                 String source = tp.getName();
                 int amount = Integer.parseInt(args[1]);
-                Core.runTaskAsynchronously(() -> {
+                Core.runTaskAsynchronously(Core.getInstance(), () -> {
                     switch (action.toLowerCase()) {
                         case "set":
                             Core.getMongoHandler().changeAmount(tp.getUniqueId(), amount, source, CurrencyType.TOKENS, true);
@@ -110,7 +110,7 @@ public class TokenCommand extends CoreCommand {
                 source = sender instanceof Player ? sender.getName() : "Console";
             }
             int amount = Integer.parseInt(args[1]);
-            Core.runTaskAsynchronously(() -> {
+            Core.runTaskAsynchronously(Core.getInstance(), () -> {
                 switch (action.toLowerCase()) {
                     case "set":
                         Core.getMongoHandler().changeAmount(tp.getUniqueId(), amount, source, CurrencyType.TOKENS, true);

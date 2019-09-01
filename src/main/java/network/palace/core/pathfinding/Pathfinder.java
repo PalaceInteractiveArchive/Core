@@ -2,6 +2,8 @@ package network.palace.core.pathfinding;
 
 import lombok.Getter;
 import org.bukkit.block.Block;
+import org.bukkit.material.Door;
+import org.bukkit.material.Gate;
 
 import java.util.*;
 
@@ -80,17 +82,26 @@ public class Pathfinder {
         switch (b.getType()) {
             case AIR:
             case LAVA:
-            case STATIONARY_LAVA:
-            case STATIONARY_WATER:
             case WATER:
             case PORTAL:
                 return true;
             case IRON_DOOR:
+            case DARK_OAK_DOOR:
+            case ACACIA_DOOR:
+            case BIRCH_DOOR:
+            case JUNGLE_DOOR:
             case WOODEN_DOOR:
-            case WOOD_DOOR:
+            case SPRUCE_DOOR:
+                Door door = (Door) b.getState();
+                return door.isOpen();
+            case ACACIA_FENCE_GATE:
+            case BIRCH_FENCE_GATE:
+            case DARK_OAK_FENCE_GATE:
+            case JUNGLE_FENCE_GATE:
             case FENCE_GATE:
-                if ((b.getData() & 16) != 16)
-                    return true;
+            case SPRUCE_FENCE_GATE:
+                Gate gate = (Gate) b.getState();
+                return gate.isOpen();
             default:
                 return false;
         }

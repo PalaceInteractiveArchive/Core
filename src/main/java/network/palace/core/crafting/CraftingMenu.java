@@ -100,23 +100,23 @@ public class CraftingMenu implements Listener {
                         case 4:
                         case 45:
                             event.setCancelled(true);
-                            Core.runTask(() -> {
+                            Core.runTask(Core.getInstance(), () -> {
                                 player.updateInventory();
                                 if (slot <= 4) update(player, slot, getMenuItems(player)[slot]);
                             });
                             break;
                         case 2:
                             event.setCancelled(true);
-                            Core.runTask(() -> openAchievementPage(player, 1));
+                            Core.runTask(Core.getInstance(), () -> openAchievementPage(player, 1));
                             break;
                         case 3:
                             event.setCancelled(true);
-                            Core.runTask(() -> openCosmeticsInventory(player));
+                            Core.runTask(Core.getInstance(), () -> openCosmeticsInventory(player));
                     }
                 }
             }
         });
-        Core.runTaskTimer(() -> Core.getPlayerManager().getOnlinePlayers().forEach(player -> {
+        Core.runTaskTimer(Core.getInstance(), () -> Core.getPlayerManager().getOnlinePlayers().forEach(player -> {
             Optional<InventoryView> optional = player.getOpenInventory();
             if (!optional.isPresent() || player.getGamemode().equals(GameMode.CREATIVE) || player.getGamemode().equals(GameMode.SPECTATOR)) {
                 refresh.remove(player.getUniqueId());
@@ -138,8 +138,8 @@ public class CraftingMenu implements Listener {
     public void onInventoryClick(InventoryClickEvent event) {
         CPlayer player = Core.getPlayerManager().getPlayer(event.getWhoClicked().getUniqueId());
         if (player == null) return;
-        Inventory inv = event.getClickedInventory();
-        if (inv == null || !inv.getName().startsWith(ChatColor.BLUE + "Achievements Page ")) return;
+        InventoryView view = event.getView();
+        if (view == null || !view.getTitle().startsWith(ChatColor.BLUE + "Achievements Page ")) return;
         event.setCancelled(true);
         String name;
         try {
@@ -147,7 +147,7 @@ public class CraftingMenu implements Listener {
         } catch (Exception ignored) {
             return;
         }
-        int page = Integer.parseInt(ChatColor.stripColor(inv.getName()).replaceAll("Achievements Page ", ""));
+        int page = Integer.parseInt(ChatColor.stripColor(view.getTitle()).replaceAll("Achievements Page ", ""));
         switch (name) {
             case "Next Page":
                 openAchievementPage(player, page + 1);
@@ -165,8 +165,8 @@ public class CraftingMenu implements Listener {
     public void onInventoryClose(InventoryCloseEvent event) {
         CPlayer player = Core.getPlayerManager().getPlayer(event.getPlayer().getUniqueId());
         if (player == null) return;
-        Inventory inv = event.getInventory();
-        String name = inv.getName();
+        InventoryView view = event.getView();
+        String name = view.getTitle();
         if (name.startsWith(ChatColor.BLUE + "Achievements Page ") || name.startsWith(ChatColor.BLUE + "Cosmetics") ||
                 name.startsWith(ChatColor.BLUE + "Particles") || name.startsWith(ChatColor.BLUE + "Hats") ||
                 name.startsWith(ChatColor.BLUE + "Pets")) {

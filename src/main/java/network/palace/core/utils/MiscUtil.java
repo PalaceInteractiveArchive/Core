@@ -1,8 +1,10 @@
 package network.palace.core.utils;
 
+import com.google.gson.JsonObject;
+import com.google.gson.JsonParser;
+import org.bukkit.Bukkit;
+import org.bukkit.Location;
 import org.bukkit.block.BlockFace;
-import org.json.simple.JSONObject;
-import org.json.simple.parser.JSONParser;
 
 import java.io.*;
 import java.net.URL;
@@ -102,12 +104,12 @@ public class MiscUtil {
      * @param url the url
      * @return JSON objects with the content of the URL
      */
-    public static JSONObject readJsonFromUrl(String url) {
+    public static JsonObject readJsonFromUrl(String url) {
         try (InputStream is = new URL(url).openStream()) {
             BufferedReader rd = new BufferedReader(new InputStreamReader(is, Charset.forName("UTF-8")));
             String jsonText = readAll(rd);
-            JSONParser parser = new JSONParser();
-            return (JSONObject) parser.parse(jsonText);
+            JsonParser parser = new JsonParser();
+            return (JsonObject) parser.parse(jsonText);
         } catch (Exception e) {
             e.printStackTrace();
             return null;
@@ -128,5 +130,36 @@ public class MiscUtil {
             sb.append((char) cp);
         }
         return sb.toString();
+    }
+
+    /**
+     * Get a location from a JsonObject
+     *
+     * @param object the JsonObject
+     * @return a Location
+     */
+    public static Location getLocation(JsonObject object) {
+        if (object == null) return null;
+        return new Location(Bukkit.getWorld(object.get("world").getAsString()), object.get("x").getAsDouble(),
+                object.get("y").getAsDouble(), object.get("z").getAsDouble(), object.get("yaw").getAsFloat(), object.get("pitch").getAsFloat());
+    }
+
+    /**
+     * Store a location in a JsonObject
+     *
+     * @param location the location to store
+     * @return a JsonObject with the location data, or an empty object if location is null
+     */
+    public static JsonObject getJson(Location location) {
+        JsonObject object = new JsonObject();
+        if (location != null) {
+            object.addProperty("x", location.getX());
+            object.addProperty("y", location.getY());
+            object.addProperty("z", location.getZ());
+            object.addProperty("yaw", location.getYaw());
+            object.addProperty("pitch", location.getPitch());
+            object.addProperty("world", location.getWorld().getName());
+        }
+        return object;
     }
 }

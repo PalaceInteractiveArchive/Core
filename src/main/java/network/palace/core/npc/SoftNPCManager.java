@@ -34,7 +34,7 @@ public final class SoftNPCManager implements Listener {
     public SoftNPCManager() {
         iDManager = new IDManager();
         Core.registerListener(this);
-        Core.runTaskTimer(() -> {
+        Core.runTaskTimer(Core.getInstance(), () -> {
             HashMap<UUID, List<MobPlayer>> localMap = (HashMap<UUID, List<MobPlayer>>) removeFromTabList.clone();
             removeFromTabList.clear();
             for (Map.Entry<UUID, List<MobPlayer>> entry : localMap.entrySet()) {
@@ -93,7 +93,7 @@ public final class SoftNPCManager implements Listener {
         CPlayer player = event.getPlayer();
         //Create team for hidden players
         WrapperPlayServerScoreboardTeam wrapper = new WrapperPlayServerScoreboardTeam();
-        wrapper.setMode(0);
+        wrapper.setMode(WrapperPlayServerScoreboardTeam.Mode.TEAM_CREATED);
         wrapper.setName(HIDDEN_TEAM);
         wrapper.setNameTagVisibility("never");
         wrapper.setPlayers(hiddenPlayerMobs);
@@ -190,7 +190,7 @@ public final class SoftNPCManager implements Listener {
 
         WrapperPlayServerScoreboardTeam wrapper = new WrapperPlayServerScoreboardTeam();
         wrapper.setName(HIDDEN_TEAM);
-        wrapper.setMode(3);
+        wrapper.setMode(WrapperPlayServerScoreboardTeam.Mode.PLAYERS_ADDED);
         wrapper.setPlayers(Collections.singletonList(mob.getCustomName()));
 
         Arrays.asList(mob.getTargets()).forEach(wrapper::sendPacket);
@@ -201,7 +201,7 @@ public final class SoftNPCManager implements Listener {
 
         WrapperPlayServerScoreboardTeam wrapper = new WrapperPlayServerScoreboardTeam();
         wrapper.setName(HIDDEN_TEAM);
-        wrapper.setMode(4);
+        wrapper.setMode(WrapperPlayServerScoreboardTeam.Mode.PLAYERS_REMOVED);
         wrapper.setPlayers(Collections.singletonList(mob.getCustomName()));
 
         Arrays.asList(mob.getTargets()).forEach(wrapper::sendPacket);

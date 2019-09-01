@@ -100,9 +100,9 @@ public class CorePlayerDefaultScoreboard implements Listener {
     }
 
     public void loadTokens(CPlayer player, CPlayerScoreboardManager scoreboard, int position) {
-        Core.runTaskAsynchronously(() -> {
+        Core.runTaskAsynchronously(Core.getInstance(), () -> {
             int tokens = player.getTokens();
-            Core.callSyncMethod((Callable<Object>) () -> {
+            Core.callSyncMethod(Core.getInstance(), (Callable<Object>) () -> {
                 setTokens(position, scoreboard, tokens);
                 return true;
             });
@@ -110,9 +110,9 @@ public class CorePlayerDefaultScoreboard implements Listener {
     }
 
     public void loadBalance(CPlayer player, CPlayerScoreboardManager scoreboard, int position) {
-        Core.runTaskAsynchronously(() -> {
+        Core.runTaskAsynchronously(Core.getInstance(), () -> {
             int balance = player.getBalance();
-            Core.callSyncMethod((Callable<Object>) () -> {
+            Core.callSyncMethod(Core.getInstance(), (Callable<Object>) () -> {
                 setBalance(position, scoreboard, balance);
                 return true;
             });

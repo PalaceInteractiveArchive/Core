@@ -31,6 +31,7 @@ import java.util.List;
 /**
  * The type Item util.
  */
+@SuppressWarnings({"Duplicates", "deprecation"})
 public class ItemUtil implements Listener {
 
     private static final String UNABLE_TO_MOVE = "unableToMove";
@@ -108,13 +109,18 @@ public class ItemUtil implements Listener {
      * @return the boolean
      */
     public static boolean hasNBT(ItemStack stack, String tag) {
-        if (stack.getType() == Material.AIR) return false;
+        if (stack.getType().equals(Material.AIR)) return false;
         ItemStack craftStack = stack;
         if (!MinecraftReflection.isCraftItemStack(stack)) {
             craftStack = MinecraftReflection.getBukkitItemStack(stack);
         }
-        NbtCompound nbt = NbtFactory.asCompound(NbtFactory.fromItemTag(craftStack));
-        return nbt.containsKey(tag) && nbt.getInteger(tag) == 1;
+        if (craftStack.getType().equals(Material.AIR)) return false;
+        try {
+            NbtCompound nbt = NbtFactory.asCompound(NbtFactory.fromItemTag(craftStack));
+            return nbt.containsKey(tag) && nbt.getInteger(tag) == 1;
+        } catch (Exception ignored) {
+            return false;
+        }
     }
 
     /**
@@ -171,7 +177,7 @@ public class ItemUtil implements Listener {
      * @return the item stack
      */
     public static ItemStack create(Material type, int amount) {
-        return create(type, amount, (byte) 0);
+        return new ItemStack(type, amount);
     }
 
     /**
@@ -179,11 +185,16 @@ public class ItemUtil implements Listener {
      *
      * @param type   the type
      * @param amount the amount
-     * @param data   the data
+     * @param damage the damage
      * @return the item stack
      */
-    public static ItemStack create(Material type, int amount, byte data) {
-        return new ItemStack(type, amount, data);
+    public static ItemStack create(Material type, int amount, int damage) {
+        ItemStack item = create(type, amount);
+        item.setDurability((short) damage);
+//        ItemMeta meta = item.getItemMeta();
+//        ((Damageable) meta).setDamage(damage);
+//        item.setItemMeta(meta);
+        return item;
     }
 
     /**
@@ -194,32 +205,24 @@ public class ItemUtil implements Listener {
      * @return the item stack
      */
     public static ItemStack create(Material type, String name) {
-        return create(type, name, (byte) 0);
+        return create(type, name, new ArrayList<>());
     }
 
     /**
      * Create item stack.
      *
-     * @param type the type
-     * @param name the name
-     * @param data the data
+     * @param type   the type
+     * @param name   the name
+     * @param damage the damage
      * @return the item stack
      */
-    public static ItemStack create(Material type, String name, byte data) {
-        return create(type, name, data, new ArrayList<>());
-    }
-
-    /**
-     * Create item stack
-     *
-     * @param type the type
-     * @param name the name
-     * @param data the data
-     * @param lore the lore
-     * @return the item stack
-     */
-    public static ItemStack create(Material type, String name, byte data, List<String> lore) {
-        return create(type, 1, data, name, lore);
+    public static ItemStack create(Material type, String name, int damage) {
+        ItemStack item = create(type, name);
+        item.setDurability((short) damage);
+//        ItemMeta meta = item.getItemMeta();
+//        ((Damageable) meta).setDamage(damage);
+//        item.setItemMeta(meta);
+        return item;
     }
 
     /**
@@ -244,7 +247,13 @@ public class ItemUtil implements Listener {
      * @return the item stack
      */
     public static ItemStack create(Material type, int amount, String name, List<String> lore) {
-        return create(type, amount, (byte) 0, name, lore);
+        ItemStack item = create(type, amount);
+        ItemMeta meta = item.getItemMeta();
+        meta.setDisplayName(name);
+        meta.setLore(lore);
+        meta.addItemFlags(ItemFlag.HIDE_ATTRIBUTES, ItemFlag.HIDE_DESTROYS);
+        item.setItemMeta(meta);
+        return item;
     }
 
     /**
@@ -252,16 +261,19 @@ public class ItemUtil implements Listener {
      *
      * @param type   the type
      * @param amount the amount
-     * @param data   the data
+     * @param damage the damage
      * @param name   the name
      * @param lore   the lore
      * @return the item stack
      */
-    public static ItemStack create(Material type, int amount, byte data, String name, List<String> lore) {
-        ItemStack item = create(type, amount, data);
+    public static ItemStack create(Material type, int amount, int damage, String name, List<String> lore) {
+        ItemStack item = create(type, amount);
+        item.setDurability((short) damage);
         ItemMeta meta = item.getItemMeta();
+//        ((Damageable) meta).setDamage(damage);
         meta.setDisplayName(name);
         meta.setLore(lore);
+        meta.addItemFlags(ItemFlag.HIDE_ATTRIBUTES, ItemFlag.HIDE_DESTROYS);
         item.setItemMeta(meta);
         return item;
     }
@@ -317,8 +329,9 @@ public class ItemUtil implements Listener {
      * @param lore        the lore
      * @return the item stack
      */
+    @SuppressWarnings("deprecation")
     public static ItemStack create(String owner, String displayName, List<String> lore) {
-        ItemStack item = create(Material.SKULL_ITEM, 1, (byte) 3);
+        ItemStack item = create(Material.SKULL_ITEM, 1, 3);
         SkullMeta sm = (SkullMeta) item.getItemMeta();
         sm.setOwner(owner);
         sm.setDisplayName(displayName);
@@ -326,6 +339,67 @@ public class ItemUtil implements Listener {
         item.setItemMeta(sm);
         return item;
     }
+
+    /*
+    OLD METHODS START
+     */
+
+    /**
+     * Create item stack.
+     *
+     * @param type   the type
+     * @param amount the amount
+     * @param data   the data
+     * @return the item stack
+     */
+    public static ItemStack create(Material type, int amount, byte data) {
+        return new ItemStack(type, amount, data);
+    }
+
+    /**
+     * Create item stack.
+     *
+     * @param type the type
+     * @param name the name
+     * @param data the data
+     * @return the item stack
+     */
+    public static ItemStack create(Material type, String name, byte data) {
+        return create(type, name, data, new ArrayList<>());
+    }
+
+    /**
+     * Create item stack
+     *
+     * @param type the type
+     * @param name the name
+     * @param data the data
+     * @param lore the lore
+     * @return the item stack
+     */
+    public static ItemStack create(Material type, String name, byte data, List<String> lore) {
+        return create(type, 1, data, name, lore);
+    }
+
+    /**
+     * Create item stack.
+     *
+     * @param type   the type
+     * @param amount the amount
+     * @param data   the data
+     * @param name   the name
+     * @param lore   the lore
+     * @return the item stack
+     */
+    public static ItemStack create(Material type, int amount, byte data, String name, List<String> lore) {
+        ItemStack item = create(type, amount, data);
+        ItemMeta meta = item.getItemMeta();
+        meta.setDisplayName(name);
+        meta.setLore(lore);
+        item.setItemMeta(meta);
+        return item;
+    }
+
 
     public static JsonObject getJsonFromItem(ItemStack i) {
         JsonObject o = new JsonObject();
@@ -394,4 +468,86 @@ public class ItemUtil implements Listener {
         }
         return a;
     }
+
+    /*
+    OLD METHODS END
+     */
+
+    /*
+    NEW METHODS START
+     */
+
+    public static JsonObject getJsonFromItemNew(ItemStack i) {
+        JsonObject o = new JsonObject();
+        if (i == null || i.getType().equals(Material.AIR)) {
+            return o;
+        }
+        o.addProperty("type", i.getData().getItemType().name());
+        o.addProperty("data", i.getDurability());
+        o.addProperty("amount", i.getAmount());
+        try {
+            String nbtTag = new NbtTextSerializer().serialize(NbtFactory.fromItemTag(i));
+            if (!nbtTag.isEmpty()) {
+                o.addProperty("tag", nbtTag);
+            }
+        } catch (Exception ignored) {
+        }
+        return o;
+    }
+
+    public static ItemStack getItemFromJsonNew(String json) {
+        JsonObject o = new JsonParser().parse(json).getAsJsonObject();
+        if (!o.has("type")) {
+            return new ItemStack(Material.AIR);
+        }
+        ItemStack i;
+        try {
+            i = MinecraftReflection.getBukkitItemStack(new ItemStack(Material.matchMaterial(o.get("type").getAsString())));
+            i.setDurability((short) o.get("data").getAsInt());
+            i.setAmount(o.get("amount").getAsInt());
+            if (o.has("tag") && !o.get("tag").getAsString().isEmpty()) {
+                try {
+                    NbtFactory.setItemTag(i, new NbtTextSerializer().deserializeCompound(o.get("tag").getAsString()));
+                } catch (Exception ex) {
+                    ex.printStackTrace();
+                }
+            }
+        } catch (Exception e) {
+            e.printStackTrace();
+            return new ItemStack(Material.AIR);
+        }
+        return i;
+    }
+
+    public static JsonArray getJsonFromInventoryNew(Inventory inv) {
+        return getJsonFromArrayNew(inv.getContents());
+    }
+
+    public static JsonArray getJsonFromArrayNew(ItemStack[] arr) {
+        JsonArray a = new JsonArray();
+        for (ItemStack i : arr) {
+            a.add(getJsonFromItemNew(i));
+        }
+        return a;
+    }
+
+    public static ItemStack[] getInventoryFromJsonNew(String json) {
+        JsonElement e = new JsonParser().parse(json);
+        if (!e.isJsonArray()) {
+            return new ItemStack[0];
+        }
+        JsonArray ja = e.getAsJsonArray();
+        ItemStack[] a = new ItemStack[ja.size()];
+        int i = 0;
+        for (JsonElement e2 : ja) {
+            JsonObject o = e2.getAsJsonObject();
+            a[i] = getItemFromJsonNew(o.toString());
+            i++;
+        }
+        return a;
+    }
+
+    /*
+    NEW METHODS END
+     */
 }

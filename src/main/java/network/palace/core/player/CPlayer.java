@@ -5,6 +5,8 @@ import network.palace.core.plugin.Plugin;
 import network.palace.core.tracking.GameType;
 import network.palace.core.tracking.StatisticType;
 import org.bukkit.*;
+import org.bukkit.attribute.Attribute;
+import org.bukkit.attribute.AttributeInstance;
 import org.bukkit.block.Block;
 import org.bukkit.entity.Entity;
 import org.bukkit.entity.Player;
@@ -114,7 +116,53 @@ public interface CPlayer {
      *
      * @return the current max health
      */
+    @Deprecated
     double getMaxHealth();
+
+    /**
+     * Get the player's food level
+     *
+     * @return the current food level
+     */
+    int getFoodLevel();
+
+    /**
+     * Set the player's food level
+     *
+     * @param level the food level
+     */
+    void setFoodLevel(int level);
+
+    /**
+     * Returns the entity's current fire ticks (ticks before the entity stops
+     * being on fire).
+     *
+     * @return int fireTicks
+     */
+    int getFireTicks();
+
+    /**
+     * Returns the entity's maximum fire ticks.
+     *
+     * @return int maxFireTicks
+     */
+    int getMaxFireTicks();
+
+    /**
+     * Sets the entity's current fire ticks (ticks before the entity stops
+     * being on fire).
+     *
+     * @param ticks Current ticks remaining
+     */
+    void setFireTicks(int ticks);
+
+    /**
+     * Gets the specified attribute instance from the player object
+     *
+     * @param attribute the type of attribute
+     * @return the attribute instance
+     */
+    AttributeInstance getAttribute(Attribute attribute);
 
     /**
      * Gets gamemode.
@@ -488,6 +536,13 @@ public interface CPlayer {
     CPlayerScoreboardManager getScoreboard();
 
     /**
+     * Gets registry
+     *
+     * @return the registry
+     */
+    CPlayerRegistry getRegistry();
+
+    /**
      * Sets the scoreboard.
      *
      * @param manager the scoreboard manager
@@ -784,6 +839,22 @@ public interface CPlayer {
     void addBalance(int amount);
 
     /**
+     * Add tokens to the player
+     *
+     * @param amount the amount to give to the player
+     * @param reason the reason for the transaction
+     */
+    void addTokens(int amount, String reason);
+
+    /**
+     * Add balance to the player
+     *
+     * @param amount the amount to add
+     * @param reason the reason for the transaction
+     */
+    void addBalance(int amount, String reason);
+
+    /**
      * Set the players tokens
      *
      * @param amount the amount to set it to
@@ -798,6 +869,22 @@ public interface CPlayer {
     void setBalance(int amount);
 
     /**
+     * Set the players tokens
+     *
+     * @param amount the amount to set it to
+     * @param reason the reason for the transaction
+     */
+    void setTokens(int amount, String reason);
+
+    /**
+     * Set the balance of the player
+     *
+     * @param amount the amount to set it to
+     * @param reason the reason for the transaction
+     */
+    void setBalance(int amount, String reason);
+
+    /**
      * Remove tokens from a player
      *
      * @param amount the amount to remove
@@ -810,6 +897,22 @@ public interface CPlayer {
      * @param amount the amount to remove
      */
     void removeBalance(int amount);
+
+    /**
+     * Remove tokens from a player
+     *
+     * @param amount the amount to remove
+     * @param reason the reason for the transaction
+     */
+    void removeTokens(int amount, String reason);
+
+    /**
+     * Remove balance from a player
+     *
+     * @param amount the amount to remove
+     * @param reason the reason for the transaction
+     */
+    void removeBalance(int amount, String reason);
 
     /**
      * Add a game statistic to a player

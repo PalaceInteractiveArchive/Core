@@ -19,7 +19,6 @@ import network.palace.core.config.LanguageManager;
 import network.palace.core.config.YAMLConfigurationFile;
 import network.palace.core.crafting.CraftingMenu;
 import network.palace.core.dashboard.DashboardConnection;
-import network.palace.core.errors.EnvironmentType;
 import network.palace.core.errors.RollbarHandler;
 import network.palace.core.honor.HonorManager;
 import network.palace.core.library.LibraryHandler;
@@ -36,6 +35,7 @@ import network.palace.core.resource.ResourceManager;
 import network.palace.core.utils.Callback;
 import network.palace.core.utils.ItemUtil;
 import network.palace.core.utils.SqlUtil;
+import network.palace.core.utils.StatUtil;
 import org.bukkit.Bukkit;
 import org.bukkit.ChatColor;
 import org.bukkit.World;
@@ -47,6 +47,7 @@ import org.bukkit.inventory.Inventory;
 import org.bukkit.plugin.Plugin;
 import org.bukkit.plugin.java.JavaPlugin;
 
+import java.io.IOException;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.UUID;
@@ -58,18 +59,17 @@ import java.util.concurrent.Future;
  * <p>
  * You can access instances of other modules by depending on Core in your pom.xml, and then executing Core.get
  */
-@PluginInfo(name = "Core", version = "2.4.3", depend = {"ProtocolLib"}, softdepend = {"ViaVersion"})
+@PluginInfo(name = "Core", version = "2.4.5", depend = {"ProtocolLib"}, softdepend = {"ViaVersion"})
 public class Core extends JavaPlugin {
 
     private boolean starting = true;
-    @Getter
-    private final long startTime = System.currentTimeMillis();
+    @Getter private final long startTime = System.currentTimeMillis();
     private YAMLConfigurationFile configFile;
     private String serverType = "Hub";
     private String instanceName = "";
     private boolean debug = false;
     private boolean dashboardAndSqlDisabled = false;
-    @Getter private String mcVersion = Bukkit.getBukkitVersion();
+    @Getter private static String minecraftVersion = Bukkit.getBukkitVersion();
     private boolean gameMode = false;
     @Getter private boolean showTitleOnLogin = false;
     @Getter private String loginTitle = "";
@@ -97,6 +97,8 @@ public class Core extends JavaPlugin {
     private HonorManager honorManager;
     private CraftingMenu craftingMenu;
 
+    @Getter private StatUtil statUtil;
+
     @Getter private RollbarHandler rollbarHandler;
 
     @Getter private List<UUID> disabledPlayers = new ArrayList<>();
@@ -109,12 +111,14 @@ public class Core extends JavaPlugin {
         for (Player player : Bukkit.getOnlinePlayers()) {
             player.kickPlayer(ChatColor.RED + "Server is reloading!");
         }
+        minecraftVersion = Bukkit.getServer().getClass().getPackage().getName();
+        minecraftVersion = minecraftVersion.substring(minecraftVersion.lastIndexOf(".") + 1);
         // Load needed libraries for Core
         LibraryHandler.loadLibraries(this);
         // Configurations
         configFile = new YAMLConfigurationFile(this, "config.yml");
-        rollbarHandler = new RollbarHandler(getCoreConfig().getString("accessToken", ""), EnvironmentType.fromString(getCoreConfig().getString("environment", "local")));
-        rollbarHandler.watch();
+//        rollbarHandler = new RollbarHandler(getCoreConfig().getString("accessToken", ""), EnvironmentType.fromString(getCoreConfig().getString("environment", "local")));
+//        rollbarHandler.watch();
         // Get info from config
         serverType = getCoreConfig().getString("server-type", "Unknown");
         instanceName = getCoreConfig().getString("instance-name", "ServerName");
@@ -150,6 +154,11 @@ public class Core extends JavaPlugin {
         //getServer().getMessenger().registerIncomingPluginChannel(this, "WDL|INIT", new CorePlayerWorldDownloadProtect());
         // SQL Classes
         sqlUtil = new SqlUtil();
+        try {
+            statUtil = new StatUtil();
+        } catch (IOException e) {
+            e.printStackTrace();
+        }
         // Mongo Classes
         mongoHandler = new MongoHandler();
         // Managers
@@ -174,19 +183,12 @@ public class Core extends JavaPlugin {
         // Register Commands
         registerCommands();
         registerDisabledCommands();
-        mcVersion = mcVersion.replace("-SNAPSHOT", "").replace("R0.", "R")
-                .replace(".", "_").replaceAll("_[0-9]-R", "_R").replace("-", "_");
         // Log
         logMessage("Core", ChatColor.DARK_GREEN + "Enabled");
 
-        // If we're running in game-mode, set starting to false immediately.
-        // Otherwise, we'll wait the 7 seconds.
-        setStarting(false);
-//        if (isGameMode()) {
-//            logMessage("Core", ChatColor.BLUE + "" + ChatColor.BOLD + "Running in game mode, skipping startup phase!");
-//            setStarting(false);
-//        } else runTaskLater(() -> setStarting(false), 20 * 7);
-//        Bukkit.getServer().clearRecipes();
+        // Always keep players off the server until it's been finished loading for 1 second
+        // This prevents issues with not loading player data when they join before plugins are loaded
+        runTaskLater(this, () -> setStarting(false), 20);
     }
 
     /**
@@ -227,7 +229,7 @@ public class Core extends JavaPlugin {
         registerCommand(new TagToggleCommand());
         registerCommand(new TokenCommand());
         registerCommand(new TopHonorCommand());
-        runTask(() -> {
+        runTask(this, () -> {
             boolean park = false;
             for (Plugin p : Bukkit.getPluginManager().getPlugins()) {
                 if (p.getName().equals("ParkManager")) {
@@ -542,6 +544,86 @@ public class Core extends JavaPlugin {
      * @param callable the callable
      * @return future
      */
+    public static <T> Future<T> callSyncMethod(Plugin plugin, Callable<T> callable) {
+        return Bukkit.getScheduler().callSyncMethod(plugin, callable);
+    }
+
+    /**
+     * Run task asynchronously int.
+     *
+     * @param task the task
+     * @return the task id
+     */
+    public static int runTaskAsynchronously(Plugin plugin, Runnable task) {
+        return Bukkit.getScheduler().runTaskAsynchronously(plugin, task).getTaskId();
+    }
+
+    /**
+     * Run task later async int.
+     *
+     * @param task  the task
+     * @param delay the delay
+     * @return the task id
+     */
+    public static int runTaskLaterAsynchronously(Plugin plugin, Runnable task, long delay) {
+        return Bukkit.getScheduler().runTaskLaterAsynchronously(plugin, task, delay).getTaskId();
+    }
+
+    /**
+     * Run task later int.
+     *
+     * @param task  the task
+     * @param delay the delay
+     * @return the task id
+     */
+    public static int runTaskLater(Plugin plugin, Runnable task, long delay) {
+        return Bukkit.getScheduler().runTaskLater(plugin, task, delay).getTaskId();
+    }
+
+    /**
+     * Run task timer asynchronously int.
+     *
+     * @param task   the task
+     * @param delay  the delay
+     * @param period the period
+     * @return the task id
+     */
+    public static int runTaskTimerAsynchronously(Plugin plugin, Runnable task, long delay, long period) {
+        return Bukkit.getScheduler().runTaskTimerAsynchronously(plugin, task, delay, period).getTaskId();
+    }
+
+    /**
+     * Run task timer int.
+     *
+     * @param task   the task
+     * @param delay  the delay
+     * @param period the period
+     * @return the task id
+     */
+    public static int runTaskTimer(Plugin plugin, Runnable task, long delay, long period) {
+        return Bukkit.getScheduler().runTaskTimer(plugin, task, delay, period).getTaskId();
+    }
+
+    /**
+     * Run task int.
+     *
+     * @param task the task
+     * @return the task id
+     */
+    public static int runTask(Plugin plugin, Runnable task) {
+        return Bukkit.getScheduler().runTask(plugin, task).getTaskId();
+    }
+
+    /*
+    OLD METHODS END
+     */
+
+    /**
+     * Call sync method
+     *
+     * @param callable the callable
+     * @return future
+     */
     public static <T> Future<T> callSyncMethod(Callable<T> callable) {
         return Bukkit.getScheduler().callSyncMethod(getInstance(), callable);
     }
@@ -612,6 +694,10 @@ public class Core extends JavaPlugin {
         return Bukkit.getScheduler().runTask(getInstance(), task).getTaskId();
     }
 
+    /*
+    OLD METHODS START
+     */
+
     /**
      * Log message.
      *
@@ -658,7 +744,7 @@ public class Core extends JavaPlugin {
      * @param callback the callbacks for the actions
      */
     public static void sendAllPlayers(String server, Callback callback) {
-        runTaskAsynchronously(() -> {
+        runTaskAsynchronously(getInstance(), () -> {
             for (CPlayer player : Core.getPlayerManager().getOnlinePlayers()) {
                 player.sendToServer(server);
             }

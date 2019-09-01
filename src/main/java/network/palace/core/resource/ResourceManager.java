@@ -100,7 +100,7 @@ public class ResourceManager {
      */
     public void sendPack(CPlayer player, ResourcePack pack) {
         if (player.getOnlineTime() < 2000) {
-            Core.runTaskLater(() -> sendPackNoDelay(player, pack), 80L);
+            Core.runTaskLater(Core.getInstance(), () -> sendPackNoDelay(player, pack), 80L);
             return;
         }
         sendPackNoDelay(player, pack);
@@ -111,7 +111,7 @@ public class ResourceManager {
                 ChatColor.GREEN + " Resource Pack!");
         player.getTitle().show("Sending Resource Pack", "This might take up to 30 seconds...", 0, 120, 0);
         downloading.put(player.getUniqueId(), pack.getName());
-        Core.runTaskLater(() -> pack.sendTo(player), 2L);
+        Core.runTaskLater(Core.getInstance(), () -> pack.sendTo(player), 2L);
     }
 
     /**

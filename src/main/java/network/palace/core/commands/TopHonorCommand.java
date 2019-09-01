@@ -24,7 +24,7 @@ public class TopHonorCommand extends CoreCommand {
     @Override
     protected void handleCommandUnspecific(final CommandSender sender, final String[] args) throws CommandException {
         sender.sendMessage(ChatColor.GREEN + "Gathering leaderboard data...");
-        Core.runTaskAsynchronously(() -> {
+        Core.runTaskAsynchronously(Core.getInstance(), () -> {
             int limit = 10;
             if (args.length > 0 && MiscUtil.checkIfInt(args[0]) && (limit = Integer.parseInt(args[0])) > 10) {
                 limit = 10;

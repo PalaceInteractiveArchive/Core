@@ -100,6 +100,7 @@ public class PermissionManager {
             attachment = attachments.get(player.getUniqueId());
         } else {
             attachment = player.addAttachment(Core.getInstance());
+            attachments.put(player.getUniqueId(), attachment);
         }
         for (Map.Entry<String, Boolean> entry : attachment.getPermissions().entrySet()) {
             attachment.unsetPermission(entry.getKey());

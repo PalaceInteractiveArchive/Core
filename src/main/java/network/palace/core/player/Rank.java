@@ -10,24 +10,23 @@ import java.util.Map;
 @AllArgsConstructor
 public enum Rank {
 
-    MANAGER("Manager", "a", ChatColor.RED + "Manager ", ChatColor.RED, ChatColor.YELLOW, true, 12),
-    ADMIN("Admin", "b", ChatColor.RED + "Admin ", ChatColor.RED, ChatColor.YELLOW, true, 12),
-    DEVELOPER("Developer", "c", ChatColor.GOLD + "Developer ", ChatColor.GOLD, ChatColor.YELLOW, true, 12),
-    SRMOD("Sr Mod", "d", ChatColor.YELLOW + "Sr Mod ", ChatColor.YELLOW, ChatColor.GREEN, true, 11),
-    ARCHITECT("Architect", "e", ChatColor.YELLOW + "Architect ", ChatColor.YELLOW, ChatColor.GREEN, true, 11),
-    BUILDER("Builder", "f", ChatColor.GREEN + "Builder ", ChatColor.GREEN, ChatColor.GREEN, true, 10),
-    MOD("Mod", "g", ChatColor.GREEN + "Mod ", ChatColor.GREEN, ChatColor.GREEN, true, 10),
-    TRAINEEBUILD("Trainee", "h", ChatColor.DARK_GREEN + "Trainee ", ChatColor.DARK_GREEN, ChatColor.DARK_GREEN, false, 9),
-    TRAINEE("Trainee", "i", ChatColor.DARK_GREEN + "Trainee ", ChatColor.DARK_GREEN, ChatColor.DARK_GREEN, false, 8),
-    CHARACTER("Character", "j", ChatColor.BLUE + "Character ", ChatColor.BLUE, ChatColor.BLUE, false, 7),
-    SPECIALGUEST("Special Guest", "k", ChatColor.DARK_PURPLE + "SG ", ChatColor.DARK_PURPLE, ChatColor.WHITE, false, 6),
-    HONORABLE("Honorable", "l", ChatColor.LIGHT_PURPLE + "Honorable ", ChatColor.LIGHT_PURPLE, ChatColor.WHITE, false, 5),
-    MAJESTIC("Majestic", "m", ChatColor.DARK_PURPLE + "Majestic ", ChatColor.DARK_PURPLE, ChatColor.WHITE, false, 4),
-    NOBLE("Noble", "n", ChatColor.BLUE + "Noble ", ChatColor.BLUE, ChatColor.WHITE, false, 3),
-    SHAREHOLDER("Shareholder", "o", ChatColor.LIGHT_PURPLE + "Shareholder ", ChatColor.LIGHT_PURPLE, ChatColor.WHITE, false, 3),
+    DIRECTOR("Director", "a", ChatColor.RED + "Director ", ChatColor.RED, ChatColor.YELLOW, true, 12),
+    MANAGER("Manager", "b", ChatColor.RED + "Manager ", ChatColor.RED, ChatColor.YELLOW, true, 12),
+    ADMIN("Admin", "c", ChatColor.RED + "Admin ", ChatColor.RED, ChatColor.YELLOW, true, 12),
+    DEVELOPER("Developer", "d", ChatColor.GOLD + "Developer ", ChatColor.GOLD, ChatColor.YELLOW, true, 12),
+    SRMOD("Sr Mod", "e", ChatColor.YELLOW + "Sr Mod ", ChatColor.YELLOW, ChatColor.GREEN, true, 11),
+    ARCHITECT("Architect", "f", ChatColor.YELLOW + "Architect ", ChatColor.YELLOW, ChatColor.GREEN, true, 11),
+    BUILDER("Builder", "g", ChatColor.GREEN + "Builder ", ChatColor.GREEN, ChatColor.GREEN, true, 10),
+    MOD("Mod", "h", ChatColor.GREEN + "Mod ", ChatColor.GREEN, ChatColor.GREEN, true, 10),
+    TRAINEEBUILD("Trainee", "i", ChatColor.DARK_GREEN + "Trainee ", ChatColor.DARK_GREEN, ChatColor.DARK_GREEN, false, 9),
+    TRAINEE("Trainee", "j", ChatColor.DARK_GREEN + "Trainee ", ChatColor.DARK_GREEN, ChatColor.DARK_GREEN, false, 8),
+    CHARACTER("Character", "k", ChatColor.BLUE + "Character ", ChatColor.BLUE, ChatColor.BLUE, false, 7),
+    SPECIALGUEST("Special Guest", "l", ChatColor.DARK_PURPLE + "SG ", ChatColor.DARK_PURPLE, ChatColor.WHITE, false, 6),
+    HONORABLE("Honorable", "m", ChatColor.LIGHT_PURPLE + "Honorable ", ChatColor.LIGHT_PURPLE, ChatColor.WHITE, false, 5),
+    MAJESTIC("Majestic", "n", ChatColor.DARK_PURPLE + "Majestic ", ChatColor.DARK_PURPLE, ChatColor.WHITE, false, 4),
+    NOBLE("Noble", "o", ChatColor.BLUE + "Noble ", ChatColor.BLUE, ChatColor.WHITE, false, 3),
     DWELLER("Dweller", "p", ChatColor.AQUA + "Dweller ", ChatColor.AQUA, ChatColor.WHITE, false, 2),
-    DVCMEMBER("DVC", "q", ChatColor.AQUA + "DVC ", ChatColor.AQUA, ChatColor.WHITE, false, 2),
-    SETTLER("Settler", "r", ChatColor.GRAY + "", ChatColor.DARK_AQUA, ChatColor.WHITE, false, 1);
+    SETTLER("Settler", "q", ChatColor.GRAY + "", ChatColor.DARK_AQUA, ChatColor.WHITE, false, 1);
 
     @Getter private String name;
     @Getter private String scoreboardPrefix;

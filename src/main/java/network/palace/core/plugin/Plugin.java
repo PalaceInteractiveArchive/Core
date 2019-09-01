@@ -36,12 +36,12 @@ public class Plugin extends JavaPlugin {
                 throw new IllegalStateException("You must annotate your class with the @PluginInfo annotation!");
             }
             // Check rollbar info
-            errorLog = getClass().getAnnotation(ErrorLog.class);
-            if (errorLog != null) {
-                if (!errorLog.enabled()) return;
-                rollbarHandler = new RollbarHandler(errorLog.accessToken(), errorLog.environment());
-                rollbarHandler.watch();
-            }
+//            errorLog = getClass().getAnnotation(ErrorLog.class);
+//            if (errorLog != null) {
+//                if (!errorLog.enabled()) return;
+//                rollbarHandler = new RollbarHandler(errorLog.accessToken(), errorLog.environment());
+//                rollbarHandler.watch();
+//            }
             // Start command map
             commandMap = new CoreCommandMap(this);
             // Plugin enabled finally

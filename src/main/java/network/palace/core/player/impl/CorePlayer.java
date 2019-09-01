@@ -15,6 +15,8 @@ import network.palace.core.plugin.Plugin;
 import network.palace.core.tracking.GameType;
 import network.palace.core.tracking.StatisticType;
 import org.bukkit.*;
+import org.bukkit.attribute.Attribute;
+import org.bukkit.attribute.AttributeInstance;
 import org.bukkit.block.Block;
 import org.bukkit.entity.Entity;
 import org.bukkit.entity.Player;
@@ -56,6 +58,7 @@ public class CorePlayer implements CPlayer {
     @Getter private CPlayerTitleManager title = new CorePlayerTitleManager(this);
     @Getter private CPlayerParticlesManager particles = new CorePlayerParticlesManager(this);
     @Getter private CPlayerResourcePackManager resourcePack = new CorePlayerResourcePackManager(this);
+    @Getter private CPlayerRegistry registry = new CorePlayerRegistry(this);
     @Getter @Setter private String textureValue = "";
     @Getter @Setter private String textureSignature = "";
     @Getter @Setter private String pack = "none";
@@ -143,13 +146,61 @@ public class CorePlayer implements CPlayer {
         return getBukkitPlayer().getHealth();
     }
 
-    @SuppressWarnings("deprecation")
+    @Deprecated
     @Override
     public double getMaxHealth() {
         if (getStatus() != PlayerStatus.JOINED) return 20;
         if (getBukkitPlayer() == null) return 20;
 
         return getBukkitPlayer().getMaxHealth();
+    }
+
+    @Override
+    public int getFoodLevel() {
+        if (getStatus() != PlayerStatus.JOINED) return 20;
+        if (getBukkitPlayer() == null) return 20;
+
+        return getBukkitPlayer().getFoodLevel();
+    }
+
+    @Override
+    public void setFoodLevel(int level) {
+        if (getStatus() != PlayerStatus.JOINED) return;
+        if (getBukkitPlayer() == null) return;
+
+        getBukkitPlayer().setFoodLevel(level);
+    }
+
+    @Override
+    public int getFireTicks() {
+        if (getStatus() != PlayerStatus.JOINED) return 0;
+        if (getBukkitPlayer() == null) return 0;
+
+        return getBukkitPlayer().getFireTicks();
+    }
+
+    @Override
+    public int getMaxFireTicks() {
+        if (getStatus() != PlayerStatus.JOINED) return 20;
+        if (getBukkitPlayer() == null) return 20;
+
+        return getBukkitPlayer().getMaxFireTicks();
+    }
+
+    @Override
+    public void setFireTicks(int ticks) {
+        if (getStatus() != PlayerStatus.JOINED) return;
+        if (getBukkitPlayer() == null) return;
+
+        getBukkitPlayer().setFireTicks(ticks);
+    }
+
+    @Override
+    public AttributeInstance getAttribute(Attribute attribute) {
+        if (getStatus() != PlayerStatus.JOINED) return null;
+        if (getBukkitPlayer() == null) return null;
+
+        return getBukkitPlayer().getAttribute(attribute);
     }
 
     @Override
@@ -265,7 +316,7 @@ public class CorePlayer implements CPlayer {
         player.setExp(0);
         player.setTotalExperience(0);
         player.setLevel(0);
-        player.setRemainingAir(20);
+        player.setRemainingAir(300);
         player.setAllowFlight(false);
         player.setFlying(false);
         player.setSneaking(false);
@@ -571,7 +622,7 @@ public class CorePlayer implements CPlayer {
         if (getStatus() != PlayerStatus.JOINED) return 0;
         if (getBukkitPlayer() == null) return 0;
         try {
-            Object craftPlayer = Class.forName("org.bukkit.craftbukkit.v" + Core.getInstance().getMcVersion() +
+            Object craftPlayer = Class.forName("org.bukkit.craftbukkit." + Core.getMinecraftVersion() +
                     ".entity.CraftPlayer").cast(getBukkitPlayer());
             Method m = craftPlayer.getClass().getDeclaredMethod("getHandle");
             Object entityPlayer = m.invoke(craftPlayer);
@@ -673,56 +724,86 @@ public class CorePlayer implements CPlayer {
 
     @Override
     public void addTokens(int amount) {
-        if (amount == 0) return;
-        if (amount > 0) {
-            getActionBar().show(ChatColor.YELLOW + "+" + CurrencyType.TOKENS.getIcon() + amount);
-        } else {
-            getActionBar().show(ChatColor.YELLOW + "-" + CurrencyType.TOKENS.getIcon() + amount);
-        }
-        Core.runTaskAsynchronously(() -> Core.getMongoHandler().changeAmount(getUuid(), amount, "plugin", CurrencyType.TOKENS, false));
+        addTokens(amount, "plugin");
     }
 
     @Override
     public void addBalance(int amount) {
+        addBalance(amount, "plugin");
+    }
+
+    @Override
+    public void addTokens(int amount, String reason) {
         if (amount == 0) return;
         if (amount > 0) {
-            getActionBar().show(ChatColor.GREEN + "+" + CurrencyType.BALANCE.getIcon() + amount);
+            getActionBar().show(ChatColor.YELLOW + "+" + CurrencyType.TOKENS.getIcon() + amount);
         } else {
-            getActionBar().show(ChatColor.GREEN + "-" + CurrencyType.BALANCE.getIcon() + amount);
+            getActionBar().show(ChatColor.YELLOW + "-" + CurrencyType.TOKENS.getIcon() + amount);
         }
-        Core.runTaskAsynchronously(() -> Core.getMongoHandler().changeAmount(getUuid(), amount, "plugin", CurrencyType.BALANCE, false));
+        Core.runTaskAsynchronously(Core.getInstance(), () -> Core.getMongoHandler().changeAmount(getUuid(), amount, reason, CurrencyType.TOKENS, false));
+    }
+
+    @Override
+    public void addBalance(int amount, String reason) {
+        if (amount == 0) return;
+        if (amount > 0) {
+            getActionBar().show(ChatColor.GREEN + "+" + CurrencyType.BALANCE.getIcon() + Math.abs(amount));
+        } else {
+            getActionBar().show(ChatColor.GREEN + "-" + CurrencyType.BALANCE.getIcon() + Math.abs(amount));
+        }
+        Core.runTaskAsynchronously(Core.getInstance(), () -> Core.getMongoHandler().changeAmount(getUuid(), amount, reason, CurrencyType.BALANCE, false));
     }
 
     @Override
     public void setTokens(int amount) {
-        Core.runTaskAsynchronously(() -> Core.getMongoHandler().changeAmount(getUuid(), amount, "Core", CurrencyType.TOKENS, true));
+        setTokens(amount, "plugin");
     }
 
     @Override
     public void setBalance(int amount) {
-        Core.runTaskAsynchronously(() -> Core.getMongoHandler().changeAmount(getUuid(), amount, "Core", CurrencyType.BALANCE, true));
+        setBalance(amount, "plugin");
+    }
+
+    @Override
+    public void setTokens(int amount, String reason) {
+        Core.runTaskAsynchronously(Core.getInstance(), () -> Core.getMongoHandler().changeAmount(getUuid(), amount, reason, CurrencyType.TOKENS, true));
+    }
+
+    @Override
+    public void setBalance(int amount, String reason) {
+        Core.runTaskAsynchronously(Core.getInstance(), () -> Core.getMongoHandler().changeAmount(getUuid(), amount, reason, CurrencyType.BALANCE, true));
     }
 
     @Override
     public void removeTokens(int amount) {
+        removeTokens(amount, "plugin");
+    }
+
+    @Override
+    public void removeBalance(int amount) {
+        removeBalance(amount, "plugin");
+    }
+
+    @Override
+    public void removeTokens(int amount, String reason) {
         if (amount == 0) return;
         if (amount > 0) {
             getActionBar().show(ChatColor.YELLOW + "-" + CurrencyType.TOKENS.getIcon() + amount);
         } else {
             getActionBar().show(ChatColor.YELLOW + "+" + CurrencyType.TOKENS.getIcon() + amount);
         }
-        Core.runTaskAsynchronously(() -> Core.getMongoHandler().changeAmount(getUuid(), -amount, "Core", CurrencyType.TOKENS, false));
+        Core.runTaskAsynchronously(Core.getInstance(), () -> Core.getMongoHandler().changeAmount(getUuid(), -amount, reason, CurrencyType.TOKENS, false));
     }
 
     @Override
-    public void removeBalance(int amount) {
+    public void removeBalance(int amount, String reason) {
         if (amount == 0) return;
         if (amount > 0) {
             getActionBar().show(ChatColor.GREEN + "-" + CurrencyType.BALANCE.getIcon() + amount);
         } else {
             getActionBar().show(ChatColor.GREEN + "+" + CurrencyType.BALANCE.getIcon() + amount);
         }
-        Core.runTaskAsynchronously(() -> Core.getMongoHandler().changeAmount(getUuid(), -amount, "Core", CurrencyType.BALANCE, false));
+        Core.runTaskAsynchronously(Core.getInstance(), () -> Core.getMongoHandler().changeAmount(getUuid(), -amount, reason, CurrencyType.BALANCE, false));
     }
 
     @Override
@@ -866,11 +947,11 @@ public class CorePlayer implements CPlayer {
     @Override
     public int getWindowId() {
         try {
-            Object craftPlayer = Class.forName("org.bukkit.craftbukkit.v" + Core.getInstance().getMcVersion() +
+            Object craftPlayer = Class.forName("org.bukkit.craftbukkit." + Core.getMinecraftVersion() +
                     ".entity.CraftPlayer").cast(getBukkitPlayer());
             Method m = craftPlayer.getClass().getDeclaredMethod("getHandle");
             Object entityPlayer = m.invoke(craftPlayer);
-            Object entityHuman = Class.forName("net.minecraft.server.v" + Core.getInstance().getMcVersion() +
+            Object entityHuman = Class.forName("net.minecraft.server." + Core.getMinecraftVersion() +
                     ".EntityHuman").cast(entityPlayer);
             Field field = entityHuman.getClass().getField("activeContainer");
             field.setAccessible(true);

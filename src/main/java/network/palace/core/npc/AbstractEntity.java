@@ -406,6 +406,7 @@ public abstract class AbstractEntity implements Observable<NPCObserver> {
     }
 
     public void removePassenger(AbstractEntity entity) {
+        if (passengers.length < 1) return;
         int[] newArray = new int[passengers.length - 1];
         int i = 0;
         for (int p : passengers) {

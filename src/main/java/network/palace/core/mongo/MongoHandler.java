@@ -44,6 +44,7 @@ public class MongoHandler {
     private MongoCollection<Document> rideCounterCollection = null;
     private MongoCollection<Document> honorMappingCollection = null;
     private MongoCollection<Document> outfitsCollection = null;
+    private MongoCollection<Document> showScheduleCollection = null;
     private MongoCollection<Document> hotelCollection = null;
     private MongoCollection<Document> warpsCollection = null;
 
@@ -73,6 +74,7 @@ public class MongoHandler {
         rideCounterCollection = database.getCollection("ridecounters");
         honorMappingCollection = database.getCollection("honormapping");
         outfitsCollection = database.getCollection("outfits");
+        showScheduleCollection = database.getCollection("showschedule");
         hotelCollection = database.getCollection("hotels");
         warpsCollection = database.getCollection("warps");
     }
@@ -324,6 +326,7 @@ public class MongoHandler {
         return doc != null && doc.get("cosmetics", ArrayList.class).contains(id);
     }
 
+    @SuppressWarnings("unchecked")
     public List<Integer> getCosmetics(UUID uuid) {
         Document doc = getPlayer(uuid, new Document("cosmetics", 1));
         List<Integer> list = new ArrayList<>();
@@ -621,6 +624,25 @@ public class MongoHandler {
     }
 
     /**
+     * Get a document with the specified data fields
+     *
+     * @param uuid        the uuid
+     * @param parkEntries the database entries to collect from the database
+     * @return a document with join data
+     */
+    public Document getJoinData(UUID uuid, String... parkEntries) {
+        Document projection = null;
+        for (String s : parkEntries) {
+            if (projection == null) {
+                projection = new Document(s, 1);
+            } else {
+                projection.append(s, 1);
+            }
+        }
+        return playerCollection.find(MongoFilter.UUID.getFilter(uuid.toString())).projection(projection).first();
+    }
+
+    /**
      * Gets permissions.
      *
      * @param player the player
@@ -773,6 +795,39 @@ public class MongoHandler {
                         .append("majestic", majestic).append("honorable", honorable)));
     }
 
+    /**
+     * Update the FastPass data for a specific UUID
+     *
+     * @param uuid     the uuid of the player
+     * @param fastPass the timestamp a fastpass was last claimed
+     */
+    public void updateFastPassData(UUID uuid, long fastPass) {
+        playerCollection.updateOne(MongoFilter.UUID.getFilter(uuid.toString()),
+                Updates.set("parks.fastpass.lastClaimed", fastPass));
+    }
+
+    /**
+     * Update the FastPass data for a specific UUID
+     *
+     * @param uuid        the uuid of the player
+     * @param slow        the amount of slow FPs
+     * @param moderate    the amount of moderate FPs
+     * @param thrill      the amount of thrill FPs
+     * @param slowday     the day of the year a slow FP was last claimed
+     * @param moderateday the day of the year a moderate FP was last claimed
+     * @param thrillday   the day of the year a thrill FP was last claimed
+     */
+    public void updateFPData(UUID uuid, int slow, int moderate, int thrill, int slowday, int moderateday, int thrillday) {
+        playerCollection.updateOne(MongoFilter.UUID.getFilter(uuid.toString()), Updates.set("parks.fastpass",
+                new Document("slow", slow).append("moderate", moderate).append("thrill", thrill).append("sday", slowday)
+                        .append("mday", moderateday).append("tday", thrillday)));
+    }
+
+    public void addFastPass(UUID uuid, int count) {
+        playerCollection.updateOne(MongoFilter.UUID.getFilter(uuid.toString()),
+                Updates.inc("parks.fastpass.count", 1), new UpdateOptions().upsert(true));
+    }
+
     public Document getHotels() {
         return hotelCollection.find().projection(new Document("hotels", 1)).first();
     }
@@ -788,6 +843,25 @@ public class MongoHandler {
     /*
     Park Methods
      */
+
+    /**
+     * Get a document with the specified park fields
+     *
+     * @param uuid        the uuid
+     * @param parkEntries the database entries to collect from the database
+     * @return a document with park join data
+     */
+    public Document getParkJoinData(UUID uuid, String... parkEntries) {
+        Document projection = null;
+        for (String s : parkEntries) {
+            if (projection == null) {
+                projection = new Document("parks." + s, 1);
+            } else {
+                projection.append("parks." + s, 1);
+            }
+        }
+        return (Document) playerCollection.find(MongoFilter.UUID.getFilter(uuid.toString())).projection(projection).first().get("parks");
+    }
 
     /**
      * Get data for a specific section of park data. If no limit is provided, the entire parks section is returned.
@@ -1021,7 +1095,7 @@ public class MongoHandler {
      */
     public void createOutfit(String name, int hid, byte hdata, String head, int cid, byte cdata, String chestplate,
                              int lid, byte ldata, String leggings, int bid, byte bdata, String boots, int resort) {
-        Document doc = new Document("id", getNextSequence());
+        Document doc = new Document("id", getNextOutfitId());
         doc.append("name", name);
         doc.append("headID", hid);
         doc.append("headData", hdata);
@@ -1039,12 +1113,23 @@ public class MongoHandler {
         outfitsCollection.insertOne(doc);
     }
 
+    public void createOutfitNew(String name, String head, String shirt, String pants, String boots, int resort) {
+        Document doc = new Document("id", getNextOutfitId());
+        doc.append("name", name);
+        doc.append("headJSON", head);
+        doc.append("shirtJSON", shirt);
+        doc.append("pantsJSON", pants);
+        doc.append("bootsJSON", boots);
+        doc.append("resort", resort);
+        outfitsCollection.insertOne(doc);
+    }
+
     /**
      * Used for creating new outfits
      *
      * @return the value of that field plus one
      */
-    private int getNextSequence() {
+    private int getNextOutfitId() {
         BasicDBObject find = new BasicDBObject();
         find.put("_id", "userid");
         BasicDBObject update = new BasicDBObject();
@@ -1124,23 +1209,6 @@ public class MongoHandler {
     }
 
     /**
-     * Update the FastPass data for a specific UUID
-     *
-     * @param uuid        the uuid of the player
-     * @param slow        the amount of slow FPs
-     * @param moderate    the amount of moderate FPs
-     * @param thrill      the amount of thrill FPs
-     * @param slowday     the day of the year a slow FP was last claimed
-     * @param moderateday the day of the year a moderate FP was last claimed
-     * @param thrillday   the day of the year a thrill FP was last claimed
-     */
-    public void updateFPData(UUID uuid, int slow, int moderate, int thrill, int slowday, int moderateday, int thrillday) {
-        playerCollection.updateOne(MongoFilter.UUID.getFilter(uuid.toString()), Updates.set("parks.fastpass",
-                new Document("slow", slow).append("moderate", moderate).append("thrill", thrill).append("sday", slowday)
-                        .append("mday", moderateday).append("tday", thrillday)));
-    }
-
-    /**
      * Get the top ride counters for a specific ride
      *
      * @param name   the name of the ride
@@ -1167,6 +1235,27 @@ public class MongoHandler {
         });
         list.sort((o1, o2) -> o2.getInteger("total") - o1.getInteger("total"));
         return list;
+    }
+
+    /**
+     * Get all Show schedule Documents
+     *
+     * @return all Show schedule Documents
+     */
+    public FindIterable<Document> getScheduledShows() {
+        return showScheduleCollection.find();
+    }
+
+    /**
+     * Update the list of scheduled shows
+     *
+     * @param shows a list of Documents formatted for show timetable entries
+     * @implNote This method deletes ALL existing documents in the 'showschedule' collection
+     * @implNote Only call this method if the list contains <b>all</b> show entries
+     */
+    public void updateScheduledShows(List<Document> shows) {
+        showScheduleCollection.deleteMany(new Document());
+        showScheduleCollection.insertMany(shows);
     }
 
     /*

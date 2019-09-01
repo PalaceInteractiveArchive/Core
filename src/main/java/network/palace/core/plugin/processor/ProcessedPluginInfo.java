@@ -6,22 +6,23 @@ import org.yaml.snakeyaml.introspector.PropertyUtils;
 import org.yaml.snakeyaml.nodes.*;
 import org.yaml.snakeyaml.representer.Representer;
 
-import java.util.LinkedHashSet;
-import java.util.Set;
+import java.util.*;
 
 public class ProcessedPluginInfo {
 
     private String name;
     private String author;
     private String version;
+    private String apiVersion;
     private String[] depend;
     private String[] softdepend;
     private String main;
 
-    public ProcessedPluginInfo(String name, String author, String version, String[] depend, String[] softdepend, String main) {
+    public ProcessedPluginInfo(String name, String author, String version, String apiVersion, String[] depend, String[] softdepend, String main) {
         this.name = name;
         this.author = author;
         this.version = version;
+        this.apiVersion = apiVersion;
         this.depend = depend;
         this.softdepend = softdepend;
         this.main = main;
@@ -32,6 +33,18 @@ public class ProcessedPluginInfo {
         representer.addClassTag(ProcessedPluginInfo.class, Tag.MAP);
         representer.setPropertyUtils(new UnsortedPropertyUtils());
         return representer;
+    }
+
+    public Map<String, Object> toYamlMap() {
+        return new LinkedHashMap<String, Object>() {{
+            put("name", name);
+            put("author", author);
+            put("version", version);
+            if (!apiVersion.isEmpty()) put("api-version", apiVersion);
+            put("depend", depend);
+            put("softdepend", softdepend);
+            put("main", main);
+        }};
     }
 
     private class UnsortedPropertyUtils extends PropertyUtils {
@@ -59,5 +72,10 @@ public class ProcessedPluginInfo {
             }
             return tuple;
         }
+    }
+
+    @Override
+    public String toString() {
+        return name + " " + author + " " + version + " " + apiVersion + " " + Arrays.toString(depend) + " " + Arrays.toString(softdepend) + " " + main;
     }
 }
