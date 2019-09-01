@@ -14,7 +14,7 @@ public enum Rank {
     MANAGER("Manager", "b", ChatColor.RED + "Manager ", ChatColor.RED, ChatColor.YELLOW, true, 12),
     ADMIN("Admin", "c", ChatColor.RED + "Admin ", ChatColor.RED, ChatColor.YELLOW, true, 12),
     DEVELOPER("Developer", "d", ChatColor.GOLD + "Developer ", ChatColor.GOLD, ChatColor.YELLOW, true, 12),
-    SRMOD("Sr Mod", "e", ChatColor.YELLOW + "Sr Mod ", ChatColor.YELLOW, ChatColor.GREEN, true, 11),
+    COORDINATOR("Coordinator", "e", ChatColor.YELLOW + "Coordinator ", ChatColor.YELLOW, ChatColor.GREEN, true, 11),
     ARCHITECT("Architect", "f", ChatColor.YELLOW + "Architect ", ChatColor.YELLOW, ChatColor.GREEN, true, 11),
     BUILDER("Builder", "g", ChatColor.GREEN + "Builder ", ChatColor.GREEN, ChatColor.GREEN, true, 10),
     MOD("Mod", "h", ChatColor.GREEN + "Mod ", ChatColor.GREEN, ChatColor.GREEN, true, 10),

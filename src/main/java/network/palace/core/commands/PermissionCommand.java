@@ -9,7 +9,7 @@ import network.palace.core.player.Rank;
 /**
  * The type Perm command.
  */
-@CommandMeta(description = "Permissions command", rank = Rank.SRMOD)
+@CommandMeta(description = "Permissions command", rank = Rank.COORDINATOR)
 public class PermissionCommand extends CoreCommand {
 
     /**
