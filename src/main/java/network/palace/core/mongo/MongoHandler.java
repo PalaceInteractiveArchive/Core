@@ -825,7 +825,7 @@ public class MongoHandler {
 
     public void addFastPass(UUID uuid, int count) {
         playerCollection.updateOne(MongoFilter.UUID.getFilter(uuid.toString()),
-                Updates.inc("parks.fastpass.count", 1), new UpdateOptions().upsert(true));
+                Updates.inc("parks.fastpass.count", count), new UpdateOptions().upsert(true));
     }
 
     public Document getHotels() {
@@ -1009,14 +1009,13 @@ public class MongoHandler {
     }
 
     /**
-     * Charge a player a specific type of FastPass
+     * Charge a player an amount of FastPasses
      *
      * @param uuid   the uuid of the player
-     * @param type   the FP type
      * @param amount the amount to charge (usually 1)
      */
-    public void chargeFastPass(UUID uuid, String type, int amount) {
-        playerCollection.updateOne(MongoFilter.UUID.getFilter(uuid.toString()), Updates.inc("parks.fastpass." + type, -amount));
+    public void chargeFastPass(UUID uuid, int amount) {
+        playerCollection.updateOne(MongoFilter.UUID.getFilter(uuid.toString()), Updates.inc("parks.fastpass.count", -amount));
     }
 
     /**
