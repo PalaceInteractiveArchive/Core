@@ -326,7 +326,6 @@ public class MongoHandler {
         return doc != null && doc.get("cosmetics", ArrayList.class).contains(id);
     }
 
-    @SuppressWarnings("unchecked")
     public List<Integer> getCosmetics(UUID uuid) {
         Document doc = getPlayer(uuid, new Document("cosmetics", 1));
         List<Integer> list = new ArrayList<>();
@@ -763,17 +762,22 @@ public class MongoHandler {
         List<UUID> list = new ArrayList<>();
         for (Document doc : friendsCollection.find(Filters.or(Filters.eq("sender", uuid.toString()),
                 Filters.eq("receiver", uuid.toString())))) {
-            UUID sender = UUID.fromString(doc.getString("sender"));
-            UUID receiver = UUID.fromString(doc.getString("receiver"));
-            boolean friend = doc.getLong("started") > 0;
-            if (!friends && !friend && receiver.equals(uuid)) {
-                list.add(sender);
-            } else if (friends && friend) {
-                if (uuid.equals(sender)) {
-                    list.add(receiver);
-                } else {
+            try {
+                UUID sender = UUID.fromString(doc.getString("sender"));
+                UUID receiver = UUID.fromString(doc.getString("receiver"));
+                boolean friend = doc.getLong("started") > 0;
+                if (!friends && !friend && receiver.equals(uuid)) {
                     list.add(sender);
+                } else if (friends && friend) {
+                    if (uuid.equals(sender)) {
+                        list.add(receiver);
+                    } else {
+                        list.add(sender);
+                    }
                 }
+            } catch (Exception e) {
+                Core.logMessage("MongoHandler", "Error processing friendship '" + doc.toString() + "': " + e.getMessage());
+                e.printStackTrace();
             }
         }
         return list;
