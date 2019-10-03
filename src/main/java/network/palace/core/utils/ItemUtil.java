@@ -57,6 +57,14 @@ public class ItemUtil implements Listener {
         return setNBTForItemstack(stack, UNABLE_TO_DROP);
     }
 
+    public static ItemStack removeDamageBar(ItemStack stack) {
+        ItemMeta meta = stack.getItemMeta();
+        meta.setUnbreakable(true);
+        meta.addItemFlags(ItemFlag.HIDE_UNBREAKABLE);
+        stack.setItemMeta(meta);
+        return stack;
+    }
+
     /**
      * Hide the damage attributes on the item stack.
      *
