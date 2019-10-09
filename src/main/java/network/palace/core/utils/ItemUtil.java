@@ -71,6 +71,20 @@ public class ItemUtil implements Listener {
     }
 
     /**
+     * Make the specified item unbreakable and add the 'HIDE_UNBREAKABLE' flag to it
+     *
+     * @param stack the item stack
+     * @return the item with unbreakable and the 'HIDE_UNBREAKABLE' flag
+     */
+    public static ItemStack unbreakable(ItemStack stack) {
+        ItemMeta meta = stack.getItemMeta();
+        meta.setUnbreakable(true);
+        meta.addItemFlags(ItemFlag.HIDE_UNBREAKABLE);
+        stack.setItemMeta(meta);
+        return stack;
+    }
+
+    /**
      * Enchanted the item stack and hide the enchantments.
      *
      * @param stack the stack
