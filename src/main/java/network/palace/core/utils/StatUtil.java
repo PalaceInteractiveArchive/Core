@@ -3,6 +3,7 @@ package network.palace.core.utils;
 import com.comphenix.protocol.utility.MinecraftReflection;
 import network.palace.core.Core;
 import network.palace.core.dashboard.packets.dashboard.PacketLogStatistic;
+import org.bukkit.Bukkit;
 import org.bukkit.configuration.file.FileConfiguration;
 
 import java.io.File;
@@ -33,6 +34,18 @@ public class StatUtil {
                 values.put("tps", (float) Math.min(Math.round(recentTps[0] * 100.0) / 100.0, 20.0));
                 logStatistic("ticks_per_second", tags, values);
             } catch (IllegalAccessException | InvocationTargetException | NoSuchMethodException | NoSuchFieldException e) {
+                e.printStackTrace();
+            }
+            try {
+                HashMap<String, Object> tags = new HashMap<>();
+                tags.put("server_name", Core.getInstanceName());
+                tags.put("production", production);
+
+                HashMap<String, Object> values = new HashMap<>();
+                values.put("count", Bukkit.getOnlinePlayers().size());
+
+                logStatistic("server_player_count", tags, values);
+            } catch (Exception e) {
                 e.printStackTrace();
             }
         }, 40L, 600L);
