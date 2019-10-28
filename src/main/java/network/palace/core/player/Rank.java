@@ -56,10 +56,16 @@ public enum Rank {
     }
 
     public String getDBName() {
-        if (this.equals(TRAINEEBUILD)) {
-            return "traineebuild";
+        String s;
+        switch (this) {
+            case TRAINEEBUILD:
+            case TRAINEETECH:
+                s = name().toLowerCase();
+                break;
+            default:
+                s = name.toLowerCase().replaceAll(" ", "");
         }
-        return name.toLowerCase().replaceAll(" ", "");
+        return s;
     }
 
     @Deprecated
