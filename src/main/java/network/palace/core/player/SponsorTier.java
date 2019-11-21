@@ -11,7 +11,8 @@ public enum SponsorTier {
     GOLD("Gold", ChatColor.YELLOW),
     LAPIS("Lapis", ChatColor.BLUE),
     DIAMOND("Diamond", ChatColor.AQUA),
-    EMERALD("Emerald", ChatColor.GREEN);
+    EMERALD("Emerald", ChatColor.GREEN),
+    OBSIDIAN("Obsidian", ChatColor.DARK_PURPLE);
 
     @Getter private String name;
     @Getter private ChatColor color;

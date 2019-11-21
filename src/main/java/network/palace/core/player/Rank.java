@@ -9,27 +9,31 @@ import java.util.Map;
 
 @AllArgsConstructor
 public enum Rank {
+    DIRECTOR("Director", ChatColor.RED + "Director ", ChatColor.RED, ChatColor.YELLOW, true, 13),
+    MANAGER("Manager", ChatColor.RED + "Manager ", ChatColor.RED, ChatColor.YELLOW, true, 13),
+    ADMIN("Admin", ChatColor.RED + "Admin ", ChatColor.RED, ChatColor.YELLOW, true, 13),
+    DEVELOPER("Developer", ChatColor.GOLD + "Developer ", ChatColor.GOLD, ChatColor.YELLOW, true, 13),
+    COORDINATOR("Coordinator", ChatColor.YELLOW + "Coordinator ", ChatColor.YELLOW, ChatColor.GREEN, true, 12),
+    ARCHITECT("Architect", ChatColor.YELLOW + "Architect ", ChatColor.YELLOW, ChatColor.GREEN, true, 12),
+    BUILDER("Builder", ChatColor.GREEN + "Builder ", ChatColor.GREEN, ChatColor.GREEN, true, 11),
+    TECHNICIAN("Technician", ChatColor.BLUE + "Technician ", ChatColor.BLUE, ChatColor.AQUA, true, 11),
+    MEDIA("Media", ChatColor.BLUE + "Media ", ChatColor.BLUE, ChatColor.AQUA, true, 11),
+    MOD("Mod", ChatColor.GREEN + "Mod ", ChatColor.GREEN, ChatColor.GREEN, true, 11),
+    TRAINEETECH("Trainee", ChatColor.BLUE + "Trainee ", ChatColor.BLUE, ChatColor.AQUA, false, 10),
+    TRAINEEBUILD("Trainee", ChatColor.DARK_GREEN + "Trainee ", ChatColor.DARK_GREEN, ChatColor.DARK_GREEN, false, 10),
+    TRAINEE("Trainee", ChatColor.DARK_GREEN + "Trainee ", ChatColor.DARK_GREEN, ChatColor.DARK_GREEN, false, 9),
+    CHARACTER("Character", ChatColor.BLUE + "Character ", ChatColor.BLUE, ChatColor.BLUE, false, 8),
+    SPECIALGUEST("Special Guest", ChatColor.DARK_PURPLE + "SG ", ChatColor.DARK_PURPLE, ChatColor.WHITE, false, 7),
+    SHAREHOLDER("Shareholder", ChatColor.LIGHT_PURPLE + "Shareholder ", ChatColor.LIGHT_PURPLE, ChatColor.WHITE, false, 6),
+    HONORABLE("Honorable", ChatColor.LIGHT_PURPLE + "Honorable ", ChatColor.LIGHT_PURPLE, ChatColor.WHITE, false, 5),
+    MAJESTIC("Majestic", ChatColor.DARK_PURPLE + "Majestic ", ChatColor.DARK_PURPLE, ChatColor.WHITE, false, 4),
+    NOBLE("Noble", ChatColor.BLUE + "Noble ", ChatColor.BLUE, ChatColor.WHITE, false, 3),
+    DWELLER("Dweller", ChatColor.AQUA + "Dweller ", ChatColor.AQUA, ChatColor.WHITE, false, 2),
+    SETTLER("Settler", ChatColor.GRAY + "", ChatColor.DARK_AQUA, ChatColor.WHITE, false, 1);
 
-    DIRECTOR("Director", "a", ChatColor.RED + "Director ", ChatColor.RED, ChatColor.YELLOW, true, 12),
-    MANAGER("Manager", "b", ChatColor.RED + "Manager ", ChatColor.RED, ChatColor.YELLOW, true, 12),
-    ADMIN("Admin", "c", ChatColor.RED + "Admin ", ChatColor.RED, ChatColor.YELLOW, true, 12),
-    DEVELOPER("Developer", "d", ChatColor.GOLD + "Developer ", ChatColor.GOLD, ChatColor.YELLOW, true, 12),
-    COORDINATOR("Coordinator", "e", ChatColor.YELLOW + "Coordinator ", ChatColor.YELLOW, ChatColor.GREEN, true, 11),
-    ARCHITECT("Architect", "f", ChatColor.YELLOW + "Architect ", ChatColor.YELLOW, ChatColor.GREEN, true, 11),
-    BUILDER("Builder", "g", ChatColor.GREEN + "Builder ", ChatColor.GREEN, ChatColor.GREEN, true, 10),
-    MOD("Mod", "h", ChatColor.GREEN + "Mod ", ChatColor.GREEN, ChatColor.GREEN, true, 10),
-    TRAINEEBUILD("Trainee", "i", ChatColor.DARK_GREEN + "Trainee ", ChatColor.DARK_GREEN, ChatColor.DARK_GREEN, false, 9),
-    TRAINEE("Trainee", "j", ChatColor.DARK_GREEN + "Trainee ", ChatColor.DARK_GREEN, ChatColor.DARK_GREEN, false, 8),
-    CHARACTER("Character", "k", ChatColor.BLUE + "Character ", ChatColor.BLUE, ChatColor.BLUE, false, 7),
-    SPECIALGUEST("Special Guest", "l", ChatColor.DARK_PURPLE + "SG ", ChatColor.DARK_PURPLE, ChatColor.WHITE, false, 6),
-    HONORABLE("Honorable", "m", ChatColor.LIGHT_PURPLE + "Honorable ", ChatColor.LIGHT_PURPLE, ChatColor.WHITE, false, 5),
-    MAJESTIC("Majestic", "n", ChatColor.DARK_PURPLE + "Majestic ", ChatColor.DARK_PURPLE, ChatColor.WHITE, false, 4),
-    NOBLE("Noble", "o", ChatColor.BLUE + "Noble ", ChatColor.BLUE, ChatColor.WHITE, false, 3),
-    DWELLER("Dweller", "p", ChatColor.AQUA + "Dweller ", ChatColor.AQUA, ChatColor.WHITE, false, 2),
-    SETTLER("Settler", "q", ChatColor.GRAY + "", ChatColor.DARK_AQUA, ChatColor.WHITE, false, 1);
+    private static final char[] alphabet = new char[]{'a', 'b', 'c', 'd', 'e', 'f', 'g', 'h', 'i', 'j', 'k', 'l', 'm', 'n', 'o', 'p', 'q', 'r', 's', 't', 'u', 'v', 'w', 'x', 'y', 'z'};
 
     @Getter private String name;
-    @Getter private String scoreboardPrefix;
     @Getter private String scoreboardName;
     @Getter private ChatColor tagColor;
     @Getter private ChatColor chatColor;
@@ -52,10 +56,16 @@ public enum Rank {
     }
 
     public String getDBName() {
-        if (this.equals(TRAINEEBUILD)) {
-            return "traineebuild";
+        String s;
+        switch (this) {
+            case TRAINEEBUILD:
+            case TRAINEETECH:
+                s = name().toLowerCase();
+                break;
+            default:
+                s = name.toLowerCase().replaceAll(" ", "");
         }
-        return name.toLowerCase().replaceAll(" ", "");
+        return s;
     }
 
     @Deprecated
@@ -80,5 +90,11 @@ public enum Rank {
      */
     public Map<String, Boolean> getPermissions() {
         return Core.getPermissionManager().getPermissions(this);
+    }
+
+    public String getScoreboardPrefix() {
+        int pos = ordinal();
+        if (pos < 0 || pos >= alphabet.length) return "";
+        return String.valueOf(alphabet[pos]);
     }
 }

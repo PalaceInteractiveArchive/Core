@@ -4,9 +4,11 @@ import network.palace.core.Core;
 import network.palace.core.command.CommandException;
 import network.palace.core.command.CommandMeta;
 import network.palace.core.command.CoreCommand;
+import network.palace.core.player.CPlayer;
 import network.palace.core.player.Rank;
 import org.bukkit.ChatColor;
 import org.bukkit.command.CommandSender;
+import org.bukkit.command.ConsoleCommandSender;
 
 import java.util.Arrays;
 import java.util.List;
@@ -20,7 +22,16 @@ public class RankCommand extends CoreCommand {
     }
 
     @Override
-    protected void handleCommandUnspecific(CommandSender sender, String[] args) throws CommandException {
+    protected void handleCommand(CPlayer player, String[] args) throws CommandException {
+        handle(player.getBukkitPlayer(), args);
+    }
+
+    @Override
+    protected void handleCommand(ConsoleCommandSender commandSender, String[] args) throws CommandException {
+        handle(commandSender, args);
+    }
+
+    protected void handle(CommandSender sender, String[] args) throws CommandException {
         if (args.length < 2) {
             helpMenu(sender);
             return;
@@ -55,7 +66,7 @@ public class RankCommand extends CoreCommand {
                 Map<String, Boolean> perms = Core.getPermissionManager().getPermissions(rank);
                 boolean val = true;
                 if (args.length > 3) {
-                    val = Boolean.valueOf(args[3]);
+                    val = Boolean.parseBoolean(args[3]);
                 }
                 perms.put(node, val);
                 boolean finalVal = val;

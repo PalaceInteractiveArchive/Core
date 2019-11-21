@@ -52,7 +52,11 @@ public class PermissionManager {
         Rank previous = null;
         for (int i = ranks.length - 1; i >= 0; i--) {
             Rank r = ranks[i];
-            Bukkit.getPluginManager().addPermission(new Permission("palace.core.rank." + r.getDBName(), PermissionDefault.OP));
+            Permission permission = Bukkit.getPluginManager().getPermission("palace.core.rank." + r.getDBName());
+            if (permission == null) {
+                permission = new Permission("palace.core.rank." + r.getDBName(), PermissionDefault.OP);
+                Bukkit.getPluginManager().addPermission(permission);
+            }
             Map<String, Boolean> perms = Core.getMongoHandler().getPermissions(r);
             if (previous != null) {
                 for (Map.Entry<String, Boolean> perm : getPermissions(previous).entrySet()) {

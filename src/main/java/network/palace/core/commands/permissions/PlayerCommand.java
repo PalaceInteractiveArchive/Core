@@ -10,6 +10,7 @@ import network.palace.core.player.Rank;
 import network.palace.core.player.SponsorTier;
 import org.bukkit.ChatColor;
 import org.bukkit.command.CommandSender;
+import org.bukkit.command.ConsoleCommandSender;
 import org.bukkit.entity.Player;
 
 import java.util.Map;
@@ -23,7 +24,16 @@ public class PlayerCommand extends CoreCommand {
     }
 
     @Override
-    protected void handleCommandUnspecific(CommandSender sender, String[] args) throws CommandException {
+    protected void handleCommand(CPlayer player, String[] args) throws CommandException {
+        handle(player.getBukkitPlayer(), args);
+    }
+
+    @Override
+    protected void handleCommand(ConsoleCommandSender commandSender, String[] args) throws CommandException {
+        handle(commandSender, args);
+    }
+
+    protected void handle(CommandSender sender, String[] args) throws CommandException {
         if (args.length < 2) {
             helpMenu(sender);
             return;

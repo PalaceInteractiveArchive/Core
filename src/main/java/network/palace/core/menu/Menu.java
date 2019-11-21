@@ -40,7 +40,13 @@ public class Menu implements Listener {
     public void open() {
         Core.runTask(Core.getInstance(), () -> {
             inventory.clear();
-            menuButtons.forEach(button -> inventory.setItem(button.getSlot(), button.getItemStack()));
+            menuButtons.forEach(button -> {
+                if (button.getSlot() >= inventory.getSize()) {
+                    throw new IllegalArgumentException("Button " + button.getItemStack().toString() + " in slot " +
+                            button.getSlot() + " exceeds inventory " + title + " size " + inventory.getSize());
+                }
+                inventory.setItem(button.getSlot(), button.getItemStack());
+            });
             player.openInventory(inventory);
             Core.registerListener(this);
         });
