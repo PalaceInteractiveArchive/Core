@@ -218,6 +218,7 @@ public class Core extends JavaPlugin {
         registerCommand(new HelpopCommand());
         registerCommand(new HonorCommand());
         registerCommand(new ListCommand());
+        registerCommand(new MsgCommand());
         registerCommand(new MyHonorCommand());
         registerCommand(new OnlineCommand());
         registerCommand(new PermissionCommand());
