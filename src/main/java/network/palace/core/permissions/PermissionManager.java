@@ -21,10 +21,14 @@ import java.util.UUID;
 public class PermissionManager {
 
     /**
-     * The Attachments.
+     * Permission Nodes
+     */
+    private Map<Rank, Map<String, Boolean>> permissions = new HashMap<>();
+
+    /**
+     * The Attachments
      */
     public Map<UUID, PermissionAttachment> attachments = new HashMap<>();
-    private Map<Rank, Map<String, Boolean>> permissions = new HashMap<>();
     private PermissionAttachment consoleAttachment = null;
 
     /**
