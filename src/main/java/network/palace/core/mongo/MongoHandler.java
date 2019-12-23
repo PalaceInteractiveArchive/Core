@@ -32,6 +32,7 @@ import java.util.*;
  * @author Marc
  * @since 9/23/17
  */
+@SuppressWarnings("rawtypes")
 public class MongoHandler {
 
     private MongoClient client = null;
@@ -663,16 +664,29 @@ public class MongoHandler {
             ArrayList allowed = (ArrayList) main.get("allowed");
             ArrayList denied = (ArrayList) main.get("denied");
             for (Object o : denied) {
-                String s = (String) o;
-                map.put(MongoUtil.commaToPeriod(s), false);
+                String node = getNode(o);
+                if (node == null) continue;
+                map.put(MongoUtil.commaToPeriod(node), false);
             }
             for (Object o : allowed) {
-                String s = (String) o;
-                map.put(MongoUtil.commaToPeriod(s), true);
+                String node = getNode(o);
+                if (node == null) continue;
+                map.put(MongoUtil.commaToPeriod(node), true);
             }
         }
         map.put("palace.core.rank." + rank.getDBName(), true);
         return map;
+    }
+
+    private String getNode(Object o) {
+        String node = (String) o;
+        if (node.contains(":")) {
+            String[] split = node.split(":");
+            String server = split[0];
+            if (!Core.getServerType().equalsIgnoreCase(server)) return null;
+            node = split[1];
+        }
+        return node;
     }
 
     /**
@@ -707,8 +721,6 @@ public class MongoHandler {
         node = MongoUtil.periodToComma(node);
         permissionCollection.updateOne(MongoFilter.RANK.getFilter(rank.getDBName()), Updates.pull("allowed", node));
         permissionCollection.updateOne(MongoFilter.RANK.getFilter(rank.getDBName()), Updates.pull("denied", node));
-//        permissionCollection.updateOne(new Document(), Updates.pull(rank.getDBName(), new Document("node", node)));
-//        permissionCollection.updateOne(new Document(), new Document("$pull", new Document(rank.getDBName(), new Document("node", node))));
     }
 
     /**
