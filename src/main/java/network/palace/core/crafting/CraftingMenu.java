@@ -10,6 +10,7 @@ import network.palace.core.Core;
 import network.palace.core.achievements.CoreAchievement;
 import network.palace.core.events.OpenCosmeticsEvent;
 import network.palace.core.player.CPlayer;
+import network.palace.core.player.RankTag;
 import network.palace.core.utils.HeadUtil;
 import network.palace.core.utils.ItemUtil;
 import network.palace.core.utils.MiscUtil;
@@ -210,7 +211,7 @@ public class CraftingMenu implements Listener {
         ItemStack head = HeadUtil.getPlayerHead(player);
         SkullMeta meta = (SkullMeta) head.getItemMeta();
         meta.setDisplayName(ChatColor.GREEN + "Player Info");
-        meta.setLore(Arrays.asList(ChatColor.GRAY + "Rank: " + player.getRank().getFormattedName() + player.getSponsorTier().getScoreboardTag(),
+        meta.setLore(Arrays.asList(ChatColor.GRAY + "Rank: " + player.getRank().getFormattedName() + RankTag.formatChat(player.getTags()),
                 ChatColor.GRAY + "Level: " + ChatColor.YELLOW + MiscUtil.formatNumber(Core.getHonorManager().getLevel(player.getHonor()).getLevel()),
                 ChatColor.GRAY + "Honor Points: " + ChatColor.YELLOW + MiscUtil.formatNumber(player.getHonor()),
                 ChatColor.GRAY + "Points to Next Level: " + ChatColor.YELLOW + MiscUtil.formatNumber(Core.getHonorManager().getNextLevel(player.getHonor()).getHonor() - player.getHonor())));

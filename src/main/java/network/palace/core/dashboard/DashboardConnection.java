@@ -79,7 +79,7 @@ public class DashboardConnection {
                         }
                         case 55: {
                             PacketRankChange packet = new PacketRankChange().fromJSON(object);
-                            final UUID uuid = packet.getUuid();
+                            final UUID uuid = packet.getUniqueId();
                             final Rank rank = packet.getRank();
                             final CPlayer player = Core.getPlayerManager().getPlayer(uuid);
                             if (uuid == null) return;
@@ -120,9 +120,7 @@ public class DashboardConnection {
                                     Core.getInstance().getDisabledPlayers().add(packet.getUuid());
                                 }
                             } else {
-                                if (Core.getInstance().getDisabledPlayers().contains(packet.getUuid())) {
-                                    Core.getInstance().getDisabledPlayers().remove(packet.getUuid());
-                                }
+                                Core.getInstance().getDisabledPlayers().remove(packet.getUuid());
                             }
                             break;
                         }
@@ -135,12 +133,7 @@ public class DashboardConnection {
                     Core.logMessage("Core", ChatColor.DARK_GREEN + "Successfully connected to Dashboard");
                     DashboardConnection.this.send(new PacketConnectionType(PacketConnectionType.ConnectionType.INSTANCE).getJSON().toString());
                     DashboardConnection.this.send(new PacketServerName(Core.getInstanceName()).getJSON().toString());
-                    Bukkit.getScheduler().scheduleSyncDelayedTask(Core.getInstance(), new Runnable() {
-                        @Override
-                        public void run() {
-                            new DashboardConnectEvent().call();
-                        }
-                    }, 0L);
+                    Bukkit.getScheduler().scheduleSyncDelayedTask(Core.getInstance(), () -> new DashboardConnectEvent().call(), 0L);
                 }
 
                 @Override

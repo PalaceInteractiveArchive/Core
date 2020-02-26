@@ -6,11 +6,13 @@ import network.palace.core.events.EconomyUpdateEvent;
 import network.palace.core.player.CPlayer;
 import network.palace.core.player.CPlayerScoreboardManager;
 import network.palace.core.player.PlayerStatus;
+import network.palace.core.player.RankTag;
 import network.palace.core.utils.MiscUtil;
 import org.bukkit.ChatColor;
 import org.bukkit.event.EventHandler;
 import org.bukkit.event.Listener;
 
+import java.util.List;
 import java.util.concurrent.Callable;
 
 /**
@@ -35,20 +37,32 @@ public class CorePlayerDefaultScoreboard implements Listener {
     public void setup(CPlayer player) {
         if (!isDefaultSidebarEnabled()) return;
         CPlayerScoreboardManager scoreboard = player.getScoreboard();
+        for (int i = 15; i > 11; i--) {
+            scoreboard.remove(i);
+        }
         // Title
         scoreboard.title(ChatColor.GOLD + "" + ChatColor.BOLD + "The " + ChatColor.DARK_PURPLE + ChatColor.BOLD + "Palace " + ChatColor.GOLD + "" + ChatColor.BOLD + "Network");
+        List<RankTag> tags = player.getTags();
+        int tagOffset = tags.size() > 0 ? tags.size() + 1 : 0;
         // Blank space
-        scoreboard.setBlank(10);
+        scoreboard.setBlank(10 + tagOffset);
         // Balance temp
-        scoreboard.set(9, ChatColor.GREEN + "$ Loading...");
+        scoreboard.set(9 + tagOffset, ChatColor.GREEN + "$ Loading...");
         // Blank space
-        scoreboard.setBlank(8);
+        scoreboard.setBlank(8 + tagOffset);
         // Tokens temp
-        scoreboard.set(7, ChatColor.GREEN + "\u272a Loading...");
+        scoreboard.set(7 + tagOffset, ChatColor.GREEN + "\u272a Loading...");
         // Blank space
-        scoreboard.setBlank(6);
+        scoreboard.setBlank(6 + tagOffset);
         // Rank
-        scoreboard.set(5, ChatColor.GREEN + "Rank: " + player.getRank().getTagColor() + player.getRank().getName() + player.getSponsorTier().getScoreboardTag());
+        scoreboard.set(5 + tagOffset, ChatColor.GREEN + "Rank: " + player.getRank().getTagColor() + player.getRank().getName());
+        if (tags.size() > 0) {
+            scoreboard.setBlank(4 + tagOffset);
+            for (int i = tags.size(); i > 0; i--) {
+                RankTag tag = tags.get(tags.size() - i);
+                scoreboard.set(4 + i, tag.getColor() + "" + ChatColor.ITALIC + "" + tag.getName());
+            }
+        }
         // Blank space
         scoreboard.setBlank(4);
         // Players number
@@ -60,9 +74,9 @@ public class CorePlayerDefaultScoreboard implements Listener {
         // Store link #Sellout
         scoreboard.set(0, ChatColor.YELLOW + "store.palace.network");
         // Load balance async
-        loadBalance(player, scoreboard, 9);
+        loadBalance(player, scoreboard, 9 + tagOffset);
         // Load tokens async
-        loadTokens(player, scoreboard, 7);
+        loadTokens(player, scoreboard, 7 + tagOffset);
     }
 
     /**
@@ -89,12 +103,14 @@ public class CorePlayerDefaultScoreboard implements Listener {
         int amount = event.getAmount();
         CPlayer player = Core.getPlayerManager().getPlayer(event.getUuid());
         if (player == null) return;
+        List<RankTag> tags = player.getTags();
+        int tagOffset = tags.size() > 0 ? tags.size() + 1 : 0;
         switch (event.getCurrency()) {
             case BALANCE:
-                setBalance(9, player.getScoreboard(), amount);
+                setBalance(9 + tagOffset, player.getScoreboard(), amount);
                 break;
             case TOKENS:
-                setTokens(7, player.getScoreboard(), amount);
+                setTokens(7 + tagOffset, player.getScoreboard(), amount);
                 break;
         }
     }
