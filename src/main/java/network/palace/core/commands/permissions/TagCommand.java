@@ -5,18 +5,18 @@ import network.palace.core.command.CommandException;
 import network.palace.core.command.CommandMeta;
 import network.palace.core.command.CoreCommand;
 import network.palace.core.player.CPlayer;
-import network.palace.core.player.SponsorTier;
+import network.palace.core.player.RankTag;
 import org.bukkit.ChatColor;
 import org.bukkit.command.CommandSender;
 import org.bukkit.command.ConsoleCommandSender;
 
 import java.util.List;
 
-@CommandMeta(description = "Sponsor commands")
-public class SponsorCommand extends CoreCommand {
+@CommandMeta(description = "Tag commands")
+public class TagCommand extends CoreCommand {
 
-    public SponsorCommand() {
-        super("sponsor");
+    public TagCommand() {
+        super("tag");
     }
 
     @Override
@@ -38,20 +38,20 @@ public class SponsorCommand extends CoreCommand {
             helpMenu(sender);
             return;
         }
-        SponsorTier tier = SponsorTier.fromString(args[0]);
+        RankTag tag = RankTag.fromString(args[0]);
 
-        List<String> members = Core.getMongoHandler().getMembers(tier);
+        List<String> members = Core.getMongoHandler().getMembers(tag);
         if (members == null) {
             sender.sendMessage(ChatColor.RED + "Too many members to list!");
         } else {
-            sender.sendMessage(tier.getChatTag(false) + " Members (" + members.size() + "):");
+            sender.sendMessage(tag.getTag() + tag.getColor() + "Members (" + members.size() + "):");
             for (String s : members) {
-                sender.sendMessage(ChatColor.GREEN + "- " + tier.getColor() + s);
+                sender.sendMessage(ChatColor.GREEN + "- " + tag.getColor() + s);
             }
         }
     }
 
     private void helpMenu(CommandSender sender) {
-        sender.sendMessage(ChatColor.GREEN + "/perm sponsor [tier] members " + ChatColor.AQUA + "- List the members of a sponsor tier");
+        sender.sendMessage(ChatColor.GREEN + "/perm tag [tag] members " + ChatColor.AQUA + "- List players with a specific tag");
     }
 }

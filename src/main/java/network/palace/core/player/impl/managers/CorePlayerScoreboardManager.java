@@ -5,7 +5,7 @@ import network.palace.core.Core;
 import network.palace.core.player.CPlayer;
 import network.palace.core.player.CPlayerScoreboardManager;
 import network.palace.core.player.Rank;
-import network.palace.core.player.SponsorTier;
+import network.palace.core.player.RankTag;
 import org.bukkit.Bukkit;
 import org.bukkit.ChatColor;
 import org.bukkit.scoreboard.DisplaySlot;
@@ -15,6 +15,7 @@ import org.bukkit.scoreboard.Team;
 
 import java.util.Arrays;
 import java.util.HashMap;
+import java.util.List;
 import java.util.Map;
 
 /**
@@ -161,14 +162,14 @@ public class CorePlayerScoreboardManager implements CPlayerScoreboardManager {
     @Override
     public void addPlayerTag(CPlayer otherPlayer) {
         if (scoreboard == null) setup();
-        if (otherPlayer == null || otherPlayer.getRank() == null || otherPlayer.getSponsorTier() == null) return;
-        String teamName = teamName(otherPlayer.getRank(), otherPlayer.getSponsorTier());
+        if (otherPlayer == null || otherPlayer.getRank() == null || otherPlayer.getTags() == null) return;
+        String teamName = teamName(otherPlayer.getRank(), otherPlayer.getTags());
         Team team = scoreboard.getTeam(teamName);
 
         if (team == null) {
             team = scoreboard.registerNewTeam(teamName);
             team.setPrefix(otherPlayer.getRank().getFormattedName() + " ");
-            team.setSuffix(otherPlayer.getSponsorTier().getScoreboardTag());
+            team.setSuffix(RankTag.formatScoreboardSuffix(otherPlayer.getTags()));
             team.setColor(otherPlayer.getRank().getTagColor());
             team.setOption(Team.Option.COLLISION_RULE, Team.OptionStatus.NEVER);
             team.addEntry(otherPlayer.getName());
@@ -186,15 +187,17 @@ public class CorePlayerScoreboardManager implements CPlayerScoreboardManager {
     public void removePlayerTag(CPlayer otherPlayer) {
         if (scoreboard == null) setup();
         if (otherPlayer == null || otherPlayer.getRank() == null) return;
-        String teamName = teamName(otherPlayer.getRank(), otherPlayer.getSponsorTier());
+        String teamName = teamName(otherPlayer.getRank(), otherPlayer.getTags());
         Team team = scoreboard.getTeam(teamName);
 
         if (team == null) return;
         team.removeEntry(otherPlayer.getName());
     }
 
-    private String teamName(Rank rank, SponsorTier tier) {
-        return rank.getScoreboardPrefix() + (rank.equals(Rank.SPECIALGUEST) ? "sg" : rank.getDBName()) + (tier.equals(SponsorTier.NONE) ? "" : tier.getDBName().substring(0, 4));
+    private String teamName(Rank rank, List<RankTag> tags) {
+        tags.sort((rankTag, t1) -> t1.getId() - rankTag.getId());
+        return rank.getScoreboardPrefix() + (rank.equals(Rank.SPECIALGUEST) ? "sg" : rank.getDBName()) +
+                (tags.isEmpty() ? "" : tags.get(0).getShortScoreboardTag());
     }
 
     /**

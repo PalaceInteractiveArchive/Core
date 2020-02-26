@@ -47,7 +47,7 @@ public class CorePlayer implements CPlayer {
     private final String name;
     @Getter @Setter private int protocolId = -1;
     @Getter @Setter private Rank rank;
-    @Getter @Setter private SponsorTier sponsorTier;
+    private List<RankTag> tags;
     @Getter @Setter private String locale;
     @Getter @Setter private PlayerStatus status = PlayerStatus.LOGIN;
     @Getter private CPlayerAchievementManager achievementManager;
@@ -75,11 +75,11 @@ public class CorePlayer implements CPlayer {
      * @param name the name
      * @param rank the rank
      */
-    public CorePlayer(UUID uuid, String name, Rank rank, SponsorTier sponsorTier, String locale) {
+    public CorePlayer(UUID uuid, String name, Rank rank, List<RankTag> tags, String locale) {
         this.uuid = uuid;
         this.name = name;
         this.rank = rank;
-        this.sponsorTier = sponsorTier;
+        this.tags = tags;
         this.locale = locale;
     }
 
@@ -593,6 +593,26 @@ public class CorePlayer implements CPlayer {
     @Override
     public UUID getUniqueId() {
         return getUuid();
+    }
+
+    @Override
+    public List<RankTag> getTags() {
+        if (tags == null || tags.isEmpty()) return new ArrayList<>();
+        tags.sort((rankTag, t1) -> t1.getId() - rankTag.getId());
+        return new ArrayList<>(tags);
+    }
+
+    @Override
+    public void addTag(RankTag tag) {
+        if (tag == null || tags.contains(tag)) return;
+        tags.add(tag);
+        tags.sort((rankTag, t1) -> t1.getId() - rankTag.getId());
+    }
+
+    @Override
+    public boolean removeTag(RankTag tag) {
+        if (tag == null) return false;
+        return tags.remove(tag);
     }
 
     @Override

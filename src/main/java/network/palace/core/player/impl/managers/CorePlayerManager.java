@@ -34,13 +34,17 @@ public class CorePlayerManager implements CPlayerManager {
         defaultScoreboard = new CorePlayerDefaultScoreboard();
     }
 
+    @SuppressWarnings("unchecked")
     @Override
     public void playerLoggedIn(UUID uuid, String name) {
-        Document joinData = Core.getMongoHandler().getJoinData(uuid, "rank", "sponsor");
+        Document joinData = Core.getMongoHandler().getJoinData(uuid, "rank", "tags");
+        List<RankTag> tags = new ArrayList<>();
+        if (joinData.containsKey("tags")) {
+            joinData.get("tags", ArrayList.class).forEach(o -> tags.add(RankTag.fromString((String) o)));
+        }
         onlinePlayers.put(uuid, new CorePlayer(uuid, name,
                 joinData.containsKey("rank") ? Rank.fromString(joinData.getString("rank")) : Rank.SETTLER,
-                joinData.containsKey("sponsor") ? SponsorTier.fromString(joinData.getString("sponsor")) : SponsorTier.NONE,
-                "en_us"));
+                tags, "en_us"));
     }
 
     @Override
@@ -162,7 +166,8 @@ public class CorePlayerManager implements CPlayerManager {
         Core.runTaskLater(Core.getInstance(), () -> {
             for (CPlayer otherPlayer : Core.getPlayerManager().getOnlinePlayers()) {
                 if (player.getScoreboard() != null) player.getScoreboard().addPlayerTag(otherPlayer);
-                if (otherPlayer.getScoreboard() != null) otherPlayer.getScoreboard().addPlayerTag(player);
+                if (!player.getUniqueId().equals(otherPlayer.getUniqueId()) &&
+                        otherPlayer.getScoreboard() != null) otherPlayer.getScoreboard().addPlayerTag(player);
             }
         }, 20L);
     }
