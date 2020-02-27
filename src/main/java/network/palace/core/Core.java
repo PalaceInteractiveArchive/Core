@@ -21,7 +21,6 @@ import network.palace.core.crafting.CraftingMenu;
 import network.palace.core.dashboard.DashboardConnection;
 import network.palace.core.errors.RollbarHandler;
 import network.palace.core.honor.HonorManager;
-import network.palace.core.library.CoreClassLoader;
 import network.palace.core.library.LibraryHandler;
 import network.palace.core.mongo.MongoHandler;
 import network.palace.core.npc.SoftNPCManager;
@@ -49,6 +48,7 @@ import org.bukkit.plugin.Plugin;
 import org.bukkit.plugin.java.JavaPlugin;
 
 import java.io.IOException;
+import java.net.URLClassLoader;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.UUID;
@@ -62,7 +62,7 @@ import java.util.concurrent.Future;
  */
 @PluginInfo(name = "Core", version = "2.5.1", depend = {"ProtocolLib"}, softdepend = {"ViaVersion"})
 public class Core extends JavaPlugin {
-    @Getter private CoreClassLoader coreClassLoader;
+    @Getter private URLClassLoader coreClassLoader;
 
     private boolean starting = true;
     @Getter private final long startTime = System.currentTimeMillis();
@@ -107,14 +107,10 @@ public class Core extends JavaPlugin {
 
     @Getter private boolean isMinecraftGreaterOrEqualTo11_2 = MinecraftVersion.getCurrentVersion().getMinor() >= 12;
 
-    public Core() {
-        this.coreClassLoader = new CoreClassLoader(this.getClassLoader());
+    @Override
+    public void onLoad() {
+        this.coreClassLoader = (URLClassLoader) getClass().getClassLoader();
     }
-
-//    @Override
-//    public void onLoad() {
-//        coreClassLoader = new CoreClassLoader(this.getClass().getClassLoader());
-//    }
 
     @Override
     public final void onEnable() {

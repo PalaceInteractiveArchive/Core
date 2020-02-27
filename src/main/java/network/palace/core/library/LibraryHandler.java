@@ -13,8 +13,10 @@ import java.io.File;
 import java.io.IOException;
 import java.io.InputStream;
 import java.io.InputStreamReader;
+import java.lang.reflect.Method;
 import java.net.MalformedURLException;
 import java.net.URL;
+import java.net.URLClassLoader;
 import java.nio.file.Files;
 import java.nio.file.StandardCopyOption;
 import java.util.HashSet;
@@ -110,24 +112,16 @@ public final class LibraryHandler {
     }
 
     private static void addURL(URL url) throws IOException {
-        // Check if this is already loaded
+        URLClassLoader sysLoader = Core.getInstance().getCoreClassLoader();
+        Class<URLClassLoader> sysClass = URLClassLoader.class;
         try {
-            System.out.println("New URL: " + url.toString());
-            Core.getInstance().getCoreClassLoader().addURL(url);
+            Method method = sysClass.getDeclaredMethod("addURL", URL.class);
+            method.setAccessible(true);
+            method.invoke(sysLoader, url);
         } catch (Throwable t) {
             t.printStackTrace();
             throw new IOException("Error, could not add URL to system classloader");
         }
-//        URLClassLoader sysLoader = (URLClassLoader) ClassLoader.getSystemClassLoader();
-//        Class<URLClassLoader> sysClass = URLClassLoader.class;
-//        try {
-//            Method method = sysClass.getDeclaredMethod("addURL", URL.class);
-//            method.setAccessible(true);
-//            method.invoke(sysLoader, url);
-//        } catch (Throwable t) {
-//            t.printStackTrace();
-//            throw new IOException("Error, could not add URL to system classloader");
-//        }
     }
 
     private static class MavenObject {
