@@ -18,7 +18,8 @@ public enum RankTag {
     SPONSOR_DIAMOND("Diamond Tier Sponsor", "S", "s_d", ChatColor.AQUA, 3),
     SPONSOR_LAPIS("Lapis Tier Sponsor", "S", "s_l", ChatColor.BLUE, 2),
     SPONSOR_GOLD("Gold Tier Sponsor", "S", "s_g", ChatColor.YELLOW, 1),
-    SPONSOR_IRON("Iron Tier Sponsor", "S", "s_i", ChatColor.GRAY, 0);
+    SPONSOR_IRON("Iron Tier Sponsor", "S", "s_i", ChatColor.GRAY, 0),
+    NONE("", "", "", ChatColor.RESET, -1);
 
     @Getter private String name;
     private String tag;
@@ -43,8 +44,8 @@ public enum RankTag {
     public static RankTag fromString(String name) {
         if (name == null || name.isEmpty()) return null;
 
-        for (RankTag tier : RankTag.values()) {
-            if (tier.getDBName().equalsIgnoreCase(name)) return tier;
+        for (RankTag tag : RankTag.values()) {
+            if (!tag.equals(NONE) && tag.getDBName().equalsIgnoreCase(name)) return tag;
         }
         return null;
     }

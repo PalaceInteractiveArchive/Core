@@ -616,6 +616,11 @@ public class CorePlayer implements CPlayer {
     }
 
     @Override
+    public boolean hasTag(RankTag tag) {
+        return getTags().contains(tag);
+    }
+
+    @Override
     public boolean hasAchievement(int i) {
         return getStatus() == PlayerStatus.JOINED && getBukkitPlayer() != null && achievementManager != null && achievementManager.hasAchievement(i);
     }
