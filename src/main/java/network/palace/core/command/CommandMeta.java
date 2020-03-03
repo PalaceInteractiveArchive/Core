@@ -1,6 +1,7 @@
 package network.palace.core.command;
 
 import network.palace.core.player.Rank;
+import network.palace.core.player.RankTag;
 
 import java.lang.annotation.ElementType;
 import java.lang.annotation.Retention;
@@ -40,4 +41,11 @@ public @interface CommandMeta {
      * @return the rank
      */
     Rank rank() default Rank.SETTLER;
+
+    /**
+     * RankTag
+     *
+     * @return the tag
+     */
+    RankTag tag() default RankTag.NONE;
 }

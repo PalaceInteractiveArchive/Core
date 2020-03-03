@@ -656,6 +656,14 @@ public interface CPlayer {
     boolean removeTag(RankTag tag);
 
     /**
+     * Determine whether a player has a certain RankTag
+     *
+     * @param tag the tag
+     * @return true if has tag, false if not
+     */
+    boolean hasTag(RankTag tag);
+
+    /**
      * Sets texture value.
      *
      * @param textureValue the texture value

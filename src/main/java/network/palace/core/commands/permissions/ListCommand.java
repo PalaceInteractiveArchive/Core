@@ -46,6 +46,7 @@ public class ListCommand extends CoreCommand {
                 sender.sendMessage(ChatColor.LIGHT_PURPLE + "Palace Sponsor Tiers:");
                 sender.sendMessage(ChatColor.GREEN + "- dbname:chat tag:scoreboard tag");
                 for (RankTag tag : RankTag.values()) {
+                    if (tag.equals(RankTag.NONE)) continue;
                     sender.sendMessage(ChatColor.GREEN + "- " + tag.getDBName() + ":" + tag.getTag() + ":" + tag.getScoreboardTag());
                 }
                 break;

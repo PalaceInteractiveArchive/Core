@@ -6,6 +6,7 @@ import lombok.Setter;
 import network.palace.core.Core;
 import network.palace.core.player.CPlayer;
 import network.palace.core.player.Rank;
+import network.palace.core.player.RankTag;
 import network.palace.core.plugin.Plugin;
 import network.palace.core.utils.MiscUtil;
 import org.bukkit.Bukkit;
@@ -144,15 +145,18 @@ public abstract class CoreCommand implements CommandExecutor, TabCompleter {
             if (sender instanceof Player) {
                 CPlayer player = Core.getPlayerManager().getPlayer(((Player) sender).getUniqueId());
                 Rank requiredRank = Rank.SETTLER;
+                RankTag requiredTag = RankTag.NONE;
                 if (getClass().isAnnotationPresent(CommandMeta.class)) {
                     CommandMeta annotation = getClass().getAnnotation(CommandMeta.class);
                     requiredRank = annotation.rank();
+                    requiredTag = annotation.tag();
                 }
                 if (getClass().isAnnotationPresent(CommandPermission.class)) {
                     CommandPermission annotation = getClass().getAnnotation(CommandPermission.class);
                     requiredRank = annotation.rank();
                 }
-                if (player.getRank().getRankId() < requiredRank.getRankId())
+                if (player.getRank().getRankId() < requiredRank.getRankId() &&
+                        (!requiredTag.equals(RankTag.NONE) && !player.hasTag(requiredTag)))
                     throw new PermissionException();
             }
             // Check if we HAVE to use sub-commands (a behavior this class provides)

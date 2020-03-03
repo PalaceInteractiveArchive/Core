@@ -6,6 +6,7 @@ import network.palace.core.command.CommandMeta;
 import network.palace.core.command.CoreCommand;
 import network.palace.core.player.CPlayer;
 import network.palace.core.player.Rank;
+import network.palace.core.player.RankTag;
 import org.bukkit.ChatColor;
 import org.bukkit.GameMode;
 import org.bukkit.Location;
@@ -16,7 +17,7 @@ import org.bukkit.entity.Player;
  * @author Innectic
  * @since 6/19/2017
  */
-@CommandMeta(description = "Teleport a player", aliases = "tp", rank = Rank.TRAINEE)
+@CommandMeta(description = "Teleport a player", aliases = "tp", rank = Rank.TRAINEE, tag = RankTag.GUIDE)
 public class TeleportCommand extends CoreCommand {
 
     public TeleportCommand() {
@@ -71,6 +72,7 @@ public class TeleportCommand extends CoreCommand {
             return;
         }
         CPlayer player = Core.getPlayerManager().getPlayer((Player) sender);
+        boolean guide = player.hasTag(RankTag.GUIDE) && player.getRank().getRankId() < Rank.TRAINEE.getRankId();
         if (args.length == 1) {
             CPlayer tp = Core.getPlayerManager().getPlayer(args[0]);
             if (tp == null) {
@@ -86,7 +88,7 @@ public class TeleportCommand extends CoreCommand {
             player.sendMessage(ChatColor.GRAY + "You teleported to " + tp.getName());
             return;
         }
-        if (args.length == 2) {
+        if (args.length == 2 && !guide) {
             CPlayer tp1 = Core.getPlayerManager().getPlayer(args[0]);
             CPlayer tp2 = Core.getPlayerManager().getPlayer(args[1]);
             if (tp1 == null || tp2 == null) {
@@ -106,7 +108,7 @@ public class TeleportCommand extends CoreCommand {
                     + " has been teleported to " + tp2.getName());
             return;
         }
-        if (args.length == 3) {
+        if (args.length == 3 && !guide) {
             try {
                 double x = args[0].startsWith("~") ? player.getLocation().getX() + num(args[0].substring(1)) : num(args[0]);
                 double y = args[1].startsWith("~") ? player.getLocation().getY() + num(args[1].substring(1)) : num(args[1]);
@@ -120,7 +122,7 @@ public class TeleportCommand extends CoreCommand {
                 return;
             }
         }
-        if (args.length == 4) {
+        if (args.length == 4 && !guide) {
             try {
                 CPlayer tp = Core.getPlayerManager().getPlayer(args[0]);
                 double x = args[1].startsWith("~") ? player.getLocation().getX() + num(args[1].substring(1)) : num(args[1]);
@@ -139,7 +141,11 @@ public class TeleportCommand extends CoreCommand {
                 return;
             }
         }
-        player.sendMessage(ChatColor.RED + "/tp [Player] <Target> or /tp <x> <y> <z> or /tp [Player] <x> <y> <z>");
+        if (guide) {
+            player.sendMessage(ChatColor.AQUA + "/tp [Player] - Teleport to a player");
+        } else {
+            player.sendMessage(ChatColor.RED + "/tp [Player] <Target> or /tp <x> <y> <z> or /tp [Player] <x> <y> <z>");
+        }
     }
 
     private double num(String s) {
