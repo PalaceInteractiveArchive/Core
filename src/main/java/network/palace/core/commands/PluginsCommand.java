@@ -46,12 +46,11 @@ public class PluginsCommand extends CoreCommand {
 
     @Override
     protected void handleCommandUnspecific(CommandSender sender, String[] args) throws CommandException {
+        // Check if sender is a player
+        boolean isPlayer = sender instanceof Player;
         // Lists
         List<PluginInfo> pluginsList = new ArrayList<>();
         List<PluginInfo> thirdPartyList = new ArrayList<>();
-        // String builds
-        FormattedMessage pluginsFM = new FormattedMessage("");
-        FormattedMessage thirdPartyFM = new FormattedMessage("");
         // Loop through plugins and add
         for (Plugin plugin : Bukkit.getPluginManager().getPlugins()) {
             if (plugin instanceof network.palace.core.plugin.Plugin) {
@@ -71,23 +70,9 @@ public class PluginsCommand extends CoreCommand {
         pluginsList.sort(Comparator.comparing(PluginInfo::getName));
         thirdPartyList.sort(Comparator.comparing(PluginInfo::getName));
         // Plugins info and colors
-        for (int i = 0; i < pluginsList.size(); i++) {
-            PluginInfo info = pluginsList.get(i);
-            pluginsFM.then(info.getName()).color(info.isEnabled() ? ChatColor.GREEN : ChatColor.RED).tooltip(ChatColor.GOLD + "Version: " + ChatColor.GREEN + info.getVersion());
-            if (i != pluginsList.size() - 1) {
-                pluginsFM.then(", ").color(ChatColor.GOLD);
-            }
-        }
+        FormattedMessage pluginsFM = createPluginListMessage(isPlayer, pluginsList);
         // Third party plugins info and colors
-        for (int i = 0; i < thirdPartyList.size(); i++) {
-            PluginInfo info = thirdPartyList.get(i);
-            thirdPartyFM.then(info.getName()).color(info.isEnabled() ? ChatColor.GREEN : ChatColor.RED).tooltip(ChatColor.GOLD + "Version: " + ChatColor.GREEN + info.getVersion());
-            if (i != thirdPartyList.size() - 1) {
-                thirdPartyFM.then(", ").color(ChatColor.GOLD);
-            }
-        }
-        // Check if sender is a player
-        boolean isPlayer = sender instanceof Player;
+        FormattedMessage thirdPartyFM = createPluginListMessage(isPlayer, thirdPartyList);
         // Boilerplate text
         String boilerPlate = BoilerplateUtil.getBoilerplateText(ChatColor.GOLD.toString() + ChatColor.STRIKETHROUGH.toString());
         // Send messages
@@ -123,18 +108,18 @@ public class PluginsCommand extends CoreCommand {
     /**
      * The type Plugin info.
      */
-    public class PluginInfo {
+    public static class PluginInfo {
+
         @Getter private final String name;
         @Getter private final String version;
         @Getter private final boolean enabled;
-
         public PluginInfo(String name, String version, boolean enabled) {
             this.name = name;
             this.version = ((version == null || version.trim().isEmpty()) ? "Unknown" : version);
             this.enabled = enabled;
         }
-    }
 
+    }
     private void obtainVersion() {
         String version = Bukkit.getVersion();
         if (version == null) version = "Custom";
@@ -183,5 +168,22 @@ public class PluginsCommand extends CoreCommand {
             e.printStackTrace();
             return -1;
         }
+    }
+
+    private FormattedMessage createPluginListMessage(boolean isPlayer, List<PluginInfo> thirdPartyList) {
+        FormattedMessage msg = new FormattedMessage("");
+        for (int i = 0; i < thirdPartyList.size(); i++) {
+            PluginInfo info = thirdPartyList.get(i);
+            msg.then(info.getName()).color(info.isEnabled() ? ChatColor.GREEN : ChatColor.RED);
+            if (isPlayer) {
+                msg.tooltip(ChatColor.GOLD + "Version: " + ChatColor.GREEN + info.getVersion());
+            } else {
+                msg.then(" (" + info.getVersion() + ")").color(ChatColor.YELLOW);
+            }
+            if (i != thirdPartyList.size() - 1) {
+                msg.then(", ").color(ChatColor.GOLD);
+            }
+        }
+        return msg;
     }
 }
