@@ -156,8 +156,9 @@ public abstract class CoreCommand implements CommandExecutor, TabCompleter {
                     requiredRank = annotation.rank();
                 }
                 if (player.getRank().getRankId() < requiredRank.getRankId() &&
-                        (!requiredTag.equals(RankTag.NONE) && !player.hasTag(requiredTag)))
+                        (requiredTag.equals(RankTag.NONE) || !player.hasTag(requiredTag))) {
                     throw new PermissionException();
+                }
             }
             // Check if we HAVE to use sub-commands (a behavior this class provides)
             if (isUsingSubCommandsOnly()) {
