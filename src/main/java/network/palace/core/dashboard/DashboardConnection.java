@@ -54,7 +54,7 @@ public class DashboardConnection {
                         case 41: {
                             PacketOnlineCount packet = new PacketOnlineCount().fromJSON(object);
                             int count = packet.getCount();
-                            new CoreOnlineCountUpdate(count).call();
+                            Core.runTask(() -> new CoreOnlineCountUpdate(count).call());
                             break;
                         }
                         case 49: {
@@ -64,7 +64,7 @@ public class DashboardConnection {
                             CPlayer player = Core.getPlayerManager().getPlayer(uuid);
                             if (player == null) break;
                             player.setPack(pack);
-                            new CurrentPackReceivedEvent(player, pack).call();
+                            Core.runTask(() -> new CurrentPackReceivedEvent(player, pack).call());
                             break;
                         }
                         case 50: {
@@ -87,7 +87,7 @@ public class DashboardConnection {
                             if (player == null) return;
 
                             player.setRank(rank);
-                            Core.getPlayerManager().displayRank(player);
+                            Core.runTask(() -> Core.getPlayerManager().displayRank(player));
                         }
                         case 67: {
                             PacketUpdateEconomy packet = new PacketUpdateEconomy().fromJSON(object);
@@ -98,18 +98,18 @@ public class DashboardConnection {
                             }
                             int bal = Core.getMongoHandler().getCurrency(player.getUniqueId(), CurrencyType.BALANCE);
                             int tok = Core.getMongoHandler().getCurrency(player.getUniqueId(), CurrencyType.TOKENS);
-                            new EconomyUpdateEvent(player.getUniqueId(), bal, CurrencyType.BALANCE).call();
-                            new EconomyUpdateEvent(player.getUniqueId(), tok, CurrencyType.TOKENS).call();
+                            Core.runTask(() -> {
+                                new EconomyUpdateEvent(player.getUniqueId(), bal, CurrencyType.BALANCE).call();
+                                new EconomyUpdateEvent(player.getUniqueId(), tok, CurrencyType.TOKENS).call();
+                            });
                             break;
                         }
                         case 68: {
                             PacketConfirmPlayer packet = new PacketConfirmPlayer().fromJSON(object);
                             if (!packet.isExists()) {
                                 Player player = Bukkit.getPlayer(packet.getUniqueId());
-                                if (player != null) {
-                                    Bukkit.getScheduler().scheduleSyncDelayedTask(Core.getInstance(), () ->
-                                            player.kickPlayer(ChatColor.RED + "Your account is not authorized on our network!"));
-                                }
+                                if (player != null)
+                                    Core.runTask(() -> player.kickPlayer(ChatColor.RED + "Your account is not authorized on our network!"));
                             }
                             break;
                         }
@@ -133,7 +133,7 @@ public class DashboardConnection {
                     Core.logMessage("Core", ChatColor.DARK_GREEN + "Successfully connected to Dashboard");
                     DashboardConnection.this.send(new PacketConnectionType(PacketConnectionType.ConnectionType.INSTANCE).getJSON().toString());
                     DashboardConnection.this.send(new PacketServerName(Core.getInstanceName()).getJSON().toString());
-                    Bukkit.getScheduler().scheduleSyncDelayedTask(Core.getInstance(), () -> new DashboardConnectEvent().call(), 0L);
+                    Core.runTask(Core.getInstance(), () -> new DashboardConnectEvent().call());
                 }
 
                 @Override
