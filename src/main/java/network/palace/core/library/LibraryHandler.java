@@ -126,10 +126,10 @@ public final class LibraryHandler {
     }
 
     private static class MavenObject {
-        @Getter private String groupId = null;
-        @Getter private String artifactId = null;
-        @Getter private String version = null;
-        @Getter private String repo = "http://repo1.maven.org/maven2";
+        @Getter private String groupId;
+        @Getter private String artifactId;
+        @Getter private String version;
+        @Getter private String repo;
 
         /**
          * Instantiates a new Maven object.
@@ -139,7 +139,7 @@ public final class LibraryHandler {
          * @param version    the version
          */
         MavenObject(String groupId, String artifactId, String version) {
-            this(groupId, artifactId, version, "http://repo1.maven.org/maven2");
+            this(groupId, artifactId, version, "https://repo1.maven.org/maven2");
         }
 
         /**
