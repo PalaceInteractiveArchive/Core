@@ -634,18 +634,34 @@ public interface CPlayer {
     void setRank(Rank rank);
 
     /**
-     * Get the player's sponsor tier
+     * Get the player's rank tags
      *
-     * @return the sponsor tier
+     * @return an ArrayList of the player's rank tags
      */
-    SponsorTier getSponsorTier();
+    List<RankTag> getTags();
 
     /**
-     * Set the player's sponsor tier
+     * Add a RankTag to a player
      *
-     * @param tier the sponsor tier
+     * @param tag the tag to add
      */
-    void setSponsorTier(SponsorTier tier);
+    void addTag(RankTag tag);
+
+    /**
+     * Remove a RankTag from a player
+     *
+     * @param tag the tag to remove
+     * @return true if removed, false if not
+     */
+    boolean removeTag(RankTag tag);
+
+    /**
+     * Determine whether a player has a certain RankTag
+     *
+     * @param tag the tag
+     * @return true if has tag, false if not
+     */
+    boolean hasTag(RankTag tag);
 
     /**
      * Sets texture value.

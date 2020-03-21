@@ -21,7 +21,7 @@ public class PermissionCommand extends CoreCommand {
         registerSubCommand(new PlayerCommand());
         registerSubCommand(new RankCommand());
         registerSubCommand(new RefreshCommand());
-        registerSubCommand(new SponsorCommand());
+        registerSubCommand(new TagCommand());
     }
 
     @Override

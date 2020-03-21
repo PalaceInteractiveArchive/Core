@@ -17,7 +17,7 @@ import network.palace.core.honor.TopHonorReport;
 import network.palace.core.npc.mob.MobPlayerTexture;
 import network.palace.core.player.CPlayer;
 import network.palace.core.player.Rank;
-import network.palace.core.player.SponsorTier;
+import network.palace.core.player.RankTag;
 import network.palace.core.resource.ResourcePack;
 import network.palace.core.tracking.GameType;
 import network.palace.core.tracking.StatisticType;
@@ -32,6 +32,7 @@ import java.util.*;
  * @author Marc
  * @since 9/23/17
  */
+@SuppressWarnings("rawtypes")
 public class MongoHandler {
 
     private MongoClient client = null;
@@ -165,11 +166,27 @@ public class MongoHandler {
         return Rank.fromString(playerCollection.find(MongoFilter.USERNAME.getFilter(username)).first().getString("rank"));
     }
 
-    public SponsorTier getSponsorTier(UUID uuid) {
-        if (uuid == null) return SponsorTier.NONE;
-        Document result = playerCollection.find(MongoFilter.UUID.getFilter(uuid.toString())).projection(new Document("sponsor", 1)).first();
-        if (result == null || !result.containsKey("sponsor")) return SponsorTier.NONE;
-        return SponsorTier.fromString(result.getString("sponsor"));
+    @SuppressWarnings("rawtypes")
+    public List<RankTag> getRankTags(UUID uuid) {
+        if (uuid == null) return new ArrayList<>();
+        Document result = playerCollection.find(MongoFilter.UUID.getFilter(uuid.toString())).projection(new Document("tags", 1)).first();
+        if (result == null || !result.containsKey("tags")) return new ArrayList<>();
+        ArrayList list = result.get("tags", ArrayList.class);
+        List<RankTag> tags = new ArrayList<>();
+        for (Object o : list) {
+            tags.add(RankTag.fromString((String) o));
+        }
+        return tags;
+    }
+
+    public void addRankTag(UUID uuid, RankTag tag) {
+        if (uuid == null || tag == null) return;
+        playerCollection.updateOne(MongoFilter.UUID.getFilter(uuid.toString()), Updates.addToSet("tags", tag.getDBName()), new UpdateOptions().upsert(true));
+    }
+
+    public void removeRankTag(UUID uuid, RankTag tag) {
+        if (uuid == null || tag == null) return;
+        playerCollection.updateOne(MongoFilter.UUID.getFilter(uuid.toString()), Updates.pull("tags", tag.getDBName()));
     }
 
     /**
@@ -326,6 +343,7 @@ public class MongoHandler {
         return doc != null && doc.get("cosmetics", ArrayList.class).contains(id);
     }
 
+    @SuppressWarnings("unchecked")
     public List<Integer> getCosmetics(UUID uuid) {
         Document doc = getPlayer(uuid, new Document("cosmetics", 1));
         List<Integer> list = new ArrayList<>();
@@ -589,14 +607,14 @@ public class MongoHandler {
     }
 
     /**
-     * Gets members.
+     * Gets members of a specific tag.
      *
-     * @param tier the rank
+     * @param tag the rank
      * @return the members
      */
-    public List<String> getMembers(SponsorTier tier) {
+    public List<String> getMembers(RankTag tag) {
         List<String> list = new ArrayList<>();
-        playerCollection.find(MongoFilter.SPONSOR.getFilter(tier.getDBName())).projection(new Document("username", 1))
+        playerCollection.find(MongoFilter.TAG.getFilter(tag.getDBName())).projection(new Document("username", 1))
                 .forEach((Block<Document>) d -> list.add(d.getString("username")));
         return list;
     }
@@ -609,17 +627,6 @@ public class MongoHandler {
      */
     public void setRank(UUID uuid, Rank rank) {
         playerCollection.updateOne(MongoFilter.UUID.getFilter(uuid.toString()), Updates.set("rank", rank.getDBName()));
-    }
-
-    /**
-     * Sets the player's sponsor tier
-     *
-     * @param uuid the uuid
-     * @param tier the tier
-     */
-    public void setSponsorTier(UUID uuid, SponsorTier tier) {
-        if (uuid == null || tier == null) return;
-        playerCollection.updateOne(MongoFilter.UUID.getFilter(uuid.toString()), tier.equals(SponsorTier.NONE) ? Updates.unset("sponsor") : Updates.set("sponsor", tier.getDBName()));
     }
 
     /**
@@ -663,16 +670,29 @@ public class MongoHandler {
             ArrayList allowed = (ArrayList) main.get("allowed");
             ArrayList denied = (ArrayList) main.get("denied");
             for (Object o : denied) {
-                String s = (String) o;
-                map.put(MongoUtil.commaToPeriod(s), false);
+                String node = getNode(o);
+                if (node == null) continue;
+                map.put(MongoUtil.commaToPeriod(node), false);
             }
             for (Object o : allowed) {
-                String s = (String) o;
-                map.put(MongoUtil.commaToPeriod(s), true);
+                String node = getNode(o);
+                if (node == null) continue;
+                map.put(MongoUtil.commaToPeriod(node), true);
             }
         }
         map.put("palace.core.rank." + rank.getDBName(), true);
         return map;
+    }
+
+    private String getNode(Object o) {
+        String node = (String) o;
+        if (node.contains(":")) {
+            String[] split = node.split(":");
+            String server = split[0];
+            if (!Core.getServerType().equalsIgnoreCase(server)) return null;
+            node = split[1];
+        }
+        return node;
     }
 
     /**
@@ -707,8 +727,6 @@ public class MongoHandler {
         node = MongoUtil.periodToComma(node);
         permissionCollection.updateOne(MongoFilter.RANK.getFilter(rank.getDBName()), Updates.pull("allowed", node));
         permissionCollection.updateOne(MongoFilter.RANK.getFilter(rank.getDBName()), Updates.pull("denied", node));
-//        permissionCollection.updateOne(new Document(), Updates.pull(rank.getDBName(), new Document("node", node)));
-//        permissionCollection.updateOne(new Document(), new Document("$pull", new Document(rank.getDBName(), new Document("node", node))));
     }
 
     /**
@@ -1321,7 +1339,7 @@ public class MongoHandler {
     }
 
     public enum MongoFilter {
-        UUID, USERNAME, RANK, SPONSOR;
+        UUID, USERNAME, RANK, TAG;
 
         public Bson getFilter(String s) {
             switch (this) {
@@ -1331,8 +1349,8 @@ public class MongoHandler {
                     return Filters.regex("username", "^" + s + "$", "i");
                 case RANK:
                     return Filters.eq("rank", s);
-                case SPONSOR:
-                    return Filters.eq("sponsor", s);
+                case TAG:
+                    return Filters.eq("tags", s);
             }
             return null;
         }

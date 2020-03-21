@@ -138,7 +138,7 @@ public final class LibraryHandler {
          * @param version    the version
          */
         MavenObject(String groupId, String artifactId, String version) {
-            this(groupId, artifactId, version, "http://repo1.maven.org/maven2");
+            this(groupId, artifactId, version, "https://repo1.maven.org/maven2");
         }
 
         /**

@@ -6,9 +6,11 @@ import network.palace.core.command.CommandMeta;
 import network.palace.core.command.CoreCommand;
 import network.palace.core.player.CPlayer;
 import network.palace.core.player.Rank;
+import org.bukkit.Bukkit;
 import org.bukkit.ChatColor;
 import org.bukkit.command.CommandSender;
 import org.bukkit.command.ConsoleCommandSender;
+import org.bukkit.permissions.Permission;
 
 import java.util.Arrays;
 import java.util.List;
@@ -63,18 +65,16 @@ public class RankCommand extends CoreCommand {
                     return;
                 }
                 String node = args[2];
-                Map<String, Boolean> perms = Core.getPermissionManager().getPermissions(rank);
-                boolean val = true;
+                boolean val;
                 if (args.length > 3) {
                     val = Boolean.parseBoolean(args[3]);
+                } else {
+                    val = true;
                 }
-                perms.put(node, val);
-                boolean finalVal = val;
                 Core.runTaskAsynchronously(Core.getInstance(), () -> {
-                    Core.getMongoHandler().setPermission(node, rank, finalVal);
-                    Core.getPermissionManager().setPermission(rank, node, finalVal);
+                    Core.getMongoHandler().setPermission(node, rank, val);
                     Core.getPermissionManager().refresh();
-                    if (finalVal) {
+                    if (val) {
                         sender.sendMessage(ChatColor.GREEN + "Rank " + rank.getFormattedName() + ChatColor.GREEN + " now sets true for " + ChatColor.AQUA + node);
                     } else {
                         sender.sendMessage(ChatColor.RED + "Rank " + rank.getFormattedName() + ChatColor.RED + " now sets false for " + ChatColor.AQUA + node);
@@ -88,18 +88,33 @@ public class RankCommand extends CoreCommand {
                     return;
                 }
                 String node = args[2];
-                Map<String, Boolean> perms = Core.getPermissionManager().getPermissions(rank);
-                if (!perms.containsKey(node)) {
-                    sender.sendMessage(ChatColor.YELLOW + "Rank " + rank.getFormattedName() + ChatColor.YELLOW + " doesn't set " + ChatColor.AQUA + node);
-                } else {
-                    perms.remove(node);
-                    Core.runTaskAsynchronously(Core.getInstance(), () -> {
-                        Core.getPermissionManager().unsetPermission(rank, node);
-                        Core.getMongoHandler().unsetPermission(node, rank);
-                        Core.getPermissionManager().refresh();
-                        sender.sendMessage(ChatColor.YELLOW + "Rank " + rank.getFormattedName() + ChatColor.YELLOW + " no longer sets " + ChatColor.AQUA + node);
-                    });
+                Core.runTaskAsynchronously(Core.getInstance(), () -> {
+                    Core.getMongoHandler().unsetPermission(node, rank);
+                    Core.getPermissionManager().refresh();
+                    sender.sendMessage(ChatColor.YELLOW + "Rank " + rank.getFormattedName() + ChatColor.YELLOW + " no longer sets " + ChatColor.AQUA + node);
+                });
+                return;
+            }
+            case "test": {
+                if (args.length < 3) {
+                    helpMenu(sender);
+                    return;
                 }
+                String node = args[2];
+                Map<String, Boolean> perms = Core.getPermissionManager().getPermissions(rank);
+                boolean val;
+                if (perms.containsKey(node)) {
+                    val = perms.get(node);
+                } else {
+                    Permission perm = Bukkit.getServer().getPluginManager().getPermission(node);
+                    if (perm == null) {
+                        val = false;
+                    } else {
+                        val = perm.getDefault().getValue(rank.isOp());
+                    }
+                }
+                sender.sendMessage(ChatColor.YELLOW + "Rank " + rank.getFormattedName() + (val ? ChatColor.GREEN : ChatColor.RED) +
+                        " does" + (val ? "" : "n't") + " have this permission");
                 return;
             }
             case "members": {
@@ -126,6 +141,7 @@ public class RankCommand extends CoreCommand {
         sender.sendMessage(ChatColor.GREEN + "/perm rank [rank] get [permission] " + ChatColor.AQUA + "- Get the value of a permission for a rank");
         sender.sendMessage(ChatColor.GREEN + "/perm rank [rank] set [permission] <true/false> " + ChatColor.AQUA + "- Set the value of a permission for a rank");
         sender.sendMessage(ChatColor.GREEN + "/perm rank [rank] unset [permission] " + ChatColor.AQUA + "- Remove the value of a permission for a rank");
+        sender.sendMessage(ChatColor.GREEN + "/perm rank [rank] test [permission] " + ChatColor.AQUA + "- Test whether a rank does or doesn't have a permission");
         sender.sendMessage(ChatColor.GREEN + "/perm rank [rank] members " + ChatColor.AQUA + "- List the members of a rank");
     }
 }
