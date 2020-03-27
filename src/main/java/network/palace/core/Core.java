@@ -48,6 +48,7 @@ import org.bukkit.plugin.Plugin;
 import org.bukkit.plugin.java.JavaPlugin;
 
 import java.io.IOException;
+import java.net.URLClassLoader;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.UUID;
@@ -61,6 +62,7 @@ import java.util.concurrent.Future;
  */
 @PluginInfo(name = "Core", version = "2.5.7", depend = {"ProtocolLib"}, softdepend = {"ViaVersion"})
 public class Core extends JavaPlugin {
+    @Getter private URLClassLoader coreClassLoader;
 
     private boolean starting = true;
     @Getter private final long startTime = System.currentTimeMillis();
@@ -104,6 +106,11 @@ public class Core extends JavaPlugin {
     @Getter private List<UUID> disabledPlayers = new ArrayList<>();
 
     @Getter private boolean isMinecraftGreaterOrEqualTo11_2 = MinecraftVersion.getCurrentVersion().getMinor() >= 12;
+
+    @Override
+    public void onLoad() {
+        this.coreClassLoader = (URLClassLoader) getClass().getClassLoader();
+    }
 
     @Override
     public final void onEnable() {

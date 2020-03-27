@@ -25,7 +25,7 @@ import java.lang.reflect.Method;
 import java.util.Set;
 
 @SupportedAnnotationTypes("network.palace.core.plugin.*")
-@SupportedSourceVersion(SourceVersion.RELEASE_8)
+@SupportedSourceVersion(SourceVersion.RELEASE_11)
 public class PluginInfoProcessor extends AbstractProcessor {
 
     private boolean hasMainBeenFound = false;

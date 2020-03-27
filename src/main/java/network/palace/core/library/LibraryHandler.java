@@ -112,8 +112,7 @@ public final class LibraryHandler {
     }
 
     private static void addURL(URL url) throws IOException {
-        // Check if this is already loaded
-        URLClassLoader sysLoader = (URLClassLoader) ClassLoader.getSystemClassLoader();
+        URLClassLoader sysLoader = Core.getInstance().getCoreClassLoader();
         Class<URLClassLoader> sysClass = URLClassLoader.class;
         try {
             Method method = sysClass.getDeclaredMethod("addURL", URL.class);
