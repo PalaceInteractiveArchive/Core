@@ -41,7 +41,7 @@ public class HonorManager {
                             continue;
                         }
                         try {
-                            Core.getMongoHandler().addHonor(transaction.getPlayerId(), transaction.getAmount());
+                            Core.getMongoHandler().addHonor(transaction.getPlayerId(), transaction.getAmount(), transaction.getSource());
                             if (transaction.getCallback() != null) transaction.getCallback().handled(true, "");
                         } catch (Exception e) {
                             e.printStackTrace();
@@ -73,6 +73,20 @@ public class HonorManager {
             i++;
         }
         return mapPart;
+    }
+
+    /**
+     * Add a transaction to the queue
+     *
+     * @param uuid     the uuid of the target of the transaction
+     * @param amount   the amount of the transaction
+     * @param source   the source of the transaction
+     * @param callback the callback to be executed after the transaction completes
+     * @implNote Do NOT call this method directly, use methods in {{@link network.palace.core.player.CPlayer}}
+     */
+    public void addTransaction(UUID uuid, int amount, String source, TransactionCallback callback) {
+        Transaction transaction = new Transaction(uuid, null, amount, source, callback);
+        transactions.put(transaction.getPaymentId(), transaction);
     }
 
     /**

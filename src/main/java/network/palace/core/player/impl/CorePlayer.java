@@ -66,7 +66,7 @@ public class CorePlayer implements CPlayer {
     @Getter private final long joinTime = System.currentTimeMillis();
     private final List<Integer> queuedAchievements = new ArrayList<>();
 
-    @Getter @Setter private int honor;
+    @Getter private int honor;
     @Getter @Setter private int previousHonorLevel;
 
     /**
@@ -917,18 +917,60 @@ public class CorePlayer implements CPlayer {
 
     @Override
     public void giveHonor(int amount) {
-        honor += amount;
-        Core.getHonorManager().displayHonor(this);
-        getActionBar().show(ChatColor.LIGHT_PURPLE + "+" + amount + " Honor");
-        Core.getMongoHandler().addHonor(getUuid(), amount);
+        giveHonor(amount, "plugin");
+    }
+
+    @Override
+    public void giveHonor(int amount, String reason) {
+        giveHonor(amount, reason, null);
+    }
+
+    @Override
+    public void giveHonor(int amount, String reason, TransactionCallback callback) {
+        if (amount == 0) return;
+        if (amount > 0) {
+            getActionBar().show(ChatColor.LIGHT_PURPLE + "+" + Math.abs(amount) + " Honor");
+        } else {
+            getActionBar().show(ChatColor.LIGHT_PURPLE + "-" + Math.abs(amount) + " Honor");
+        }
+        Core.getHonorManager().addTransaction(uuid, amount, reason, null);
     }
 
     @Override
     public void removeHonor(int amount) {
-        honor -= amount;
-        Core.getHonorManager().displayHonor(this);
-        getActionBar().show(ChatColor.DARK_PURPLE + "-" + amount + " Honor");
-        Core.getMongoHandler().addHonor(getUuid(), -amount);
+        removeHonor(amount, "plugin");
+    }
+
+    @Override
+    public void removeHonor(int amount, String reason) {
+        removeHonor(amount, reason, null);
+    }
+
+    @Override
+    public void removeHonor(int amount, String reason, TransactionCallback callback) {
+        if (amount == 0) return;
+        if (amount < 0) {
+            getActionBar().show(ChatColor.LIGHT_PURPLE + "+" + Math.abs(amount) + " Honor");
+        } else {
+            getActionBar().show(ChatColor.LIGHT_PURPLE + "-" + Math.abs(amount) + " Honor");
+        }
+        Core.getHonorManager().addTransaction(uuid, amount, reason, null);
+    }
+
+    @Override
+    public void setHonor(int amount) {
+        setHonor(amount, "plugin");
+    }
+
+    @Override
+    public void setHonor(int amount, String reason) {
+        this.honor = amount;
+        Core.runTaskAsynchronously(Core.getInstance(), () -> Core.getMongoHandler().setHonor(getUuid(), amount, reason));
+    }
+
+    @Override
+    public void loadHonor(int honor) {
+        this.honor = honor;
     }
 
     @Override

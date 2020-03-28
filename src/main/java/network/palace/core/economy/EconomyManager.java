@@ -74,6 +74,7 @@ public class EconomyManager {
      * @param uuid     the uuid of the target of the transaction
      * @param amount   the amount of the transaction
      * @param source   the source of the transaction
+     * @param type     the type of currency for the transaction
      * @param callback the callback to be executed after the transaction completes
      * @implNote Do NOT call this method directly, use methods in {{@link network.palace.core.player.CPlayer}}
      */

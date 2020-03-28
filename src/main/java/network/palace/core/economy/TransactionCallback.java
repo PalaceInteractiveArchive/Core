@@ -9,5 +9,5 @@ public abstract class TransactionCallback {
         }
     }
 
-    abstract void callback(boolean success, String error);
+    public abstract void callback(boolean success, String error);
 }
