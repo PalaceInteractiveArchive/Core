@@ -6,7 +6,8 @@ import lombok.Getter;
 import lombok.Setter;
 import network.palace.core.Core;
 import network.palace.core.config.LanguageManager;
-import network.palace.core.economy.CurrencyType;
+import network.palace.core.economy.TransactionCallback;
+import network.palace.core.economy.currency.CurrencyType;
 import network.palace.core.events.GameStatisticChangeEvent;
 import network.palace.core.packets.AbstractPacket;
 import network.palace.core.player.*;
@@ -759,24 +760,34 @@ public class CorePlayer implements CPlayer {
 
     @Override
     public void addTokens(int amount, String reason) {
-        if (amount == 0) return;
-        if (amount > 0) {
-            getActionBar().show(ChatColor.YELLOW + "+" + CurrencyType.TOKENS.getIcon() + amount);
-        } else {
-            getActionBar().show(ChatColor.YELLOW + "-" + CurrencyType.TOKENS.getIcon() + amount);
-        }
-        Core.runTaskAsynchronously(Core.getInstance(), () -> Core.getMongoHandler().changeAmount(getUuid(), amount, reason, CurrencyType.TOKENS, false));
+        addTokens(amount, reason, null);
     }
 
     @Override
     public void addBalance(int amount, String reason) {
+        addBalance(amount, reason, null);
+    }
+
+    @Override
+    public void addTokens(int amount, String reason, TransactionCallback callback) {
+        if (amount == 0) return;
+        if (amount > 0) {
+            getActionBar().show(ChatColor.YELLOW + "+" + CurrencyType.TOKENS.getIcon() + Math.abs(amount));
+        } else {
+            getActionBar().show(ChatColor.YELLOW + "-" + CurrencyType.TOKENS.getIcon() + Math.abs(amount));
+        }
+        Core.getEconomy().addTransaction(uuid, amount, reason, CurrencyType.TOKENS, callback);
+    }
+
+    @Override
+    public void addBalance(int amount, String reason, TransactionCallback callback) {
         if (amount == 0) return;
         if (amount > 0) {
             getActionBar().show(ChatColor.GREEN + "+" + CurrencyType.BALANCE.getIcon() + Math.abs(amount));
         } else {
             getActionBar().show(ChatColor.GREEN + "-" + CurrencyType.BALANCE.getIcon() + Math.abs(amount));
         }
-        Core.runTaskAsynchronously(Core.getInstance(), () -> Core.getMongoHandler().changeAmount(getUuid(), amount, reason, CurrencyType.BALANCE, false));
+        Core.getEconomy().addTransaction(uuid, amount, reason, CurrencyType.BALANCE, callback);
     }
 
     @Override
@@ -811,24 +822,34 @@ public class CorePlayer implements CPlayer {
 
     @Override
     public void removeTokens(int amount, String reason) {
-        if (amount == 0) return;
-        if (amount > 0) {
-            getActionBar().show(ChatColor.YELLOW + "-" + CurrencyType.TOKENS.getIcon() + amount);
-        } else {
-            getActionBar().show(ChatColor.YELLOW + "+" + CurrencyType.TOKENS.getIcon() + amount);
-        }
-        Core.runTaskAsynchronously(Core.getInstance(), () -> Core.getMongoHandler().changeAmount(getUuid(), -amount, reason, CurrencyType.TOKENS, false));
+        removeTokens(amount, reason, null);
     }
 
     @Override
     public void removeBalance(int amount, String reason) {
+        removeBalance(amount, reason, null);
+    }
+
+    @Override
+    public void removeBalance(int amount, String reason, TransactionCallback callback) {
         if (amount == 0) return;
         if (amount > 0) {
-            getActionBar().show(ChatColor.GREEN + "-" + CurrencyType.BALANCE.getIcon() + amount);
+            getActionBar().show(ChatColor.GREEN + "-" + CurrencyType.BALANCE.getIcon() + Math.abs(amount));
         } else {
-            getActionBar().show(ChatColor.GREEN + "+" + CurrencyType.BALANCE.getIcon() + amount);
+            getActionBar().show(ChatColor.GREEN + "+" + CurrencyType.BALANCE.getIcon() + Math.abs(amount));
         }
-        Core.runTaskAsynchronously(Core.getInstance(), () -> Core.getMongoHandler().changeAmount(getUuid(), -amount, reason, CurrencyType.BALANCE, false));
+        Core.getEconomy().addTransaction(uuid, -amount, reason, CurrencyType.BALANCE, callback);
+    }
+
+    @Override
+    public void removeTokens(int amount, String reason, TransactionCallback callback) {
+        if (amount == 0) return;
+        if (amount > 0) {
+            getActionBar().show(ChatColor.YELLOW + "-" + CurrencyType.TOKENS.getIcon() + Math.abs(amount));
+        } else {
+            getActionBar().show(ChatColor.YELLOW + "+" + CurrencyType.TOKENS.getIcon() + Math.abs(amount));
+        }
+        Core.getEconomy().addTransaction(uuid, -amount, reason, CurrencyType.TOKENS, callback);
     }
 
     @Override

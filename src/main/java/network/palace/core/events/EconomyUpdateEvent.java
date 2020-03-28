@@ -2,7 +2,7 @@ package network.palace.core.events;
 
 import lombok.AllArgsConstructor;
 import lombok.Getter;
-import network.palace.core.economy.CurrencyType;
+import network.palace.core.economy.currency.CurrencyType;
 
 import java.util.UUID;
 

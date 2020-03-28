@@ -1,6 +1,8 @@
-package network.palace.core.honor;
+package network.palace.core.economy;
 
 import network.palace.core.Core;
+import network.palace.core.economy.currency.Transaction;
+import network.palace.core.economy.honor.HonorMapping;
 import network.palace.core.player.CPlayer;
 import org.bukkit.ChatColor;
 import org.bukkit.Sound;
@@ -12,10 +14,66 @@ import java.util.*;
  * @since 6/6/2017
  */
 public class HonorManager {
-
+    private final Map<UUID, Transaction> transactions = new HashMap<>();
     private final Set<HonorMapping> mappings = new HashSet<>();
     private final TreeSet<Integer> honorMappings = new TreeSet<>();
     private int highest = 0;
+
+    /**
+     * Instantiates a new Honor manager.
+     */
+    public HonorManager() {
+        Core.runTaskTimer(() -> {
+            boolean started = false;
+            try {
+                // Process at most 20 transactions per second
+                Map<UUID, Transaction> localMap = getPartOfMap(transactions, 20);
+                started = true;
+                // Remove payments about to be processed from main transactions map
+                localMap.keySet().forEach(transactions::remove);
+                // Asynchronously handle database calls for localMap payments
+                Core.runTaskAsynchronously(() -> {
+                    for (Map.Entry<UUID, Transaction> entry : new HashSet<>(localMap.entrySet())) {
+                        Transaction transaction = entry.getValue();
+                        if (transaction.getAmount() == 0) {
+                            if (transaction.getCallback() != null)
+                                transaction.getCallback().handled(false, "Cannot process transaction of amount 0.");
+                            continue;
+                        }
+                        try {
+                            Core.getMongoHandler().addHonor(transaction.getPlayerId(), transaction.getAmount());
+                            if (transaction.getCallback() != null) transaction.getCallback().handled(true, "");
+                        } catch (Exception e) {
+                            e.printStackTrace();
+                            if (transaction.getCallback() != null)
+                                transaction.getCallback().handled(false, "An error occurred while contacting the database to process this transaction.");
+                        }
+                    }
+                });
+            } catch (Exception e) {
+                e.printStackTrace();
+                if (started) {
+                    transactions.values().forEach(transaction -> {
+                        if (transaction.getCallback() != null)
+                            transaction.getCallback().handled(false, "An error occurred while processing this transaction.");
+                    });
+                    transactions.clear();
+                }
+            }
+        }, 0L, 20L);
+    }
+
+    private Map<UUID, Transaction> getPartOfMap(Map<UUID, Transaction> map, int amount) {
+        if (map.size() <= amount) return new HashMap<>(map);
+        Map<UUID, Transaction> mapPart = new HashMap<>();
+        int i = 0;
+        for (Map.Entry<UUID, Transaction> entry : map.entrySet()) {
+            if (i >= amount) break;
+            mapPart.put(entry.getKey(), entry.getValue());
+            i++;
+        }
+        return mapPart;
+    }
 
     /**
      * Provide mappings to the manager

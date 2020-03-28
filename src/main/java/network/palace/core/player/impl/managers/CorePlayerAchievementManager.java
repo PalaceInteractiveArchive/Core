@@ -3,7 +3,7 @@ package network.palace.core.player.impl.managers;
 import lombok.AllArgsConstructor;
 import network.palace.core.Core;
 import network.palace.core.achievements.CoreAchievement;
-import network.palace.core.economy.CurrencyType;
+import network.palace.core.economy.currency.CurrencyType;
 import network.palace.core.player.CPlayer;
 import network.palace.core.player.CPlayerAchievementManager;
 import org.bukkit.ChatColor;

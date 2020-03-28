@@ -19,8 +19,9 @@ import network.palace.core.config.LanguageManager;
 import network.palace.core.config.YAMLConfigurationFile;
 import network.palace.core.crafting.CraftingMenu;
 import network.palace.core.dashboard.DashboardConnection;
+import network.palace.core.economy.EconomyManager;
+import network.palace.core.economy.HonorManager;
 import network.palace.core.errors.RollbarHandler;
-import network.palace.core.honor.HonorManager;
 import network.palace.core.library.LibraryHandler;
 import network.palace.core.mongo.MongoHandler;
 import network.palace.core.npc.SoftNPCManager;
@@ -89,7 +90,7 @@ public class Core extends JavaPlugin {
     private MongoHandler mongoHandler;
     private LanguageManager languageManager;
     private PermissionManager permissionManager;
-    //    private EconomyManager economyManager;
+    private EconomyManager economyManager;
     private ResourceManager resourceManager;
     private AchievementManager achievementManager;
     private SoftNPCManager softNPCManager;
@@ -173,7 +174,7 @@ public class Core extends JavaPlugin {
         playerManager = new CorePlayerManager();
         permissionManager = new PermissionManager();
         resourceManager = new ResourceManager();
-//        economyManager = new EconomyManager();
+        economyManager = new EconomyManager();
         achievementManager = new AchievementManager();
         softNPCManager = new SoftNPCManager();
         // Setup the honor manager
@@ -410,14 +411,14 @@ public class Core extends JavaPlugin {
         return getInstance().permissionManager;
     }
 
-//    /**
-//     * Gets economy.
-//     *
-//     * @return the economy
-//     */
-//    public static EconomyManager getEconomy() {
-//        return getInstance().economyManager;
-//    }
+    /**
+     * Gets economy.
+     *
+     * @return the economy
+     */
+    public static EconomyManager getEconomy() {
+        return getInstance().economyManager;
+    }
 
     /**
      * Gets resource manager.

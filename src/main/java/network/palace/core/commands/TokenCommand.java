@@ -4,7 +4,7 @@ import network.palace.core.Core;
 import network.palace.core.command.CommandException;
 import network.palace.core.command.CommandMeta;
 import network.palace.core.command.CoreCommand;
-import network.palace.core.economy.CurrencyType;
+import network.palace.core.economy.currency.CurrencyType;
 import network.palace.core.player.CPlayer;
 import network.palace.core.player.Rank;
 import network.palace.core.utils.MiscUtil;
@@ -36,7 +36,7 @@ public class TokenCommand extends CoreCommand {
         if (args.length == 0) {
             if (isPlayer) {
                 Core.runTaskAsynchronously(Core.getInstance(), () -> sender.sendMessage(ChatColor.YELLOW + "" + ChatColor.BOLD +
-                        "Your Tokens: " + ChatColor.GREEN + "✪ " +
+                        "Your Tokens: " + ChatColor.GREEN + CurrencyType.TOKENS.getIcon() +
                         Core.getMongoHandler().getCurrency(((Player) sender).getUniqueId(), CurrencyType.TOKENS)));
             } else {
                 helpMenu(sender);
@@ -47,9 +47,10 @@ public class TokenCommand extends CoreCommand {
             final String user = args[0];
             Core.runTaskAsynchronously(Core.getInstance(), () -> {
                 UUID uuid = Core.getMongoHandler().usernameToUUID(user);
+                int tokens = Core.getMongoHandler().getCurrency(uuid, CurrencyType.TOKENS);
                 if (uuid != null) {
-                    sender.sendMessage(ChatColor.YELLOW + "" + ChatColor.BOLD + "Tokens for " + user + ": " +
-                            ChatColor.GREEN + "✪ " + Core.getMongoHandler().getCurrency(uuid, CurrencyType.TOKENS));
+                    Core.runTask(() -> sender.sendMessage(ChatColor.YELLOW + "" + ChatColor.BOLD + "Tokens for " +
+                            user + ": " + ChatColor.GREEN + CurrencyType.TOKENS.getIcon() + tokens));
                 } else {
                     sender.sendMessage(ChatColor.RED + "Player not found!");
                 }
@@ -70,23 +71,7 @@ public class TokenCommand extends CoreCommand {
                     helpMenu(sender);
                     return;
                 }
-                String source = tp.getName();
-                int amount = Integer.parseInt(args[1]);
-                Core.runTaskAsynchronously(Core.getInstance(), () -> {
-                    switch (action.toLowerCase()) {
-                        case "set":
-                            Core.getMongoHandler().changeAmount(tp.getUniqueId(), amount, source, CurrencyType.TOKENS, true);
-                            break;
-                        case "add":
-                            tp.getActionBar().show(ChatColor.YELLOW + "+" + CurrencyType.TOKENS.getIcon() + amount);
-                            Core.getMongoHandler().changeAmount(tp.getUniqueId(), amount, source, CurrencyType.TOKENS, false);
-                            break;
-                        case "minus":
-                            tp.getActionBar().show(ChatColor.YELLOW + "-" + CurrencyType.TOKENS.getIcon() + amount);
-                            Core.getMongoHandler().changeAmount(tp.getUniqueId(), -amount, source, CurrencyType.TOKENS, false);
-                            break;
-                    }
-                });
+                process(tp, Integer.parseInt(args[1]), tp.getName(), action);
             }
             return;
         }
@@ -109,31 +94,30 @@ public class TokenCommand extends CoreCommand {
             } else {
                 source = sender instanceof Player ? sender.getName() : "Console";
             }
-            int amount = Integer.parseInt(args[1]);
-            Core.runTaskAsynchronously(Core.getInstance(), () -> {
-                switch (action.toLowerCase()) {
-                    case "set":
-                        Core.getMongoHandler().changeAmount(tp.getUniqueId(), amount, source, CurrencyType.TOKENS, true);
-                        break;
-                    case "add":
-                        tp.getActionBar().show(ChatColor.YELLOW + "+" + CurrencyType.TOKENS.getIcon() + amount);
-                        Core.getMongoHandler().changeAmount(tp.getUniqueId(), amount, source, CurrencyType.TOKENS, false);
-                        break;
-                    case "minus":
-                        tp.getActionBar().show(ChatColor.YELLOW + "-" + CurrencyType.TOKENS.getIcon() + amount);
-                        Core.getMongoHandler().changeAmount(tp.getUniqueId(), -amount, source, CurrencyType.TOKENS, false);
-                        break;
-                }
-            });
+            process(tp, Integer.parseInt(args[1]), source, action);
             return;
         }
         helpMenu(sender);
     }
 
+    private void process(CPlayer player, int amount, String source, String action) {
+        switch (action.toLowerCase()) {
+            case "set":
+                player.setTokens(amount, source);
+                break;
+            case "add":
+                player.addTokens(amount, source);
+                break;
+            case "minus":
+                player.addTokens(-amount, source);
+                break;
+        }
+    }
+
     private void helpMenu(CommandSender sender) {
         sender.sendMessage(ChatColor.YELLOW
-                + "/tokens <player> - Gets the amount of tokens a player has.");
+                + "/tokens [player] - Gets the amount of tokens a player has.");
         sender.sendMessage(ChatColor.YELLOW
-                + "/tokens <set,add,minus> <amount> [player] - Changes the amount of tokens a player has.");
+                + "/tokens [set,add,minus] [amount] <player> - Changes the amount of tokens a player has.");
     }
 }

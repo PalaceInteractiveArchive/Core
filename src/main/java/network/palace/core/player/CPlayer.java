@@ -1,5 +1,6 @@
 package network.palace.core.player;
 
+import network.palace.core.economy.TransactionCallback;
 import network.palace.core.packets.AbstractPacket;
 import network.palace.core.plugin.Plugin;
 import network.palace.core.tracking.GameType;
@@ -871,6 +872,24 @@ public interface CPlayer {
     void addBalance(int amount, String reason);
 
     /**
+     * Add tokens to the player
+     *
+     * @param amount   the amount to give to the player
+     * @param reason   the reason for the transaction
+     * @param callback the callback to run after the transaction has been processed
+     */
+    void addTokens(int amount, String reason, TransactionCallback callback);
+
+    /**
+     * Add balance to the player
+     *
+     * @param amount   the amount to add
+     * @param reason   the reason for the transaction
+     * @param callback the callback to run after the transaction has been processed
+     */
+    void addBalance(int amount, String reason, TransactionCallback callback);
+
+    /**
      * Set the players tokens
      *
      * @param amount the amount to set it to
@@ -929,6 +948,24 @@ public interface CPlayer {
      * @param reason the reason for the transaction
      */
     void removeBalance(int amount, String reason);
+
+    /**
+     * Remove balance from a player
+     *
+     * @param amount   the amount to remove
+     * @param reason   the reason for the transaction
+     * @param callback the callback to run after the transaction has been processed
+     */
+    void removeBalance(int amount, String reason, TransactionCallback callback);
+
+    /**
+     * Remove tokens from a player
+     *
+     * @param amount   the amount to remove
+     * @param reason   the reason for the transaction
+     * @param callback the callback to run after the transaction has been processed
+     */
+    void removeTokens(int amount, String reason, TransactionCallback callback);
 
     /**
      * Add a game statistic to a player

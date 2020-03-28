@@ -1,4 +1,4 @@
-package network.palace.core.honor;
+package network.palace.core.economy.honor;
 
 import lombok.AllArgsConstructor;
 import lombok.Getter;

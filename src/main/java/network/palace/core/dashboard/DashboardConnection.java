@@ -5,7 +5,7 @@ import com.google.gson.JsonParser;
 import network.palace.core.Core;
 import network.palace.core.dashboard.packets.BasePacket;
 import network.palace.core.dashboard.packets.dashboard.*;
-import network.palace.core.economy.CurrencyType;
+import network.palace.core.economy.currency.CurrencyType;
 import network.palace.core.events.*;
 import network.palace.core.player.CPlayer;
 import network.palace.core.player.Rank;
