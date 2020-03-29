@@ -4,7 +4,7 @@ import network.palace.core.Core;
 import network.palace.core.command.CommandException;
 import network.palace.core.command.CommandMeta;
 import network.palace.core.command.CoreCommand;
-import network.palace.core.honor.HonorMapping;
+import network.palace.core.economy.honor.HonorMapping;
 import network.palace.core.player.CPlayer;
 import org.bukkit.ChatColor;
 

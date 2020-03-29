@@ -72,7 +72,7 @@ public class CorePlayerManager implements CPlayerManager {
             List<Integer> ids = Core.getMongoHandler().getAchievements(corePlayer.getUniqueId());
             corePlayer.setAchievementManager(new CorePlayerAchievementManager(corePlayer, ids));
             Core.getCraftingMenu().update(corePlayer, 2, Core.getCraftingMenu().getAchievement(corePlayer));
-            corePlayer.setHonor(Core.getMongoHandler().getHonor(corePlayer.getUniqueId()));
+            corePlayer.loadHonor(Core.getMongoHandler().getHonor(corePlayer.getUniqueId()));
             corePlayer.setPreviousHonorLevel(Core.getHonorManager().getLevel(corePlayer.getHonor()).getLevel());
             corePlayer.giveAchievement(0);
             Core.getHonorManager().displayHonor(corePlayer, true);

@@ -1,5 +1,6 @@
 package network.palace.core.player;
 
+import network.palace.core.economy.TransactionCallback;
 import network.palace.core.packets.AbstractPacket;
 import network.palace.core.plugin.Plugin;
 import network.palace.core.tracking.GameType;
@@ -871,6 +872,24 @@ public interface CPlayer {
     void addBalance(int amount, String reason);
 
     /**
+     * Add tokens to the player
+     *
+     * @param amount   the amount to give to the player
+     * @param reason   the reason for the transaction
+     * @param callback the callback to run after the transaction has been processed
+     */
+    void addTokens(int amount, String reason, TransactionCallback callback);
+
+    /**
+     * Add balance to the player
+     *
+     * @param amount   the amount to add
+     * @param reason   the reason for the transaction
+     * @param callback the callback to run after the transaction has been processed
+     */
+    void addBalance(int amount, String reason, TransactionCallback callback);
+
+    /**
      * Set the players tokens
      *
      * @param amount the amount to set it to
@@ -929,6 +948,24 @@ public interface CPlayer {
      * @param reason the reason for the transaction
      */
     void removeBalance(int amount, String reason);
+
+    /**
+     * Remove balance from a player
+     *
+     * @param amount   the amount to remove
+     * @param reason   the reason for the transaction
+     * @param callback the callback to run after the transaction has been processed
+     */
+    void removeBalance(int amount, String reason, TransactionCallback callback);
+
+    /**
+     * Remove tokens from a player
+     *
+     * @param amount   the amount to remove
+     * @param reason   the reason for the transaction
+     * @param callback the callback to run after the transaction has been processed
+     */
+    void removeTokens(int amount, String reason, TransactionCallback callback);
 
     /**
      * Add a game statistic to a player
@@ -1071,25 +1108,74 @@ public interface CPlayer {
     int getHonor();
 
     /**
-     * Give honor to a player
+     * Give honor to the player
      *
-     * @param amount the amount of honor to add
+     * @param amount the amount to give to the player
      */
     void giveHonor(int amount);
 
     /**
+     * Give honor to the player
+     *
+     * @param amount the amount to give to the player
+     * @param reason the reason for the transaction
+     */
+    void giveHonor(int amount, String reason);
+
+    /**
+     * Give honor to the player
+     *
+     * @param amount   the amount to give to the player
+     * @param reason   the reason for the transaction
+     * @param callback the callback to run after the transaction has been processed
+     */
+    void giveHonor(int amount, String reason, TransactionCallback callback);
+
+    /**
      * Remove honor from the player
      *
-     * @param amount the amount to remove
+     * @param amount the amount to remove from the player
      */
     void removeHonor(int amount);
 
     /**
+     * Remove honor from the player
+     *
+     * @param amount the amount to remove from the player
+     * @param reason the reason for the transaction
+     */
+    void removeHonor(int amount, String reason);
+
+    /**
+     * Remove honor from the player
+     *
+     * @param amount   the amount to remove from the player
+     * @param reason   the reason for the transaction
+     * @param callback the callback to run after the transaction has been processed
+     */
+    void removeHonor(int amount, String reason, TransactionCallback callback);
+
+    /**
      * Set the player's honor
      *
-     * @param amount the amount to set to
+     * @param amount the amount to set it to
      */
     void setHonor(int amount);
+
+    /**
+     * Set the player's honor
+     *
+     * @param amount the amount to set it to
+     * @param reason the reason for the transaction
+     */
+    void setHonor(int amount, String reason);
+
+    /**
+     * Load the player's honor into the CPlayer object
+     *
+     * @param honor the amount of honor
+     */
+    void loadHonor(int honor);
 
     /**
      * Get stored honor level to keep track of level changes

@@ -4,10 +4,14 @@ import network.palace.core.Core;
 import network.palace.core.command.CommandException;
 import network.palace.core.command.CommandMeta;
 import network.palace.core.command.CoreCommand;
-import network.palace.core.honor.HonorMapping;
+import network.palace.core.economy.honor.HonorMapping;
 import network.palace.core.player.CPlayer;
 import network.palace.core.player.Rank;
+import network.palace.core.utils.MiscUtil;
+import org.bukkit.Bukkit;
 import org.bukkit.ChatColor;
+import org.bukkit.Location;
+import org.bukkit.command.BlockCommandSender;
 import org.bukkit.command.CommandSender;
 import org.bukkit.entity.Player;
 
@@ -28,85 +32,96 @@ public class HonorCommand extends CoreCommand {
 
     @Override
     protected void handleCommandUnspecific(CommandSender sender, String[] args) throws CommandException {
-        Core.runTaskAsynchronously(Core.getInstance(), () -> {
-            if (args.length == 0 || args[0].equalsIgnoreCase("help")) {
-                helpMenu(sender);
-                return;
-            }
-            if (args.length > 1) {
-                int amount;
-                try {
-                    amount = Integer.parseInt(args[1]);
-                } catch (NumberFormatException ignored) {
-                    sender.sendMessage(ChatColor.RED + "Invalid number " + args[1]);
+        boolean isPlayer = sender instanceof Player;
+        if (args.length == 0) {
+            helpMenu(sender);
+            return;
+        }
+        if (args.length == 1 && isPlayer) {
+            final String user = args[0];
+            Core.runTaskAsynchronously(Core.getInstance(), () -> {
+                UUID uuid = Core.getMongoHandler().usernameToUUID(user);
+                if (uuid == null) {
+                    sender.sendMessage(ChatColor.RED + "Player not found");
                     return;
                 }
-                UUID uuid;
-                String name;
-                if (args.length > 2) {
-                    uuid = Core.getMongoHandler().usernameToUUID(args[2]);
-                    name = args[2];
+                int honor = Core.getMongoHandler().getHonor(uuid);
+                int level = Core.getHonorManager().getLevel(honor).getLevel();
+                HonorMapping nextLevel = Core.getHonorManager().getNextLevel(honor);
+                float progress = Core.getHonorManager().progressToNextLevel(honor);
+                sender.sendMessage(ChatColor.GREEN + args[0] + " is Level " + format(level) + " with " + format(honor) +
+                        " Honor.");
+                if (level < Core.getHonorManager().getTopLevel()) {
+                    sender.sendMessage(ChatColor.GREEN + "They are " + (nextLevel.getHonor() - honor) + " Honor (" +
+                            (int) (progress * 100.0f) + "%) away from Level " + nextLevel.getLevel());
                 } else {
-                    uuid = ((Player) sender).getUniqueId();
-                    name = sender.getName();
+                    sender.sendMessage(ChatColor.GREEN + "They are at the highest level.");
                 }
-                if (uuid == null) {
+            });
+            return;
+        }
+        if (args.length == 2) {
+            if (!isPlayer) {
+                helpMenu(sender);
+            } else {
+                String action = args[0];
+                CPlayer tp = Core.getPlayerManager().getPlayer(((Player) sender).getUniqueId());
+                if (tp == null) {
                     sender.sendMessage(ChatColor.RED + "Player not found!");
                     return;
                 }
-                CPlayer player = Core.getPlayerManager().getPlayer(uuid);
-                switch (args[0]) {
-                    case "add":
-                        if (player == null) {
-                            Core.getMongoHandler().addHonor(player.getUniqueId(), amount);
-                        } else {
-                            player.giveHonor(amount);
-                        }
-                        sender.sendMessage(ChatColor.GREEN + "Added " + amount + " to " + name + "'s Honor");
-                        return;
-                    case "minus":
-                        if (player == null) {
-                            Core.getMongoHandler().addHonor(player.getUniqueId(), -amount);
-                        } else {
-                            player.removeHonor(amount);
-                        }
-                        sender.sendMessage(ChatColor.GREEN + "Removed " + amount + " from " + name + "'s Honor");
-                        return;
-                    case "set":
-                        Core.getMongoHandler().setHonor(uuid, amount);
-                        if (player != null) {
-                            player.setHonor(amount);
-                            player.getActionBar().show(ChatColor.LIGHT_PURPLE + "Your Honor was set to " + amount);
-                            Core.getHonorManager().displayHonor(player);
-                        }
-                        sender.sendMessage(ChatColor.GREEN + "Set " + name + "'s Honor to " + amount);
-                        return;
+                if (!MiscUtil.checkIfInt(args[1])) {
+                    helpMenu(sender);
+                    return;
                 }
+                if (!process(tp, Integer.parseInt(args[1]), tp.getName(), action)) helpMenu(sender);
+            }
+            return;
+        }
+        if (args.length == 3) {
+            String action = args[0];
+            CPlayer tp = Core.getPlayerManager().getPlayer(Bukkit.getPlayer(args[2]));
+            if (tp == null) {
+                sender.sendMessage(ChatColor.GREEN + args[2] + ChatColor.RED + " is not online!");
+                return;
+            }
+            if (!MiscUtil.checkIfInt(args[1])) {
                 helpMenu(sender);
                 return;
             }
-            UUID uuid = Core.getMongoHandler().usernameToUUID(args[0]);
-            if (uuid == null) {
-                sender.sendMessage(ChatColor.RED + "Player not found!");
-                return;
-            }
-            int honor = Core.getMongoHandler().getHonor(uuid);
-            int level = Core.getHonorManager().getLevel(honor).getLevel();
-            HonorMapping nextLevel = Core.getHonorManager().getNextLevel(honor);
-            float progress = Core.getHonorManager().progressToNextLevel(honor);
-            sender.sendMessage(ChatColor.GREEN + args[0] + " is Level " + format(level) + " with " + format(honor) +
-                    " Honor.");
-            if (level < Core.getHonorManager().getTopLevel()) {
-                sender.sendMessage(ChatColor.GREEN + "They are " + (nextLevel.getHonor() - honor) + " Honor (" +
-                        (int) (progress * 100.0f) + "%) away from Level " + nextLevel.getLevel());
+            String source;
+            if (sender instanceof BlockCommandSender) {
+                BlockCommandSender s = (BlockCommandSender) sender;
+                Location loc = s.getBlock().getLocation();
+                source = "Command Block x: " + loc.getBlockX() + " y: " + loc.getBlockY() + " z: " + loc.getBlockZ();
             } else {
-                sender.sendMessage(ChatColor.GREEN + "They are at the highest level.");
+                source = sender instanceof Player ? sender.getName() : "Console";
             }
-        });
+            if (!process(tp, Integer.parseInt(args[1]), source, action)) helpMenu(sender);
+            return;
+        }
+        helpMenu(sender);
+    }
+
+    private boolean process(CPlayer player, int amount, String source, String action) {
+        switch (action.toLowerCase()) {
+            case "set":
+                player.setHonor(amount, source);
+                return true;
+            case "add":
+                player.giveHonor(amount, source);
+                return true;
+            case "minus":
+                player.giveHonor(-amount, source);
+                return true;
+            default:
+                return false;
+        }
     }
 
     private void helpMenu(CommandSender sender) {
-        sender.sendMessage(ChatColor.YELLOW + "/honor [player] - Gets the honor report of a player.");
+        sender.sendMessage(ChatColor.YELLOW
+                + "/honor [player] - Gets the amount of honor a player has.");
         sender.sendMessage(ChatColor.YELLOW
                 + "/honor [set,add,minus] [amount] <player> - Changes the amount of honor a player has.");
     }

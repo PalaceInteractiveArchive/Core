@@ -10,10 +10,10 @@ import com.mongodb.client.MongoDatabase;
 import com.mongodb.client.model.*;
 import lombok.Getter;
 import network.palace.core.Core;
-import network.palace.core.economy.CurrencyType;
+import network.palace.core.economy.currency.CurrencyType;
+import network.palace.core.economy.honor.HonorMapping;
+import network.palace.core.economy.honor.TopHonorReport;
 import network.palace.core.events.EconomyUpdateEvent;
-import network.palace.core.honor.HonorMapping;
-import network.palace.core.honor.TopHonorReport;
 import network.palace.core.npc.mob.MobPlayerTexture;
 import network.palace.core.player.CPlayer;
 import network.palace.core.player.Rank;
@@ -393,18 +393,6 @@ public class MongoHandler {
      *
      * @param uuid   the uuid
      * @param amount the amount
-     * @param type   the currency type
-     * @param set    true if the value should be set to amount, false if existing value should be incremented
-     */
-    public void changeAmount(UUID uuid, int amount, CurrencyType type, boolean set) {
-        changeAmount(uuid, amount, "plugin", type, set);
-    }
-
-    /**
-     * Change a player's currency amount
-     *
-     * @param uuid   the uuid
-     * @param amount the amount
      * @param source the source of the transaction
      * @param type   the currency type
      * @param set    true if the value should be set to amount, false if existing value should be incremented
@@ -415,23 +403,6 @@ public class MongoHandler {
                 .append("server", Core.getInstanceName()).append("timestamp", System.currentTimeMillis() / 1000);
         playerCollection.updateOne(MongoFilter.UUID.getFilter(uuid.toString()), Updates.push("transactions", doc));
         new EconomyUpdateEvent(uuid, getCurrency(uuid, type), type).call();
-    }
-
-    /**
-     * Log a transaction in the database
-     *
-     * @param uuid   the uuid
-     * @param amount the amount
-     * @param source the source of the transaction
-     * @param type   the currency type
-     * @param set    whether or not the transaction was a set
-     */
-    public void logTransaction(UUID uuid, int amount, String source, CurrencyType type, boolean set) {
-        playerCollection.updateOne(MongoFilter.UUID.getFilter(uuid.toString()), Updates.push("transactions", new BasicDBObject("amount", amount)
-                .append("type", (set ? "set " : "add ") + type.getName())
-                .append("source", source)
-                .append("server", Core.getInstanceName())
-                .append("timestamp", System.currentTimeMillis() / 1000)));
     }
 
     /* Game Methods */
@@ -512,9 +483,18 @@ public class MongoHandler {
      *
      * @param uuid   the player's uuid
      * @param amount the amount to add
+     * @param source the source of the transaction
      */
-    public void addHonor(UUID uuid, int amount) {
+    public void addHonor(UUID uuid, int amount, String source) {
         playerCollection.updateOne(MongoFilter.UUID.getFilter(uuid.toString()), Updates.inc("honor", amount));
+        Document doc = new Document("amount", amount).append("type", "honor").append("source", source)
+                .append("server", Core.getInstanceName()).append("timestamp", System.currentTimeMillis() / 1000);
+        playerCollection.updateOne(MongoFilter.UUID.getFilter(uuid.toString()), Updates.push("transactions", doc));
+        CPlayer tp;
+        if ((tp = Core.getPlayerManager().getPlayer(uuid)) != null) {
+            tp.loadHonor(getHonor(uuid));
+            Core.getHonorManager().displayHonor(tp);
+        }
     }
 
     /**
@@ -522,9 +502,18 @@ public class MongoHandler {
      *
      * @param uuid   the player's uuid
      * @param amount the amount
+     * @param source the source of the transaction
      */
-    public void setHonor(UUID uuid, int amount) {
+    public void setHonor(UUID uuid, int amount, String source) {
         playerCollection.updateOne(MongoFilter.UUID.getFilter(uuid.toString()), Updates.set("honor", amount));
+        Document doc = new Document("amount", amount).append("type", "honor").append("source", source)
+                .append("server", Core.getInstanceName()).append("timestamp", System.currentTimeMillis() / 1000);
+        playerCollection.updateOne(MongoFilter.UUID.getFilter(uuid.toString()), Updates.push("transactions", doc));
+        CPlayer tp;
+        if ((tp = Core.getPlayerManager().getPlayer(uuid)) != null) {
+            tp.loadHonor(getHonor(uuid));
+            Core.getHonorManager().displayHonor(tp);
+        }
     }
 
     /**

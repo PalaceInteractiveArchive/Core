@@ -1,4 +1,4 @@
-package network.palace.core.economy;
+package network.palace.core.economy.currency;
 
 import lombok.AllArgsConstructor;
 import lombok.Getter;
@@ -22,7 +22,7 @@ public enum CurrencyType {
             case "tokens":
                 return TOKENS;
             default:
-                return BALANCE;
+                return null;
         }
     }
 
