@@ -3,7 +3,6 @@ package network.palace.core.player.impl.managers;
 import lombok.AllArgsConstructor;
 import network.palace.core.Core;
 import network.palace.core.achievements.CoreAchievement;
-import network.palace.core.economy.currency.CurrencyType;
 import network.palace.core.player.CPlayer;
 import network.palace.core.player.CPlayerAchievementManager;
 import org.bukkit.ChatColor;
@@ -43,7 +42,7 @@ public class CorePlayerAchievementManager implements CPlayerAchievementManager {
         player.playSound(player.getLocation(), Sound.ENTITY_ARROW_HIT_PLAYER, 100f, 0.75f);
 //        Core.runTaskAsynchronously(() -> Core.getSqlUtil().addAchievement(player, i));
         Core.runTaskAsynchronously(Core.getInstance(), () -> Core.getMongoHandler().addAchievement(player.getUniqueId(), i));
-        Core.getMongoHandler().changeAmount(player.getUniqueId(), 5, "Achievement ID " + i, CurrencyType.TOKENS, false);
+        player.addTokens(5, "Achievement ID " + i);
         //TODO Make honor
     }
 }
