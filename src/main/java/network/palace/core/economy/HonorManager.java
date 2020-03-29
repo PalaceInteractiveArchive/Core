@@ -27,7 +27,7 @@ public class HonorManager {
             boolean started = false;
             try {
                 // Process at most 20 transactions per second
-                Map<UUID, Transaction> localMap = getPartOfMap(transactions, 20);
+                Map<UUID, Transaction> localMap = getPartOfMap(transactions, 10);
                 started = true;
                 // Remove payments about to be processed from main transactions map
                 localMap.keySet().forEach(transactions::remove);
