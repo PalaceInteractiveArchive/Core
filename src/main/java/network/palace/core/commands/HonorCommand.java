@@ -74,7 +74,7 @@ public class HonorCommand extends CoreCommand {
                     helpMenu(sender);
                     return;
                 }
-                process(tp, Integer.parseInt(args[1]), tp.getName(), action);
+                if (!process(tp, Integer.parseInt(args[1]), tp.getName(), action)) helpMenu(sender);
             }
             return;
         }
@@ -97,23 +97,25 @@ public class HonorCommand extends CoreCommand {
             } else {
                 source = sender instanceof Player ? sender.getName() : "Console";
             }
-            process(tp, Integer.parseInt(args[1]), source, action);
+            if (!process(tp, Integer.parseInt(args[1]), source, action)) helpMenu(sender);
             return;
         }
         helpMenu(sender);
     }
 
-    private void process(CPlayer player, int amount, String source, String action) {
+    private boolean process(CPlayer player, int amount, String source, String action) {
         switch (action.toLowerCase()) {
             case "set":
                 player.setHonor(amount, source);
-                break;
+                return true;
             case "add":
                 player.giveHonor(amount, source);
-                break;
+                return true;
             case "minus":
                 player.giveHonor(-amount, source);
-                break;
+                return true;
+            default:
+                return false;
         }
     }
 
