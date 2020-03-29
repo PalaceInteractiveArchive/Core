@@ -402,7 +402,7 @@ public class MongoHandler {
         Document doc = new Document("amount", amount).append("type", type.getName()).append("source", source)
                 .append("server", Core.getInstanceName()).append("timestamp", System.currentTimeMillis() / 1000);
         playerCollection.updateOne(MongoFilter.UUID.getFilter(uuid.toString()), Updates.push("transactions", doc));
-        new EconomyUpdateEvent(uuid, getCurrency(uuid, type), type).call();
+        Core.runTask(() -> new EconomyUpdateEvent(uuid, getCurrency(uuid, type), type).call());
     }
 
     /* Game Methods */
