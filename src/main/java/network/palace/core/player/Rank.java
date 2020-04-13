@@ -11,8 +11,8 @@ import java.util.Map;
 public enum Rank {
     DIRECTOR("Director", ChatColor.RED + "Director ", ChatColor.RED, ChatColor.YELLOW, true, 13),
     MANAGER("Manager", ChatColor.RED + "Manager ", ChatColor.RED, ChatColor.YELLOW, true, 13),
-    ADMIN("Admin", ChatColor.RED + "Admin ", ChatColor.RED, ChatColor.YELLOW, true, 13),
-    DEVELOPER("Developer", ChatColor.GOLD + "Developer ", ChatColor.GOLD, ChatColor.YELLOW, true, 13),
+    LEAD("Lead", ChatColor.GOLD + "Lead ", ChatColor.GOLD, ChatColor.YELLOW, true, 13),
+    DEVELOPER("Developer", ChatColor.BLUE + "Developer ", ChatColor.BLUE, ChatColor.AQUA, true, 13),
     COORDINATOR("Coordinator", ChatColor.YELLOW + "Coordinator ", ChatColor.YELLOW, ChatColor.GREEN, true, 12),
     ARCHITECT("Architect", ChatColor.YELLOW + "Architect ", ChatColor.YELLOW, ChatColor.GREEN, true, 12),
     BUILDER("Builder", ChatColor.BLUE + "Builder ", ChatColor.BLUE, ChatColor.AQUA, true, 11),
@@ -42,6 +42,7 @@ public enum Rank {
 
     public static Rank fromString(String name) {
         if (name == null) return SETTLER;
+        if (name.equalsIgnoreCase("admin")) return LEAD;
         String rankName = name.replaceAll(" ", "");
 
         for (Rank rank : Rank.values()) {
