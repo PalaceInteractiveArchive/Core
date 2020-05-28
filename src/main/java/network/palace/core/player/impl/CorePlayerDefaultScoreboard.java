@@ -12,7 +12,9 @@ import org.bukkit.ChatColor;
 import org.bukkit.event.EventHandler;
 import org.bukkit.event.Listener;
 
+import java.util.ArrayList;
 import java.util.List;
+import java.util.UUID;
 import java.util.concurrent.Callable;
 
 /**
@@ -20,11 +22,15 @@ import java.util.concurrent.Callable;
  */
 public class CorePlayerDefaultScoreboard implements Listener {
     private int playerCount = 0;
+    private final boolean defaultScoreboardEnabled;
+    /* An ArrayList tracking the players not using the default scoreboard */
+    private List<UUID> disabledFor = new ArrayList<>();
 
     /**
      * Instantiates a new Core player default scoreboard.
      */
     public CorePlayerDefaultScoreboard() {
+        defaultScoreboardEnabled = Core.getCoreConfig().getBoolean("isDefaultSidebarEnabled", true);
         if (!isDefaultSidebarEnabled()) return;
         Core.registerListener(this);
     }
@@ -35,7 +41,7 @@ public class CorePlayerDefaultScoreboard implements Listener {
      * @param player the player
      */
     public void setup(CPlayer player) {
-        if (!isDefaultSidebarEnabled()) return;
+        if (!isDefaultSidebarEnabled() || disabledFor.contains(player.getUniqueId())) return;
         CPlayerScoreboardManager scoreboard = player.getScoreboard();
         for (int i = 15; i > 11; i--) {
             scoreboard.remove(i);
@@ -88,7 +94,9 @@ public class CorePlayerDefaultScoreboard implements Listener {
     public void onOnlineCountUpdate(CoreOnlineCountUpdate event) {
         playerCount = event.getCount();
         for (CPlayer player : Core.getPlayerManager().getOnlinePlayers()) {
-            if (player.getStatus() != PlayerStatus.JOINED || !player.getScoreboard().isSetup()) continue;
+            if (player.getStatus() != PlayerStatus.JOINED ||
+                    !player.getScoreboard().isSetup() ||
+                    disabledFor.contains(player.getUniqueId())) continue;
             player.getScoreboard().set(3, ChatColor.GREEN + "Online Players: " + MiscUtil.formatNumber(playerCount));
         }
     }
@@ -102,7 +110,7 @@ public class CorePlayerDefaultScoreboard implements Listener {
     public void onEconomyUpdate(EconomyUpdateEvent event) {
         int amount = event.getAmount();
         CPlayer player = Core.getPlayerManager().getPlayer(event.getUuid());
-        if (player == null) return;
+        if (player == null || disabledFor.contains(player.getUniqueId())) return;
         List<RankTag> tags = player.getTags();
         int tagOffset = tags.size() > 0 ? tags.size() + 1 : 0;
         switch (event.getCurrency()) {
@@ -151,7 +159,19 @@ public class CorePlayerDefaultScoreboard implements Listener {
         }
     }
 
+    public void disableDefaultScoreboard(UUID uuid) {
+        disabledFor.add(uuid);
+    }
+
+    public void enableDefaultScoreboard(UUID uuid) {
+        disabledFor.remove(uuid);
+    }
+
+    public boolean isDefaultScoreboardDisabled(UUID uuid) {
+        return disabledFor.contains(uuid);
+    }
+
     private boolean isDefaultSidebarEnabled() {
-        return Core.getCoreConfig().getBoolean("isDefaultSidebarEnabled", true);
+        return defaultScoreboardEnabled;
     }
 }
