@@ -5,7 +5,6 @@ import network.palace.core.command.CommandException;
 import network.palace.core.command.CommandMeta;
 import network.palace.core.command.CoreCommand;
 import network.palace.core.dashboard.packets.dashboard.PacketEmptyServer;
-import network.palace.core.player.CPlayer;
 import network.palace.core.player.Rank;
 import org.bukkit.Bukkit;
 import org.bukkit.ChatColor;
@@ -56,15 +55,18 @@ public class ShutdownCommand extends CoreCommand {
         }
         sender.sendMessage(ChatColor.RED + "Shutting the server down in " + delay + " seconds...");
         taskID = Core.runTaskTimer(Core.getInstance(), new Runnable() {
-            int i = delay;
+            int i = delay, count = 19;
 
             @Override
             public void run() {
+                if (++count % 20 != 0) return;
+                count = 0;
                 if (i > 0) {
                     message(i);
                     i--;
                     return;
                 }
+                if (i-- < 0) return;
                 Core.setStarting(true);
                 Bukkit.getWorlds().forEach(World::save);
                 Core.getDashboardConnection().send(new PacketEmptyServer(Core.getInstanceName()));
@@ -75,7 +77,7 @@ public class ShutdownCommand extends CoreCommand {
                     }
                 }, 0L, 40L);
             }
-        }, 0L, 20L);
+        }, 0L, 1L);
     }
 
     public void message(int seconds) {
@@ -92,9 +94,6 @@ public class ShutdownCommand extends CoreCommand {
         } else {
             return;
         }
-        String msg = ChatColor.LIGHT_PURPLE + "[Server] " + ChatColor.GREEN + "This server (" + Core.getInstanceName() + ") will restart in " + time;
-        for (CPlayer player : Core.getPlayerManager().getOnlinePlayers()) {
-            player.sendMessage(msg);
-        }
+        Bukkit.broadcastMessage(ChatColor.LIGHT_PURPLE + "[Server] " + ChatColor.GREEN + "This server (" + Core.getInstanceName() + ") will restart in " + time);
     }
 }
