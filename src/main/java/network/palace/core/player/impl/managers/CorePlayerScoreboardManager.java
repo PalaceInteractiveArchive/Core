@@ -1,7 +1,6 @@
 package network.palace.core.player.impl.managers;
 
 import lombok.Getter;
-import network.palace.core.Core;
 import network.palace.core.player.CPlayer;
 import network.palace.core.player.CPlayerScoreboardManager;
 import network.palace.core.player.Rank;
@@ -205,7 +204,7 @@ public class CorePlayerScoreboardManager implements CPlayerScoreboardManager {
      */
     @Override
     public void clear() {
-        Core.runTask(Core.getInstance(), this::setup);
+        setup();
     }
 
     @Override

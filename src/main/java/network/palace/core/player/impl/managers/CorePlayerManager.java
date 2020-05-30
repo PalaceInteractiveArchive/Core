@@ -2,6 +2,7 @@ package network.palace.core.player.impl.managers;
 
 import com.comphenix.protocol.wrappers.WrappedGameProfile;
 import com.comphenix.protocol.wrappers.WrappedSignedProperty;
+import lombok.Getter;
 import network.palace.core.Core;
 import network.palace.core.dashboard.packets.dashboard.PacketConfirmPlayer;
 import network.palace.core.dashboard.packets.dashboard.PacketGetPack;
@@ -22,7 +23,7 @@ import java.util.*;
  * The type Core player manager.
  */
 public class CorePlayerManager implements CPlayerManager {
-    private CorePlayerDefaultScoreboard defaultScoreboard;
+    @Getter private CorePlayerDefaultScoreboard defaultScoreboard;
     private final Map<UUID, CPlayer> onlinePlayers = new HashMap<>();
 
     /**
