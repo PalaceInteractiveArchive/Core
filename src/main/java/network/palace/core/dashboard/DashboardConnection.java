@@ -33,7 +33,9 @@ public class DashboardConnection {
 
     public DashboardConnection() {
         dashboardURL = Core.getCoreConfig().getString("dashboardURL");
-        if (!Core.isDashboardAndSqlDisabled()) start();
+        if (!Core.isDashboardAndSqlDisabled()) {
+            Core.runTask(Core.getInstance(), this::start);
+        }
     }
 
     private void start() {
