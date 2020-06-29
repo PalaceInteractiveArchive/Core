@@ -147,6 +147,7 @@ public class DashboardConnection {
                             start();
                         }
                     }, 5000L);
+                    Core.runTask(Core.getInstance(), () -> new DashboardDisconnectEvent().call());
                 }
 
                 @Override
