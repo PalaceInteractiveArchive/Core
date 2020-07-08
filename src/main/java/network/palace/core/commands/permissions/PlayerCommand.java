@@ -105,6 +105,12 @@ public class PlayerCommand extends CoreCommand {
                     sender.sendMessage(ChatColor.RED + args[2] + " isn't a rank!");
                     return;
                 }
+                if (sender instanceof Player) {
+                    if (next.getRankId() > Core.getPlayerManager().getPlayer(((Player) sender).getUniqueId()).getRank().getRankId()) {
+                        sender.sendMessage(ChatColor.RED + "You don't have permission to set a player to " + next.getFormattedName() + "!");
+                        return;
+                    }
+                }
                 Core.getMongoHandler().setRank(uuid, next);
                 if (player != null) {
                     player.setRank(next);
