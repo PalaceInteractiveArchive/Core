@@ -9,6 +9,7 @@ import java.util.Map;
 
 @AllArgsConstructor
 public enum Rank {
+    OWNER("Owner", ChatColor.RED + "Owner ", ChatColor.RED, ChatColor.YELLOW, true, 13),
     DIRECTOR("Director", ChatColor.RED + "Director ", ChatColor.RED, ChatColor.YELLOW, true, 13),
     MANAGER("Manager", ChatColor.RED + "Manager ", ChatColor.RED, ChatColor.YELLOW, true, 13),
     LEAD("Lead", ChatColor.GOLD + "Lead ", ChatColor.GOLD, ChatColor.YELLOW, true, 13),
