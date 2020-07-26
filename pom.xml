@@ -7,19 +7,6 @@
     <artifactId>Core</artifactId>
     <version>2.6.4</version>
 
-    <distributionManagement>
-        <repository>
-            <id>palace</id>
-            <name>Palace Repository</name>
-            <url>https://repo.palace.network/nexus/content/repositories/releases/</url>
-        </repository>
-        <snapshotRepository>
-            <id>palace-snapshot</id>
-            <name>Palace Snapshot Repository</name>
-            <url>https://repo.palace.network/nexus/content/repositories/snapshots/</url>
-        </snapshotRepository>
-    </distributionManagement>
-
     <repositories>
         <repository>
             <id>palace</id>
@@ -106,6 +93,11 @@
             <artifactId>viaversion-common</artifactId>
             <version>2.2.3</version>
         </dependency>
+        <dependency>
+            <groupId>io.netty</groupId>
+            <artifactId>netty-buffer</artifactId>
+            <version>4.1.51.Final</version>
+        </dependency>
     </dependencies>
 
     <properties>
@@ -145,6 +137,7 @@
             <plugin>
                 <groupId>org.apache.maven.plugins</groupId>
                 <artifactId>maven-source-plugin</artifactId>
+                <version>3.2.1</version>
                 <executions>
                     <execution>
                         <id>attach-sources</id>
