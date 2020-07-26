@@ -9,6 +9,11 @@ import com.google.gson.JsonArray;
 import com.google.gson.JsonElement;
 import com.google.gson.JsonObject;
 import com.google.gson.JsonParser;
+import io.netty.buffer.ByteBuf;
+import io.netty.buffer.Unpooled;
+import network.palace.core.Core;
+import network.palace.core.packets.server.entity.WrapperPlayServerCustomPayload;
+import network.palace.core.player.CPlayer;
 import org.bukkit.Color;
 import org.bukkit.Material;
 import org.bukkit.enchantments.Enchantment;
@@ -20,6 +25,7 @@ import org.bukkit.event.player.PlayerDropItemEvent;
 import org.bukkit.inventory.Inventory;
 import org.bukkit.inventory.ItemFlag;
 import org.bukkit.inventory.ItemStack;
+import org.bukkit.inventory.PlayerInventory;
 import org.bukkit.inventory.meta.ItemMeta;
 import org.bukkit.inventory.meta.LeatherArmorMeta;
 import org.bukkit.inventory.meta.SkullMeta;
@@ -36,6 +42,26 @@ public class ItemUtil implements Listener {
 
     private static final String UNABLE_TO_MOVE = "unableToMove";
     private static final String UNABLE_TO_DROP = "unableToDrop";
+
+    public static void openBook(CPlayer player, ItemStack book) {
+        PlayerInventory i = player.getInventory();
+        int slot = i.getHeldItemSlot();
+        ItemStack save = i.getItemInMainHand();
+        i.setItem(slot, book);
+
+        ByteBuf buf = Unpooled.buffer(256);
+        buf.setByte(0, (byte) 0);
+        buf.writerIndex(1);
+
+        WrapperPlayServerCustomPayload packet = new WrapperPlayServerCustomPayload();
+        packet.setChannel("MC|BOpen");
+        packet.setContentsBuffer(buf);
+
+        Core.runTaskLater(Core.getInstance(), () -> {
+            player.sendPacket(packet);
+            i.setItem(slot, save);
+        }, 2L);
+    }
 
     /**
      * Make unable to move item stack.
