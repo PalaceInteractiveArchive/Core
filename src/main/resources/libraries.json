@@ -38,5 +38,10 @@
     "groupId": "io.netty",
     "artifactId": "netty-buffer",
     "version": "4.1.51.Final"
+  },
+  {
+    "groupId": "org.apache.httpcomponents",
+    "artifactId": "httpclient",
+    "version": "4.4"
   }
 ]

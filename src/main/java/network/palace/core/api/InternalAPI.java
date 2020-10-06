@@ -1,0 +1,291 @@
+package network.palace.core.api;
+
+import com.google.gson.Gson;
+import com.google.gson.GsonBuilder;
+import network.palace.core.api.adapters.DateTimeTypeAdapter;
+import network.palace.core.api.adapters.UUIDTypeAdapter;
+import network.palace.core.api.exceptions.APIThrottleException;
+import network.palace.core.api.exceptions.PalaceAPIException;
+import network.palace.core.api.reply.AbstractReply;
+import network.palace.core.api.reply.FriendsReply;
+import org.apache.http.client.HttpClient;
+import org.apache.http.client.methods.HttpGet;
+import org.apache.http.impl.client.HttpClientBuilder;
+import org.apache.http.util.EntityUtils;
+
+import java.time.ZonedDateTime;
+import java.util.UUID;
+import java.util.concurrent.CompletableFuture;
+import java.util.concurrent.ExecutorService;
+import java.util.concurrent.Executors;
+
+public class InternalAPI {
+
+    private static final Gson GSON = new GsonBuilder()
+            .registerTypeAdapter(UUID.class, new UUIDTypeAdapter())
+            .registerTypeAdapter(ZonedDateTime.class, new DateTimeTypeAdapter())
+            .create();
+    private static final String BASE_URL = "https://internal-api.palace.network/";
+
+    private final UUID apiKey;
+
+    private final ExecutorService executorService;
+    private final HttpClient httpClient;
+
+    public InternalAPI(UUID apiKey) {
+        this.apiKey = apiKey;
+
+        this.executorService = Executors.newCachedThreadPool();
+        this.httpClient = HttpClientBuilder.create().build();
+    }
+
+    /**
+     * Shuts down the internal executor service
+     */
+    public void shutdown() {
+        executorService.shutdown();
+    }
+
+    /**
+     * @return currently set API key
+     */
+    public UUID getApiKey() {
+        return apiKey;
+    }
+
+//    public CompletableFuture<LeaderboardsReply> getLeaderboards() {
+//        return get(LeaderboardsReply.class, "leaderboards");
+//    }
+
+    /**
+     * This is now included inside {@link InternalAPI#getGameCounts()}
+     */
+//    @Deprecated
+//    public CompletableFuture<PlayerCountReply> getPlayerCount() {
+//        return get(PlayerCountReply.class, "playerCount");
+//    }
+
+//    public CompletableFuture<PlayerReply> getPlayerByUuid(UUID player) {
+//        return get(PlayerReply.class, "player", "uuid", player);
+//    }
+
+    /**
+     * @param player uuid of a player in string format, can be both dashed or undashed.
+     * @return the future
+     */
+//    public CompletableFuture<PlayerReply> getPlayerByUuid(String player) {
+//        return get(PlayerReply.class, "player", "uuid", player);
+//    }
+
+//    @Deprecated
+//    public CompletableFuture<PlayerReply> getPlayerByName(String player) {
+//        return get(PlayerReply.class, "player", "name", player);
+//    }
+    public CompletableFuture<FriendsReply> getFriends(UUID player) {
+        return get(FriendsReply.class, "friends", "uuid", player);
+    }
+
+    /**
+     * @param player uuid of a player in string format, can be both dashed or undashed.
+     * @return the future
+     */
+    public CompletableFuture<FriendsReply> getFriends(String player) {
+        return get(FriendsReply.class, "friends", "uuid", player);
+    }
+
+//    public CompletableFuture<GuildReply> getGuildByPlayer(UUID player) {
+//        return get(GuildReply.class, "guild", "player", player);
+//    }
+//
+//    /**
+//     * @param player uuid of a player in string format, can be both dashed or undashed.
+//     * @return the future
+//     */
+//    public CompletableFuture<GuildReply> getGuildByPlayer(String player) {
+//        return get(GuildReply.class, "guild", "player", player);
+//    }
+//
+//    public CompletableFuture<GuildReply> getGuildByName(String name) {
+//        return get(GuildReply.class, "guild", "name", name);
+//    }
+//
+//    /**
+//     * @param id mongo id hex string
+//     * @return the future
+//     */
+//    public CompletableFuture<GuildReply> getGuildById(String id) {
+//        return get(GuildReply.class, "guild", "id", id);
+//    }
+//
+//    /**
+//     * You can directly get the guild using {@link InternalAPI#getGuildByPlayer(UUID)}
+//     */
+//    @Deprecated
+//    public CompletableFuture<FindGuildReply> findGuildByPlayer(UUID player) {
+//        return get(FindGuildReply.class, "findGuild", "byUuid", player);
+//    }
+//
+//    /**
+//     * You can directly get the guild using {@link InternalAPI#getGuildByPlayer(String)}
+//     */
+//    @Deprecated
+//    public CompletableFuture<FindGuildReply> findGuildByPlayer(String player) {
+//        return get(FindGuildReply.class, "findGuild", "byUuid", player);
+//    }
+//
+//    /**
+//     * You can directly get the guild using {@link InternalAPI#getGuildByName(String)})}
+//     */
+//    @Deprecated
+//    public CompletableFuture<GuildReply> findGuildByName(String name) {
+//        return get(GuildReply.class, "findGuild", "byName", name);
+//    }
+//
+//    public CompletableFuture<KeyReply> getKey() {
+//        return get(KeyReply.class, "key");
+//    }
+//
+//    public CompletableFuture<GameCountsReply> getGameCounts() {
+//        return get(GameCountsReply.class, "gameCounts");
+//    }
+//
+//    public CompletableFuture<SkyBlockProfileReply> getSkyBlockProfile(String profile) {
+//        return get(SkyBlockProfileReply.class, "skyblock/profile", "profile", profile);
+//    }
+//
+//    public CompletableFuture<SkyBlockNewsReply> getSkyBlockNews() {
+//        return get(SkyBlockNewsReply.class, "skyblock/news");
+//    }
+//
+//    public CompletableFuture<SkyBlockAuctionsReply> getSkyBlockAuctions(int page) {
+//        return get(SkyBlockAuctionsReply.class, "skyblock/auctions", "page", page);
+//    }
+//
+//    /**
+//     * Gets the current status of the player with information about the server they are in
+//     * at that moment.
+//     * In case the person is in limbo, result will be the last known server
+//     *
+//     * @param uuid of player
+//     * @return CompletableFuture with status reply
+//     */
+//    public CompletableFuture<StatusReply> getStatus(UUID uuid) {
+//        return get(StatusReply.class, "status", "uuid", uuid);
+//    }
+//
+//    /**
+//     * Gets up to 100 of the player's most recently played games. Games are removed from this list after 3 days.
+//     *
+//     * @param uuid of player
+//     * @return CompletableFuture with recentGames reply
+//     */
+//    public CompletableFuture<RecentGamesReply> getRecentGames(UUID uuid) {
+//        return get(RecentGamesReply.class, "recentGames", "uuid", uuid);
+//    }
+//
+//    /**
+//     * Retrieve resources which don't change often.
+//     *
+//     * @param resource to be requested
+//     * @return CompletableFuture with resource reply
+//     */
+//    public CompletableFuture<ResourceReply> getResource(ResourceType resource) {
+//        return getResource(resource.getPath());
+//    }
+//
+//    /**
+//     * Requests information about products in bazaar.
+//     *
+//     * @return CompletableFuture with BazaarReply
+//     */
+//    public CompletableFuture<BazaarReply> getBazaar() {
+//        return get(BazaarReply.class, "skyblock/bazaar");
+//    }
+//
+//    public CompletableFuture<ResourceReply> getResource(String resource) {
+//        return requestResource(resource);
+//    }
+
+    /**
+     * Execute Request asynchronously, executes Callback when finished
+     *
+     * @param request Request to get
+     */
+    // TODO use a map of string to object?
+    private <R extends AbstractReply> CompletableFuture<R> get(Class<R> clazz, String request, Object... params) {
+        CompletableFuture<R> future = new CompletableFuture<>();
+        try {
+            if (params.length % 2 != 0)
+                throw new IllegalArgumentException("Need both key and value for parameters");
+
+            StringBuilder url = new StringBuilder(BASE_URL);
+
+            url.append(request);
+            url.append("?key=").append(apiKey);
+
+            for (int i = 0; i < params.length - 1; i += 2) {
+                url.append("&").append(params[i]).append("=").append(params[i + 1]);
+            }
+
+            executorService.submit(() -> {
+                try {
+                    R response = httpClient.execute(new HttpGet(url.toString()), obj -> {
+                        String content = EntityUtils.toString(obj.getEntity(), "UTF-8");
+                        return GSON.fromJson(content, clazz);
+                    });
+
+                    checkReply(response);
+
+                    future.complete(response);
+                } catch (Throwable t) {
+                    future.completeExceptionally(t);
+                }
+            });
+        } catch (Throwable throwable) {
+            future.completeExceptionally(throwable);
+        }
+        return future;
+    }
+
+//    private CompletableFuture<ResourceReply> requestResource(String resource) {
+//        CompletableFuture<ResourceReply> future = new CompletableFuture<>();
+//        try {
+//            StringBuilder url = new StringBuilder(BASE_URL);
+//            url.append("resources/").append(resource);
+//
+//            executorService.submit(() -> {
+//                try {
+//                    ResourceReply response = httpClient.execute(new HttpGet(url.toString()), obj -> {
+//                        String content = EntityUtils.toString(obj.getEntity(), "UTF-8");
+//                        return new ResourceReply(GSON.fromJson(content, JsonObject.class));
+//                    });
+//
+//                    checkReply(response);
+//
+//                    future.complete(response);
+//                } catch (Throwable t) {
+//                    future.completeExceptionally(t);
+//                }
+//            });
+//        } catch (Throwable throwable) {
+//            future.completeExceptionally(throwable);
+//        }
+//        return future;
+//    }
+
+    /**
+     * Checks reply and throws appropriate exceptions based on it's content
+     *
+     * @param reply The reply to check
+     * @param <T>   The class of the reply
+     */
+    private <T extends AbstractReply> void checkReply(T reply) {
+        if (reply != null) {
+            if (reply.isThrottle()) {
+                throw new APIThrottleException();
+            } else if (!reply.isSuccess()) {
+                throw new PalaceAPIException(reply.getCause());
+            }
+        }
+    }
+}
