@@ -39,13 +39,18 @@ public class CorePlayerManager implements CPlayerManager {
     @Override
     public void playerLoggedIn(UUID uuid, String name) {
         Document joinData = Core.getMongoHandler().getJoinData(uuid, "rank", "tags");
+        Rank rank;
         List<RankTag> tags = new ArrayList<>();
-        if (joinData.containsKey("tags")) {
-            joinData.get("tags", ArrayList.class).forEach(o -> tags.add(RankTag.fromString((String) o)));
+        if (joinData == null) {
+            // new player!
+            rank = Rank.SETTLER;
+        } else {
+            rank = joinData.containsKey("rank") ? Rank.fromString(joinData.getString("rank")) : Rank.SETTLER;
+            if (joinData.containsKey("tags")) {
+                joinData.get("tags", ArrayList.class).forEach(o -> tags.add(RankTag.fromString((String) o)));
+            }
         }
-        onlinePlayers.put(uuid, new CorePlayer(uuid, name,
-                joinData.containsKey("rank") ? Rank.fromString(joinData.getString("rank")) : Rank.SETTLER,
-                tags, "en_us"));
+        onlinePlayers.put(uuid, new CorePlayer(uuid, name, rank, tags, "en_us"));
     }
 
     @Override
