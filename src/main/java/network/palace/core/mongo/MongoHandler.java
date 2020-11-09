@@ -22,7 +22,6 @@ import network.palace.core.resource.ResourcePack;
 import network.palace.core.tracking.GameType;
 import network.palace.core.tracking.StatisticType;
 import org.bson.Document;
-import org.bson.conversions.Bson;
 import org.bukkit.Bukkit;
 import org.bukkit.ChatColor;
 
@@ -117,7 +116,7 @@ public class MongoHandler {
      * @implNote This method shouldn't be used frequently, use {@link #getPlayer(UUID, Document)} to get specific data
      */
     public Document getPlayer(UUID uuid) {
-        return playerCollection.find(MongoFilter.UUID.getFilter(uuid.toString())).first();
+        return playerCollection.find(Filters.eq("uuid", uuid.toString())).first();
     }
 
     /**
@@ -128,7 +127,7 @@ public class MongoHandler {
      * @return a Document with the limited data
      */
     public Document getPlayer(UUID uuid, Document limit) {
-        FindIterable<Document> doc = playerCollection.find(MongoFilter.UUID.getFilter(uuid.toString())).projection(limit);
+        FindIterable<Document> doc = playerCollection.find(Filters.eq("uuid", uuid.toString())).projection(limit);
         if (doc == null) return null;
         return doc.first();
     }
@@ -140,7 +139,7 @@ public class MongoHandler {
      * @return true if exists, otherwise false
      */
     public boolean playerExists(String username) {
-        return playerCollection.find(MongoFilter.USERNAME.getFilter(username)) != null;
+        return playerCollection.find(Filters.eq("username", username)) != null;
     }
 
     /**
@@ -151,7 +150,7 @@ public class MongoHandler {
      */
     public Rank getRank(UUID uuid) {
         if (uuid == null) return Rank.SETTLER;
-        Document result = playerCollection.find(MongoFilter.UUID.getFilter(uuid.toString())).first();
+        Document result = playerCollection.find(Filters.eq("uuid", uuid.toString())).first();
         if (result == null) return Rank.SETTLER;
         return Rank.fromString(result.getString("rank"));
     }
@@ -163,13 +162,13 @@ public class MongoHandler {
      * @return the rank, or settler if doesn't exist
      */
     public Rank getRank(String username) {
-        return Rank.fromString(playerCollection.find(MongoFilter.USERNAME.getFilter(username)).first().getString("rank"));
+        return Rank.fromString(playerCollection.find(Filters.eq("username", username)).first().getString("rank"));
     }
 
     @SuppressWarnings("rawtypes")
     public List<RankTag> getRankTags(UUID uuid) {
         if (uuid == null) return new ArrayList<>();
-        Document result = playerCollection.find(MongoFilter.UUID.getFilter(uuid.toString())).projection(new Document("tags", 1)).first();
+        Document result = playerCollection.find(Filters.eq("uuid", uuid.toString())).projection(new Document("tags", 1)).first();
         if (result == null || !result.containsKey("tags")) return new ArrayList<>();
         ArrayList list = result.get("tags", ArrayList.class);
         List<RankTag> tags = new ArrayList<>();
@@ -181,12 +180,12 @@ public class MongoHandler {
 
     public void addRankTag(UUID uuid, RankTag tag) {
         if (uuid == null || tag == null) return;
-        playerCollection.updateOne(MongoFilter.UUID.getFilter(uuid.toString()), Updates.addToSet("tags", tag.getDBName()), new UpdateOptions().upsert(true));
+        playerCollection.updateOne(Filters.eq("uuid", uuid.toString()), Updates.addToSet("tags", tag.getDBName()), new UpdateOptions().upsert(true));
     }
 
     public void removeRankTag(UUID uuid, RankTag tag) {
         if (uuid == null || tag == null) return;
-        playerCollection.updateOne(MongoFilter.UUID.getFilter(uuid.toString()), Updates.pull("tags", tag.getDBName()));
+        playerCollection.updateOne(Filters.eq("uuid", uuid.toString()), Updates.pull("tags", tag.getDBName()));
     }
 
     /**
@@ -196,7 +195,7 @@ public class MongoHandler {
      * @return their username or null if no player is found
      */
     public String uuidToUsername(UUID uuid) {
-        FindIterable<Document> list = playerCollection.find(MongoFilter.UUID.getFilter(uuid.toString()));
+        FindIterable<Document> list = playerCollection.find(Filters.eq("uuid", uuid.toString()));
         if (list.first() == null) return null;
         return list.first().getString("username");
     }
@@ -209,7 +208,7 @@ public class MongoHandler {
      */
     public UUID usernameToUUID(String username) {
         try {
-            FindIterable<Document> list = playerCollection.find(MongoFilter.USERNAME.getFilter(username));
+            FindIterable<Document> list = playerCollection.find(Filters.eq("username", username));
             if (list.first() == null) return null;
             return UUID.fromString(list.first().getString("uuid"));
         } catch (IllegalArgumentException e) {
@@ -225,7 +224,7 @@ public class MongoHandler {
      * @param signature Signature of the skin
      */
     public void cacheSkin(UUID uuid, String value, String signature) {
-        playerCollection.updateOne(MongoFilter.UUID.getFilter(uuid.toString()), Updates.set("skin", new Document("hash", value).append("signature", signature)));
+        playerCollection.updateOne(Filters.eq("uuid", uuid.toString()), Updates.set("skin", new Document("hash", value).append("signature", signature)));
     }
 
     /**
@@ -277,7 +276,7 @@ public class MongoHandler {
      * @param achievementID the achievement ID
      */
     public void addAchievement(UUID uuid, int achievementID) {
-        playerCollection.updateOne(MongoFilter.UUID.getFilter(uuid.toString()), Updates.push("achievements", new BasicDBObject("id", achievementID).append("time", System.currentTimeMillis() / 1000)));
+        playerCollection.updateOne(Filters.eq("uuid", uuid.toString()), Updates.push("achievements", new BasicDBObject("id", achievementID).append("time", System.currentTimeMillis() / 1000)));
     }
 
     /**
@@ -317,7 +316,7 @@ public class MongoHandler {
      * @param id   the id of the cosmetic they earned
      */
     public void earnCosmetic(UUID uuid, int id) {
-        playerCollection.updateOne(MongoFilter.UUID.getFilter(uuid.toString()), Updates.push("cosmetics", id));
+        playerCollection.updateOne(Filters.eq("uuid", uuid.toString()), Updates.push("cosmetics", id));
     }
 
     /**
@@ -398,10 +397,10 @@ public class MongoHandler {
      * @param set    true if the value should be set to amount, false if existing value should be incremented
      */
     public void changeAmount(UUID uuid, int amount, String source, CurrencyType type, boolean set) {
-        playerCollection.updateOne(MongoFilter.UUID.getFilter(uuid.toString()), set ? Updates.set(type.getName(), amount) : Updates.inc(type.getName(), amount));
+        playerCollection.updateOne(Filters.eq("uuid", uuid.toString()), set ? Updates.set(type.getName(), amount) : Updates.inc(type.getName(), amount));
         Document doc = new Document("amount", amount).append("type", type.getName()).append("source", source)
                 .append("server", Core.getInstanceName()).append("timestamp", System.currentTimeMillis() / 1000);
-        playerCollection.updateOne(MongoFilter.UUID.getFilter(uuid.toString()), Updates.push("transactions", doc));
+        playerCollection.updateOne(Filters.eq("uuid", uuid.toString()), Updates.push("transactions", doc));
         Core.runTask(() -> new EconomyUpdateEvent(uuid, getCurrency(uuid, type), type).call());
     }
 
@@ -457,7 +456,7 @@ public class MongoHandler {
      * @param amount    the amount to give the player
      */
     public void addGameStat(GameType game, StatisticType statistic, int amount, UUID uuid) {
-        playerCollection.updateOne(MongoFilter.UUID.getFilter(uuid.toString()), Updates.set("gameData", new BasicDBObject(game.getDbName(), new BasicDBObject(statistic.getType(), amount))));
+        playerCollection.updateOne(Filters.eq("uuid", uuid.toString()), Updates.set("gameData", new BasicDBObject(game.getDbName(), new BasicDBObject(statistic.getType(), amount))));
     }
 
     /* Honor Methods */
@@ -486,10 +485,10 @@ public class MongoHandler {
      * @param source the source of the transaction
      */
     public void addHonor(UUID uuid, int amount, String source) {
-        playerCollection.updateOne(MongoFilter.UUID.getFilter(uuid.toString()), Updates.inc("honor", amount));
+        playerCollection.updateOne(Filters.eq("uuid", uuid.toString()), Updates.inc("honor", amount));
         Document doc = new Document("amount", amount).append("type", "honor").append("source", source)
                 .append("server", Core.getInstanceName()).append("timestamp", System.currentTimeMillis() / 1000);
-        playerCollection.updateOne(MongoFilter.UUID.getFilter(uuid.toString()), Updates.push("transactions", doc));
+        playerCollection.updateOne(Filters.eq("uuid", uuid.toString()), Updates.push("transactions", doc));
         CPlayer tp;
         if ((tp = Core.getPlayerManager().getPlayer(uuid)) != null) {
             tp.loadHonor(getHonor(uuid));
@@ -505,10 +504,10 @@ public class MongoHandler {
      * @param source the source of the transaction
      */
     public void setHonor(UUID uuid, int amount, String source) {
-        playerCollection.updateOne(MongoFilter.UUID.getFilter(uuid.toString()), Updates.set("honor", amount));
+        playerCollection.updateOne(Filters.eq("uuid", uuid.toString()), Updates.set("honor", amount));
         Document doc = new Document("amount", amount).append("type", "honor").append("source", source)
                 .append("server", Core.getInstanceName()).append("timestamp", System.currentTimeMillis() / 1000);
-        playerCollection.updateOne(MongoFilter.UUID.getFilter(uuid.toString()), Updates.push("transactions", doc));
+        playerCollection.updateOne(Filters.eq("uuid", uuid.toString()), Updates.push("transactions", doc));
         CPlayer tp;
         if ((tp = Core.getPlayerManager().getPlayer(uuid)) != null) {
             tp.loadHonor(getHonor(uuid));
@@ -590,7 +589,7 @@ public class MongoHandler {
      */
     public List<String> getMembers(Rank rank) {
         List<String> list = new ArrayList<>();
-        playerCollection.find(MongoFilter.RANK.getFilter(rank.getDBName())).projection(new Document("username", 1))
+        playerCollection.find(Filters.eq("rank", rank.getDBName())).projection(new Document("username", 1))
                 .forEach((Block<Document>) d -> list.add(d.getString("username")));
         return list;
     }
@@ -603,7 +602,7 @@ public class MongoHandler {
      */
     public List<String> getMembers(RankTag tag) {
         List<String> list = new ArrayList<>();
-        playerCollection.find(MongoFilter.TAG.getFilter(tag.getDBName())).projection(new Document("username", 1))
+        playerCollection.find(Filters.eq("tags", tag.getDBName())).projection(new Document("username", 1))
                 .forEach((Block<Document>) d -> list.add(d.getString("username")));
         return list;
     }
@@ -615,7 +614,7 @@ public class MongoHandler {
      * @param rank the rank
      */
     public void setRank(UUID uuid, Rank rank) {
-        playerCollection.updateOne(MongoFilter.UUID.getFilter(uuid.toString()), Updates.set("rank", rank.getDBName()));
+        playerCollection.updateOne(Filters.eq("uuid", uuid.toString()), Updates.set("rank", rank.getDBName()));
     }
 
     /**
@@ -634,7 +633,7 @@ public class MongoHandler {
                 projection.append(s, 1);
             }
         }
-        return playerCollection.find(MongoFilter.UUID.getFilter(uuid.toString())).projection(projection).first();
+        return playerCollection.find(Filters.eq("uuid", uuid.toString())).projection(projection).first();
     }
 
     /**
@@ -695,15 +694,15 @@ public class MongoHandler {
         node = MongoUtil.periodToComma(node);
         boolean removeFromOtherList = false;
         String other = value ? "denied" : "allowed";
-        for (Document d : permissionCollection.find(MongoFilter.RANK.getFilter(rank.getDBName())).projection(new Document(other, 1))) {
+        for (Document d : permissionCollection.find(Filters.eq("rank", rank.getDBName())).projection(new Document(other, 1))) {
             for (Object o : d.get(other, ArrayList.class)) {
                 String s = (String) o;
                 if (s != null && s.equals(node)) {
-                    permissionCollection.updateOne(MongoFilter.RANK.getFilter(rank.getDBName()), Updates.pull(other, node));
+                    permissionCollection.updateOne(Filters.eq("rank", rank.getDBName()), Updates.pull(other, node));
                 }
             }
         }
-        permissionCollection.updateOne(MongoFilter.RANK.getFilter(rank.getDBName()), Updates.addToSet(value ? "allowed" : "denied", node));
+        permissionCollection.updateOne(Filters.eq("rank", rank.getDBName()), Updates.addToSet(value ? "allowed" : "denied", node));
     }
 
     /**
@@ -714,8 +713,8 @@ public class MongoHandler {
      */
     public void unsetPermission(String node, Rank rank) {
         node = MongoUtil.periodToComma(node);
-        permissionCollection.updateOne(MongoFilter.RANK.getFilter(rank.getDBName()), Updates.pull("allowed", node));
-        permissionCollection.updateOne(MongoFilter.RANK.getFilter(rank.getDBName()), Updates.pull("denied", node));
+        permissionCollection.updateOne(Filters.eq("rank", rank.getDBName()), Updates.pull("allowed", node));
+        permissionCollection.updateOne(Filters.eq("rank", rank.getDBName()), Updates.pull("denied", node));
     }
 
     /**
@@ -801,7 +800,7 @@ public class MongoHandler {
      * @param honorable the timestamp honorable was last claimed
      */
     public void updateMonthlyRewardData(UUID uuid, long settler, long dweller, long noble, long majestic, long honorable) {
-        playerCollection.updateOne(MongoFilter.UUID.getFilter(uuid.toString()), Updates.set("monthlyRewards",
+        playerCollection.updateOne(Filters.eq("uuid", uuid.toString()), Updates.set("monthlyRewards",
                 new Document("settler", settler).append("dweller", dweller).append("noble", noble)
                         .append("majestic", majestic).append("honorable", honorable)));
     }
@@ -813,7 +812,7 @@ public class MongoHandler {
      * @param fastPass the timestamp a fastpass was last claimed
      */
     public void updateFastPassData(UUID uuid, long fastPass) {
-        playerCollection.updateOne(MongoFilter.UUID.getFilter(uuid.toString()),
+        playerCollection.updateOne(Filters.eq("uuid", uuid.toString()),
                 Updates.set("parks.fastpass.lastClaimed", fastPass));
     }
 
@@ -829,13 +828,13 @@ public class MongoHandler {
      * @param thrillday   the day of the year a thrill FP was last claimed
      */
     public void updateFPData(UUID uuid, int slow, int moderate, int thrill, int slowday, int moderateday, int thrillday) {
-        playerCollection.updateOne(MongoFilter.UUID.getFilter(uuid.toString()), Updates.set("parks.fastpass",
+        playerCollection.updateOne(Filters.eq("uuid", uuid.toString()), Updates.set("parks.fastpass",
                 new Document("slow", slow).append("moderate", moderate).append("thrill", thrill).append("sday", slowday)
                         .append("mday", moderateday).append("tday", thrillday)));
     }
 
     public void addFastPass(UUID uuid, int count) {
-        playerCollection.updateOne(MongoFilter.UUID.getFilter(uuid.toString()),
+        playerCollection.updateOne(Filters.eq("uuid", uuid.toString()),
                 Updates.inc("parks.fastpass.count", count), new UpdateOptions().upsert(true));
     }
 
@@ -871,7 +870,7 @@ public class MongoHandler {
                 projection.append("parks." + s, 1);
             }
         }
-        return (Document) playerCollection.find(MongoFilter.UUID.getFilter(uuid.toString())).projection(projection).first().get("parks");
+        return (Document) playerCollection.find(Filters.eq("uuid", uuid.toString())).projection(projection).first().get("parks");
     }
 
     /**
@@ -963,7 +962,7 @@ public class MongoHandler {
      */
     public ArrayList getRideCounterData(UUID uuid) {
         ArrayList<Document> list = new ArrayList<>();
-        for (Document d : rideCounterCollection.find(MongoFilter.UUID.getFilter(uuid.toString()))) {
+        for (Document d : rideCounterCollection.find(Filters.eq("uuid", uuid.toString()))) {
             list.add(d);
         }
         return list;
@@ -991,7 +990,7 @@ public class MongoHandler {
      * @return an iterable of the player's autographs
      */
     public ArrayList getAutographs(UUID uuid) {
-        return playerCollection.find(MongoFilter.UUID.getFilter(uuid.toString()))
+        return playerCollection.find(Filters.eq("uuid", uuid.toString()))
                 .projection(new Document("autographs", 1)).first().get("autographs", ArrayList.class);
     }
 
@@ -1004,7 +1003,7 @@ public class MongoHandler {
      */
     public void signBook(UUID player, String sender, String message) {
         Document doc = new Document("author", sender).append("message", message).append("time", System.currentTimeMillis());
-        playerCollection.updateOne(MongoFilter.UUID.getFilter(player.toString()), Updates.push("autographs", doc));
+        playerCollection.updateOne(Filters.eq("uuid", player.toString()), Updates.push("autographs", doc));
     }
 
     /**
@@ -1015,7 +1014,7 @@ public class MongoHandler {
      * @param time   the time the autograph was written
      */
     public void deleteAutograph(UUID uuid, String sender, long time) {
-        playerCollection.updateOne(MongoFilter.UUID.getFilter(uuid.toString()), Updates.pull("autographs",
+        playerCollection.updateOne(Filters.eq("uuid", uuid.toString()), Updates.pull("autographs",
                 new Document("author", sender).append("time", time)));
     }
 
@@ -1026,7 +1025,7 @@ public class MongoHandler {
      * @param amount the amount to charge (usually 1)
      */
     public void chargeFastPass(UUID uuid, int amount) {
-        playerCollection.updateOne(MongoFilter.UUID.getFilter(uuid.toString()), Updates.inc("parks.fastpass.count", -amount));
+        playerCollection.updateOne(Filters.eq("uuid", uuid.toString()), Updates.inc("parks.fastpass.count", -amount));
     }
 
     /**
@@ -1071,7 +1070,7 @@ public class MongoHandler {
      * @param code the value of the code
      */
     public void setOutfitCode(UUID uuid, String code) {
-        playerCollection.updateOne(MongoFilter.UUID.getFilter(uuid.toString()), Updates.set("parks.outfit", code));
+        playerCollection.updateOne(Filters.eq("uuid", uuid.toString()), Updates.set("parks.outfit", code));
     }
 
     /**
@@ -1081,7 +1080,7 @@ public class MongoHandler {
      * @param id   the id of the outfit
      */
     public void purchaseOutfit(UUID uuid, int id) {
-        playerCollection.updateOne(MongoFilter.UUID.getFilter(uuid.toString()),
+        playerCollection.updateOne(Filters.eq("uuid", uuid.toString()),
                 Updates.push("parks.outfitPurchases", new Document("id", id).append("time", System.currentTimeMillis() / 1000)));
     }
 
@@ -1169,7 +1168,7 @@ public class MongoHandler {
      * @param value   the value of the setting
      */
     public void setParkSetting(UUID uuid, String setting, Object value) {
-        playerCollection.updateOne(MongoFilter.UUID.getFilter(uuid.toString()), Updates.set("parks.settings." + setting, value));
+        playerCollection.updateOne(Filters.eq("uuid", uuid.toString()), Updates.set("parks.settings." + setting, value));
     }
 
     /**
@@ -1180,7 +1179,7 @@ public class MongoHandler {
      * @param value the value to set the key to
      */
     public void setMagicBandData(UUID uuid, String key, String value) {
-        playerCollection.updateOne(MongoFilter.UUID.getFilter(uuid.toString()), Updates.set("parks.magicband." + key, value));
+        playerCollection.updateOne(Filters.eq("uuid", uuid.toString()), Updates.set("parks.magicband." + key, value));
     }
 
     /**
@@ -1190,7 +1189,7 @@ public class MongoHandler {
      * @param value the value to set it to
      */
     public void setBuildMode(UUID uuid, boolean value) {
-        playerCollection.updateOne(MongoFilter.UUID.getFilter(uuid.toString()), Updates.set("parks.buildmode", value));
+        playerCollection.updateOne(Filters.eq("uuid", uuid.toString()), Updates.set("parks.buildmode", value));
     }
 
     /**
@@ -1302,7 +1301,7 @@ public class MongoHandler {
      * @param value the value to set
      */
     public void setCreativeValue(UUID uuid, String key, Object value) {
-        playerCollection.updateOne(MongoFilter.UUID.getFilter(uuid.toString()), Updates.set("creative." + key, value));
+        playerCollection.updateOne(Filters.eq("uuid", uuid.toString()), Updates.set("creative." + key, value));
     }
 
     public List<String> getCreatorMembers() {
@@ -1325,23 +1324,5 @@ public class MongoHandler {
      */
     public void close() {
         client.close();
-    }
-
-    public enum MongoFilter {
-        UUID, USERNAME, RANK, TAG;
-
-        public Bson getFilter(String s) {
-            switch (this) {
-                case UUID:
-                    return Filters.eq("uuid", s);
-                case USERNAME:
-                    return Filters.regex("username", "^" + s + "$", "i");
-                case RANK:
-                    return Filters.eq("rank", s);
-                case TAG:
-                    return Filters.eq("tags", s);
-            }
-            return null;
-        }
     }
 }
