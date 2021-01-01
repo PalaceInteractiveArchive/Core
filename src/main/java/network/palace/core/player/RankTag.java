@@ -20,7 +20,7 @@ public enum RankTag {
     SPONSOR_GOLD("Gold Tier Sponsor", "S", "s_g", ChatColor.YELLOW, 2),
     SPONSOR_IRON("Iron Tier Sponsor", "S", "s_i", ChatColor.GRAY, 1),
     /* Creator Tag */
-    Creator("Creator", "C", "c", ChatColor.BLUE, 0),
+    CREATOR("Creator", "C", "c", ChatColor.BLUE, 0),
     /* No Tags */
     NONE("", "", "", ChatColor.RESET, -1);
 
