@@ -1,5 +1,15 @@
 [
   {
+    "groupId": "com.rabbitmq",
+    "artifactId": "amqp-client",
+    "version": "5.10.0"
+  },
+  {
+    "groupId": "org.slf4j",
+    "artifactId": "slf4j-api",
+    "version": "1.7.30"
+  },
+  {
     "groupId": "org.java-websocket",
     "artifactId": "Java-WebSocket",
     "version": "1.3.0"

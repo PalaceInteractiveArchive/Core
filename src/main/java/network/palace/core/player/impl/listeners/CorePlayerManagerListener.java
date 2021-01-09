@@ -33,6 +33,11 @@ public class CorePlayerManagerListener implements Listener {
                 return;
             }
         }
+        if (!Core.getMongoHandler().isPlayerOnline(event.getUniqueId())) {
+            event.setLoginResult(AsyncPlayerPreLoginEvent.Result.KICK_OTHER);
+            event.setKickMessage(ChatColor.RED + "Your account is not authorized on our network!");
+            return;
+        }
         if (event.getLoginResult().equals(AsyncPlayerPreLoginEvent.Result.ALLOWED)) {
             Core.getPlayerManager().playerLoggedIn(event.getUniqueId(), event.getName());
         }

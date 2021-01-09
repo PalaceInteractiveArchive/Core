@@ -47,6 +47,7 @@ public class MongoHandler {
     private MongoCollection<Document> showScheduleCollection = null;
     private MongoCollection<Document> hotelCollection = null;
     private MongoCollection<Document> warpsCollection = null;
+    private MongoCollection<Document> serversCollection = null;
 
     public MongoHandler() {
         connect();
@@ -77,6 +78,7 @@ public class MongoHandler {
         showScheduleCollection = database.getCollection("showschedule");
         hotelCollection = database.getCollection("hotels");
         warpsCollection = database.getCollection("warps");
+        serversCollection = database.getCollection("servers");
     }
 
     /* Player Methods */
@@ -130,6 +132,10 @@ public class MongoHandler {
         FindIterable<Document> doc = playerCollection.find(Filters.eq("uuid", uuid.toString())).projection(limit);
         if (doc == null) return null;
         return doc.first();
+    }
+
+    public boolean isPlayerOnline(UUID uuid) {
+        return playerCollection.find(Filters.and(Filters.eq("uuid", uuid.toString()), Filters.eq("online", true))).first() != null;
     }
 
     /**
@@ -1324,5 +1330,10 @@ public class MongoHandler {
      */
     public void close() {
         client.close();
+    }
+
+    public void setServerOnline(String instanceName, String serverType, boolean playground, boolean online) {
+        serversCollection.updateOne(Filters.and(Filters.eq("name", instanceName), Filters.eq("type", serverType),
+                Filters.exists("playground", playground)), Updates.set("online", online));
     }
 }
