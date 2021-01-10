@@ -14,6 +14,7 @@ public class MentionPacket extends MQPacket {
     }
 
     public MentionPacket(UUID uuid) {
+        super(PacketID.Global.MENTION.getId(), null);
         this.uuid = uuid;
     }
 

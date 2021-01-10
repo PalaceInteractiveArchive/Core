@@ -43,7 +43,7 @@ public class MessageHandler {
                 //noinspection SwitchStatementWithTooFewBranches
                 switch (object.get("id").getAsInt()) {
                     // Mention
-                    case 4: {
+                    case 10: {
                         MentionPacket packet = new MentionPacket(object);
                         CPlayer player = Core.getPlayerManager().getPlayer(packet.getUuid());
                         if (player != null)
