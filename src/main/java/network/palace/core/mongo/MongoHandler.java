@@ -59,13 +59,14 @@ public class MongoHandler {
         String username = Core.getCoreConfig().getString("db.user");
         String password = Core.getCoreConfig().getString("db.password");
         String hostname = Core.getCoreConfig().getString("db.hostname");
+        String dbName = Core.getCoreConfig().contains("db.database") ? Core.getCoreConfig().getString("db.database") : "palace";
         if (username == null || password == null || hostname == null) {
             Core.logMessage("Mongo Handler", ChatColor.RED + "" + ChatColor.BOLD + "Error with mongo config!");
             Bukkit.shutdown();
         }
         MongoClientURI connectionString = new MongoClientURI("mongodb://" + username + ":" + password + "@" + hostname);
         client = new MongoClient(connectionString);
-        database = client.getDatabase("palace");
+        database = client.getDatabase(dbName);
         activityCollection = database.getCollection("activity");
         playerCollection = database.getCollection("players");
         friendsCollection = database.getCollection("friends");
