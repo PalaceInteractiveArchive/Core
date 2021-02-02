@@ -8,10 +8,7 @@ import lombok.Getter;
 import net.md_5.bungee.api.chat.BaseComponent;
 import net.md_5.bungee.chat.ComponentSerializer;
 
-import java.util.ArrayList;
-import java.util.Arrays;
-import java.util.List;
-import java.util.UUID;
+import java.util.*;
 
 public class ComponentMessagePacket extends MQPacket {
     @Getter private final String serializedMessage;
@@ -20,15 +17,25 @@ public class ComponentMessagePacket extends MQPacket {
     public ComponentMessagePacket(JsonObject object) {
         super(PacketID.Global.COMPONENTMESSAGE.getId(), object);
         this.serializedMessage = object.get("serializedMessage").getAsString();
-        this.players = new ArrayList<>();
-        JsonArray players = object.get("players").getAsJsonArray();
-        for (JsonElement e : players) {
-            this.players.add(UUID.fromString(e.getAsString()));
+        if (object.has("players")) {
+            this.players = new ArrayList<>();
+            JsonArray players = object.get("players").getAsJsonArray();
+            for (JsonElement e : players) {
+                this.players.add(UUID.fromString(e.getAsString()));
+            }
+        } else {
+            this.players = null;
         }
     }
 
     public ComponentMessagePacket(BaseComponent[] components, UUID uuid) {
-        this(ComponentSerializer.toString(components), uuid);
+        super(PacketID.Global.COMPONENTMESSAGE.getId(), null);
+        this.serializedMessage = ComponentSerializer.toString(components);
+        if (uuid != null) {
+            this.players = new ArrayList<>(Collections.singletonList(uuid));
+        } else {
+            this.players = null;
+        }
     }
 
     public ComponentMessagePacket(String serializedMessage, UUID... players) {
@@ -41,8 +48,10 @@ public class ComponentMessagePacket extends MQPacket {
     public JsonObject getJSON() {
         JsonObject object = getBaseJSON();
         object.addProperty("serializedMessage", serializedMessage);
-        Gson gson = new Gson();
-        object.add("players", gson.toJsonTree(this.players).getAsJsonArray());
+        if (players != null) {
+            Gson gson = new Gson();
+            object.add("players", gson.toJsonTree(players).getAsJsonArray());
+        }
         return object;
     }
 }

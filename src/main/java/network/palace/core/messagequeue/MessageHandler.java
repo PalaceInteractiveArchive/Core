@@ -5,10 +5,10 @@ import com.google.gson.JsonParser;
 import com.rabbitmq.client.*;
 import net.md_5.bungee.api.ChatColor;
 import network.palace.core.Core;
+import network.palace.core.messagequeue.packets.ComponentMessagePacket;
 import network.palace.core.messagequeue.packets.MQPacket;
 import network.palace.core.messagequeue.packets.MentionPacket;
 import network.palace.core.messagequeue.packets.MessageByRankPacket;
-import network.palace.core.messagequeue.packets.MessagePacket;
 import network.palace.core.player.CPlayer;
 import network.palace.core.player.Rank;
 import org.bukkit.Sound;
@@ -22,6 +22,11 @@ import java.util.UUID;
 import java.util.concurrent.TimeoutException;
 
 public class MessageHandler {
+    public static final AMQP.BasicProperties JSON_PROPS = new AMQP.BasicProperties.Builder().contentEncoding("application/json").build();
+
+    public Connection PUBLISHING_CONNECTION, CONSUMING_CONNECTION;
+    public MessageClient ALL_PROXIES, CHAT_ANALYSIS;
+
     private final ConnectionFactory factory;
     private final HashMap<String, Channel> channels = new HashMap<>();
 
@@ -32,6 +37,38 @@ public class MessageHandler {
         factory.setHost(section.getString("host"));
         factory.setUsername(section.getString("username"));
         factory.setPassword(section.getString("password"));
+
+        PUBLISHING_CONNECTION = factory.newConnection();
+        CONSUMING_CONNECTION = factory.newConnection();
+
+        PUBLISHING_CONNECTION.addShutdownListener(e -> {
+            Core.getInstance().getLogger().warning("Publishing connection has been closed - reinitializing!");
+            try {
+                PUBLISHING_CONNECTION = factory.newConnection();
+            } catch (IOException | TimeoutException ioException) {
+                Core.getInstance().getLogger().severe("Failed to reinitialize publishing connection!");
+                ioException.printStackTrace();
+            }
+        });
+        CONSUMING_CONNECTION.addShutdownListener(e -> {
+            Core.getInstance().getLogger().warning("Consuming connection has been closed - reinitializing!");
+            try {
+                CONSUMING_CONNECTION = factory.newConnection();
+            } catch (IOException | TimeoutException ioException) {
+                Core.getInstance().getLogger().severe("Failed to reinitialize consuming connection!");
+                ioException.printStackTrace();
+            }
+        });
+    }
+
+    public void initialize() throws IOException, TimeoutException {
+        try {
+            ALL_PROXIES = new MessageClient(ConnectionType.PUBLISHING, "all_proxies", "fanout");
+            CHAT_ANALYSIS = new MessageClient(ConnectionType.PUBLISHING, "chat_analysis", true);
+        } catch (Exception e) {
+            e.printStackTrace();
+            Core.getInstance().getLogger().severe("There was an error initializing essential message publishing queues!");
+        }
 
         CancelCallback doNothing = consumerTag -> {
         };
@@ -85,9 +122,7 @@ public class MessageHandler {
      * @throws TimeoutException on TimeoutException
      */
     public String registerConsumer(String exchange, String exchangeType, String routingKey, DeliverCallback deliverCallback, CancelCallback cancelCallback) throws IOException, TimeoutException {
-        Connection connection = factory.newConnection();
-
-        Channel channel = connection.createChannel();
+        Channel channel = CONSUMING_CONNECTION.createChannel();
         channel.exchangeDeclare(exchange, exchangeType);
 
         String queueName = channel.queueDeclare().getQueue();
@@ -119,23 +154,23 @@ public class MessageHandler {
         channels.clear();
     }
 
-    public void sendMessage(MQPacket packet, String exchange, String exchangeType) throws Exception {
-        sendMessage(packet, exchange, exchangeType, "");
+    public void sendMessage(MQPacket packet, MessageClient client) throws IOException {
+        sendMessage(packet, client, "");
+    }
+
+    public void sendMessage(MQPacket packet, MessageClient client, String routingKey) throws IOException {
+        client.basicPublish(packet.toBytes(), routingKey);
     }
 
     public void sendMessage(MQPacket packet, String exchange, String exchangeType, String routingKey) throws Exception {
-        try (Connection connection = factory.newConnection()) {
-            Channel channel = connection.createChannel();
-            channel.exchangeDeclare(exchange, exchangeType);
-            AMQP.BasicProperties props = new AMQP.BasicProperties.Builder().contentEncoding("application/json").build();
-            channel.basicPublish(exchange, routingKey, props, packet.toBytes());
-        }
+        MessageClient client = new MessageClient(ConnectionType.PUBLISHING, exchange, exchangeType);
+        client.basicPublish(packet.toBytes(), routingKey);
     }
 
     public void sendStaffMessage(String message) throws Exception {
         MessageByRankPacket packet = new MessageByRankPacket("[" + ChatColor.RED + "STAFF" +
-                ChatColor.WHITE + "] " + message, Rank.TRAINEE, null, false);
-        sendMessage(packet, "all_proxies", "fanout");
+                ChatColor.WHITE + "] " + message, Rank.TRAINEE, null, false, false);
+        sendMessage(packet, ALL_PROXIES);
     }
 
     public void sendMessageToPlayer(UUID uuid, String message) throws Exception {
@@ -144,7 +179,22 @@ public class MessageHandler {
             player.sendMessage(message);
             return;
         }
-        MessagePacket packet = new MessagePacket(message, uuid);
-        sendMessage(packet, "all_proxies", "fanout");
+        ComponentMessagePacket packet = new ComponentMessagePacket(message, uuid);
+        sendMessage(packet, ALL_PROXIES);
+    }
+
+    public void sendToProxy(MQPacket packet, UUID targetProxy) throws Exception {
+        sendMessage(packet, new MessageClient(ConnectionType.PUBLISHING, "proxy_direct", "direct"), targetProxy.toString());
+    }
+
+    public Connection getConnection(ConnectionType type) throws IOException, TimeoutException {
+        switch (type) {
+            case PUBLISHING:
+                return PUBLISHING_CONNECTION;
+            case CONSUMING:
+                return CONSUMING_CONNECTION;
+            default:
+                return factory.newConnection();
+        }
     }
 }

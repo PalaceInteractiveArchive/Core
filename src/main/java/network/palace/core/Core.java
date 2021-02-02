@@ -88,7 +88,7 @@ public class Core extends JavaPlugin {
     @Getter @Setter private String tabFooter = ChatColor.LIGHT_PURPLE + "You're on the " + ChatColor.GREEN + "Hub " +
             ChatColor.LIGHT_PURPLE + "server";
 
-    @Getter private MessageHandler messageHandler;
+    @Getter private static MessageHandler messageHandler;
 
     private SqlUtil sqlUtil;
     private MongoHandler mongoHandler;
@@ -190,6 +190,7 @@ public class Core extends JavaPlugin {
         dashboardConnection = new DashboardConnection();
         try {
             messageHandler = new MessageHandler();
+            messageHandler.initialize();
         } catch (IOException | TimeoutException e) {
             e.printStackTrace();
             Core.logMessage("MessageHandler", "Error initializing message queue connection!");
@@ -204,9 +205,7 @@ public class Core extends JavaPlugin {
         // Log
         logMessage("Core", ChatColor.DARK_GREEN + "Enabled");
 
-        runTask(this, () -> {
-            mongoHandler.setServerOnline(getInstanceName(), getServerType(), Core.getCoreConfig().getBoolean("playground"), true);
-        });
+        runTask(this, () -> mongoHandler.setServerOnline(getInstanceName(), getServerType(), Core.getCoreConfig().getBoolean("playground"), true));
 
         // Always keep players off the server until it's been finished loading for 1 second
         // This prevents issues with not loading player data when they join before plugins are loaded
@@ -214,7 +213,7 @@ public class Core extends JavaPlugin {
             setStarting(false);
             try {
                 getMongoHandler().setServerOnline(instanceName, serverType, Core.getCoreConfig().getBoolean("playground"), true);
-                Core.getInstance().getMessageHandler().sendStaffMessage(ChatColor.AQUA + "Network: " + ChatColor.YELLOW + getInstanceName() + " (MC)" + ChatColor.GREEN + " is now online");
+                Core.getMessageHandler().sendStaffMessage(ChatColor.AQUA + "Network: " + ChatColor.YELLOW + getInstanceName() + " (MC)" + ChatColor.GREEN + " is now online");
             } catch (Exception e) {
                 e.printStackTrace();
                 Core.logMessage("Core", "Error announcing server start-up to message queue");
@@ -286,7 +285,7 @@ public class Core extends JavaPlugin {
     public final void onDisable() {
         try {
             getMongoHandler().setServerOnline(instanceName, serverType, Core.getCoreConfig().getBoolean("playground"), false);
-            Core.getInstance().getMessageHandler().sendStaffMessage(ChatColor.AQUA + "Network: " + ChatColor.YELLOW + getInstanceName() + " (MC)" + ChatColor.RED + " is safely shutting down");
+            Core.getMessageHandler().sendStaffMessage(ChatColor.AQUA + "Network: " + ChatColor.YELLOW + getInstanceName() + " (MC)" + ChatColor.RED + " is safely shutting down");
         } catch (Exception e) {
             e.printStackTrace();
             Core.logMessage("Core", "Error announcing server shutdown to message queue");
