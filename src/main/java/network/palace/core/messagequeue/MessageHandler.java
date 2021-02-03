@@ -26,7 +26,7 @@ public class MessageHandler {
     public static final AMQP.BasicProperties JSON_PROPS = new AMQP.BasicProperties.Builder().contentEncoding("application/json").build();
 
     public Connection PUBLISHING_CONNECTION, CONSUMING_CONNECTION;
-    public MessageClient ALL_PROXIES, CHAT_ANALYSIS;
+    public MessageClient ALL_PROXIES;
 
     private final ConnectionFactory factory;
     private final HashMap<String, Channel> channels = new HashMap<>();
@@ -65,7 +65,6 @@ public class MessageHandler {
     public void initialize() throws IOException, TimeoutException {
         try {
             ALL_PROXIES = new MessageClient(ConnectionType.PUBLISHING, "all_proxies", "fanout");
-            CHAT_ANALYSIS = new MessageClient(ConnectionType.PUBLISHING, "chat_analysis", true);
         } catch (Exception e) {
             e.printStackTrace();
             Core.getInstance().getLogger().severe("There was an error initializing essential message publishing queues!");
