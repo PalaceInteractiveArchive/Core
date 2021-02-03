@@ -106,15 +106,15 @@ public class DashboardConnection {
                             });
                             break;
                         }
-                        case 68: {
-                            PacketConfirmPlayer packet = new PacketConfirmPlayer().fromJSON(object);
-                            if (!packet.isExists()) {
-                                Player player = Bukkit.getPlayer(packet.getUniqueId());
-                                if (player != null)
-                                    Core.runTask(() -> player.kickPlayer(ChatColor.RED + "Your account is not authorized on our network!"));
-                            }
-                            break;
-                        }
+//                        case 68: {
+//                            PacketConfirmPlayer packet = new PacketConfirmPlayer().fromJSON(object);
+//                            if (!packet.isExists()) {
+//                                Player player = Bukkit.getPlayer(packet.getUniqueId());
+//                                if (player != null)
+//                                    Core.runTask(() -> player.kickPlayer(ChatColor.RED + "Your account is not authorized on our network!"));
+//                            }
+//                            break;
+//                        }
                         case 69: {
                             PacketDisablePlayer packet = new PacketDisablePlayer().fromJSON(object);
                             if (packet.isDisabled()) {

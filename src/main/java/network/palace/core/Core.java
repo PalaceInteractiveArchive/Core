@@ -23,6 +23,7 @@ import network.palace.core.economy.EconomyManager;
 import network.palace.core.economy.HonorManager;
 import network.palace.core.errors.RollbarHandler;
 import network.palace.core.library.LibraryHandler;
+import network.palace.core.messagequeue.MessageHandler;
 import network.palace.core.mongo.MongoHandler;
 import network.palace.core.npc.SoftNPCManager;
 import network.palace.core.packets.adapters.PlayerInfoAdapter;
@@ -55,6 +56,7 @@ import java.util.List;
 import java.util.UUID;
 import java.util.concurrent.Callable;
 import java.util.concurrent.Future;
+import java.util.concurrent.TimeoutException;
 
 /**
  * This will manage all Modules and also the Core Managers.
@@ -85,6 +87,8 @@ public class Core extends JavaPlugin {
     @Getter @Setter private String tabHeader = ChatColor.GOLD + "Palace Network - A Family of Servers";
     @Getter @Setter private String tabFooter = ChatColor.LIGHT_PURPLE + "You're on the " + ChatColor.GREEN + "Hub " +
             ChatColor.LIGHT_PURPLE + "server";
+
+    @Getter private static MessageHandler messageHandler;
 
     private SqlUtil sqlUtil;
     private MongoHandler mongoHandler;
@@ -184,6 +188,13 @@ public class Core extends JavaPlugin {
         commandMap = new CoreCommandMap(this);
         // Dashboard
         dashboardConnection = new DashboardConnection();
+        try {
+            messageHandler = new MessageHandler();
+            messageHandler.initialize();
+        } catch (IOException | TimeoutException e) {
+            e.printStackTrace();
+            Core.logMessage("MessageHandler", "Error initializing message queue connection!");
+        }
         // Crafting Menu
         craftingMenu = new CraftingMenu();
         // Register Listeners
@@ -194,9 +205,20 @@ public class Core extends JavaPlugin {
         // Log
         logMessage("Core", ChatColor.DARK_GREEN + "Enabled");
 
+        runTask(this, () -> mongoHandler.setServerOnline(getInstanceName(), getServerType(), Core.getCoreConfig().getBoolean("playground"), true));
+
         // Always keep players off the server until it's been finished loading for 1 second
         // This prevents issues with not loading player data when they join before plugins are loaded
-        runTaskLater(this, () -> setStarting(false), 20);
+        runTaskLater(this, () -> {
+            setStarting(false);
+            try {
+                getMongoHandler().setServerOnline(instanceName, serverType, Core.getCoreConfig().getBoolean("playground"), true);
+                Core.getMessageHandler().sendStaffMessage(ChatColor.AQUA + "Network: " + ChatColor.YELLOW + getInstanceName() + " (MC)" + ChatColor.GREEN + " is now online");
+            } catch (Exception e) {
+                e.printStackTrace();
+                Core.logMessage("Core", "Error announcing server start-up to message queue");
+            }
+        }, 20);
     }
 
     /**
@@ -261,6 +283,13 @@ public class Core extends JavaPlugin {
 
     @Override
     public final void onDisable() {
+        try {
+            getMongoHandler().setServerOnline(instanceName, serverType, Core.getCoreConfig().getBoolean("playground"), false);
+            Core.getMessageHandler().sendStaffMessage(ChatColor.AQUA + "Network: " + ChatColor.YELLOW + getInstanceName() + " (MC)" + ChatColor.RED + " is safely shutting down");
+        } catch (Exception e) {
+            e.printStackTrace();
+            Core.logMessage("Core", "Error announcing server shutdown to message queue");
+        }
         logMessage("Core", ChatColor.DARK_RED + "Disabled");
     }
 

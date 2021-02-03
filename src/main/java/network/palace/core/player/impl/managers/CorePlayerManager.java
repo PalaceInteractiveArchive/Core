@@ -84,7 +84,7 @@ public class CorePlayerManager implements CPlayerManager {
             Core.getHonorManager().displayHonor(corePlayer, true);
 
             // Packets
-            Core.getDashboardConnection().send(new PacketConfirmPlayer(corePlayer.getUniqueId(), false));
+//            Core.getDashboardConnection().send(new PacketConfirmPlayer(corePlayer.getUniqueId(), false));
             Core.getDashboardConnection().send(new PacketGetPack(corePlayer.getUniqueId(), ""));
         });
 
