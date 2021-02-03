@@ -4,7 +4,6 @@ import com.comphenix.protocol.wrappers.WrappedGameProfile;
 import com.comphenix.protocol.wrappers.WrappedSignedProperty;
 import lombok.Getter;
 import network.palace.core.Core;
-import network.palace.core.dashboard.packets.dashboard.PacketConfirmPlayer;
 import network.palace.core.dashboard.packets.dashboard.PacketGetPack;
 import network.palace.core.events.CorePlayerJoinedEvent;
 import network.palace.core.player.*;
@@ -37,20 +36,30 @@ public class CorePlayerManager implements CPlayerManager {
 
     @SuppressWarnings("unchecked")
     @Override
-    public void playerLoggedIn(UUID uuid, String name) {
-        Document joinData = Core.getMongoHandler().getJoinData(uuid, "rank", "tags");
+    public void playerLoggedIn(UUID uuid, String name) throws Exception {
+        Document joinData = Core.getMongoHandler().getJoinData(uuid, "rank", "tags", "onlineData");
         Rank rank;
         List<RankTag> tags = new ArrayList<>();
+        UUID proxy;
         if (joinData == null) {
             // new player!
             rank = Rank.SETTLER;
+            proxy = UUID.randomUUID();
         } else {
             rank = joinData.containsKey("rank") ? Rank.fromString(joinData.getString("rank")) : Rank.SETTLER;
             if (joinData.containsKey("tags")) {
                 joinData.get("tags", ArrayList.class).forEach(o -> tags.add(RankTag.fromString((String) o)));
             }
+            if (!joinData.containsKey("onlineData")) {
+                throw new Exception("Player isn't online!");
+            } else {
+                Document onlineData = (Document) joinData.get("onlineData");
+                proxy = UUID.fromString(onlineData.getString("proxy"));
+            }
         }
-        onlinePlayers.put(uuid, new CorePlayer(uuid, name, rank, tags, "en_us"));
+        CPlayer player = new CorePlayer(uuid, name, rank, tags, "en_us");
+        player.getRegistry().addEntry("proxy", proxy);
+        onlinePlayers.put(uuid, player);
     }
 
     @Override
@@ -153,9 +162,6 @@ public class CorePlayerManager implements CPlayerManager {
 
     @Override
     public List<CPlayer> getOnlinePlayers() {
-        if (onlinePlayers == null) {
-            return new ArrayList<>();
-        }
         return new ArrayList<>(onlinePlayers.values());
     }
 

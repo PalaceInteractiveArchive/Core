@@ -39,7 +39,12 @@ public class CorePlayerManagerListener implements Listener {
             return;
         }
         if (event.getLoginResult().equals(AsyncPlayerPreLoginEvent.Result.ALLOWED)) {
-            Core.getPlayerManager().playerLoggedIn(event.getUniqueId(), event.getName());
+            try {
+                Core.getPlayerManager().playerLoggedIn(event.getUniqueId(), event.getName());
+            } catch (Exception e) {
+                event.setKickMessage(ChatColor.RED + "An error occurred while connecting you to this server. Please try again soon!");
+                event.setLoginResult(AsyncPlayerPreLoginEvent.Result.KICK_OTHER);
+            }
         }
     }
 

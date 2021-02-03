@@ -632,13 +632,9 @@ public class MongoHandler {
      * @return a document with join data
      */
     public Document getJoinData(UUID uuid, String... parkEntries) {
-        Document projection = null;
+        Document projection = new Document();
         for (String s : parkEntries) {
-            if (projection == null) {
-                projection = new Document(s, 1);
-            } else {
-                projection.append(s, 1);
-            }
+            projection.append(s, 1);
         }
         return playerCollection.find(Filters.eq("uuid", uuid.toString())).projection(projection).first();
     }
@@ -893,7 +889,7 @@ public class MongoHandler {
         Document current = (Document) getPlayer(uuid, new Document("parks." + limit, 1)).get("parks");
         String[] split;
         if (limit.contains(".")) {
-            split = limit.split(".");
+            split = limit.split("\\.");
         } else {
             split = new String[]{limit};
         }
