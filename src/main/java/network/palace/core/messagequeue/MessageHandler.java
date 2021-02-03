@@ -5,6 +5,7 @@ import com.google.gson.JsonParser;
 import com.rabbitmq.client.*;
 import net.md_5.bungee.api.ChatColor;
 import network.palace.core.Core;
+import network.palace.core.events.IncomingMessageEvent;
 import network.palace.core.messagequeue.packets.ComponentMessagePacket;
 import network.palace.core.messagequeue.packets.MQPacket;
 import network.palace.core.messagequeue.packets.MentionPacket;
@@ -76,9 +77,16 @@ public class MessageHandler {
         registerConsumer("mc_direct", "direct", Core.getInstanceName(), (consumerTag, delivery) -> {
             try {
                 JsonObject object = parseDelivery(delivery);
-                Core.getInstance().getLogger().severe(object.toString());
+                Core.debugLog(object.toString());
+                int id = object.get("id").getAsInt();
+                try {
+                    new IncomingMessageEvent(id, object).call();
+                } catch (Exception e) {
+                    Core.logMessage("MessageHandler", "Error processing IncomingMessageEvent for incoming packet " + object.toString());
+                    e.printStackTrace();
+                }
                 //noinspection SwitchStatementWithTooFewBranches
-                switch (object.get("id").getAsInt()) {
+                switch (id) {
                     // Mention
                     case 10: {
                         MentionPacket packet = new MentionPacket(object);
