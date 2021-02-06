@@ -1333,4 +1333,12 @@ public class MongoHandler {
         serversCollection.updateOne(Filters.and(Filters.eq("name", instanceName), Filters.eq("type", serverType),
                 Filters.exists("playground", playground)), Updates.set("online", online));
     }
+
+    public void setOnlineDataValue(UUID uuid, String key, Object value) {
+        if (value == null) {
+            playerCollection.updateOne(Filters.eq("uuid", uuid.toString()), Updates.unset("onlineData." + key));
+        } else {
+            playerCollection.updateOne(Filters.eq("uuid", uuid.toString()), Updates.set("onlineData." + key, value));
+        }
+    }
 }

@@ -41,10 +41,12 @@ public class CorePlayerManager implements CPlayerManager {
         Rank rank;
         List<RankTag> tags = new ArrayList<>();
         UUID proxy;
+        Document onlineData;
         if (joinData == null) {
             // new player!
             rank = Rank.SETTLER;
             proxy = UUID.randomUUID();
+            onlineData = new Document();
         } else {
             rank = joinData.containsKey("rank") ? Rank.fromString(joinData.getString("rank")) : Rank.SETTLER;
             if (joinData.containsKey("tags")) {
@@ -53,12 +55,13 @@ public class CorePlayerManager implements CPlayerManager {
             if (!joinData.containsKey("onlineData")) {
                 throw new Exception("Player isn't online!");
             } else {
-                Document onlineData = (Document) joinData.get("onlineData");
+                onlineData = (Document) joinData.get("onlineData");
                 proxy = UUID.fromString(onlineData.getString("proxy"));
             }
         }
         CPlayer player = new CorePlayer(uuid, name, rank, tags, "en_us");
         player.getRegistry().addEntry("proxy", proxy);
+        player.getRegistry().addEntry("onlineData", onlineData);
         onlinePlayers.put(uuid, player);
     }
 
