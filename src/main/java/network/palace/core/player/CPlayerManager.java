@@ -16,7 +16,7 @@ public interface CPlayerManager {
      * @param uuid the uuid of the player
      * @param name the name of the player
      */
-    void playerLoggedIn(UUID uuid, String name);
+    void playerLoggedIn(UUID uuid, String name) throws Exception;
 
     /**
      * Player joined.
