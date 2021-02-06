@@ -1341,4 +1341,10 @@ public class MongoHandler {
             playerCollection.updateOne(Filters.eq("uuid", uuid.toString()), Updates.set("onlineData." + key, value));
         }
     }
+
+    public Object getOnlineDataValue(UUID uuid, String key) {
+        Document onlineData = playerCollection.find(Filters.eq("uuid", uuid.toString())).projection(new Document("onlineData." + key, 1)).first();
+        if (onlineData == null || !onlineData.containsKey("onlineData." + key)) return null;
+        return onlineData.get("onlineData." + key);
+    }
 }
