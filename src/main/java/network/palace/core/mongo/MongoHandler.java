@@ -48,6 +48,7 @@ public class MongoHandler {
     private MongoCollection<Document> hotelCollection = null;
     private MongoCollection<Document> warpsCollection = null;
     private MongoCollection<Document> serversCollection = null;
+    private MongoCollection<Document> storageCollection = null;
 
     public MongoHandler() {
         connect();
@@ -80,6 +81,7 @@ public class MongoHandler {
         hotelCollection = database.getCollection("hotels");
         warpsCollection = database.getCollection("warps");
         serversCollection = database.getCollection("servers");
+        storageCollection = database.getCollection("storage");
     }
 
     /* Player Methods */
@@ -912,6 +914,33 @@ public class MongoHandler {
     }
 
     /**
+     * Update a value inside the parks document
+     *
+     * @param uuid  the uuid
+     * @param key   the key, excluding 'parks' (i.e. only provide 'storage' for 'parks.storage')
+     * @param value the value
+     */
+    public void setParkValue(UUID uuid, String key, Object value) {
+        playerCollection.updateOne(Filters.eq("uuid", uuid.toString()), Updates.set("parks." + key, value));
+    }
+
+    /**
+     * Update a player's park storage value
+     *
+     * @param uuid the uuid
+     * @param key  the key, i.e. 'wdw_storage'
+     * @param doc  the storage document
+     * @implNote This method will only succeed in updating the storage value if the player's onlineData.parkStorageLock field equals the server's instance name.
+     * This aims to prevent multiple servers from modifying the same storage value simultaneously.
+     */
+    public void setParkStorage(UUID uuid, String key, Document doc) {
+        playerCollection.updateOne(Filters.and(
+                Filters.eq("uuid", uuid.toString()),
+                Filters.eq("onlineData.parkStorageLock", Core.getInstanceName())
+        ), Updates.set("parks." + key, doc));
+    }
+
+    /**
      * Get the namecolor data for a player's MagicBand
      *
      * @param uuid the uuid of the player
@@ -1342,9 +1371,45 @@ public class MongoHandler {
         }
     }
 
+    /**
+     * Set onlineData field value while considering concurrent writes
+     *
+     * @param uuid         the uuid
+     * @param key          the field's key
+     * @param newValue     the new value for the field
+     * @param currentValue the value the field must currently have in order for it to be updated
+     * @implNote if the field's value doesn't equal currentValue, it won't be updated to newValue.
+     * This ensures that multiple services writing to the field at the same time don't conflict with each other.
+     */
+    public void setOnlineDataValueConcurrentSafe(UUID uuid, String key, Object newValue, Object currentValue) {
+        if (newValue == null) {
+            playerCollection.updateOne(Filters.and(
+                    Filters.eq("uuid", uuid.toString()),
+                    Filters.eq("onlineData." + key, currentValue)
+            ), Updates.unset("onlineData." + key));
+        } else {
+            playerCollection.updateOne(Filters.and(
+                    Filters.eq("uuid", uuid.toString()),
+                    Filters.eq("onlineData." + key, currentValue)
+            ), Updates.set("onlineData." + key, newValue));
+        }
+    }
+
     public Object getOnlineDataValue(UUID uuid, String key) {
         Document onlineData = playerCollection.find(Filters.eq("uuid", uuid.toString())).projection(new Document("onlineData." + key, 1)).first();
-        if (onlineData == null || !onlineData.containsKey("onlineData." + key)) return null;
-        return onlineData.get("onlineData." + key);
+        if (onlineData == null) return null;
+        onlineData = onlineData.get("onlineData", Document.class);
+        if (!onlineData.containsKey(key)) return null;
+        return onlineData.get(key);
+    }
+
+    public FindIterable<Document> getOldStorageDocuments(UUID uuid) {
+        return storageCollection.find(Filters.and(
+                Filters.eq("uuid", uuid.toString()),
+                Filters.or(
+                        Filters.exists("wdw"),
+                        Filters.exists("uso")
+                )
+        ));
     }
 }

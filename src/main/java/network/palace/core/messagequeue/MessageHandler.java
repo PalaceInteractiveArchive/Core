@@ -26,7 +26,9 @@ public class MessageHandler {
     public static final AMQP.BasicProperties JSON_PROPS = new AMQP.BasicProperties.Builder().contentEncoding("application/json").build();
 
     public Connection PUBLISHING_CONNECTION, CONSUMING_CONNECTION;
-    public MessageClient ALL_PROXIES;
+    public MessageClient ALL_PROXIES, ALL_MC;
+
+    public final HashMap<String, MessageClient> permanentClients = new HashMap<>();
 
     private final ConnectionFactory factory;
     private final HashMap<String, Channel> channels = new HashMap<>();
@@ -65,6 +67,7 @@ public class MessageHandler {
     public void initialize() throws IOException, TimeoutException {
         try {
             ALL_PROXIES = new MessageClient(ConnectionType.PUBLISHING, "all_proxies", "fanout");
+            ALL_MC = new MessageClient(ConnectionType.PUBLISHING, "all_mc", "fanout");
         } catch (Exception e) {
             e.printStackTrace();
             Core.getInstance().getLogger().severe("There was an error initializing essential message publishing queues!");
@@ -72,6 +75,22 @@ public class MessageHandler {
 
         CancelCallback doNothing = consumerTag -> {
         };
+
+        registerConsumer("all_mc", "fanout", "", (consumerTag, delivery) -> {
+            try {
+                JsonObject object = parseDelivery(delivery);
+                Core.debugLog(object.toString());
+                int id = object.get("id").getAsInt();
+                try {
+                    new IncomingMessageEvent(id, object).call();
+                } catch (Exception e) {
+                    Core.logMessage("MessageHandler", "Error processing IncomingMessageEvent for incoming packet " + object.toString());
+                    e.printStackTrace();
+                }
+            } catch (Exception e) {
+                handleError(consumerTag, delivery, e);
+            }
+        }, doNothing);
 
         registerConsumer("mc_direct", "direct", Core.getInstanceName(), (consumerTag, delivery) -> {
             try {
@@ -100,7 +119,7 @@ public class MessageHandler {
         }, doNothing);
     }
 
-    private void handleError(String consumerTag, Delivery delivery, Exception e) {
+    public void handleError(String consumerTag, Delivery delivery, Exception e) {
         Core.getInstance().getLogger().severe("[MessageHandler] Error processing message: " + e.getClass().getName() + " - " + e.getMessage());
         Core.getInstance().getLogger().severe("consumerTag: " + consumerTag);
         Core.getInstance().getLogger().severe("envelope: " + delivery.getEnvelope().toString());
@@ -109,7 +128,7 @@ public class MessageHandler {
         e.printStackTrace();
     }
 
-    private JsonObject parseDelivery(Delivery delivery) {
+    public JsonObject parseDelivery(Delivery delivery) {
         byte[] bytes = delivery.getBody();
         String s = new String(bytes, StandardCharsets.UTF_8);
         JsonObject object = (JsonObject) new JsonParser().parse(s);
