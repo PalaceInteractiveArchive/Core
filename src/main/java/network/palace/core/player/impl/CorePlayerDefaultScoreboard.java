@@ -21,10 +21,9 @@ import java.util.concurrent.Callable;
  * The type Core player default scoreboard.
  */
 public class CorePlayerDefaultScoreboard implements Listener {
-    private int playerCount = 0;
     private final boolean defaultScoreboardEnabled;
     /* An ArrayList tracking the players not using the default scoreboard */
-    private List<UUID> disabledFor = new ArrayList<>();
+    private final List<UUID> disabledFor = new ArrayList<>();
 
     /**
      * Instantiates a new Core player default scoreboard.
@@ -72,7 +71,7 @@ public class CorePlayerDefaultScoreboard implements Listener {
         // Blank space
         scoreboard.setBlank(4);
         // Players number
-        scoreboard.set(3, ChatColor.GREEN + "Online Players: " + playerCount);
+        scoreboard.set(3, ChatColor.GREEN + "Online Players: " + Core.getPlayerManager().getPlayerCount());
         // Server name
         scoreboard.set(2, ChatColor.GREEN + "Server: " + Core.getServerType());
         // Blank
@@ -92,12 +91,11 @@ public class CorePlayerDefaultScoreboard implements Listener {
      */
     @EventHandler
     public void onOnlineCountUpdate(CoreOnlineCountUpdate event) {
-        playerCount = event.getCount();
         for (CPlayer player : Core.getPlayerManager().getOnlinePlayers()) {
             if (player.getStatus() != PlayerStatus.JOINED ||
                     !player.getScoreboard().isSetup() ||
                     disabledFor.contains(player.getUniqueId())) continue;
-            player.getScoreboard().set(3, ChatColor.GREEN + "Online Players: " + MiscUtil.formatNumber(playerCount));
+            player.getScoreboard().set(3, ChatColor.GREEN + "Online Players: " + MiscUtil.formatNumber(event.getCount()));
         }
     }
 

@@ -5,6 +5,7 @@ import com.comphenix.protocol.wrappers.WrappedSignedProperty;
 import lombok.Getter;
 import network.palace.core.Core;
 import network.palace.core.dashboard.packets.dashboard.PacketGetPack;
+import network.palace.core.events.CoreOnlineCountUpdate;
 import network.palace.core.events.CorePlayerJoinedEvent;
 import network.palace.core.player.*;
 import network.palace.core.player.impl.CorePlayer;
@@ -24,6 +25,7 @@ import java.util.*;
 public class CorePlayerManager implements CPlayerManager {
     @Getter private CorePlayerDefaultScoreboard defaultScoreboard;
     private final Map<UUID, CPlayer> onlinePlayers = new HashMap<>();
+    @Getter private int playerCount = 0;
 
     /**
      * Instantiates a new Core player manager.
@@ -32,7 +34,19 @@ public class CorePlayerManager implements CPlayerManager {
         Core.registerListener(new CorePlayerManagerListener());
         Core.registerListener(new CorePlayerStaffLoginListener());
         defaultScoreboard = new CorePlayerDefaultScoreboard();
-        Core.runTaskTimer(Core.getInstance(), () -> Core.getMongoHandler().setPlayerCount(Core.getInstanceName(), Core.isPlayground(), onlinePlayers.size()), 20L, 100L);
+        Core.runTaskTimer(Core.getInstance(), new Runnable() {
+            boolean b = true;
+
+            @Override
+            public void run() {
+                Core.getMongoHandler().setPlayerCount(Core.getInstanceName(), Core.isPlayground(), onlinePlayers.size());
+                if (b) {
+                    playerCount = Core.getMongoHandler().getPlayerCount();
+                    new CoreOnlineCountUpdate(playerCount).call();
+                }
+                b = !b;
+            }
+        }, 20L, 100L);
     }
 
     @SuppressWarnings("unchecked")

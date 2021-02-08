@@ -10,6 +10,8 @@ import java.util.UUID;
  */
 public interface CPlayerManager {
 
+    int getPlayerCount();
+
     /**
      * Player logged in.
      *
