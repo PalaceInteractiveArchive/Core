@@ -32,6 +32,7 @@ public class CorePlayerManager implements CPlayerManager {
         Core.registerListener(new CorePlayerManagerListener());
         Core.registerListener(new CorePlayerStaffLoginListener());
         defaultScoreboard = new CorePlayerDefaultScoreboard();
+        Core.runTaskTimer(Core.getInstance(), () -> Core.getMongoHandler().setPlayerCount(Core.getInstanceName(), Core.isPlayground(), onlinePlayers.size()), 20L, 100L);
     }
 
     @SuppressWarnings("unchecked")

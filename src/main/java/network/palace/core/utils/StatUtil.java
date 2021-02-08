@@ -19,7 +19,7 @@ public class StatUtil {
             config.set("playground", false);
             config.save(new File("plugins/Core/config.yml"));
         }
-        int production = Core.getCoreConfig().getBoolean("playground") ? 0 : 1;
+        int production = Core.isPlayground() ? 0 : 1;
         Core.runTaskTimer(Core.getInstance(), () -> {
             try {
                 Class<?> minecraftServer = MinecraftReflection.getMinecraftServerClass();

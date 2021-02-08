@@ -63,12 +63,13 @@ import java.util.concurrent.TimeoutException;
  * <p>
  * You can access instances of other modules by depending on Core in your pom.xml, and then executing Core.get
  */
-@PluginInfo(name = "Core", version = "2.7.1", depend = {"ProtocolLib"}, softdepend = {"ViaVersion"})
+@PluginInfo(name = "Core", version = "2.7.2", depend = {"ProtocolLib"}, softdepend = {"ViaVersion"})
 public class Core extends JavaPlugin {
     @Getter private URLClassLoader coreClassLoader;
-
+    @Getter private static Core instance;
     private boolean starting = true;
     @Getter private final long startTime = System.currentTimeMillis();
+    @Getter private static boolean playground = false;
     private YAMLConfigurationFile configFile;
     private String serverType = "Hub";
     private String instanceName = "";
@@ -119,6 +120,7 @@ public class Core extends JavaPlugin {
 
     @Override
     public final void onEnable() {
+        instance = this;
         // Kick all players on reload
         for (Player player : Bukkit.getOnlinePlayers()) {
             player.kickPlayer(ChatColor.RED + "Server is reloading!");
@@ -129,8 +131,7 @@ public class Core extends JavaPlugin {
         LibraryHandler.loadLibraries(this);
         // Configurations
         configFile = new YAMLConfigurationFile(this, "config.yml");
-//        rollbarHandler = new RollbarHandler(getCoreConfig().getString("accessToken", ""), EnvironmentType.fromString(getCoreConfig().getString("environment", "local")));
-//        rollbarHandler.watch();
+        playground = Core.getCoreConfig().getBoolean("playground");
         // Get info from config
         serverType = getCoreConfig().getString("server-type", "Unknown");
         instanceName = getCoreConfig().getString("instance-name", "ServerName");
@@ -205,14 +206,14 @@ public class Core extends JavaPlugin {
         // Log
         logMessage("Core", ChatColor.DARK_GREEN + "Enabled");
 
-        runTask(this, () -> mongoHandler.setServerOnline(getInstanceName(), getServerType(), Core.getCoreConfig().getBoolean("playground"), true));
+        runTask(this, () -> mongoHandler.setServerOnline(getInstanceName(), getServerType(), playground, true));
 
         // Always keep players off the server until it's been finished loading for 1 second
         // This prevents issues with not loading player data when they join before plugins are loaded
         runTaskLater(this, () -> {
             setStarting(false);
             try {
-                getMongoHandler().setServerOnline(instanceName, serverType, Core.getCoreConfig().getBoolean("playground"), true);
+                getMongoHandler().setServerOnline(instanceName, serverType, playground, true);
                 Core.getMessageHandler().sendStaffMessage(ChatColor.AQUA + "Network: " + ChatColor.YELLOW + getInstanceName() + " (MC)" + ChatColor.GREEN + " is now online");
             } catch (Exception e) {
                 e.printStackTrace();
@@ -284,22 +285,13 @@ public class Core extends JavaPlugin {
     @Override
     public final void onDisable() {
         try {
-            getMongoHandler().setServerOnline(instanceName, serverType, Core.getCoreConfig().getBoolean("playground"), false);
+            getMongoHandler().setServerOnline(instanceName, serverType, playground, false);
             Core.getMessageHandler().sendStaffMessage(ChatColor.AQUA + "Network: " + ChatColor.YELLOW + getInstanceName() + " (MC)" + ChatColor.RED + " is safely shutting down");
         } catch (Exception e) {
             e.printStackTrace();
             Core.logMessage("Core", "Error announcing server shutdown to message queue");
         }
         logMessage("Core", ChatColor.DARK_RED + "Disabled");
-    }
-
-    /**
-     * Gets core instance.
-     *
-     * @return Core instance
-     */
-    public static Core getInstance() {
-        return Core.getPlugin(Core.class);
     }
 
     /**

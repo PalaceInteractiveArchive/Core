@@ -1412,4 +1412,8 @@ public class MongoHandler {
                 )
         ));
     }
+
+    public void setPlayerCount(String serverName, boolean playground, int size) {
+        serversCollection.updateOne(Filters.and(Filters.eq("name", serverName), Filters.exists("playground", playground)), Updates.set("count", size));
+    }
 }
