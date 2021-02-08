@@ -63,7 +63,7 @@ import java.util.concurrent.TimeoutException;
  * <p>
  * You can access instances of other modules by depending on Core in your pom.xml, and then executing Core.get
  */
-@PluginInfo(name = "Core", version = "2.7.0", depend = {"ProtocolLib"}, softdepend = {"ViaVersion"})
+@PluginInfo(name = "Core", version = "2.7.1", depend = {"ProtocolLib"}, softdepend = {"ViaVersion"})
 public class Core extends JavaPlugin {
     @Getter private URLClassLoader coreClassLoader;
 
@@ -108,9 +108,9 @@ public class Core extends JavaPlugin {
 
     @Getter private RollbarHandler rollbarHandler;
 
-    @Getter private List<UUID> disabledPlayers = new ArrayList<>();
+    @Getter private final List<UUID> disabledPlayers = new ArrayList<>();
 
-    @Getter private boolean isMinecraftGreaterOrEqualTo11_2 = MinecraftVersion.getCurrentVersion().getMinor() >= 12;
+    @Getter private final boolean isMinecraftGreaterOrEqualTo11_2 = MinecraftVersion.getCurrentVersion().getMinor() >= 12;
 
     @Override
     public void onLoad() {

@@ -6,10 +6,7 @@ import com.rabbitmq.client.*;
 import net.md_5.bungee.api.ChatColor;
 import network.palace.core.Core;
 import network.palace.core.events.IncomingMessageEvent;
-import network.palace.core.messagequeue.packets.ComponentMessagePacket;
-import network.palace.core.messagequeue.packets.MQPacket;
-import network.palace.core.messagequeue.packets.MentionPacket;
-import network.palace.core.messagequeue.packets.MessageByRankPacket;
+import network.palace.core.messagequeue.packets.*;
 import network.palace.core.player.CPlayer;
 import network.palace.core.player.Rank;
 import org.bukkit.Sound;
@@ -200,12 +197,21 @@ public class MessageHandler {
     }
 
     public void sendMessageToPlayer(UUID uuid, String message) throws Exception {
+        sendMessageToPlayer(uuid, message, false);
+    }
+
+    public void sendMessageToPlayer(UUID uuid, String message, boolean component) throws Exception {
         CPlayer player = Core.getPlayerManager().getPlayer(uuid);
         if (player != null) {
             player.sendMessage(message);
             return;
         }
-        ComponentMessagePacket packet = new ComponentMessagePacket(message, uuid);
+        MQPacket packet;
+        if (component) {
+            packet = new ComponentMessagePacket(message, uuid);
+        } else {
+            packet = new MessagePacket(message, uuid);
+        }
         sendMessage(packet, ALL_PROXIES);
     }
 
