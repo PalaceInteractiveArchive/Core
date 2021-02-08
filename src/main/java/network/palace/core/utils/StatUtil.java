@@ -2,7 +2,7 @@ package network.palace.core.utils;
 
 import com.comphenix.protocol.utility.MinecraftReflection;
 import network.palace.core.Core;
-import network.palace.core.dashboard.packets.dashboard.PacketLogStatistic;
+import network.palace.core.messagequeue.packets.LogStatisticPacket;
 import org.bukkit.Bukkit;
 import org.bukkit.configuration.file.FileConfiguration;
 
@@ -33,7 +33,7 @@ public class StatUtil {
                 HashMap<String, Object> values = new HashMap<>();
                 values.put("tps", (float) Math.min(Math.round(recentTps[0] * 100.0) / 100.0, 20.0));
                 logStatistic("ticks_per_second", tags, values);
-            } catch (IllegalAccessException | InvocationTargetException | NoSuchMethodException | NoSuchFieldException e) {
+            } catch (IllegalAccessException | InvocationTargetException | NoSuchMethodException | NoSuchFieldException | IOException e) {
                 e.printStackTrace();
             }
             try {
@@ -51,7 +51,7 @@ public class StatUtil {
         }, 40L, 600L);
     }
 
-    public void logStatistic(String tableName, HashMap<String, Object> tags, HashMap<String, Object> values) {
-        Core.getDashboardConnection().send(new PacketLogStatistic(tableName, tags, values));
+    public void logStatistic(String tableName, HashMap<String, Object> tags, HashMap<String, Object> values) throws IOException {
+        Core.getMessageHandler().sendMessage(new LogStatisticPacket(tableName, tags, values), Core.getMessageHandler().STATISTICS);
     }
 }

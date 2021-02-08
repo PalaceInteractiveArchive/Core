@@ -1420,4 +1420,12 @@ public class MongoHandler {
     public int getPlayerCount() {
         return (int) playerCollection.count(Filters.eq("online", true));
     }
+
+    public void banPlayer(UUID uuid, String reason, long expires, boolean permanent, String source) {
+        Document banDocument = new Document("created", System.currentTimeMillis()).append("expires", expires)
+                .append("permanent", permanent).append("reason", reason)
+                .append("source", source).append("active", true);
+
+        playerCollection.updateOne(Filters.eq("uuid", uuid.toString()), Updates.push("bans", banDocument));
+    }
 }

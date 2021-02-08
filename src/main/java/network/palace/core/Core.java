@@ -18,7 +18,6 @@ import network.palace.core.commands.disabled.StopCommand;
 import network.palace.core.config.LanguageManager;
 import network.palace.core.config.YAMLConfigurationFile;
 import network.palace.core.crafting.CraftingMenu;
-import network.palace.core.dashboard.DashboardConnection;
 import network.palace.core.economy.EconomyManager;
 import network.palace.core.economy.HonorManager;
 import network.palace.core.errors.RollbarHandler;
@@ -31,6 +30,7 @@ import network.palace.core.packets.adapters.SettingsAdapter;
 import network.palace.core.permissions.PermissionManager;
 import network.palace.core.player.CPlayer;
 import network.palace.core.player.CPlayerManager;
+import network.palace.core.player.impl.CorePlayerWorldDownloadProtect;
 import network.palace.core.player.impl.managers.CorePlayerManager;
 import network.palace.core.plugin.PluginInfo;
 import network.palace.core.resource.ResourceManager;
@@ -101,7 +101,6 @@ public class Core extends JavaPlugin {
     private SoftNPCManager softNPCManager;
     private CPlayerManager playerManager;
     private CoreCommandMap commandMap;
-    private DashboardConnection dashboardConnection;
     private HonorManager honorManager;
     private CraftingMenu craftingMenu;
 
@@ -163,8 +162,7 @@ public class Core extends JavaPlugin {
         });
         // Register plugin channel
         getServer().getMessenger().registerOutgoingPluginChannel(this, "BungeeCord");
-        //TODO Find a different way to do this if possible
-        //getServer().getMessenger().registerIncomingPluginChannel(this, "WDL|INIT", new CorePlayerWorldDownloadProtect());
+        getServer().getMessenger().registerIncomingPluginChannel(this, "WDL|INIT", new CorePlayerWorldDownloadProtect());
         // SQL Classes
         sqlUtil = new SqlUtil();
         try {
@@ -187,8 +185,6 @@ public class Core extends JavaPlugin {
         honorManager.provideMappings(mongoHandler.getHonorMappings());
         // Core command map
         commandMap = new CoreCommandMap(this);
-        // Dashboard
-        dashboardConnection = new DashboardConnection();
         try {
             messageHandler = new MessageHandler();
             messageHandler.initialize();
@@ -292,15 +288,6 @@ public class Core extends JavaPlugin {
             Core.logMessage("Core", "Error announcing server shutdown to message queue");
         }
         logMessage("Core", ChatColor.DARK_RED + "Disabled");
-    }
-
-    /**
-     * Gets dashboard connection.
-     *
-     * @return the dashboard connection
-     */
-    public static DashboardConnection getDashboardConnection() {
-        return getInstance().dashboardConnection;
     }
 
     /**

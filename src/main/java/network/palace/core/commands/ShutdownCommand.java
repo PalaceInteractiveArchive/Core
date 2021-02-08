@@ -4,12 +4,14 @@ import network.palace.core.Core;
 import network.palace.core.command.CommandException;
 import network.palace.core.command.CommandMeta;
 import network.palace.core.command.CoreCommand;
-import network.palace.core.dashboard.packets.dashboard.PacketEmptyServer;
+import network.palace.core.messagequeue.packets.EmptyServerPacket;
 import network.palace.core.player.Rank;
 import org.bukkit.Bukkit;
 import org.bukkit.ChatColor;
 import org.bukkit.World;
 import org.bukkit.command.CommandSender;
+
+import java.io.IOException;
 
 /**
  * Server shutdown command.
@@ -69,13 +71,16 @@ public class ShutdownCommand extends CoreCommand {
                 if (i-- < 0) return;
                 Core.setStarting(true);
                 Bukkit.getWorlds().forEach(World::save);
-                Core.getDashboardConnection().send(new PacketEmptyServer(Core.getInstanceName()));
+                try {
+                    Core.getMessageHandler().sendMessage(new EmptyServerPacket(Core.getInstanceName()), Core.getMessageHandler().ALL_PROXIES);
+                } catch (IOException e) {
+                    e.printStackTrace();
+                }
                 Core.runTaskTimer(Core.getInstance(), () -> {
                     if (Bukkit.getOnlinePlayers().size() <= 0) {
-                        Core.getDashboardConnection().stop();
                         Bukkit.shutdown();
                     }
-                }, 0L, 40L);
+                }, 40L, 40L);
             }
         }, 0L, 1L);
     }

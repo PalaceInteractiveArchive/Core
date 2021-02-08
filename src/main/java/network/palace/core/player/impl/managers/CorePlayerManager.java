@@ -4,9 +4,9 @@ import com.comphenix.protocol.wrappers.WrappedGameProfile;
 import com.comphenix.protocol.wrappers.WrappedSignedProperty;
 import lombok.Getter;
 import network.palace.core.Core;
-import network.palace.core.dashboard.packets.dashboard.PacketGetPack;
 import network.palace.core.events.CoreOnlineCountUpdate;
 import network.palace.core.events.CorePlayerJoinedEvent;
+import network.palace.core.events.CurrentPackReceivedEvent;
 import network.palace.core.player.*;
 import network.palace.core.player.impl.CorePlayer;
 import network.palace.core.player.impl.CorePlayerDefaultScoreboard;
@@ -109,10 +109,9 @@ public class CorePlayerManager implements CPlayerManager {
             corePlayer.setPreviousHonorLevel(Core.getHonorManager().getLevel(corePlayer.getHonor()).getLevel());
             corePlayer.giveAchievement(0);
             Core.getHonorManager().displayHonor(corePlayer, true);
-
-            // Packets
-//            Core.getDashboardConnection().send(new PacketConfirmPlayer(corePlayer.getUniqueId(), false));
-            Core.getDashboardConnection().send(new PacketGetPack(corePlayer.getUniqueId(), ""));
+            Object packObject = Core.getMongoHandler().getOnlineDataValue(corePlayer.getUniqueId(), "resourcePack");
+            String pack = packObject == null ? "none" : (String) packObject;
+            Core.runTask(() -> new CurrentPackReceivedEvent(corePlayer, pack).call());
         });
 
         // Setup permissions for player

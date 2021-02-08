@@ -4,7 +4,7 @@ import network.palace.core.Core;
 import network.palace.core.command.CommandException;
 import network.palace.core.command.CommandMeta;
 import network.palace.core.command.CoreCommand;
-import network.palace.core.dashboard.packets.dashboard.PacketRankChange;
+import network.palace.core.messagequeue.packets.RankChangePacket;
 import network.palace.core.player.CPlayer;
 import network.palace.core.player.Rank;
 import network.palace.core.player.RankTag;
@@ -13,10 +13,12 @@ import org.bukkit.command.CommandSender;
 import org.bukkit.command.ConsoleCommandSender;
 import org.bukkit.entity.Player;
 
+import java.io.IOException;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
 import java.util.UUID;
+import java.util.logging.Level;
 
 @CommandMeta(description = "Player commands")
 public class PlayerCommand extends CoreCommand {
@@ -119,8 +121,11 @@ public class PlayerCommand extends CoreCommand {
                     }
                 }
                 String source = sender instanceof Player ? sender.getName() : "Console on " + Core.getInstanceName();
-                PacketRankChange packet = new PacketRankChange(uuid, next, tags, source);
-                Core.getDashboardConnection().send(packet);
+                try {
+                    Core.getMessageHandler().sendMessage(new RankChangePacket(uuid, next, tags, source), Core.getMessageHandler().ALL_PROXIES);
+                } catch (IOException e) {
+                    Core.getInstance().getLogger().log(Level.SEVERE, "Error communicating player rank change", e);
+                }
                 sender.sendMessage(ChatColor.GREEN + name + " is now rank " + next.getFormattedName());
                 return;
             }
@@ -151,8 +156,11 @@ public class PlayerCommand extends CoreCommand {
                     }
                 }
                 String source = sender instanceof Player ? sender.getName() : "Console on " + Core.getInstanceName();
-                PacketRankChange packet = new PacketRankChange(uuid, rank, tags, source);
-                Core.getDashboardConnection().send(packet);
+                try {
+                    Core.getMessageHandler().sendMessage(new RankChangePacket(uuid, rank, tags, source), Core.getMessageHandler().ALL_PROXIES);
+                } catch (IOException e) {
+                    Core.getInstance().getLogger().log(Level.SEVERE, "Error communicating player rank change", e);
+                }
                 sender.sendMessage(ChatColor.GREEN + name + " now has the tag " + tag.getName());
                 return;
             }
@@ -179,8 +187,11 @@ public class PlayerCommand extends CoreCommand {
                     }
                 }
                 String source = sender instanceof Player ? sender.getName() : "Console on " + Core.getInstanceName();
-                PacketRankChange packet = new PacketRankChange(uuid, rank, tags, source);
-                Core.getDashboardConnection().send(packet);
+                try {
+                    Core.getMessageHandler().sendMessage(new RankChangePacket(uuid, rank, tags, source), Core.getMessageHandler().ALL_PROXIES);
+                } catch (IOException e) {
+                    Core.getInstance().getLogger().log(Level.SEVERE, "Error communicating player rank change", e);
+                }
                 sender.sendMessage(ChatColor.GREEN + name + " no longer has the tag " + tag.getName());
                 return;
             }

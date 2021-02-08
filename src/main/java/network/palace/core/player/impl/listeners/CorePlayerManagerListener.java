@@ -26,12 +26,10 @@ public class CorePlayerManagerListener implements Listener {
             event.setLoginResult(AsyncPlayerPreLoginEvent.Result.KICK_OTHER);
             return;
         }
-        if (!Core.isDashboardAndSqlDisabled()) {
-            if (Core.getDashboardConnection() == null || !Core.getDashboardConnection().isConnected() || Core.getMongoHandler() == null) {
-                event.setKickMessage(ChatColor.AQUA + "This server is still starting up. Try again in a few seconds!");
-                event.setLoginResult(AsyncPlayerPreLoginEvent.Result.KICK_OTHER);
-                return;
-            }
+        if (Core.getMongoHandler() == null) {
+            event.setKickMessage(ChatColor.AQUA + "This server is still starting up. Try again in a few seconds!");
+            event.setLoginResult(AsyncPlayerPreLoginEvent.Result.KICK_OTHER);
+            return;
         }
         if (!Core.getMongoHandler().isPlayerOnline(event.getUniqueId())) {
             event.setLoginResult(AsyncPlayerPreLoginEvent.Result.KICK_OTHER);
@@ -102,16 +100,6 @@ public class CorePlayerManagerListener implements Listener {
         Core.getPlayerManager().playerLoggedOut(event.getPlayer());
         event.setLeaveMessage("");
         Core.getPermissionManager().logout(event.getPlayer().getUniqueId());
-    }
-
-    /**
-     * On player achievement awarded.
-     *
-     * @param event the event
-     */
-    @EventHandler
-    public void onPlayerAchievementAwarded(PlayerAchievementAwardedEvent event) {
-        event.setCancelled(true);
     }
 
     /**
