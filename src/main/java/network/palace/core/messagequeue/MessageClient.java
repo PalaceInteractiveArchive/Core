@@ -6,11 +6,10 @@ import lombok.Getter;
 import network.palace.core.Core;
 
 import java.io.IOException;
-import java.util.concurrent.TimeoutException;
 
 @Getter
 public class MessageClient {
-    private Channel channel;
+    private final Channel channel;
     private final String name;
     private final boolean queue;
 
@@ -19,15 +18,6 @@ public class MessageClient {
         this.channel = Core.getMessageHandler().getConnection(type).createChannel();
         this.name = exchange;
         channel.exchangeDeclare(exchange, exchangeType);
-        channel.addShutdownListener(e -> {
-            Core.getInstance().getLogger().warning("The " + exchange + " channel has been closed - recreating!");
-            try {
-                channel = Core.getMessageHandler().getConnection(type).createChannel();
-            } catch (IOException | TimeoutException ioException) {
-                ioException.printStackTrace();
-                Core.getInstance().getLogger().warning("There was an error recreating the " + exchange + " channel!");
-            }
-        });
     }
 
     public MessageClient(ConnectionType type, String queueName, boolean durable) throws Exception {
