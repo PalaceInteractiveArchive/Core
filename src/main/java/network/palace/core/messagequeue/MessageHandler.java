@@ -23,7 +23,7 @@ public class MessageHandler {
     public static final AMQP.BasicProperties JSON_PROPS = new AMQP.BasicProperties.Builder().contentEncoding("application/json").build();
 
     public Connection PUBLISHING_CONNECTION, CONSUMING_CONNECTION;
-    public MessageClient ALL_PROXIES, ALL_MC, STATISTICS;
+    public MessageClient ALL_PROXIES, ALL_MC, STATISTICS, PROXY_DIRECT, MC_DIRECT;
 
     public final HashMap<String, MessageClient> permanentClients = new HashMap<>();
 
@@ -66,6 +66,8 @@ public class MessageHandler {
             ALL_PROXIES = new MessageClient(ConnectionType.PUBLISHING, "all_proxies", "fanout");
             ALL_MC = new MessageClient(ConnectionType.PUBLISHING, "all_mc", "fanout");
             STATISTICS = new MessageClient(ConnectionType.PUBLISHING, "statistics", true);
+            PROXY_DIRECT = new MessageClient(ConnectionType.PUBLISHING, "proxy_direct", "direct");
+            MC_DIRECT = new MessageClient(ConnectionType.PUBLISHING, "mc_direct", "direct");
         } catch (Exception e) {
             e.printStackTrace();
             Core.getInstance().getLogger().severe("There was an error initializing essential message publishing queues!");
@@ -167,6 +169,41 @@ public class MessageHandler {
     }
 
     public void shutdown() {
+        if (ALL_PROXIES != null) {
+            try {
+                ALL_PROXIES.close();
+            } catch (Exception e) {
+                e.printStackTrace();
+            }
+        }
+        if (ALL_MC != null) {
+            try {
+                ALL_MC.close();
+            } catch (Exception e) {
+                e.printStackTrace();
+            }
+        }
+        if (STATISTICS != null) {
+            try {
+                STATISTICS.close();
+            } catch (Exception e) {
+                e.printStackTrace();
+            }
+        }
+        if (PROXY_DIRECT != null) {
+            try {
+                PROXY_DIRECT.close();
+            } catch (Exception e) {
+                e.printStackTrace();
+            }
+        }
+        if (MC_DIRECT != null) {
+            try {
+                MC_DIRECT.close();
+            } catch (Exception e) {
+                e.printStackTrace();
+            }
+        }
         channels.forEach((queueName, channel) -> {
             try {
                 Connection connection = channel.getConnection();
@@ -189,6 +226,7 @@ public class MessageHandler {
     public void sendMessage(MQPacket packet, String exchange, String exchangeType, String routingKey) throws Exception {
         MessageClient client = new MessageClient(ConnectionType.PUBLISHING, exchange, exchangeType);
         client.basicPublish(packet.toBytes(), routingKey);
+        client.close();
     }
 
     public void sendStaffMessage(String message) throws Exception {
@@ -217,7 +255,7 @@ public class MessageHandler {
     }
 
     public void sendToProxy(MQPacket packet, UUID targetProxy) throws Exception {
-        sendMessage(packet, new MessageClient(ConnectionType.PUBLISHING, "proxy_direct", "direct"), targetProxy.toString());
+        sendMessage(packet, PROXY_DIRECT, targetProxy.toString());
     }
 
     public Connection getConnection(ConnectionType type) throws IOException, TimeoutException {
@@ -229,5 +267,9 @@ public class MessageHandler {
             default:
                 return factory.newConnection();
         }
+    }
+
+    public void sendDirectServerMessage(MQPacket packet, String server) throws IOException {
+        sendMessage(packet, MC_DIRECT, server);
     }
 }

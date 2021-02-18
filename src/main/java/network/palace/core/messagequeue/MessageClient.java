@@ -6,6 +6,7 @@ import lombok.Getter;
 import network.palace.core.Core;
 
 import java.io.IOException;
+import java.util.concurrent.TimeoutException;
 
 @Getter
 public class MessageClient {
@@ -42,5 +43,9 @@ public class MessageClient {
         } else {
             channel.basicPublish(name, routingKey, props, bytes);
         }
+    }
+
+    public void close() throws IOException, TimeoutException {
+        channel.close();
     }
 }
