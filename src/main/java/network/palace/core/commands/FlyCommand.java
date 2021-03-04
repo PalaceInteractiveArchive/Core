@@ -51,9 +51,11 @@ public class FlyCommand extends CoreCommand {
     private void toggleFlight(CPlayer sender, CPlayer target) {
         if (sender.getRank().equals(Rank.SHAREHOLDER)) {
             if (Bukkit.getPluginManager().getPlugin("ParkManager") == null) {
-                // since ParkManager isn't present, isn't a park server, don't let shareholders fly
-                sender.sendMessage(ChatColor.RED + "You can only use this on Park servers!");
-                return;
+                if (Bukkit.getPluginManager().getPlugin("Lobby") == null) {
+                    // since ParkManager isn't present, isn't a park server, don't let shareholders fly
+                    sender.sendMessage(ChatColor.RED + "You can only use this on Park servers!");
+                    return;
+                }
             }
             if (shareholderFlightDisabled) {
                 sender.sendMessage(ChatColor.RED + "This command is disabled on this server!");
