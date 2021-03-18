@@ -203,7 +203,7 @@ public class CraftingMenu implements Listener {
         return new ItemStack[]{air, getPlayerHead(player), getAchievement(player),
                 ItemUtil.create(Material.ENDER_CHEST, ChatColor.GREEN + "Cosmetics",
                         Collections.singletonList(ChatColor.GRAY + "Open Cosmetics Menu")),
-                ItemUtil.create(Material.STORAGE_MINECART, ChatColor.GREEN + "Leveling Rewards",
+                ItemUtil.create(Material.CHEST_MINECART, ChatColor.GREEN + "Leveling Rewards",
                         Collections.singletonList(ChatColor.GRAY + "" + ChatColor.ITALIC + "Coming soon!"))};
     }
 
@@ -257,10 +257,10 @@ public class CraftingMenu implements Listener {
                 break;
             }
             if (player.hasAchievement(ach.getId())) {
-                inv.setItem(place, ItemUtil.create(Material.STAINED_CLAY, 1, (byte) 5, ChatColor.GREEN +
+                inv.setItem(place, ItemUtil.create(Material.GREEN_TERRACOTTA, 1, ChatColor.GREEN +
                         ach.getDisplayName(), Collections.singletonList(ChatColor.GRAY + "" + ChatColor.ITALIC + ach.getDescription())));
             } else {
-                inv.setItem(place, ItemUtil.create(Material.STAINED_CLAY, 1, (byte) 4, ChatColor.RED +
+                inv.setItem(place, ItemUtil.create(Material.RED_TERRACOTTA, 1, ChatColor.RED +
                         ach.getDisplayName(), Collections.singletonList(ChatColor.GRAY + "" + ChatColor.ITALIC + "?")));
             }
             place++;

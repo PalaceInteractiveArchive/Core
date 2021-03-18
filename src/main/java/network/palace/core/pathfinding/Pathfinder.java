@@ -2,8 +2,6 @@ package network.palace.core.pathfinding;
 
 import lombok.Getter;
 import org.bukkit.block.Block;
-import org.bukkit.material.Door;
-import org.bukkit.material.Gate;
 
 import java.util.*;
 
@@ -11,10 +9,10 @@ public class Pathfinder {
 
     @Getter private final Map<Double, PathfindingTile> tiles = new HashMap<>();
 
-    private Point endPos;
+    private final Point endPos;
 
-    private PathfindingTile start;
-    private PathfindingTile end;
+    private final PathfindingTile start;
+    private final PathfindingTile end;
 
     public Pathfinder(Point startPos, Point endPos) {
         this.endPos = endPos;
@@ -79,55 +77,11 @@ public class Pathfinder {
     }
 
     private static boolean canWalkThrough(Block b) {
-        switch (b.getType()) {
-            case AIR:
-            case LAVA:
-            case WATER:
-            case PORTAL:
-                return true;
-            case IRON_DOOR:
-            case DARK_OAK_DOOR:
-            case ACACIA_DOOR:
-            case BIRCH_DOOR:
-            case JUNGLE_DOOR:
-            case WOODEN_DOOR:
-            case SPRUCE_DOOR:
-                Door door = (Door) b.getState();
-                return door.isOpen();
-            case ACACIA_FENCE_GATE:
-            case BIRCH_FENCE_GATE:
-            case DARK_OAK_FENCE_GATE:
-            case JUNGLE_FENCE_GATE:
-            case FENCE_GATE:
-            case SPRUCE_FENCE_GATE:
-                Gate gate = (Gate) b.getState();
-                return gate.isOpen();
-            default:
-                return false;
-        }
+        return !b.getType().isSolid();
     }
 
     private boolean canWalkOn(Block b) {
-        if (canWalkThrough(b)) return false;
-
-        switch (b.getType()) {
-            case LADDER:
-            case WHEAT:
-            case LONG_GRASS:
-            case RAILS:
-            case ACTIVATOR_RAIL:
-            case DETECTOR_RAIL:
-            case POWERED_RAIL:
-            case CAULDRON:
-            case YELLOW_FLOWER:
-            case FLOWER_POT:
-            case RED_ROSE:
-            case CAKE_BLOCK:
-            case CARPET:
-                return false;
-            default:
-                return true;
-        }
+        return b.getType().isSolid();
     }
 
     private PathfindingTile tileFrom(Point point, PathfindingTile parent) {

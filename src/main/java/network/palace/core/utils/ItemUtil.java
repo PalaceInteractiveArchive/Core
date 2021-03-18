@@ -29,7 +29,6 @@ import org.bukkit.inventory.PlayerInventory;
 import org.bukkit.inventory.meta.ItemMeta;
 import org.bukkit.inventory.meta.LeatherArmorMeta;
 import org.bukkit.inventory.meta.SkullMeta;
-import org.bukkit.material.MaterialData;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -379,7 +378,7 @@ public class ItemUtil implements Listener {
      */
     @SuppressWarnings("deprecation")
     public static ItemStack create(String owner, String displayName, List<String> lore) {
-        ItemStack item = create(Material.SKULL_ITEM, 1, 3);
+        ItemStack item = create(Material.PLAYER_HEAD, 1, 3);
         SkullMeta sm = (SkullMeta) item.getItemMeta();
         sm.setOwner(owner);
         sm.setDisplayName(displayName);
@@ -387,139 +386,6 @@ public class ItemUtil implements Listener {
         item.setItemMeta(sm);
         return item;
     }
-
-    /*
-    OLD METHODS START
-     */
-
-    /**
-     * Create item stack.
-     *
-     * @param type   the type
-     * @param amount the amount
-     * @param data   the data
-     * @return the item stack
-     */
-    public static ItemStack create(Material type, int amount, byte data) {
-        return new ItemStack(type, amount, data);
-    }
-
-    /**
-     * Create item stack.
-     *
-     * @param type the type
-     * @param name the name
-     * @param data the data
-     * @return the item stack
-     */
-    public static ItemStack create(Material type, String name, byte data) {
-        return create(type, name, data, new ArrayList<>());
-    }
-
-    /**
-     * Create item stack
-     *
-     * @param type the type
-     * @param name the name
-     * @param data the data
-     * @param lore the lore
-     * @return the item stack
-     */
-    public static ItemStack create(Material type, String name, byte data, List<String> lore) {
-        return create(type, 1, data, name, lore);
-    }
-
-    /**
-     * Create item stack.
-     *
-     * @param type   the type
-     * @param amount the amount
-     * @param data   the data
-     * @param name   the name
-     * @param lore   the lore
-     * @return the item stack
-     */
-    public static ItemStack create(Material type, int amount, byte data, String name, List<String> lore) {
-        ItemStack item = create(type, amount, data);
-        ItemMeta meta = item.getItemMeta();
-        meta.setDisplayName(name);
-        meta.setLore(lore);
-        item.setItemMeta(meta);
-        return item;
-    }
-
-
-    public static JsonObject getJsonFromItem(ItemStack i) {
-        JsonObject o = new JsonObject();
-        if (i == null) {
-            return o;
-        }
-        o.addProperty("t", i.getTypeId());
-        o.addProperty("a", i.getAmount());
-        o.addProperty("da", i.getData().getData());
-        o.addProperty("du", i.getDurability());
-        String t = new NbtTextSerializer().serialize(NbtFactory.fromItemTag(i));
-        if (!t.equals("")) {
-            o.addProperty("ta", t);
-        }
-        return o;
-    }
-
-    public static ItemStack getItemFromJson(String json) {
-        JsonObject o = new JsonParser().parse(json).getAsJsonObject();
-        if (!o.has("t")) {
-            return new ItemStack(Material.AIR);
-        }
-        ItemStack i;
-        try {
-            i = MinecraftReflection.getBukkitItemStack(new ItemStack(o.get("t").getAsInt()));
-            i.setData(new MaterialData(o.get("t").getAsInt(), (byte) o.get("da").getAsInt()));
-            i.setAmount(o.get("a").getAsInt());
-            i.setDurability(o.get("du").getAsShort());
-            if (o.has("ta")) {
-                try {
-                    NbtFactory.setItemTag(i, new NbtTextSerializer().deserializeCompound(o.get("ta").getAsString()));
-                } catch (Exception ex) {
-                    ex.printStackTrace();
-                }
-            }
-        } catch (Exception ignored) {
-            return new ItemStack(Material.AIR);
-        }
-        return i;
-    }
-
-    public static JsonArray getJsonFromInventory(Inventory inv) {
-        return getJsonFromArray(inv.getContents());
-    }
-
-    public static JsonArray getJsonFromArray(ItemStack[] arr) {
-        JsonArray a = new JsonArray();
-        for (ItemStack i : arr) {
-            a.add(getJsonFromItem(i));
-        }
-        return a;
-    }
-
-    public static ItemStack[] getInventoryFromJson(String json) {
-        JsonElement e = new JsonParser().parse(json);
-        if (!e.isJsonArray()) {
-            return new ItemStack[0];
-        }
-        JsonArray ja = e.getAsJsonArray();
-        ItemStack[] a = new ItemStack[ja.size()];
-        int i = 0;
-        for (JsonElement e2 : ja) {
-            JsonObject o = e2.getAsJsonObject();
-            a[i] = getItemFromJson(o.toString());
-            i++;
-        }
-        return a;
-    }
-
-    /*
-    OLD METHODS END
-     */
 
     /*
     NEW METHODS START
