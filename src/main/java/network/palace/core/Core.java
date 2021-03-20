@@ -162,7 +162,7 @@ public class Core extends JavaPlugin {
         });
         // Register plugin channel
         getServer().getMessenger().registerOutgoingPluginChannel(this, "BungeeCord");
-        getServer().getMessenger().registerIncomingPluginChannel(this, "WDL|INIT", new CorePlayerWorldDownloadProtect());
+        getServer().getMessenger().registerIncomingPluginChannel(this, "wdl:init", new CorePlayerWorldDownloadProtect());
         // SQL Classes
         sqlUtil = new SqlUtil();
         try {

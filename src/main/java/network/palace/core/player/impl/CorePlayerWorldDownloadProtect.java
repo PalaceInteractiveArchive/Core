@@ -18,7 +18,7 @@ public class CorePlayerWorldDownloadProtect implements PluginMessageListener {
     public void onPluginMessageReceived(String channel, Player pl, byte[] data) {
         CPlayer player = Core.getPlayerManager().getPlayer(pl);
         if (player == null) return;
-        if (channel.equals("WDL|INIT")) {
+        if (channel.equals("wdl:init")) {
             if (!player.getRegistry().hasEntry("wdl_bypass")) {
                 if (player.getRank().getRankId() >= Rank.TRAINEE.getRankId()) {
                     Document doc = Core.getMongoHandler().getPlayer(player.getUniqueId(), new Document("wdl_bypass", true));
