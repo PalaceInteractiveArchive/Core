@@ -195,8 +195,7 @@ public class CorePlayerScoreboardManager implements CPlayerScoreboardManager {
 
     private String teamName(Rank rank, List<RankTag> tags) {
         tags.sort((rankTag, t1) -> t1.getId() - rankTag.getId());
-        return rank.getShortName() + (rank.equals(Rank.VIP) ? "vip" : rank.getDBName()) +
-                (tags.isEmpty() ? "" : tags.get(0).getShortScoreboardTag());
+        return rank.getShortName() + (tags.isEmpty() ? "" : tags.get(0).getShortScoreboardTag());
     }
 
     /**
