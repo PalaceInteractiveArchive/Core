@@ -145,7 +145,7 @@ public class CorePlayerScoreboardManager implements CPlayerScoreboardManager {
         if (scoreboard == null) setup();
         for (Rank rank : Rank.values()) {
             if (scoreboard.getTeam(rank.getScoreboardPrefix() + rank.getName()) != null) continue;
-            Team team = scoreboard.registerNewTeam(rank.getScoreboardPrefix() + rank.getScoreboardName());
+            Team team = scoreboard.registerNewTeam(rank.getScoreboardPrefix() + rank.getName());
             team.setPrefix(rank.getFormattedName() + " ");
             team.setColor(rank.getTagColor());
             team.setOption(Team.Option.COLLISION_RULE, Team.OptionStatus.NEVER);

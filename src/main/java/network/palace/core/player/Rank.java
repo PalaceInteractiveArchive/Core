@@ -81,7 +81,14 @@ public enum Rank {
      * @return the rank name with any additional formatting that should exist
      */
     public String getFormattedName() {
+        if (getName() == "Premier Passport") {
+            return getTagColor() + "Premier";
+        }
         return getTagColor() + getName();
+    }
+
+    public String getFormattedScoreboardName() {
+        return getTagColor() + getScoreboardName();
     }
 
     /**
