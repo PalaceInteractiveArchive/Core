@@ -47,7 +47,7 @@ public abstract class CoreCommand implements CommandExecutor, TabCompleter {
 
     @Getter @Setter private CoreCommand superCommand = null;
 
-    @Getter @Setter private Rank rank = Rank.SETTLER;
+    @Getter @Setter private Rank rank = Rank.GUEST;
 
     @Getter @Setter private String description = "";
 
@@ -144,7 +144,7 @@ public abstract class CoreCommand implements CommandExecutor, TabCompleter {
             CoreCommand subCommand = null;
             if (sender instanceof Player) {
                 CPlayer player = Core.getPlayerManager().getPlayer(((Player) sender).getUniqueId());
-                Rank requiredRank = Rank.SETTLER;
+                Rank requiredRank = Rank.GUEST;
                 RankTag requiredTag = RankTag.NONE;
                 if (getClass().isAnnotationPresent(CommandMeta.class)) {
                     CommandMeta annotation = getClass().getAnnotation(CommandMeta.class);
@@ -211,7 +211,7 @@ public abstract class CoreCommand implements CommandExecutor, TabCompleter {
         // Security for tab complete
         if (sender instanceof Player) {
             CPlayer player = Core.getPlayerManager().getPlayer(((Player) sender).getUniqueId());
-            Rank requiredRank = Rank.SETTLER;
+            Rank requiredRank = Rank.GUEST;
             if (getClass().isAnnotationPresent(CommandMeta.class)) {
                 CommandMeta annotation = getClass().getAnnotation(CommandMeta.class);
                 requiredRank = annotation.rank();

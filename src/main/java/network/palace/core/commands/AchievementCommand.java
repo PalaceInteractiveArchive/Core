@@ -11,7 +11,7 @@ import network.palace.core.utils.MiscUtil;
 import org.bukkit.ChatColor;
 import org.bukkit.command.CommandSender;
 
-@CommandMeta(description = "Award an achievement to a player", rank = Rank.MOD)
+@CommandMeta(description = "Award an achievement to a player", rank = Rank.CM)
 public class AchievementCommand extends CoreCommand {
 
     public AchievementCommand() {

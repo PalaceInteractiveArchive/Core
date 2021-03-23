@@ -158,9 +158,9 @@ public class MongoHandler {
      * @return the rank, or settler if doesn't exist
      */
     public Rank getRank(UUID uuid) {
-        if (uuid == null) return Rank.SETTLER;
+        if (uuid == null) return Rank.GUEST;
         Document result = playerCollection.find(Filters.eq("uuid", uuid.toString())).first();
-        if (result == null) return Rank.SETTLER;
+        if (result == null) return Rank.GUEST;
         return Rank.fromString(result.getString("rank"));
     }
 

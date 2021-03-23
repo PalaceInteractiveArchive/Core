@@ -118,7 +118,7 @@ public class RankCommand extends CoreCommand {
                 return;
             }
             case "members": {
-                List<Rank> blocked = Arrays.asList(Rank.SETTLER, Rank.DWELLER);
+                List<Rank> blocked = Arrays.asList(Rank.GUEST, Rank.PASSHOLDER);
                 List<String> members = null;
                 if (!blocked.contains(rank)) {
                     members = Core.getMongoHandler().getMembers(rank);
