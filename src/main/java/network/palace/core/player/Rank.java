@@ -109,4 +109,14 @@ public enum Rank {
         return String.valueOf(alphabet[pos] + getName());
 
     }
+
+    public String getScoreboardPrefix() {
+        int pos = ordinal();
+        if (pos < 0 || pos >= alphabet.length) return "";
+        return String.valueOf(alphabet[pos]);
+    }
+
+    public String getShortName() {
+        return getName().substring(0, 3);
+    }
 }

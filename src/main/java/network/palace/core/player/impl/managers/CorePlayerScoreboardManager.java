@@ -144,8 +144,8 @@ public class CorePlayerScoreboardManager implements CPlayerScoreboardManager {
     public void setupPlayerTags() {
         if (scoreboard == null) setup();
         for (Rank rank : Rank.values()) {
-            if (scoreboard.getTeam(rank.getScoreboardName()) != null) continue;
-            Team team = scoreboard.registerNewTeam(rank.getScoreboardName());
+            if (scoreboard.getTeam(rank.getScoreboardPrefix() + rank.getShortName()) != null) continue;
+            Team team = scoreboard.registerNewTeam(rank.getScoreboardPrefix() + rank.getShortName());
             team.setPrefix(rank.getFormattedName() + " ");
             team.setColor(rank.getTagColor());
             team.setOption(Team.Option.COLLISION_RULE, Team.OptionStatus.NEVER);
@@ -195,7 +195,7 @@ public class CorePlayerScoreboardManager implements CPlayerScoreboardManager {
 
     private String teamName(Rank rank, List<RankTag> tags) {
         tags.sort((rankTag, t1) -> t1.getId() - rankTag.getId());
-        return rank.getScoreboardName() + (rank.equals(Rank.VIP) ? "vip" : rank.getDBName()) +
+        return rank.getShortName() + (rank.equals(Rank.VIP) ? "vip" : rank.getDBName()) +
                 (tags.isEmpty() ? "" : tags.get(0).getShortScoreboardTag());
     }
 
