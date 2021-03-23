@@ -100,9 +100,13 @@ public enum Rank {
         return Core.getPermissionManager().getPermissions(this);
     }
 
-    public String getScoreboardPrefix() {
+    public String getScoreboardName() {
         int pos = ordinal();
         if (pos < 0 || pos >= alphabet.length) return "";
-        return String.valueOf(alphabet[pos]);
+        if (getName() == "Premier Passport") {
+            return String.valueOf(alphabet[pos] + "Premier");
+        }
+        return String.valueOf(alphabet[pos] + getName());
+
     }
 }
