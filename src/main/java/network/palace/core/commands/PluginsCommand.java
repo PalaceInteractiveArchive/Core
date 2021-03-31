@@ -3,6 +3,9 @@ package network.palace.core.commands;
 import com.comphenix.protocol.utility.MinecraftVersion;
 import com.google.common.base.Charsets;
 import com.google.common.io.Resources;
+import com.google.gson.Gson;
+import com.google.gson.JsonObject;
+import com.google.gson.JsonSyntaxException;
 import lombok.Getter;
 import network.palace.core.Core;
 import network.palace.core.command.CommandException;
@@ -15,15 +18,13 @@ import org.bukkit.ChatColor;
 import org.bukkit.command.CommandSender;
 import org.bukkit.entity.Player;
 import org.bukkit.plugin.Plugin;
-import org.json.simple.JSONObject;
-import org.json.simple.parser.JSONParser;
-import org.json.simple.parser.ParseException;
 
 import java.io.BufferedReader;
 import java.io.IOException;
 import java.lang.annotation.IncompleteAnnotationException;
 import java.net.URL;
 import java.net.URLEncoder;
+import java.nio.charset.StandardCharsets;
 import java.util.ArrayList;
 import java.util.Comparator;
 import java.util.List;
@@ -113,6 +114,7 @@ public class PluginsCommand extends CoreCommand {
         @Getter private final String name;
         @Getter private final String version;
         @Getter private final boolean enabled;
+
         public PluginInfo(String name, String version, boolean enabled) {
             this.name = name;
             this.version = ((version == null || version.trim().isEmpty()) ? "Unknown" : version);
@@ -120,47 +122,50 @@ public class PluginsCommand extends CoreCommand {
         }
 
     }
+
     private void obtainVersion() {
         String version = Bukkit.getVersion();
         if (version == null) version = "Custom";
-        if (version.startsWith("git-Spigot-")) {
-            String[] parts = version.substring("git-Spigot-".length()).split("-");
-            int cbVersions = getDistance("craftbukkit", parts[1].substring(0, parts[1].indexOf(' ')));
-            int spigotVersions = getDistance("spigot", parts[0]);
+        String[] parts = version.substring(0, version.indexOf(' ')).split("-");
+        if (parts.length == 4) {
+            int cbVersions = getDistance("craftbukkit", parts[3]);
+            int spigotVersions = getDistance("spigot", parts[2]);
             if (cbVersions == -1 || spigotVersions == -1) {
                 versionsBehind = "Error obtaining version information";
             } else {
                 if (cbVersions == 0 && spigotVersions == 0) {
-                    versionsBehind = "Latest";
+                    versionsBehind = "You are running the latest version";
                 } else {
-                    versionsBehind = (cbVersions + spigotVersions) + " behind";
+                    versionsBehind = "You are " + (cbVersions + spigotVersions) + " version(s) behind";
                 }
             }
-        } else if (version.startsWith("git-Bukkit-")) {
-            version = version.substring("git-Bukkit-".length());
-            int cbVersions = getDistance("craftbukkit", version.substring(0, version.indexOf(' ')));
+
+        } else if (parts.length == 3) {
+            int cbVersions = getDistance("craftbukkit", parts[2]);
             if (cbVersions == -1) {
                 versionsBehind = "Error obtaining version information";
             } else {
                 if (cbVersions == 0) {
-                    versionsBehind = "Latest";
+                    versionsBehind = "You are running the latest version";
                 } else {
-                    versionsBehind = cbVersions + " behind";
+                    versionsBehind = "You are " + cbVersions + " version(s) behind";
                 }
             }
         } else {
-            versionsBehind = "Unknown";
+            versionsBehind = "Unknown version";
         }
     }
 
+
     private static int getDistance(String repo, String hash) {
         try {
-            try (BufferedReader reader = Resources.asCharSource(new URL("https://hub.spigotmc.org/stash/rest/api/1.0/projects/SPIGOT/repos/"
-                    + repo + "/commits?since=" + URLEncoder.encode(hash, "UTF-8") + "&withCounts=true"), Charsets.UTF_8
+            try (BufferedReader reader = Resources.asCharSource(
+                    new URL("https://hub.spigotmc.org/stash/rest/api/1.0/projects/SPIGOT/repos/" + repo + "/commits?since=" + URLEncoder.encode(hash, StandardCharsets.UTF_8) + "&withCounts=true"),
+                    Charsets.UTF_8
             ).openBufferedStream()) {
-                JSONObject obj = (JSONObject) new JSONParser().parse(reader);
-                return ((Number) obj.get("totalCount")).intValue();
-            } catch (ParseException ex) {
+                JsonObject obj = new Gson().fromJson(reader, JsonObject.class);
+                return obj.get("totalCount").getAsInt();
+            } catch (JsonSyntaxException ex) {
                 ex.printStackTrace();
                 return -1;
             }
