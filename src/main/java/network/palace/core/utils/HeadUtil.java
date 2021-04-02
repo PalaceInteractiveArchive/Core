@@ -1,10 +1,8 @@
 package network.palace.core.utils;
 
 import com.comphenix.protocol.utility.MinecraftReflection;
-import com.comphenix.protocol.wrappers.nbt.NbtCompound;
-import com.comphenix.protocol.wrappers.nbt.NbtFactory;
-import com.comphenix.protocol.wrappers.nbt.NbtList;
 import network.palace.core.player.CPlayer;
+import org.bukkit.Bukkit;
 import org.bukkit.ChatColor;
 import org.bukkit.Material;
 import org.bukkit.inventory.ItemStack;
@@ -61,16 +59,16 @@ public class HeadUtil {
     private static ItemStack getHead(String hash) {
         ItemStack item = new ItemStack(Material.PLAYER_HEAD);
         item = MinecraftReflection.getBukkitItemStack(item);
-        NbtCompound nbt = NbtFactory.asCompound(NbtFactory.fromItemTag(item));
-        NbtCompound texture = NbtFactory.ofCompound("");
-        texture.put("Value", hash);
-        NbtList<NbtCompound> textures = NbtFactory.ofList("textures", texture);
-        NbtCompound properties = NbtFactory.ofCompound("Properties");
-        properties.put(textures);
-        NbtCompound skullOwner = NbtFactory.ofCompound("SkullOwner");
-        skullOwner.put("Id", UUID.randomUUID().toString());
-        skullOwner.put(properties);
-        nbt.put(skullOwner);
-        return item;
+
+        UUID uuid = UUID.randomUUID();
+        if (Bukkit.getVersion().contains("1.16")) {
+            int first = (int) (uuid.getMostSignificantBits() >>> 32);
+            int second = (int) (uuid.getMostSignificantBits());
+            int third = (int) (uuid.getLeastSignificantBits() >>> 32);
+            int fourth = (int) (uuid.getLeastSignificantBits());
+            return Bukkit.getUnsafe().modifyItemStack(item, "{SkullOwner:{Id:[I;" + first + "," + second + "," + third + "," + fourth + "],Properties:{textures:[{Value:\"" + hash + "\"}]}}}");
+        } else {
+            return Bukkit.getUnsafe().modifyItemStack(item, "{SkullOwner:{Id:\"" + uuid.toString() + "\",Properties:{textures:[{Value:\"" + hash + "\"}]}}}");
+        }
     }
 }
