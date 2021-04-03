@@ -18,7 +18,7 @@ public enum Rank {
     COORDINATOR("Coordinator", ChatColor.BLUE + "Coordinator ", ChatColor.BLUE, ChatColor.AQUA, true, 12),
     BUILDER("Imagineer", ChatColor.AQUA + "Imagineer ", ChatColor.AQUA, ChatColor.AQUA, true, 11),
     IMAGINEER("Imagineer", ChatColor.AQUA + "Imagineer ", ChatColor.AQUA, ChatColor.AQUA, true, 11),
-    MEDIA("Cast Member", ChatColor.BLUE + "CM ", ChatColor.AQUA, ChatColor.AQUA, true, 11),
+    MEDIA("Cast Member", ChatColor.AQUA + "CM ", ChatColor.AQUA, ChatColor.AQUA, true, 11),
     CM("Cast Member", ChatColor.AQUA + "CM ", ChatColor.AQUA, ChatColor.AQUA, true, 11),
     TRAINEETECH("Trainee", ChatColor.AQUA + "Trainee ", ChatColor.AQUA, ChatColor.AQUA, false, 10),
     TRAINEEBUILD("Trainee", ChatColor.AQUA + "Trainee ", ChatColor.AQUA, ChatColor.AQUA, false, 10),
