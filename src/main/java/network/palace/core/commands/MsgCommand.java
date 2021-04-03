@@ -10,7 +10,7 @@ import org.bukkit.ChatColor;
 import org.bukkit.command.CommandSender;
 import org.bukkit.entity.Player;
 
-@CommandMeta(description = "Send message", aliases = {"tell", "t", "w", "whisper", "m"}, rank = Rank.MOD)
+@CommandMeta(description = "Send message", aliases = {"tell", "t", "w", "whisper", "m"}, rank = Rank.CM)
 public class MsgCommand extends CoreCommand {
 
     public MsgCommand() {

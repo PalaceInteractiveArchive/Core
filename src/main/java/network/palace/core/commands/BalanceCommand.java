@@ -20,7 +20,7 @@ import java.util.UUID;
 /**
  * The type Balance command.
  */
-@CommandMeta(aliases = "bal", description = "Manage economy balances", rank = Rank.MOD)
+@CommandMeta(aliases = "bal", description = "Manage economy balances", rank = Rank.CM)
 public class BalanceCommand extends CoreCommand {
 
     /**

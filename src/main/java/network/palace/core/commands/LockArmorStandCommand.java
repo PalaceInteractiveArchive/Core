@@ -14,7 +14,7 @@ import java.lang.reflect.Field;
 import java.lang.reflect.InvocationTargetException;
 import java.util.Collection;
 
-@CommandMeta(description = "Toggle whether players can edit the items on an armor stand", rank = Rank.MOD)
+@CommandMeta(description = "Toggle whether players can edit the items on an armor stand", rank = Rank.CM)
 public class LockArmorStandCommand extends CoreCommand {
 
     public LockArmorStandCommand() {

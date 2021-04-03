@@ -59,11 +59,11 @@ public class CorePlayerManager implements CPlayerManager {
         Document onlineData;
         if (joinData == null) {
             // new player!
-            rank = Rank.SETTLER;
+            rank = Rank.GUEST;
             proxy = UUID.randomUUID();
             onlineData = new Document();
         } else {
-            rank = joinData.containsKey("rank") ? Rank.fromString(joinData.getString("rank")) : Rank.SETTLER;
+            rank = joinData.containsKey("rank") ? Rank.fromString(joinData.getString("rank")) : Rank.GUEST;
             if (joinData.containsKey("tags")) {
                 joinData.get("tags", ArrayList.class).forEach(o -> tags.add(RankTag.fromString((String) o)));
             }
