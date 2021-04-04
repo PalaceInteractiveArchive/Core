@@ -8,6 +8,8 @@ import java.util.List;
 
 @AllArgsConstructor
 public enum RankTag {
+    /* Dev Team (best team) */
+    JRDEV("Jr. Developer Program", "J", "j", ChatColor.DARK_RED, 9),
     /* Media Team */
     DESIGNER("Resource Pack Designer", "D", "d", ChatColor.BLUE, 8),
     /* Guide Program */

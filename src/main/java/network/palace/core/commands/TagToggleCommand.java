@@ -7,7 +7,7 @@ import network.palace.core.player.CPlayer;
 import network.palace.core.player.Rank;
 import org.bukkit.ChatColor;
 
-@CommandMeta(description = "Hide username tags", rank = Rank.SPECIALGUEST)
+@CommandMeta(description = "Hide username tags", rank = Rank.VIP)
 public class TagToggleCommand extends CoreCommand {
 
     /**

@@ -20,7 +20,7 @@ import java.util.UUID;
 /**
  * The type Token command.
  */
-@CommandMeta(description = "Manage economy tokens", rank = Rank.MOD)
+@CommandMeta(description = "Manage economy tokens", rank = Rank.CM)
 public class TokenCommand extends CoreCommand {
 
     /**

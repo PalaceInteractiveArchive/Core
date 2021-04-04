@@ -40,7 +40,7 @@ public @interface CommandMeta {
      *
      * @return the rank
      */
-    Rank rank() default Rank.SETTLER;
+    Rank rank() default Rank.GUEST;
 
     /**
      * RankTag
