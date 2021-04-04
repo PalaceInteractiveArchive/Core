@@ -108,7 +108,10 @@ public enum Rank {
             return String.valueOf(alphabet[pos] + "Premier");
         }
         return String.valueOf(alphabet[pos] + getName());
+    }
 
+    public String getScoreboardTeamName() {
+        return getScoreboardPrefix() + getDBName().substring(0, Math.min(getDBName().length(), 10));
     }
 
     public String getScoreboardPrefix() {
