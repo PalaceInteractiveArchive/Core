@@ -82,7 +82,7 @@ public class MessageHandler {
                 Core.debugLog(object.toString());
                 int id = object.get("id").getAsInt();
                 try {
-                    new IncomingMessageEvent(id, object).call();
+                    Core.runTask(Core.getInstance(), () -> new IncomingMessageEvent(id, object).call());
                 } catch (Exception e) {
                     Core.logMessage("MessageHandler", "Error processing IncomingMessageEvent for incoming packet " + object.toString());
                     e.printStackTrace();
@@ -98,7 +98,7 @@ public class MessageHandler {
                 Core.debugLog(object.toString());
                 int id = object.get("id").getAsInt();
                 try {
-                    new IncomingMessageEvent(id, object).call();
+                    Core.runTask(Core.getInstance(), () -> new IncomingMessageEvent(id, object).call());
                 } catch (Exception e) {
                     Core.logMessage("MessageHandler", "Error processing IncomingMessageEvent for incoming packet " + object.toString());
                     e.printStackTrace();
