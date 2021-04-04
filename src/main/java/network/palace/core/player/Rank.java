@@ -65,6 +65,12 @@ public enum Rank {
             case TRAINEETECH:
                 s = name().toLowerCase();
                 break;
+            case MEDIA:
+                s = "media";
+                break;
+            case BUILDER:
+                s = "builder";
+                break;
             default:
                 s = name.toLowerCase().replaceAll(" ", "");
         }
