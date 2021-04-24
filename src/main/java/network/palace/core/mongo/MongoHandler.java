@@ -1428,4 +1428,16 @@ public class MongoHandler {
 
         playerCollection.updateOne(Filters.eq("uuid", uuid.toString()), Updates.push("bans", banDocument));
     }
+
+    /**
+     * Gets a users discord ID if stored
+     * @param uuid the uuid of the player
+     * @return a string of the users discord ID if stored
+     */
+    public String getUserDiscordId(UUID uuid) {
+        FindIterable<Document> result = playerCollection.find(Filters.eq("uuid", uuid.toString()));
+
+        if (!result.first().getString("discord.discordID").equals("")) return result.first().getString("discord.discordID");
+        return "";
+    }
 }

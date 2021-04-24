@@ -1,9 +1,11 @@
 package network.palace.core.commands.permissions;
 
+import lombok.val;
 import network.palace.core.Core;
 import network.palace.core.command.CommandException;
 import network.palace.core.command.CommandMeta;
 import network.palace.core.command.CoreCommand;
+import network.palace.core.messagequeue.packets.BotRankChangePacket;
 import network.palace.core.messagequeue.packets.RankChangePacket;
 import network.palace.core.player.CPlayer;
 import network.palace.core.player.Rank;
@@ -19,6 +21,7 @@ import java.util.List;
 import java.util.Map;
 import java.util.UUID;
 import java.util.logging.Level;
+import java.util.stream.Collectors;
 
 @CommandMeta(description = "Player commands")
 public class PlayerCommand extends CoreCommand {
@@ -127,6 +130,18 @@ public class PlayerCommand extends CoreCommand {
                     Core.getInstance().getLogger().log(Level.SEVERE, "Error communicating player rank change", e);
                 }
                 sender.sendMessage(ChatColor.GREEN + name + " is now rank " + next.getFormattedName());
+                val discordId = Core.getMongoHandler().getUserDiscordId(player.getUuid());
+                if (!discordId.equals("")) {
+                    String userTags = player.getTags()
+                            .stream()
+                            .map(a -> a.getDBName())
+                            .collect(Collectors.joining(","));
+                    try {
+                        Core.getMessageHandler().sendMessage(new BotRankChangePacket(next.getDBName(), name, discordId, userTags), Core.getMessageHandler().BOT);
+                    } catch (IOException e) {
+                        e.printStackTrace();
+                    }
+                }
                 return;
             }
             case "addtag": {
