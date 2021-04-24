@@ -1436,8 +1436,10 @@ public class MongoHandler {
      */
     public String getUserDiscordId(UUID uuid) {
         FindIterable<Document> result = playerCollection.find(Filters.eq("uuid", uuid.toString()));
-
-        if (!result.first().getString("discord.discordID").equals("")) return result.first().getString("discord.discordID");
+        Document data = result.first();
+        Document discord = (Document) data.get("discord");
+        String discordId = discord.getString("discordID");
+        if (!discordId.equals("")) return discordId;
         return "";
     }
 }
