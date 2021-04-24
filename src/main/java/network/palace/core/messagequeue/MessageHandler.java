@@ -23,7 +23,7 @@ public class MessageHandler {
     public static final AMQP.BasicProperties JSON_PROPS = new AMQP.BasicProperties.Builder().contentEncoding("application/json").build();
 
     public Connection PUBLISHING_CONNECTION, CONSUMING_CONNECTION;
-    public MessageClient ALL_PROXIES, ALL_MC, STATISTICS, PROXY_DIRECT, MC_DIRECT;
+    public MessageClient ALL_PROXIES, ALL_MC, STATISTICS, PROXY_DIRECT, MC_DIRECT, BOT;
 
     public final HashMap<String, MessageClient> permanentClients = new HashMap<>();
 
@@ -68,6 +68,7 @@ public class MessageHandler {
             STATISTICS = new MessageClient(ConnectionType.PUBLISHING, "statistics", true);
             PROXY_DIRECT = new MessageClient(ConnectionType.PUBLISHING, "proxy_direct", "direct");
             MC_DIRECT = new MessageClient(ConnectionType.PUBLISHING, "mc_direct", "direct");
+            BOT = new MessageClient(ConnectionType.PUBLISHING, "bot-networking", true);
         } catch (Exception e) {
             e.printStackTrace();
             Core.getInstance().getLogger().severe("There was an error initializing essential message publishing queues!");
