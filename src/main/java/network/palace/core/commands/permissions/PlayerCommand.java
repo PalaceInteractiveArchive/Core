@@ -130,17 +130,17 @@ public class PlayerCommand extends CoreCommand {
                     Core.getInstance().getLogger().log(Level.SEVERE, "Error communicating player rank change", e);
                 }
                 sender.sendMessage(ChatColor.GREEN + name + " is now rank " + next.getFormattedName());
-                val discordId = Core.getMongoHandler().getUserDiscordId(player.getUuid());
-                if (!discordId.equals("")) {
-                    String userTags = player.getTags()
-                            .stream()
-                            .map(a -> a.getDBName())
-                            .collect(Collectors.joining(","));
-                    try {
+                try {
+                    val discordId = Core.getMongoHandler().getUserDiscordId(player.getUuid());
+                    if (!discordId.equals("")) {
+                        String userTags = player.getTags()
+                                .stream()
+                                .map(a -> a.getDBName())
+                                .collect(Collectors.joining(","));
                         Core.getMessageHandler().sendMessage(new BotRankChangePacket(next.getDBName(), name, discordId, userTags), Core.getMessageHandler().BOT);
-                    } catch (IOException e) {
-                        e.printStackTrace();
                     }
+                } catch (IOException e) {
+                        e.printStackTrace();
                 }
                 return;
             }
