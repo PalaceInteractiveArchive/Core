@@ -20,7 +20,7 @@ public class CommandListener implements Listener {
 
     @EventHandler
     public void preProcessCommand(PlayerCommandPreprocessEvent event) {
-        if (event.getMessage().startsWith("/minecraft:kill")) {
+        if (event.getMessage().toLowerCase().startsWith("/minecraft:kill")) {
             if (!event.getMessage().matches(".*r=[1-9].*")) {
                 event.setCancelled(true);
                 event.getPlayer().sendMessage("§cYou cannot kill entities without a radius!");
@@ -37,12 +37,12 @@ public class CommandListener implements Listener {
         CommandBlock cb = (CommandBlock)block.getState();
         try {
             String[] args = cb.getCommand().split(" ");
-            if (args[0].equals("minecraft:kill") && !cb.getCommand().matches(".*r=[1-9].*")) {
+            if (args[0].toLowerCase().equals("minecraft:kill") && !cb.getCommand().matches(".*r=[1-9].*")) {
                 setCommandBlock(cb, "", String.join(" ", args));
                 return;
             }
 
-            if (!args[0].equals("kill")) return;
+            if (!args[0].toLowerCase().equals("kill")) return;
 
             String cmd = cb.getCommand().matches(".*r=[1-9].*") ? "minecraft:" + cb.getCommand() : "";
             setCommandBlock(cb, cmd, String.join(" ", args));
