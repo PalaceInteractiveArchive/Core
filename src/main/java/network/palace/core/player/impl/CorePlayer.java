@@ -738,36 +738,43 @@ public class CorePlayer implements CPlayer {
         getBukkitPlayer().performCommand(cmd);
     }
 
+    @Deprecated
     @Override
     public int getTokens() {
         return Core.getMongoHandler().getCurrency(getUuid(), CurrencyType.TOKENS);
     }
 
+    @Deprecated
     @Override
     public int getBalance() {
         return Core.getMongoHandler().getCurrency(getUuid(), CurrencyType.BALANCE);
     }
 
+    @Deprecated
     @Override
     public void addTokens(int amount) {
         addTokens(amount, "plugin");
     }
 
+    @Deprecated
     @Override
     public void addBalance(int amount) {
         addBalance(amount, "plugin");
     }
 
+    @Deprecated
     @Override
     public void addTokens(int amount, String reason) {
         addTokens(amount, reason, null);
     }
 
+    @Deprecated
     @Override
     public void addBalance(int amount, String reason) {
         addBalance(amount, reason, null);
     }
 
+    @Deprecated
     @Override
     public void addTokens(int amount, String reason, TransactionCallback callback) {
         if (amount == 0) return;
@@ -779,6 +786,7 @@ public class CorePlayer implements CPlayer {
         Core.getEconomy().addTransaction(uuid, amount, reason, CurrencyType.TOKENS, callback);
     }
 
+    @Deprecated
     @Override
     public void addBalance(int amount, String reason, TransactionCallback callback) {
         if (amount == 0) return;
@@ -790,46 +798,55 @@ public class CorePlayer implements CPlayer {
         Core.getEconomy().addTransaction(uuid, amount, reason, CurrencyType.BALANCE, callback);
     }
 
+    @Deprecated
     @Override
     public void setTokens(int amount) {
         setTokens(amount, "plugin");
     }
 
+    @Deprecated
     @Override
     public void setBalance(int amount) {
         setBalance(amount, "plugin");
     }
 
+    @Deprecated
     @Override
     public void setTokens(int amount, String reason) {
         Core.runTaskAsynchronously(Core.getInstance(), () -> Core.getMongoHandler().changeAmount(getUuid(), amount, reason, CurrencyType.TOKENS, true));
     }
 
+    @Deprecated
     @Override
     public void setBalance(int amount, String reason) {
         Core.runTaskAsynchronously(Core.getInstance(), () -> Core.getMongoHandler().changeAmount(getUuid(), amount, reason, CurrencyType.BALANCE, true));
     }
 
+    @Deprecated
     @Override
     public void removeTokens(int amount) {
         removeTokens(amount, "plugin");
     }
 
+    @Deprecated
     @Override
     public void removeBalance(int amount) {
         removeBalance(amount, "plugin");
     }
 
+    @Deprecated
     @Override
     public void removeTokens(int amount, String reason) {
         removeTokens(amount, reason, null);
     }
 
+    @Deprecated
     @Override
     public void removeBalance(int amount, String reason) {
         removeBalance(amount, reason, null);
     }
 
+    @Deprecated
     @Override
     public void removeBalance(int amount, String reason, TransactionCallback callback) {
         if (amount == 0) return;
@@ -841,6 +858,7 @@ public class CorePlayer implements CPlayer {
         Core.getEconomy().addTransaction(uuid, -amount, reason, CurrencyType.BALANCE, callback);
     }
 
+    @Deprecated
     @Override
     public void removeTokens(int amount, String reason, TransactionCallback callback) {
         if (amount == 0) return;
