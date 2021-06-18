@@ -20,6 +20,7 @@ import java.util.UUID;
 /**
  * The type Token command.
  */
+@Deprecated
 @CommandMeta(description = "Manage economy tokens", rank = Rank.CM)
 public class TokenCommand extends CoreCommand {
 
