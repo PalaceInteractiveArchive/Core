@@ -63,7 +63,7 @@ import java.util.concurrent.TimeoutException;
  * <p>
  * You can access instances of other modules by depending on Core in your pom.xml, and then executing Core.get
  */
-@PluginInfo(name = "Core", version = "2.8.3", depend = {"ProtocolLib"}, softdepend = {"ViaVersion"})
+@PluginInfo(name = "Core", version = "2.8.4", depend = {"ProtocolLib"}, softdepend = {"ViaVersion"})
 public class Core extends JavaPlugin {
     @Getter private URLClassLoader coreClassLoader;
     @Getter private static Core instance;

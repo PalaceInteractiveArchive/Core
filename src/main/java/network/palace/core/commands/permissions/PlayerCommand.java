@@ -10,6 +10,7 @@ import network.palace.core.messagequeue.packets.RankChangePacket;
 import network.palace.core.player.CPlayer;
 import network.palace.core.player.Rank;
 import network.palace.core.player.RankTag;
+import org.bson.Document;
 import org.bukkit.ChatColor;
 import org.bukkit.command.CommandSender;
 import org.bukkit.command.ConsoleCommandSender;
@@ -131,14 +132,17 @@ public class PlayerCommand extends CoreCommand {
                 }
                 sender.sendMessage(ChatColor.GREEN + name + " is now rank " + next.getFormattedName());
                 try {
-                    val discordId = Core.getMongoHandler().getUserDiscordId(player.getUuid());
-                    if (!discordId.equals("")) {
-                        String userTags = player.getTags()
-                                .stream()
-                                .map(a -> a.getDBName())
-                                .collect(Collectors.joining(","));
-                            Core.getMessageHandler().sendMessage(new BotRankChangePacket(next.getDBName(), name, discordId, userTags), Core.getMessageHandler().BOT);
-                    }
+                        val discordId = Core.getMongoHandler().getUserDiscordId(uuid);
+                        if (discordId.isPresent()) {
+                            val dbPlayer = Core.getMongoHandler().getPlayer(uuid);
+                            val tagsList = dbPlayer.get("tags");
+                            Core.logInfo(tagsList.toString());
+//                            String userTags = dbPlayer.getTags()
+//                                    .stream()
+//                                    .map(RankTag::getDBName)
+//                                    .collect(Collectors.joining(","));
+                            Core.getMessageHandler().sendMessage(new BotRankChangePacket(next.getDBName(), name, discordId.get(), ""), Core.getMessageHandler().BOT);
+                        }
                 } catch (IOException e) {
                     e.printStackTrace();
                 }
