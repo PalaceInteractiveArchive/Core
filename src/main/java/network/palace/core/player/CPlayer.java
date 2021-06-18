@@ -832,6 +832,7 @@ public interface CPlayer {
      *
      * @return the tokens the player has
      */
+    @Deprecated
     int getTokens();
 
     /**
@@ -839,6 +840,7 @@ public interface CPlayer {
      *
      * @return the balance the player has
      */
+    @Deprecated
     int getBalance();
 
     /**
@@ -846,6 +848,7 @@ public interface CPlayer {
      *
      * @param amount the amount to give to the player
      */
+    @Deprecated
     void addTokens(int amount);
 
     /**
@@ -853,6 +856,7 @@ public interface CPlayer {
      *
      * @param amount the amount to add
      */
+    @Deprecated
     void addBalance(int amount);
 
     /**
@@ -861,6 +865,7 @@ public interface CPlayer {
      * @param amount the amount to give to the player
      * @param reason the reason for the transaction
      */
+    @Deprecated
     void addTokens(int amount, String reason);
 
     /**
@@ -869,6 +874,7 @@ public interface CPlayer {
      * @param amount the amount to add
      * @param reason the reason for the transaction
      */
+    @Deprecated
     void addBalance(int amount, String reason);
 
     /**
@@ -878,6 +884,7 @@ public interface CPlayer {
      * @param reason   the reason for the transaction
      * @param callback the callback to run after the transaction has been processed
      */
+    @Deprecated
     void addTokens(int amount, String reason, TransactionCallback callback);
 
     /**
@@ -887,6 +894,7 @@ public interface CPlayer {
      * @param reason   the reason for the transaction
      * @param callback the callback to run after the transaction has been processed
      */
+    @Deprecated
     void addBalance(int amount, String reason, TransactionCallback callback);
 
     /**
@@ -894,6 +902,7 @@ public interface CPlayer {
      *
      * @param amount the amount to set it to
      */
+    @Deprecated
     void setTokens(int amount);
 
     /**
@@ -901,6 +910,7 @@ public interface CPlayer {
      *
      * @param amount the amount to set it to
      */
+    @Deprecated
     void setBalance(int amount);
 
     /**
@@ -909,6 +919,7 @@ public interface CPlayer {
      * @param amount the amount to set it to
      * @param reason the reason for the transaction
      */
+    @Deprecated
     void setTokens(int amount, String reason);
 
     /**
@@ -917,6 +928,7 @@ public interface CPlayer {
      * @param amount the amount to set it to
      * @param reason the reason for the transaction
      */
+    @Deprecated
     void setBalance(int amount, String reason);
 
     /**
@@ -924,6 +936,7 @@ public interface CPlayer {
      *
      * @param amount the amount to remove
      */
+    @Deprecated
     void removeTokens(int amount);
 
     /**
@@ -931,6 +944,7 @@ public interface CPlayer {
      *
      * @param amount the amount to remove
      */
+    @Deprecated
     void removeBalance(int amount);
 
     /**
@@ -939,6 +953,7 @@ public interface CPlayer {
      * @param amount the amount to remove
      * @param reason the reason for the transaction
      */
+    @Deprecated
     void removeTokens(int amount, String reason);
 
     /**
@@ -947,6 +962,7 @@ public interface CPlayer {
      * @param amount the amount to remove
      * @param reason the reason for the transaction
      */
+    @Deprecated
     void removeBalance(int amount, String reason);
 
     /**
@@ -956,6 +972,7 @@ public interface CPlayer {
      * @param reason   the reason for the transaction
      * @param callback the callback to run after the transaction has been processed
      */
+    @Deprecated
     void removeBalance(int amount, String reason, TransactionCallback callback);
 
     /**
@@ -965,6 +982,7 @@ public interface CPlayer {
      * @param reason   the reason for the transaction
      * @param callback the callback to run after the transaction has been processed
      */
+    @Deprecated
     void removeTokens(int amount, String reason, TransactionCallback callback);
 
     /**
