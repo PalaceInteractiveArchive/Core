@@ -6,7 +6,7 @@ import org.bukkit.ChatColor;
 
 @AllArgsConstructor
 public enum CurrencyType {
-    BALANCE("$", ChatColor.GREEN), TOKENS("✪ ", ChatColor.YELLOW);
+    BALANCE("$", ChatColor.GREEN), TOKENS("✪ ", ChatColor.YELLOW), ADVENTURE("➶", ChatColor.GREEN);
 
     @Getter private String icon;
     @Getter private ChatColor color;
@@ -21,6 +21,8 @@ public enum CurrencyType {
                 return BALANCE;
             case "tokens":
                 return TOKENS;
+            case "adventure":
+                return ADVENTURE;
             default:
                 return null;
         }
