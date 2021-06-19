@@ -871,6 +871,19 @@ public class CorePlayer implements CPlayer {
     }
 
     @Override
+    public void addAdventureCoins(int amount, String reason) {
+        if (amount == 0) return;
+        if (amount > 0) {
+            playSound(getLocation(), Sound.ENTITY_EXPERIENCE_ORB_PICKUP, 1f, 0f);
+            sendMessage(ChatColor.GREEN + "" + ChatColor.BOLD + "-------------------------");
+            sendMessage(ChatColor.GREEN + "You earned " + amount + " Adventure Coins!");
+            sendMessage(ChatColor.GREEN + "Giving you a total of " + 0 + " Adventure Coins!");
+            sendMessage(ChatColor.GREEN + "" + ChatColor.BOLD + "-------------------------");
+            Core.getEconomy().addTransaction(uuid, -amount, reason, CurrencyType.TOKENS, null);
+        }
+    }
+
+    @Override
     public void addStatistic(GameType gameType, StatisticType statisticType, int amount) {
         Core.getMongoHandler().addGameStat(gameType, statisticType, amount, this);
         new GameStatisticChangeEvent(this, gameType, statisticType, amount).call();
