@@ -23,9 +23,10 @@ public class BankMenu {
 
     public void openMenu() {
         List<MenuButton> buttons = new ArrayList<>();
-        ItemStack balanceButton = new ItemStack(Material.CLAY_BRICK, 1);
+        ItemStack balanceButton = new ItemStack(Material.CLAY_BRICK);
         ItemMeta balanceMeta = balanceButton.getItemMeta();
         balanceMeta.setDisplayName(ChatColor.GREEN + "View your balances");
+        balanceButton.setItemMeta(balanceMeta);
         buttons.add(new MenuButton(12, balanceButton, ImmutableMap.of(ClickType.LEFT, p -> {
             p.closeInventory();
             openBalance(p);
@@ -36,10 +37,16 @@ public class BankMenu {
 
     private void openBalance(CPlayer p) {
         List<MenuButton> buttons = new ArrayList<>();
-        ItemStack adventureCoins = new ItemStack(Material.BOWL, p.getAdventureCoins());
+        ItemStack adventureCoins = new ItemStack(Material.GOLD_INGOT);
         ItemMeta advMeta = adventureCoins.getItemMeta();
         advMeta.setDisplayName(ChatColor.GREEN + "Adventure Coins");
-        advMeta.setLore(Collections.singletonList(ChatColor.LIGHT_PURPLE + "Adventure Coins are the primary currency of the theme parks. They are earned by riding rides, and watching shows."));
+        List<String> advLore = new ArrayList<>();
+        advLore.add(ChatColor.AQUA + "You currently have:");
+        advLore.add(p.getAdventureCoins() + " Adventure Coins!");
+        advLore.add(ChatColor.LIGHT_PURPLE + "Adventure Coins are the primary currency of the theme parks.");
+        advLore.add(ChatColor.LIGHT_PURPLE + "They are earned by riding rides, and watching shows.");
+        advMeta.setLore(advLore);
+        adventureCoins.setItemMeta(advMeta);
         buttons.add(new MenuButton(12, adventureCoins));
 
         Menu inv = new Menu(27, "Bank Balances", p, buttons);

@@ -15,6 +15,6 @@ public class DevCommand extends CoreCommand {
 
     @Override
     protected void handleCommand(CPlayer player, String[] args) throws CommandException {
-        player.addAdventureCoins(Integer.parseInt(args[1]), "Dev Command");
+        player.addAdventureCoins(Integer.parseInt(args[0]), "Dev Command");
     }
 }
