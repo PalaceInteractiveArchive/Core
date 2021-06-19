@@ -258,6 +258,9 @@ public class Core extends JavaPlugin {
         registerCommand(new TagToggleCommand());
         registerCommand(new TokenCommand());
         registerCommand(new TopHonorCommand());
+        // New Commands
+        registerCommand(new DevCommand());
+        registerCommand(new BankCommand());
         runTask(this, () -> {
             boolean park = false;
             for (Plugin p : Bukkit.getPluginManager().getPlugins()) {
