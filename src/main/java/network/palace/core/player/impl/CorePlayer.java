@@ -877,10 +877,15 @@ public class CorePlayer implements CPlayer {
             playSound(getLocation(), Sound.ENTITY_EXPERIENCE_ORB_PICKUP, 1f, 0f);
             sendMessage(ChatColor.GREEN + "" + ChatColor.BOLD + "-------------------------");
             sendMessage(ChatColor.GREEN + "You earned " + amount + " Adventure Coins!");
-            sendMessage(ChatColor.GREEN + "Giving you a total of " + 0 + " Adventure Coins!");
+            sendMessage(ChatColor.GREEN + "Giving you a total of " + getAdventureCoins() + " Adventure Coins!");
             sendMessage(ChatColor.GREEN + "" + ChatColor.BOLD + "-------------------------");
             Core.getEconomy().addTransaction(uuid, -amount, reason, CurrencyType.TOKENS, null);
         }
+    }
+
+    @Override
+    public int getAdventureCoins() {
+        return Core.getMongoHandler().getCurrency(getUuid(), CurrencyType.ADVENTURE);
     }
 
     @Override

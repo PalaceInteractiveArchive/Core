@@ -993,7 +993,10 @@ public interface CPlayer {
      */
     void addAdventureCoins(int amount, String reason);
 
-
+    /**
+     * Get's the amount of Adventure Coins a player has
+     */
+    int getAdventureCoins();
 
 
     /**
