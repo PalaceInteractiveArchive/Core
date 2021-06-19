@@ -986,6 +986,17 @@ public interface CPlayer {
     void removeTokens(int amount, String reason, TransactionCallback callback);
 
     /**
+     * Gives a player Adventure Coins
+     *
+     * @param amount the amount to receive
+     * @param reason the reason behind the transaction
+     */
+    void addAdventureCoins(int amount, String reason);
+
+
+
+
+    /**
      * Add a game statistic to a player
      *
      * @param gameType      the game type that the statistic was earned in
