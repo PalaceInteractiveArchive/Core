@@ -98,7 +98,7 @@ public class MongoHandler {
                 .append("username", player.getName())
                 .append("ip", "localhost")
                 .append("tokens", 1)
-                .append("currency", 1)
+                .append("adventure", 1)
                 .append("currentServer", "Hub1")
                 .append("isp", "localhost")
                 .append("rank", player.getRank().getDBName())
