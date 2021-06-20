@@ -70,7 +70,7 @@ public class BankMenu {
         backMeta.setDisplayName(ChatColor.RED + "Go Back");
         backButton.setItemMeta(backMeta);
 
-        buttons.add(new MenuButton(24, backButton, ImmutableMap.of(ClickType.LEFT, user -> {
+        buttons.add(new MenuButton(22, backButton, ImmutableMap.of(ClickType.LEFT, user -> {
             user.closeInventory();
             openMenu();
         })));
@@ -117,7 +117,7 @@ public class BankMenu {
         backMeta.setDisplayName(ChatColor.RED + "Go Back");
         backButton.setItemMeta(backMeta);
 
-        buttons.add(new MenuButton(24, backButton, ImmutableMap.of(ClickType.LEFT, user -> {
+        buttons.add(new MenuButton(22, backButton, ImmutableMap.of(ClickType.LEFT, user -> {
             user.closeInventory();
             openMenu();
         })));
