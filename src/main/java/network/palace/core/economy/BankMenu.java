@@ -192,7 +192,7 @@ public class BankMenu {
     private void sendPlayerTradeRequest(CPlayer receiver) {
         if (receiver.equals(player)) {
             player.sendMessage(ChatColor.RED + "You cannot trade with yourself!");
-            player.playSound(player.getLocation(), Sound.BLOCK_ANVIL_DESTROY, 1f, 0f);
+            player.playSound(player.getLocation(), Sound.ENTITY_ZOMBIE_ATTACK_DOOR_WOOD, 1f, 0f);
             return;
         }
         player.sendMessage(ChatColor.GREEN + "Sent a request to " + receiver.getName() + " successfully. They have one minute to respond.");
