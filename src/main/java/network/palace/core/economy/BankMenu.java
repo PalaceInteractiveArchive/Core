@@ -175,6 +175,8 @@ public class BankMenu {
             })));
         }
 
+        Menu inv = new Menu(27, "Players to Trade", player, buttons);
+        inv.open();
     }
 
 }
