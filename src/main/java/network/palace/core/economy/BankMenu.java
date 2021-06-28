@@ -175,6 +175,15 @@ public class BankMenu {
             })));
         }
 
+        ItemStack exitButton = new ItemStack(Material.BARRIER);
+        ItemMeta exitButtonItemMeta = exitButton.getItemMeta();
+        exitButtonItemMeta.setDisplayName(ChatColor.RED + "Return to Utilities Menu");
+        exitButton.setItemMeta(exitButtonItemMeta);
+        buttons.add(new MenuButton(22, exitButton, ImmutableMap.of(ClickType.LEFT, user -> {
+            user.closeInventory();
+            openUtilsMenu();
+        })));
+
         Menu inv = new Menu(27, "Players to Trade", player, buttons);
         inv.open();
     }
