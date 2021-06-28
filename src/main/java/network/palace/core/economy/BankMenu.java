@@ -7,6 +7,7 @@ import network.palace.core.menu.MenuButton;
 import network.palace.core.player.CPlayer;
 import org.bukkit.ChatColor;
 import org.bukkit.Material;
+import org.bukkit.Sound;
 import org.bukkit.event.inventory.ClickType;
 import org.bukkit.inventory.ItemStack;
 import org.bukkit.inventory.meta.ItemMeta;
@@ -143,11 +144,11 @@ public class BankMenu {
 
                 SkullMeta playerHeadMeta = (SkullMeta) playerHead.getItemMeta();
                 playerHeadMeta.setOwningPlayer(onlinePlayer.getBukkitPlayer());
-                playerHeadMeta.setDisplayName(ChatColor.GOLD + onlinePlayer.getName());
+                playerHeadMeta.setDisplayName(onlinePlayer.getRank().getFormattedName() + " " + onlinePlayer.getName());
                 playerHead.setItemMeta(playerHeadMeta);
                 buttons.add(new MenuButton(x, playerHead, ImmutableMap.of(ClickType.LEFT, user -> {
                     user.closeInventory();
-                    //todo
+                    sendPlayerTradeRequest(onlinePlayer);
                 })));
                 x++;
             }
@@ -186,6 +187,17 @@ public class BankMenu {
 
         Menu inv = new Menu(27, "Players to Trade", player, buttons);
         inv.open();
+    }
+
+    private void sendPlayerTradeRequest(CPlayer receiver) {
+        if (receiver.equals(player)) {
+            player.sendMessage(ChatColor.RED + "You cannot trade with yourself!");
+            player.playSound(player.getLocation(), Sound.BLOCK_ANVIL_DESTROY, 1f, 0f);
+            return;
+        }
+        player.sendMessage(ChatColor.GREEN + "Sent a request to " + receiver.getName() + " successfully. They have one minute to respond.");
+        receiver.playSound(receiver.getLocation(), Sound.ENTITY_EXPERIENCE_ORB_PICKUP, 1f, 0f);
+        receiver.sendMessage(ChatColor.GREEN + "A trade request has been sent by " + player.getName() + "! To begin the trade, type /trade " + player.getName());
     }
 
 }
