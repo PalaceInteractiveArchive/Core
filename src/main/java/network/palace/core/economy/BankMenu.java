@@ -1,6 +1,7 @@
 package network.palace.core.economy;
 
 import com.google.common.collect.ImmutableMap;
+import network.palace.core.Core;
 import network.palace.core.menu.Menu;
 import network.palace.core.menu.MenuButton;
 import network.palace.core.player.CPlayer;
@@ -9,6 +10,7 @@ import org.bukkit.Material;
 import org.bukkit.event.inventory.ClickType;
 import org.bukkit.inventory.ItemStack;
 import org.bukkit.inventory.meta.ItemMeta;
+import org.bukkit.inventory.meta.SkullMeta;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -99,7 +101,7 @@ public class BankMenu {
 
         buttons.add(new MenuButton(11, tradingMenu, ImmutableMap.of(ClickType.LEFT, p -> {
             p.closeInventory();
-            //todo
+            openTrading(0);
         })));
 
         buttons.add(new MenuButton(13, transactionsMenu, ImmutableMap.of(ClickType.LEFT, p -> {
@@ -125,4 +127,54 @@ public class BankMenu {
         Menu inv = new Menu(27, "Bank Utilities", player, buttons);
         inv.open();
     }
+
+    private void openTrading(int page) {
+        List<MenuButton> buttons = new ArrayList<>();
+        int players = Core.getPlayerManager().getPlayerCount();
+
+        int lowerNum = page * 14;
+        int i = 0;
+        int x = 0;
+
+        for (CPlayer onlinePlayer : Core.getPlayerManager().getOnlinePlayers()) {
+            i++;
+            if (i >= lowerNum && i <= (lowerNum + 14)) {
+                ItemStack playerHead = new ItemStack(Material.SKULL_ITEM, 1, (short) 3);
+
+                SkullMeta playerHeadMeta = (SkullMeta) playerHead.getItemMeta();
+                playerHeadMeta.setOwningPlayer(onlinePlayer.getBukkitPlayer());
+                playerHeadMeta.setDisplayName(ChatColor.GOLD + onlinePlayer.getName());
+                playerHead.setItemMeta(playerHeadMeta);
+                buttons.add(new MenuButton(x, playerHead, ImmutableMap.of(ClickType.LEFT, user -> {
+                    user.closeInventory();
+                    //todo
+                })));
+                x++;
+            }
+        }
+
+        if (page > 1) {
+            ItemStack backButton = new ItemStack(Material.STICK);
+            ItemMeta backMeta = backButton.getItemMeta();
+            backMeta.setDisplayName(ChatColor.RED + "Back one page");
+            backButton.setItemMeta(backMeta);
+            buttons.add(new MenuButton(16, backButton, ImmutableMap.of(ClickType.LEFT, user -> {
+                user.closeInventory();
+                openTrading(page -1);
+            })));
+        }
+
+        if ((14*(Math.ceil(Math.abs(players/14))) > (page * 14)) {
+            ItemStack forwardButton = new ItemStack(Material.STICK);
+            ItemMeta forwardButtonItemMeta = forwardButton.getItemMeta();
+            forwardButtonItemMeta.setDisplayName(ChatColor.RED + "Forward one page");
+            forwardButton.setItemMeta(forwardButtonItemMeta);
+            buttons.add(new MenuButton(26, forwardButton, ImmutableMap.of(ClickType.LEFT, user -> {
+                user.closeInventory();
+                openTrading(page +1);
+            })));
+        }
+
+    }
+
 }
