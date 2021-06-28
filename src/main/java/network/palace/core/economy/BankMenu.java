@@ -164,7 +164,7 @@ public class BankMenu {
             })));
         }
 
-        if ((14*(Math.ceil(Math.abs(players/14))) > (page * 14)) {
+        if ((14*(Math.ceil(Math.abs(players/14))) > (page * 14))) {
             ItemStack forwardButton = new ItemStack(Material.STICK);
             ItemMeta forwardButtonItemMeta = forwardButton.getItemMeta();
             forwardButtonItemMeta.setDisplayName(ChatColor.RED + "Forward one page");
