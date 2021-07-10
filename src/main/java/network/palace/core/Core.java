@@ -21,6 +21,7 @@ import network.palace.core.crafting.CraftingMenu;
 import network.palace.core.economy.EconomyManager;
 import network.palace.core.economy.HonorManager;
 import network.palace.core.errors.RollbarHandler;
+import network.palace.core.events.CommandListener;
 import network.palace.core.library.LibraryHandler;
 import network.palace.core.messagequeue.MessageHandler;
 import network.palace.core.mongo.MongoHandler;
@@ -201,6 +202,8 @@ public class Core extends JavaPlugin {
         registerDisabledCommands();
         // Log
         logMessage("Core", ChatColor.DARK_GREEN + "Enabled");
+        // Command Listener
+        new CommandListener(this);
 
         runTask(this, () -> mongoHandler.setServerOnline(getInstanceName(), getServerType(), playground, true));
 
@@ -244,6 +247,7 @@ public class Core extends JavaPlugin {
         registerCommand(new FlyCommand());
         registerCommand(new HelpopCommand());
         registerCommand(new HonorCommand());
+        registerCommand(new KillCommand());
         registerCommand(new ListCommand());
         registerCommand(new LockArmorStandCommand());
         registerCommand(new MsgCommand());
